@@ -149,7 +149,7 @@ class IpscMatchCompetitorServiceImplTest {
         when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
 
         // Act & Assert
-        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(1L, "A1", "Someone Else"));
+        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(1L, 1, "Someone Else"));
         verify(competitorRepository, never()).findAllByFullNameIgnoreCase(anyString());
     }
 
@@ -165,35 +165,35 @@ class IpscMatchCompetitorServiceImplTest {
     }
 
     @Test
-    void testResolveCompetitor_whenNumberGiven_thenFindsCompetitorByTrimmedNumberBeforeName() {
+    void testResolveCompetitor_whenNumberGiven_thenFindsCompetitorByNumberBeforeName() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(4L);
-        when(competitorRepository.findAllByCompetitorNumber("A123")).thenReturn(List.of(competitor));
+        when(competitorRepository.findAllByCompetitorNumber(123)).thenReturn(List.of(competitor));
 
         // Act & Assert
-        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, " A123 ", "Someone Else"));
+        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, 123, "Someone Else"));
         verify(competitorRepository, never()).findAllByFullNameIgnoreCase(anyString());
     }
 
     @Test
     void testResolveCompetitor_whenNumberMatchesNobody_thenThrowsNonFatalException() {
         // Arrange
-        when(competitorRepository.findAllByCompetitorNumber("A123")).thenReturn(List.of());
+        when(competitorRepository.findAllByCompetitorNumber(123)).thenReturn(List.of());
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, "A123", null));
+        assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, 123, null));
     }
 
     @Test
     void testResolveCompetitor_whenNumberMatchesSeveral_thenThrowsValidationException() {
         // Arrange
-        when(competitorRepository.findAllByCompetitorNumber("A123"))
+        when(competitorRepository.findAllByCompetitorNumber(123))
                 .thenReturn(List.of(new Competitor(), new Competitor()));
 
         // Act & Assert
         assertThrows(ValidationException.class,
-                () -> matchCompetitorServiceImpl.resolveCompetitor(null, "A123", null));
+                () -> matchCompetitorServiceImpl.resolveCompetitor(null, 123, null));
     }
 
     @Test
@@ -218,7 +218,7 @@ class IpscMatchCompetitorServiceImplTest {
     @Test
     void testResolveCompetitor_whenNeitherIdNorNameGiven_thenThrowsValidationException() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, "  ", "  "));
+        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, null, "  "));
     }
 
     // findCompetitorOrThrow()

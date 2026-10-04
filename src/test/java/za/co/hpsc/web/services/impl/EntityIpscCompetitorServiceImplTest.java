@@ -35,19 +35,19 @@ public class EntityIpscCompetitorServiceImplTest {
     @Test
     void testFindCompetitor_whenCalled_thenQueriesTheNumberAsAString() {
         // Arrange
-        when(competitorRepository.findAllByCompetitorNumber("42")).thenReturn(List.of(new Competitor()));
+        when(competitorRepository.findAllByCompetitorNumber(42)).thenReturn(List.of(new Competitor()));
 
         // Act
         entityIpscCompetitorService.findCompetitor("Jane Doe", 42);
 
         // Assert
-        verify(competitorRepository).findAllByCompetitorNumber("42");
+        verify(competitorRepository).findAllByCompetitorNumber(42);
     }
 
     @Test
     void testFindCompetitor_whenTheNameHasAnRoSuffix_thenQueriesTheNormalisedName() {
         // Arrange
-        when(competitorRepository.findAllByCompetitorNumber("42")).thenReturn(List.of());
+        when(competitorRepository.findAllByCompetitorNumber(42)).thenReturn(List.of());
 
         // Act
         entityIpscCompetitorService.findCompetitor("Jane Doe RO", 42);
@@ -59,7 +59,7 @@ public class EntityIpscCompetitorServiceImplTest {
     @Test
     void testFindCompetitor_whenTheNameHasABracketedRoSuffix_thenQueriesTheNormalisedName() {
         // Arrange
-        when(competitorRepository.findAllByCompetitorNumber("42")).thenReturn(List.of());
+        when(competitorRepository.findAllByCompetitorNumber(42)).thenReturn(List.of());
 
         // Act
         entityIpscCompetitorService.findCompetitor("  Jane Doe (RO)  ", 42);
@@ -71,21 +71,21 @@ public class EntityIpscCompetitorServiceImplTest {
     @Test
     void testFindCompetitor_whenTheNumberIsAnExcludedAlias_thenSkipsTheNumberQuery() {
         // Arrange
-        int excludedNumber = Integer.parseInt(IpscConstants.EXCLUDE_ICS_ALIAS.getFirst());
+        int excludedNumber = IpscConstants.EXCLUDE_ICS_ALIAS.getFirst();
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of());
 
         // Act
         entityIpscCompetitorService.findCompetitor("Jane Doe", excludedNumber);
 
         // Assert
-        verify(competitorRepository, never()).findAllByCompetitorNumber(anyString());
+        verify(competitorRepository, never()).findAllByCompetitorNumber(any());
         verify(competitorRepository).findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe");
     }
 
     @Test
     void testFindCompetitor_whenOneCompetitorHasTheNumber_thenSkipsTheNameQuery() {
         // Arrange
-        when(competitorRepository.findAllByCompetitorNumber("42")).thenReturn(List.of(new Competitor()));
+        when(competitorRepository.findAllByCompetitorNumber(42)).thenReturn(List.of(new Competitor()));
 
         // Act
         entityIpscCompetitorService.findCompetitor("Jane Doe", 42);
@@ -103,7 +103,7 @@ public class EntityIpscCompetitorServiceImplTest {
         Competitor john = new Competitor();
         john.setFirstName("John");
         john.setLastName("Doe");
-        when(competitorRepository.findAllByCompetitorNumber("42")).thenReturn(List.of(jane, john));
+        when(competitorRepository.findAllByCompetitorNumber(42)).thenReturn(List.of(jane, john));
 
         // Act
         entityIpscCompetitorService.findCompetitor("Jane Doe", 42);

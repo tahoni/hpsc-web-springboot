@@ -20,7 +20,7 @@ class CompetitorRequestTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequest request = new CompetitorRequest(
                 1L, "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com"), true, false,
+                12345, 7001, "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com"), true, false,
                 true);
 
         // Act
@@ -37,7 +37,7 @@ class CompetitorRequestTest {
         assertEquals("Female", node.get("gender").asText());
         assertEquals("Test Club", node.get("homeClub").asText());
         assertEquals(12345, node.get("sapsaNumber").asInt());
-        assertEquals("C-1", node.get("competitorNumber").asText());
+        assertEquals("7001", node.get("competitorNumber").asText());
         assertEquals("HPSC-001", node.get("clubNumber").asText());
         assertEquals("9001015800083", node.get("idNumber").asText());
         assertEquals("0821234567", node.get("cellphoneNumber").asText());
@@ -54,7 +54,7 @@ class CompetitorRequestTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequest request = new CompetitorRequest(
                 1L, "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com", "jane2.doe@example.com"), true, false,
+                12345, 7001, "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com", "jane2.doe@example.com"), true, false,
                 null);
 
         // Act
@@ -108,7 +108,7 @@ class CompetitorRequestTest {
                   "gender": "Female",
                   "homeClub": "Test Club",
                   "sapsaNumber": 12345,
-                  "competitorNumber": "C-1",
+                  "competitorNumber": 7001,
                   "clubNumber": "HPSC-001",
                   "idNumber": "9001015800083",
                   "cellphoneNumber": "0821234567",
@@ -132,7 +132,7 @@ class CompetitorRequestTest {
         assertEquals("Female", request.getGender());
         assertEquals("Test Club", request.getHomeClub());
         assertEquals(12345, request.getSapsaNumber());
-        assertEquals("C-1", request.getCompetitorNumber());
+        assertEquals(7001, request.getCompetitorNumber());
         assertEquals("HPSC-001", request.getClubNumber());
         assertEquals("9001015800083", request.getIdNumber());
         assertEquals("0821234567", request.getCellphoneNumber());

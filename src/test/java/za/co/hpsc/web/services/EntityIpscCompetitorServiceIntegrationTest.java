@@ -36,7 +36,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
     @Test
     void testFindCompetitor_whenOneCompetitorHasTheNumber_thenReturnsItRegardlessOfTheName() {
         // Arrange
-        Competitor saved = saveCompetitor("Jane", "Doe", null, "880001");
+        Competitor saved = saveCompetitor("Jane", "Doe", null, 880001);
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Someone Else", 880001);
@@ -49,7 +49,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
     @Test
     void testFindCompetitor_whenNoCompetitorHasTheNumberAndOneHasTheFullName_thenReturnsTheNameMatch() {
         // Arrange
-        Competitor saved = saveCompetitor("Jane", "Doe", null, "880002");
+        Competitor saved = saveCompetitor("Jane", "Doe", null, 880002);
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("jane doe", 880099);
@@ -62,7 +62,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
     @Test
     void testFindCompetitor_whenNoCompetitorHasTheNumberAndOneHasTheNickname_thenReturnsTheNicknameMatch() {
         // Arrange
-        Competitor saved = saveCompetitor("Janet", "Doe", "Jenny", "880003");
+        Competitor saved = saveCompetitor("Janet", "Doe", "Jenny", 880003);
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jenny Doe", 880099);
@@ -75,7 +75,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
     @Test
     void testFindCompetitor_whenTheNameHasAnRoSuffix_thenMatchesTheNameWithoutIt() {
         // Arrange
-        Competitor saved = saveCompetitor("Jane", "Doe", null, "880004");
+        Competitor saved = saveCompetitor("Jane", "Doe", null, 880004);
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe RO", 880099);
@@ -88,7 +88,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
     @Test
     void testFindCompetitor_whenNoCompetitorMatchesTheNumberOrTheName_thenReturnsEmpty() {
         // Arrange
-        saveCompetitor("Jane", "Doe", null, "880005");
+        saveCompetitor("Jane", "Doe", null, 880005);
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Nobody Here", 880099);
@@ -100,8 +100,8 @@ class EntityIpscCompetitorServiceIntegrationTest {
     @Test
     void testFindCompetitor_whenSeveralHaveTheFullNameAndNoneTheNumber_thenReturnsEmpty() {
         // Arrange
-        saveCompetitor("Jane", "Doe", null, "880006");
-        saveCompetitor("Janet", "Doe", "Jane", "880007");
+        saveCompetitor("Jane", "Doe", null, 880006);
+        saveCompetitor("Janet", "Doe", "Jane", 880007);
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", 880099);
@@ -113,8 +113,8 @@ class EntityIpscCompetitorServiceIntegrationTest {
     @Test
     void testFindCompetitor_whenSeveralHaveTheNumberAndOneHasTheFullName_thenReturnsThatCompetitor() {
         // Arrange
-        Competitor jane = saveCompetitor("Jane", "Doe", null, "880008");
-        saveCompetitor("John", "Doe", null, "880008");
+        Competitor jane = saveCompetitor("Jane", "Doe", null, 880008);
+        saveCompetitor("John", "Doe", null, 880008);
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", 880008);
@@ -127,8 +127,8 @@ class EntityIpscCompetitorServiceIntegrationTest {
     @Test
     void testFindCompetitor_whenSeveralHaveTheNumberAndOneHasTheNickname_thenReturnsThatCompetitor() {
         // Arrange
-        Competitor janet = saveCompetitor("Janet", "Doe", "Jenny", "880009");
-        saveCompetitor("John", "Doe", null, "880009");
+        Competitor janet = saveCompetitor("Janet", "Doe", "Jenny", 880009);
+        saveCompetitor("John", "Doe", null, 880009);
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jenny Doe", 880009);
@@ -141,8 +141,8 @@ class EntityIpscCompetitorServiceIntegrationTest {
     @Test
     void testFindCompetitor_whenSeveralHaveTheNumberAndNoneHasTheName_thenReturnsEmpty() {
         // Arrange
-        saveCompetitor("John", "Doe", null, "880010");
-        saveCompetitor("Jack", "Doe", null, "880010");
+        saveCompetitor("John", "Doe", null, 880010);
+        saveCompetitor("Jack", "Doe", null, 880010);
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", 880010);
@@ -154,8 +154,8 @@ class EntityIpscCompetitorServiceIntegrationTest {
     @Test
     void testFindCompetitor_whenSeveralHaveTheNumberAndSeveralHaveTheName_thenReturnsEmpty() {
         // Arrange
-        saveCompetitor("Jane", "Doe", null, "880011");
-        saveCompetitor("Janet", "Doe", "Jane", "880011");
+        saveCompetitor("Jane", "Doe", null, 880011);
+        saveCompetitor("Janet", "Doe", "Jane", 880011);
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", 880011);
@@ -167,8 +167,8 @@ class EntityIpscCompetitorServiceIntegrationTest {
     @Test
     void testFindCompetitor_whenTheNumberIsAnExcludedAlias_thenMatchesByNameOnly() {
         // Arrange
-        saveCompetitor("Jack", "Doe", null, "15000");
-        Competitor jane = saveCompetitor("Jane", "Doe", null, "880012");
+        saveCompetitor("Jack", "Doe", null, 15000);
+        Competitor jane = saveCompetitor("Jane", "Doe", null, 880012);
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", 15000);
@@ -179,7 +179,7 @@ class EntityIpscCompetitorServiceIntegrationTest {
     }
 
     // Helpers
-    private Competitor saveCompetitor(String firstName, String lastName, String nickname, String competitorNumber) {
+    private Competitor saveCompetitor(String firstName, String lastName, String nickname, Integer competitorNumber) {
         Competitor competitor = new Competitor();
         competitor.setFirstName(firstName);
         competitor.setLastName(lastName);

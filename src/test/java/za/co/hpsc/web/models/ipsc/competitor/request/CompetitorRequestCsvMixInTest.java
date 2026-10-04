@@ -22,7 +22,7 @@ class CompetitorRequestCsvMixInTest {
         // Arrange
         String csvData = """
                 FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
-                Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,C-1,HPSC-001,9001015800083,0821234567,jane.doe@example.com;jane2.doe@example.com,true,false
+                Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,7001,HPSC-001,9001015800083,0821234567,jane.doe@example.com;jane2.doe@example.com,true,false
                 """;
 
         // Act
@@ -40,7 +40,7 @@ class CompetitorRequestCsvMixInTest {
         assertEquals("Female", row.getGender());
         assertEquals("Test Club", row.getHomeClub());
         assertEquals(12345, row.getSapsaNumber());
-        assertEquals("C-1", row.getCompetitorNumber());
+        assertEquals(7001, row.getCompetitorNumber());
         assertEquals("HPSC-001", row.getClubNumber());
         assertEquals("9001015800083", row.getIdNumber());
         assertEquals("0821234567", row.getCellphoneNumber());

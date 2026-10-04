@@ -219,7 +219,7 @@ public class IpscCompetitorServiceTest {
         request.setNickName("Janie");
         request.setGender(Gender.Female.toString());
         request.setSapsaNumber(12345);
-        request.setCompetitorNumber("C-1");
+        request.setCompetitorNumber(7001);
         request.setIdNumber("9001015800083");
         request.setCellphoneNumber("0821234567");
         request.setEmailAddresses(List.of("jane.doe@example.com"));
@@ -236,7 +236,7 @@ public class IpscCompetitorServiceTest {
         assertEquals(Gender.Female, response.getGender());
         assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, response.getHomeClub());
         assertEquals(12345, response.getSapsaNumber());
-        assertEquals("C-1", response.getCompetitorNumber());
+        assertEquals(7001, response.getCompetitorNumber());
         assertEquals("HPSC-001", response.getClubNumber());
         assertEquals("9001015800083", response.getIdNumber());
         assertEquals("0821234567", response.getCellphoneNumber());
@@ -785,7 +785,7 @@ public class IpscCompetitorServiceTest {
         patch.setNickName("Janie");
         patch.setDateOfBirth(dateOfBirth);
         patch.setSapsaNumber(12345);
-        patch.setCompetitorNumber("C-001");
+        patch.setCompetitorNumber(7003);
         patch.setIdNumber("8001015800083");
         patch.setCellphoneNumber("0821234567");
         patch.setPaidUpSapsa(true);
@@ -802,7 +802,7 @@ public class IpscCompetitorServiceTest {
         assertEquals("Janie", patched.getNickName());
         assertEquals(dateOfBirth, patched.getDateOfBirth());
         assertEquals(12345, patched.getSapsaNumber());
-        assertEquals("C-001", patched.getCompetitorNumber());
+        assertEquals(7003, patched.getCompetitorNumber());
         assertEquals("8001015800083", patched.getIdNumber());
         assertEquals("0821234567", patched.getCellphoneNumber());
         assertEquals(Boolean.TRUE, patched.getPaidUpSapsa());

@@ -44,7 +44,7 @@ public class EntityIpscCompetitorServiceTest {
     void testFindCompetitor_whenOneCompetitorHasTheNumber_thenReturnsItWithoutMatchingTheName() {
         // Arrange
         Competitor competitor = competitor("Jane", "Doe", null);
-        when(competitorRepository.findAllByCompetitorNumber("1234")).thenReturn(List.of(competitor));
+        when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of(competitor));
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Someone Else", 1234);
@@ -59,7 +59,7 @@ public class EntityIpscCompetitorServiceTest {
     void testFindCompetitor_whenNoCompetitorHasTheNumberAndOneHasTheName_thenReturnsTheNameMatch() {
         // Arrange
         Competitor competitor = competitor("Jane", "Doe", null);
-        when(competitorRepository.findAllByCompetitorNumber("1234")).thenReturn(List.of());
+        when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of());
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
 
         // Act
@@ -73,7 +73,7 @@ public class EntityIpscCompetitorServiceTest {
     @Test
     void testFindCompetitor_whenNoCompetitorHasTheNumberOrTheName_thenReturnsEmpty() {
         // Arrange
-        when(competitorRepository.findAllByCompetitorNumber("1234")).thenReturn(List.of());
+        when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of());
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of());
 
         // Act
@@ -86,7 +86,7 @@ public class EntityIpscCompetitorServiceTest {
     @Test
     void testFindCompetitor_whenNoCompetitorHasTheNumberAndSeveralHaveTheName_thenReturnsEmpty() {
         // Arrange
-        when(competitorRepository.findAllByCompetitorNumber("1234")).thenReturn(List.of());
+        when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of());
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe"))
                 .thenReturn(List.of(competitor("Jane", "Doe", null), competitor("Janet", "Doe", "Jane")));
 
@@ -102,7 +102,7 @@ public class EntityIpscCompetitorServiceTest {
         // Arrange
         Competitor jane = competitor("Jane", "Doe", null);
         Competitor john = competitor("John", "Doe", null);
-        when(competitorRepository.findAllByCompetitorNumber("1234")).thenReturn(List.of(jane, john));
+        when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of(jane, john));
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", 1234);
@@ -118,7 +118,7 @@ public class EntityIpscCompetitorServiceTest {
         // Arrange
         Competitor janet = competitor("Janet", "Doe", "Jane");
         Competitor john = competitor("John", "Doe", null);
-        when(competitorRepository.findAllByCompetitorNumber("1234")).thenReturn(List.of(janet, john));
+        when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of(janet, john));
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("Jane Doe", 1234);
@@ -133,7 +133,7 @@ public class EntityIpscCompetitorServiceTest {
         // Arrange
         Competitor jane = competitor("Jane", "Doe", null);
         Competitor john = competitor("John", "Doe", null);
-        when(competitorRepository.findAllByCompetitorNumber("1234")).thenReturn(List.of(jane, john));
+        when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of(jane, john));
 
         // Act
         Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("jANE dOE", 1234);
@@ -146,7 +146,7 @@ public class EntityIpscCompetitorServiceTest {
     @Test
     void testFindCompetitor_whenSeveralHaveTheNumberAndNoneHasTheName_thenReturnsEmpty() {
         // Arrange
-        when(competitorRepository.findAllByCompetitorNumber("1234"))
+        when(competitorRepository.findAllByCompetitorNumber(1234))
                 .thenReturn(List.of(competitor("John", "Doe", null), competitor("Jack", "Doe", null)));
 
         // Act
@@ -159,7 +159,7 @@ public class EntityIpscCompetitorServiceTest {
     @Test
     void testFindCompetitor_whenSeveralHaveTheNumberAndSeveralHaveTheName_thenReturnsEmpty() {
         // Arrange
-        when(competitorRepository.findAllByCompetitorNumber("1234"))
+        when(competitorRepository.findAllByCompetitorNumber(1234))
                 .thenReturn(List.of(competitor("Jane", "Doe", null), competitor("Janet", "Doe", "Jane")));
 
         // Act
@@ -181,14 +181,14 @@ public class EntityIpscCompetitorServiceTest {
         // Assert
         assertTrue(result.isPresent());
         assertSame(competitor, result.get());
-        verify(competitorRepository, never()).findAllByCompetitorNumber(anyString());
+        verify(competitorRepository, never()).findAllByCompetitorNumber(any());
     }
 
     @Test
     void testFindCompetitor_whenTheNameHasAnRoSuffix_thenMatchesTheNameWithoutIt() {
         // Arrange
         Competitor competitor = competitor("Jane", "Doe", null);
-        when(competitorRepository.findAllByCompetitorNumber("1234")).thenReturn(List.of());
+        when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of());
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
 
         // Act

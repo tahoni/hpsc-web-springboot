@@ -69,7 +69,7 @@ class IpscCompetitorServiceImplTest {
         request.setGender(Gender.Female.toString());
         request.setHomeClub("Test Club");
         request.setSapsaNumber(12345);
-        request.setCompetitorNumber("C-1");
+        request.setCompetitorNumber(7001);
         request.setClubNumber("HPSC-001");
         request.setIdNumber("9001015800083");
         request.setCellphoneNumber("0821234567");
@@ -92,7 +92,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals(Gender.Female, competitor.getGender());
         assertSame(club, competitor.getHomeClub());
         assertEquals(12345, competitor.getSapsaNumber());
-        assertEquals("C-1", competitor.getCompetitorNumber());
+        assertEquals(7001, competitor.getCompetitorNumber());
         assertEquals("HPSC-001", competitor.getClubNumber());
         assertEquals("9001015800083", competitor.getIdNumber());
         assertEquals("0821234567", competitor.getCellphoneNumber());
@@ -293,7 +293,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "C-1", "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com", "jane2.doe@example.com"), true, false,
+                12345, 7001, "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com", "jane2.doe@example.com"), true, false,
                 true);
 
         // Act
@@ -309,7 +309,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("Female", request.getGender());
         assertEquals("Test Club", request.getHomeClub());
         assertEquals(12345, request.getSapsaNumber());
-        assertEquals("C-1", request.getCompetitorNumber());
+        assertEquals(7001, request.getCompetitorNumber());
         assertEquals("HPSC-001", request.getClubNumber());
         assertEquals("9001015800083", request.getIdNumber());
         assertEquals("0821234567", request.getCellphoneNumber());
@@ -324,7 +324,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "jANE", "o'NEIL-smith", "ann marie", "JANIE", null, "FEMALE", "test CLUB",
-                null, "c-1a", "hpsc-001", null, null, List.of("Jane.Doe@Example.com"), null, null, null);
+                null, 7002, "hpsc-001", null, null, List.of("Jane.Doe@Example.com"), null, null, null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
@@ -336,7 +336,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("Janie", request.getNickName());
         assertEquals("Female", request.getGender());
         assertEquals("test CLUB", request.getHomeClub());
-        assertEquals("c-1a", request.getCompetitorNumber());
+        assertEquals(7002, request.getCompetitorNumber());
         assertEquals("hpsc-001", request.getClubNumber());
         assertEquals(List.of("Jane.Doe@Example.com"), request.getEmailAddresses());
     }
@@ -346,7 +346,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "JANE", "O'NEIL-SMITH", "ANN MARIE", "JANIE", LocalDate.of(1990, 1, 1), "FEMALE", "TEST CLUB",
-                12345, "C-1A", "HPSC-001", "9001015800083", "0821234567", List.of("JANE.DOE@EXAMPLE.COM", "JANE2.DOE@EXAMPLE.COM"), true, false,
+                12345, 7002, "HPSC-001", "9001015800083", "0821234567", List.of("JANE.DOE@EXAMPLE.COM", "JANE2.DOE@EXAMPLE.COM"), true, false,
                 null);
 
         // Act
@@ -359,7 +359,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("Janie", request.getNickName());
         assertEquals("Female", request.getGender());
         assertEquals("TEST CLUB", request.getHomeClub());
-        assertEquals("C-1A", request.getCompetitorNumber());
+        assertEquals(7002, request.getCompetitorNumber());
         assertEquals("HPSC-001", request.getClubNumber());
         assertEquals("9001015800083", request.getIdNumber());
         assertEquals("0821234567", request.getCellphoneNumber());
@@ -371,7 +371,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "jane", "o'neil-smith", "ann marie", "janie", null, "female", "test club",
-                null, "c-1a", "hpsc-001", null, null, List.of("jane.doe@example.com"), null, null, null);
+                null, 7002, "hpsc-001", null, null, List.of("jane.doe@example.com"), null, null, null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
@@ -383,7 +383,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("Janie", request.getNickName());
         assertEquals("Female", request.getGender());
         assertEquals("test club", request.getHomeClub());
-        assertEquals("c-1a", request.getCompetitorNumber());
+        assertEquals(7002, request.getCompetitorNumber());
         assertEquals("hpsc-001", request.getClubNumber());
         assertEquals(List.of("jane.doe@example.com"), request.getEmailAddresses());
     }
@@ -515,7 +515,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         String csvData = """
                 FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
-                Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,C-1,HPSC-001,9001015800083,0821234567,jane.doe@example.com
+                Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,7001,HPSC-001,9001015800083,0821234567,jane.doe@example.com
                 John,Smith,,,,,,,,HPSC-002,,,
                 """;
 
@@ -534,7 +534,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("Female", first.getGender());
         assertEquals("Test Club", first.getHomeClub());
         assertEquals(12345, first.getSapsaNumber());
-        assertEquals("C-1", first.getCompetitorNumber());
+        assertEquals(7001, first.getCompetitorNumber());
         assertEquals("HPSC-001", first.getClubNumber());
         assertEquals("9001015800083", first.getIdNumber());
         assertEquals("0821234567", first.getCellphoneNumber());
@@ -749,27 +749,17 @@ class IpscCompetitorServiceImplTest {
 
     @Test
     void testResolveCompetitorNumber_whenOnlyCompetitorNumberIsSupplied_thenReturnsCompetitorNumber() {
-        assertEquals("C123", ipscCompetitorServiceImpl.resolveCompetitorNumber("C123", null));
+        assertEquals(123, ipscCompetitorServiceImpl.resolveCompetitorNumber(123, null));
     }
 
     @Test
-    void testResolveCompetitorNumber_whenOnlySapsaNumberIsSupplied_thenReturnsSapsaNumberAsString() {
-        assertEquals("4567", ipscCompetitorServiceImpl.resolveCompetitorNumber(null, 4567));
+    void testResolveCompetitorNumber_whenOnlySapsaNumberIsSupplied_thenReturnsSapsaNumber() {
+        assertEquals(4567, ipscCompetitorServiceImpl.resolveCompetitorNumber(null, 4567));
     }
 
     @Test
     void testResolveCompetitorNumber_whenBothAreSupplied_thenCompetitorNumberTakesPrecedence() {
-        assertEquals("C123", ipscCompetitorServiceImpl.resolveCompetitorNumber("C123", 4567));
-    }
-
-    @Test
-    void testResolveCompetitorNumber_whenCompetitorNumberIsBlank_thenFallsBackToSapsaNumber() {
-        assertEquals("4567", ipscCompetitorServiceImpl.resolveCompetitorNumber("  ", 4567));
-    }
-
-    @Test
-    void testResolveCompetitorNumber_whenCompetitorNumberIsBlankAndSapsaNumberIsNull_thenReturnsNull() {
-        assertNull(ipscCompetitorServiceImpl.resolveCompetitorNumber("  ", null));
+        assertEquals(123, ipscCompetitorServiceImpl.resolveCompetitorNumber(123, 4567));
     }
 
     // toResponse()
@@ -809,7 +799,7 @@ class IpscCompetitorServiceImplTest {
         competitor.setDateOfBirth(LocalDate.of(1990, 1, 1));
         competitor.setGender(Gender.Female);
         competitor.setSapsaNumber(12345);
-        competitor.setCompetitorNumber("C-1");
+        competitor.setCompetitorNumber(7001);
         competitor.setClubNumber("HPSC-001");
         competitor.setIdNumber("9001015800083");
         competitor.setCellphoneNumber("0821234567");
@@ -830,7 +820,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals(LocalDate.of(1990, 1, 1), response.getDateOfBirth());
         assertEquals(Gender.Female, response.getGender());
         assertEquals(12345, response.getSapsaNumber());
-        assertEquals("C-1", response.getCompetitorNumber());
+        assertEquals(7001, response.getCompetitorNumber());
         assertEquals("HPSC-001", response.getClubNumber());
         assertEquals("9001015800083", response.getIdNumber());
         assertEquals("0821234567", response.getCellphoneNumber());

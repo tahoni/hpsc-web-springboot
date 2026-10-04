@@ -63,7 +63,7 @@ class CompetitorPatchRequestTest {
                   "gender": "Female",
                   "homeClub": "Test Club",
                   "sapsaNumber": 12345,
-                  "competitorNumber": "C-1",
+                  "competitorNumber": 7001,
                   "clubNumber": "HPSC-001",
                   "idNumber": "9001015800083",
                   "cellphoneNumber": "0821234567",
@@ -86,7 +86,7 @@ class CompetitorPatchRequestTest {
         assertEquals("Female", request.getGender());
         assertEquals("Test Club", request.getHomeClub());
         assertEquals(12345, request.getSapsaNumber());
-        assertEquals("C-1", request.getCompetitorNumber());
+        assertEquals(7001, request.getCompetitorNumber());
         assertEquals("HPSC-001", request.getClubNumber());
         assertEquals("9001015800083", request.getIdNumber());
         assertEquals("0821234567", request.getCellphoneNumber());

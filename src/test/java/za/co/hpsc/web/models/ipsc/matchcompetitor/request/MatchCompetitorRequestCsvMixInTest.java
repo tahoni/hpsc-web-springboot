@@ -49,7 +49,7 @@ class MatchCompetitorRequestCsvMixInTest {
         // Arrange
         String csvData = """
                 Name,Mem #,MatchId,Cats,Div
-                Jane Doe,A123,2,Junior,Open Division
+                Jane Doe,123,2,Junior,Open Division
                 """;
 
         // Act
@@ -58,7 +58,7 @@ class MatchCompetitorRequestCsvMixInTest {
         // Assert
         assertNull(row.getCompetitorId());
         assertEquals("Jane Doe", row.getCompetitorName());
-        assertEquals("A123", row.getCompetitorNumber());
+        assertEquals(123, row.getCompetitorNumber());
     }
 
     @Test
