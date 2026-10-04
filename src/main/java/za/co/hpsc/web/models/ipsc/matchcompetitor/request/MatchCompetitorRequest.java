@@ -43,7 +43,7 @@ public class MatchCompetitorRequest {
      * {@link #competitorId} is {@code null}.
      */
     @JsonProperty("competitorNumber")
-    private Integer competitorNumber;
+    private String competitorNumber;
     /** The identifier of the match the competitor shot. */
     @JsonProperty(required = true)
     private Long matchId;
@@ -133,7 +133,7 @@ public class MatchCompetitorRequest {
     public MatchCompetitorRequest(@JsonProperty("matchCompetitorId") Long matchCompetitorId,
                                   @JsonProperty("competitorId") Long competitorId,
                                   @JsonProperty("name") String competitorName,
-                                  @JsonProperty("competitorNumber") Integer competitorNumber,
+                                  @JsonProperty("competitorNumber") String competitorNumber,
                                   @JsonProperty(value = "matchId", required = true) Long matchId,
                                   @JsonProperty("matchClub") String matchClub,
                                   @JsonProperty(value = "competitorCategory", required = true) String competitorCategory,

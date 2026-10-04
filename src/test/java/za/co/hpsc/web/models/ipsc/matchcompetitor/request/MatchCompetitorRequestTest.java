@@ -17,7 +17,7 @@ class MatchCompetitorRequestTest {
     void testJsonSerialization_whenFullyPopulated_thenSerializesAllFields() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
-        MatchCompetitorRequest request = new MatchCompetitorRequest(7L, 1L, "Jane Doe", 123, 2L, "HPSC", "Junior",
+        MatchCompetitorRequest request = new MatchCompetitorRequest(7L, 1L, "Jane Doe", "123", 2L, "HPSC", "Junior",
                 "Handgun", "Open Division", "Major", new BigDecimal("95.5"), new BigDecimal("98.25"),
                 new BigDecimal("41.5"), new BigDecimal("93.75"), 30, 4, 1, 2, 1, 0, 3, 0,
                 new BigDecimal("2"), new BigDecimal("1"), false);

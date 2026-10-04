@@ -58,7 +58,7 @@ class MatchCompetitorRequestCsvMixInTest {
         // Assert
         assertNull(row.getCompetitorId());
         assertEquals("Jane Doe", row.getCompetitorName());
-        assertEquals(123, row.getCompetitorNumber());
+        assertEquals("123", row.getCompetitorNumber());
     }
 
     @Test

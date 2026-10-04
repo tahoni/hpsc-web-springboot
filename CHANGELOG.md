@@ -88,10 +88,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `IpscMatchCompetitorController`:** **Breaking:** The `POST /bulk` endpoints now consume `text/plain` instead of
   `text/csv`, so a request sent with `Content-Type: text/csv` is refused with a 415 error; their OpenAPI request-body
   content type matches, and the CSV body is unchanged
-- **`CompetitorRequest`, `CompetitorPatchRequest`, `CompetitorResponse`, `CompetitorRequestCsvMixIn`,
-  `MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorRequestCsvMixIn`:** **Breaking:**
-  `competitorNumber` (CSV `CompetitorNumber`, and `Mem #` for match competitors) is now a whole number instead of a
-  string; a value that is not a whole number, such as `C-1`, is refused when the request is read
+- **`CompetitorRequest`, `CompetitorPatchRequest`, `CompetitorResponse`, `CompetitorRequestCsvMixIn`:** **Breaking:**
+  `competitorNumber` (CSV `CompetitorNumber`) is now a whole number instead of a string; a value that is not a whole
+  number, such as `C-1`, is refused when the request is read
+- **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorRequestCsvMixIn`:** `competitorNumber`
+  (CSV `Mem #`) stays a string in the request, as before; it is read as a whole number to find the competitor, and a
+  value that is not a whole number is refused with a validation error
 - **`CompetitorRequest`, `CompetitorPatchRequest`, `CompetitorResponse`, `CompetitorRequestCsvMixIn`:** **Breaking:**
   The competitor's nickname property is renamed from `nickname` to `nickName` in JSON, and its CSV column from
   `Nickname` to `NickName`; a CSV that still has a `Nickname` column imports without a nickname, because unknown

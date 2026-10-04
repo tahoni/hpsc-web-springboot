@@ -150,7 +150,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         competitorRepository.save(competitor);
         IpscMatch match = createMatch();
         MatchCompetitorRequest request = validRequest(null, match.getId());
-        request.setCompetitorNumber(123);
+        request.setCompetitorNumber("123");
 
         // Act
         MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(request);
