@@ -369,7 +369,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
             return findCompetitorOrThrow(competitorId);
         }
         if (hasText(competitorNumber)) {
-            List<Competitor> numberMatches = competitorRepository.findByCompetitorNumber(competitorNumber.trim());
+            List<Competitor> numberMatches = competitorRepository.findAllByCompetitorNumber(competitorNumber.trim());
             if (numberMatches.isEmpty()) {
                 throw new NonFatalException("No competitor found with number " + competitorNumber.trim());
             }
@@ -382,7 +382,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (!hasText(name)) {
             throw new ValidationException("Competitor ID, number or name is required.");
         }
-        List<Competitor> matches = competitorRepository.findByFullNameIgnoreCase(name.trim());
+        List<Competitor> matches = competitorRepository.findAllByFullNameIgnoreCase(name.trim());
         if (matches.isEmpty()) {
             throw new NonFatalException("No competitor found with name " + name.trim());
         }

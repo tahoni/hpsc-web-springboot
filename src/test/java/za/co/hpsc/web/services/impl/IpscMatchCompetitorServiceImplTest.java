@@ -150,7 +150,7 @@ class IpscMatchCompetitorServiceImplTest {
 
         // Act & Assert
         assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(1L, "A1", "Someone Else"));
-        verify(competitorRepository, never()).findByFullNameIgnoreCase(anyString());
+        verify(competitorRepository, never()).findAllByFullNameIgnoreCase(anyString());
     }
 
     @Test
@@ -158,7 +158,7 @@ class IpscMatchCompetitorServiceImplTest {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(3L);
-        when(competitorRepository.findByFullNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
+        when(competitorRepository.findAllByFullNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
 
         // Act & Assert
         assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, null, "  Jane Doe "));
@@ -169,17 +169,17 @@ class IpscMatchCompetitorServiceImplTest {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(4L);
-        when(competitorRepository.findByCompetitorNumber("A123")).thenReturn(List.of(competitor));
+        when(competitorRepository.findAllByCompetitorNumber("A123")).thenReturn(List.of(competitor));
 
         // Act & Assert
         assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, " A123 ", "Someone Else"));
-        verify(competitorRepository, never()).findByFullNameIgnoreCase(anyString());
+        verify(competitorRepository, never()).findAllByFullNameIgnoreCase(anyString());
     }
 
     @Test
     void testResolveCompetitor_whenNumberMatchesNobody_thenThrowsNonFatalException() {
         // Arrange
-        when(competitorRepository.findByCompetitorNumber("A123")).thenReturn(List.of());
+        when(competitorRepository.findAllByCompetitorNumber("A123")).thenReturn(List.of());
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, "A123", null));
@@ -188,7 +188,7 @@ class IpscMatchCompetitorServiceImplTest {
     @Test
     void testResolveCompetitor_whenNumberMatchesSeveral_thenThrowsValidationException() {
         // Arrange
-        when(competitorRepository.findByCompetitorNumber("A123"))
+        when(competitorRepository.findAllByCompetitorNumber("A123"))
                 .thenReturn(List.of(new Competitor(), new Competitor()));
 
         // Act & Assert
@@ -199,7 +199,7 @@ class IpscMatchCompetitorServiceImplTest {
     @Test
     void testResolveCompetitor_whenNameMatchesNobody_thenThrowsNonFatalException() {
         // Arrange
-        when(competitorRepository.findByFullNameIgnoreCase("Jane Doe")).thenReturn(List.of());
+        when(competitorRepository.findAllByFullNameIgnoreCase("Jane Doe")).thenReturn(List.of());
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, null, "Jane Doe"));
@@ -208,7 +208,7 @@ class IpscMatchCompetitorServiceImplTest {
     @Test
     void testResolveCompetitor_whenNameMatchesSeveral_thenThrowsValidationException() {
         // Arrange
-        when(competitorRepository.findByFullNameIgnoreCase("Jane Doe"))
+        when(competitorRepository.findAllByFullNameIgnoreCase("Jane Doe"))
                 .thenReturn(List.of(new Competitor(), new Competitor()));
 
         // Act & Assert
