@@ -32,7 +32,8 @@ public interface IpscCompetitorService {
      *                             without a club number.
      * @throws NonFatalException   if the named home club cannot be found.
      */
-    CompetitorResponse createCompetitor(CompetitorRequest request) throws ValidationException, NonFatalException;
+    CompetitorResponse createCompetitor(CompetitorRequest request)
+            throws ValidationException, NonFatalException;
 
     /**
      * Creates a batch of new IPSC competitors from CSV data.
@@ -111,7 +112,8 @@ public interface IpscCompetitorService {
      * @return the competitor.
      * @throws NonFatalException if no competitor with {@code competitorId} exists.
      */
-    CompetitorResponse getCompetitor(Long competitorId) throws NonFatalException;
+    CompetitorResponse getCompetitor(Long competitorId)
+            throws NonFatalException;
 
     /**
      * Retrieves every IPSC competitor.
@@ -134,5 +136,6 @@ public interface IpscCompetitorService {
      *                             is otherwise still referenced when the delete is flushed.
      * @throws NonFatalException   if no competitor with {@code competitorId} exists.
      */
-    void deleteCompetitor(Long competitorId) throws ValidationException, NonFatalException;
+    void deleteCompetitor(Long competitorId)
+            throws ValidationException, NonFatalException;
 }

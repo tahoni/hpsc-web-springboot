@@ -139,5 +139,6 @@ public interface IpscMatchService {
      *                             delete is flushed.
      * @throws NonFatalException   if no match with {@code matchId} exists.
      */
-    void deleteMatch(Long matchId) throws ValidationException, NonFatalException;
+    void deleteMatch(Long matchId)
+            throws ValidationException, NonFatalException;
 }

@@ -103,7 +103,8 @@ public interface IpscMatchCompetitorService {
      * @return the match competitor.
      * @throws NonFatalException if no match competitor with {@code matchCompetitorId} exists.
      */
-    MatchCompetitorResponse getMatchCompetitor(Long matchCompetitorId) throws NonFatalException;
+    MatchCompetitorResponse getMatchCompetitor(Long matchCompetitorId)
+            throws NonFatalException;
 
     /**
      * Retrieves every match competitor.
@@ -125,5 +126,6 @@ public interface IpscMatchCompetitorService {
      * @throws ValidationException if the match competitor is still referenced when the delete is flushed.
      * @throws NonFatalException   if no match competitor with {@code matchCompetitorId} exists.
      */
-    void deleteMatchCompetitor(Long matchCompetitorId) throws ValidationException, NonFatalException;
+    void deleteMatchCompetitor(Long matchCompetitorId)
+            throws ValidationException, NonFatalException;
 }
