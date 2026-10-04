@@ -78,6 +78,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   number and matches it, then the ID number, then the full name — an unmatched number and name still throws a
   `NonFatalException`, while an ambiguous one, including several that share the number but not the name, keeps
   throwing a `ValidationException`
+- **`IpscMatchCompetitorServiceImpl.resolveCompetitor`:** The match competitor create and patch endpoints now match a
+  competitor given by number and name through `findCompetitor`, so a name also matches a nickname, a number also
+  matches an ID number, several competitors sharing a number are narrowed by name, and a name is tried when the number
+  matches nobody
+- **`IpscMatchCompetitorServiceImpl.resolveCompetitor`:** **Breaking:** the shared alias numbers `15000` and `16000`
+  are no longer matched by competitor number, so a request that identified a competitor by one of them now resolves
+  only if the name matches, and a number that is not a whole number is looked up as an ID number, answering `404`
+  when nothing matches, instead of being rejected up front with a `400`
 
 ##### Utils
 

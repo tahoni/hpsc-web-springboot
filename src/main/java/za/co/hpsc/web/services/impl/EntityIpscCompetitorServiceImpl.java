@@ -88,7 +88,7 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
         competitorsMatchWithCompetitorOrIdNumberList.addAll(competitorsWithCompetitorNumberList);
         competitorsMatchWithCompetitorOrIdNumberList.addAll(competitorsWithIdNumberList);
 
-        // Then try to match using exact full name, narrowed to the number matches when there are any
+        // Try to match using exact full name, narrowed to the number matches when there are any
         List<Competitor> competitorsMatchWithFullNameList = competitorsMatchWithCompetitorOrIdNumberList.isEmpty()
                 ? competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase(normalisedCompetitorFullName)
                 : competitorsMatchWithCompetitorOrIdNumberList
