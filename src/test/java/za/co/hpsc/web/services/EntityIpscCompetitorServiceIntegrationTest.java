@@ -97,13 +97,13 @@ class EntityIpscCompetitorServiceIntegrationTest {
     }
 
     @Test
-    void testFindCompetitor_whenSeveralHaveTheFullNameAndNoneTheNumber_thenThrowsNonFatalException() {
+    void testFindCompetitor_whenSeveralHaveTheFullNameAndNoneTheNumber_thenThrowsValidationException() {
         // Arrange
         saveCompetitor("Jane", "Doe", null, 880006);
         saveCompetitor("Janet", "Doe", "Jane", 880007);
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> entityIpscCompetitorService.findCompetitor("880099", "Jane Doe"));
+        assertThrows(ValidationException.class, () -> entityIpscCompetitorService.findCompetitor("880099", "Jane Doe"));
     }
 
     @Test
@@ -135,23 +135,23 @@ class EntityIpscCompetitorServiceIntegrationTest {
     }
 
     @Test
-    void testFindCompetitor_whenSeveralHaveTheNumberAndNoneHasTheName_thenThrowsNonFatalException() {
+    void testFindCompetitor_whenSeveralHaveTheNumberAndNoneHasTheName_thenThrowsValidationException() {
         // Arrange
         saveCompetitor("John", "Doe", null, 880010);
         saveCompetitor("Jack", "Doe", null, 880010);
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> entityIpscCompetitorService.findCompetitor("880010", "Jane Doe"));
+        assertThrows(ValidationException.class, () -> entityIpscCompetitorService.findCompetitor("880010", "Jane Doe"));
     }
 
     @Test
-    void testFindCompetitor_whenSeveralHaveTheNumberAndSeveralHaveTheName_thenThrowsNonFatalException() {
+    void testFindCompetitor_whenSeveralHaveTheNumberAndSeveralHaveTheName_thenThrowsValidationException() {
         // Arrange
         saveCompetitor("Jane", "Doe", null, 880011);
         saveCompetitor("Janet", "Doe", "Jane", 880011);
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> entityIpscCompetitorService.findCompetitor("880011", "Jane Doe"));
+        assertThrows(ValidationException.class, () -> entityIpscCompetitorService.findCompetitor("880011", "Jane Doe"));
     }
 
     @Test

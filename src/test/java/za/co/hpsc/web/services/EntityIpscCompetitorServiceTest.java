@@ -114,14 +114,14 @@ public class EntityIpscCompetitorServiceTest {
     }
 
     @Test
-    void testFindCompetitor_whenNoCompetitorHasTheNumberAndSeveralHaveTheName_thenThrowsNonFatalException() {
+    void testFindCompetitor_whenNoCompetitorHasTheNumberAndSeveralHaveTheName_thenThrowsValidationException() {
         // Arrange
         when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of());
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe"))
                 .thenReturn(List.of(competitor("Jane", "Doe", null), competitor("Janet", "Doe", "Jane")));
 
         // Act & Assert
-        NonFatalException exception = assertThrows(NonFatalException.class,
+        ValidationException exception = assertThrows(ValidationException.class,
                 () -> entityIpscCompetitorService.findCompetitor("1234", "Jane Doe"));
         assertTrue(exception.getMessage().startsWith("Two or more"));
     }
@@ -173,25 +173,25 @@ public class EntityIpscCompetitorServiceTest {
     }
 
     @Test
-    void testFindCompetitor_whenSeveralHaveTheNumberAndNoneHasTheName_thenThrowsNonFatalException() {
+    void testFindCompetitor_whenSeveralHaveTheNumberAndNoneHasTheName_thenThrowsValidationException() {
         // Arrange
         when(competitorRepository.findAllByCompetitorNumber(1234))
                 .thenReturn(List.of(competitor("John", "Doe", null), competitor("Jack", "Doe", null)));
 
         // Act & Assert
-        NonFatalException exception = assertThrows(NonFatalException.class,
+        ValidationException exception = assertThrows(ValidationException.class,
                 () -> entityIpscCompetitorService.findCompetitor("1234", "Jane Doe"));
-        assertTrue(exception.getMessage().startsWith("No competitors"));
+        assertTrue(exception.getMessage().startsWith("Two or more"));
     }
 
     @Test
-    void testFindCompetitor_whenSeveralHaveTheNumberAndSeveralHaveTheName_thenThrowsNonFatalException() {
+    void testFindCompetitor_whenSeveralHaveTheNumberAndSeveralHaveTheName_thenThrowsValidationException() {
         // Arrange
         when(competitorRepository.findAllByCompetitorNumber(1234))
                 .thenReturn(List.of(competitor("Jane", "Doe", null), competitor("Janet", "Doe", "Jane")));
 
         // Act & Assert
-        NonFatalException exception = assertThrows(NonFatalException.class,
+        ValidationException exception = assertThrows(ValidationException.class,
                 () -> entityIpscCompetitorService.findCompetitor("1234", "Jane Doe"));
         assertTrue(exception.getMessage().startsWith("Two or more"));
     }
@@ -212,15 +212,15 @@ public class EntityIpscCompetitorServiceTest {
     }
 
     @Test
-    void testFindCompetitor_whenSeveralHaveTheIdNumberAndNoneHasTheName_thenThrowsNonFatalException() {
+    void testFindCompetitor_whenSeveralHaveTheIdNumberAndNoneHasTheName_thenThrowsValidationException() {
         // Arrange
         when(competitorRepository.findAllByIdNumber("AB123456"))
                 .thenReturn(List.of(competitor("John", "Doe", null), competitor("Jack", "Doe", null)));
 
         // Act & Assert
-        NonFatalException exception = assertThrows(NonFatalException.class,
+        ValidationException exception = assertThrows(ValidationException.class,
                 () -> entityIpscCompetitorService.findCompetitor("AB123456", "Jane Doe"));
-        assertTrue(exception.getMessage().startsWith("No competitors"));
+        assertTrue(exception.getMessage().startsWith("Two or more"));
     }
 
     @Test

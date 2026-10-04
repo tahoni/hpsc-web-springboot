@@ -372,13 +372,15 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * @param competitorName   the competitor's full name, "FirstName LastName" or "NickName LastName", matched
      *                         ignoring case.
      * @return the matching {@link Competitor}.
-     * @throws ValidationException if both the competitor number and the name are null or blank.
-     * @throws NonFatalException   if no competitor matches, or more than one competitor matches.
+     * @throws ValidationException if both the competitor number and the name are null or blank, or if more than one
+     *                             competitor matches, including when the name matches none of the competitors that
+     *                             share the number.
+     * @throws NonFatalException   if no competitor matches.
      */
     protected Competitor findCompetitorOrThrow(String competitorNumber, String competitorName) {
         String trimmedCompetitorNumber = (competitorNumber == null) ? null : competitorNumber.trim();
         return entityIpscCompetitorService.findCompetitor(trimmedCompetitorNumber, competitorName)
-                .orElseThrow(() ->  new NonFatalException(
+                .orElseThrow(() -> new NonFatalException(
                         String.format("No competitor found with competitor number of %s or name %s ",
                                 competitorNumber, competitorName)));
     }
@@ -410,9 +412,9 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      *                         {@code competitorNumber} is given.
      * @return the matching {@link Competitor}.
      * @throws ValidationException if {@code competitorId}, {@code competitorNumber} and {@code name} are all null
-     *                             or blank.
-     * @throws NonFatalException   if no competitor matches, or if more than one competitor matches the number
-     *                             and name.
+     *                             or blank, or if more than one competitor matches the number and name, including when
+     *                             the name matches none of the competitors that share the number.
+     * @throws NonFatalException   if no competitor matches the number and name.
      */
     protected Competitor resolveCompetitor(Long competitorId, String competitorNumber, String name) {
         if (competitorId != null) {

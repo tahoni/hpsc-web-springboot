@@ -40,8 +40,10 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
      * </ol>
      * <p>The full name is normalised before comparison by trimming it and removing the
      * characters matched by {@link IpscConstants#REPLACE_IN_NAMES_REGEX}.</p>
-     * <p>If the final stage does not yield exactly one competitor, a {@link NonFatalException}
-     * is thrown rather than returning an empty {@link Optional}.</p>
+     * <p>If the final stage does not yield exactly one competitor, an exception is thrown rather
+     * than returning an empty {@link Optional}: a {@link NonFatalException} when no competitor
+     * matched the number, ID number or name, a {@link ValidationException} when several did, even
+     * if the name matched none of the competitors that share the number.</p>
      */
     @Override
     public Optional<Competitor> findCompetitor(String competitorNumber, String fullName)
@@ -53,12 +55,13 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
         }
 
         // Normalise full name
-        String competitorFullName = StringUtils.trimToEmpty(fullName).replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX, "").trim();
+        String normalisedCompetitorFullName = StringUtils.trimToEmpty(fullName).replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX, "").trim();
         // Normalise competitor number
+        String normalisedCompetitorNumber = StringUtils.trimToEmpty(competitorNumber);
         // A numeric value too long for an int (such as an ID number) is not a competitor number
         int competitorNumberInt = 0;
-        if (StringUtils.isNumeric(competitorNumber)) {
-            competitorNumberInt = NumberUtils.toInt(competitorNumber, 0);
+        if (StringUtils.isNumeric(normalisedCompetitorNumber)) {
+            competitorNumberInt = NumberUtils.toInt(normalisedCompetitorNumber, 0);
         }
 
         List<Competitor> competitorsWithCompetitorNumberList = new ArrayList<>();
@@ -87,23 +90,26 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
 
         // Then try to match using exact full name, narrowed to the number matches when there are any
         List<Competitor> competitorsMatchWithFullNameList = competitorsMatchWithCompetitorOrIdNumberList.isEmpty()
-                ? competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase(competitorFullName)
+                ? competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase(normalisedCompetitorFullName)
                 : competitorsMatchWithCompetitorOrIdNumberList
                 .stream()
                 .filter(competitor -> (
-                        (competitorFullName.equalsIgnoreCase(competitor.getFirstName() + " " + competitor.getLastName())) ||
-                        (competitorFullName.equalsIgnoreCase(competitor.getNickName() + " " + competitor.getLastName()))))
+                        (normalisedCompetitorFullName.equalsIgnoreCase(competitor.getFirstName() + " " + competitor.getLastName())) ||
+                        (normalisedCompetitorFullName.equalsIgnoreCase(competitor.getNickName() + " " + competitor.getLastName()))))
                 .toList();
         if (competitorsMatchWithFullNameList.size() == 1) {
             return Optional.of(competitorsMatchWithFullNameList.getFirst());
         }
 
-        String errorMessage = "";
         if (competitorsMatchWithFullNameList.isEmpty()) {
-            errorMessage = "No competitors with the same competitor number or full name were found";
-        } else {
-            errorMessage = "Two or more competitors with the same competitor number or name were found";
+            // Only an outright lack of matches is "not found"; several number matches that the name cannot
+            // narrow down are still ambiguous
+            if (competitorsMatchWithCompetitorOrIdNumberList.isEmpty()) {
+                throw new NonFatalException("No competitors with the same competitor number or full name were found");
+            }
+            throw new ValidationException(
+                    "Two or more competitors with the same competitor number were found, but none with the full name");
         }
-        throw new NonFatalException(errorMessage);
+        throw new ValidationException("Two or more competitors with the same competitor number or name were found");
     }
 }

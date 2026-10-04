@@ -160,13 +160,24 @@ class IpscMatchCompetitorServiceIntegrationTest {
     }
 
     @Test
-    void testCreateMatchCompetitor_whenNameMatchesSeveralCompetitors_thenThrowsNonFatalException() {
+    void testCreateMatchCompetitor_whenNameMatchesSeveralCompetitors_thenThrowsValidationException() {
         // Arrange
         createCompetitor("HPSC-MC-003");
         createCompetitor("HPSC-MC-004");
         IpscMatch match = createMatch();
         MatchCompetitorRequest request = validRequest(null, match.getId());
         request.setCompetitorName("Jane Doe");
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
+    }
+
+    @Test
+    void testCreateMatchCompetitor_whenNoCompetitorMatchesTheName_thenThrowsNonFatalException() {
+        // Arrange
+        IpscMatch match = createMatch();
+        MatchCompetitorRequest request = validRequest(null, match.getId());
+        request.setCompetitorName("Nobody Here");
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));

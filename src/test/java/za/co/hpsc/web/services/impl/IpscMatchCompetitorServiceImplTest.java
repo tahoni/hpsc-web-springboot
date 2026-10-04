@@ -193,13 +193,24 @@ class IpscMatchCompetitorServiceImplTest {
     }
 
     @Test
-    void testResolveCompetitor_whenTheEntityServiceFindsNoSingleCompetitor_thenThrowsNonFatalException() {
+    void testResolveCompetitor_whenTheEntityServiceFindsNoCompetitor_thenThrowsNonFatalException() {
         // Arrange
         when(entityIpscCompetitorService.findCompetitor("123", "Jane Doe"))
                 .thenThrow(new NonFatalException("No competitors found"));
 
         // Act & Assert
         assertThrows(NonFatalException.class,
+                () -> matchCompetitorServiceImpl.resolveCompetitor(null, "123", "Jane Doe"));
+    }
+
+    @Test
+    void testResolveCompetitor_whenTheEntityServiceFindsSeveralCompetitors_thenThrowsValidationException() {
+        // Arrange
+        when(entityIpscCompetitorService.findCompetitor("123", "Jane Doe"))
+                .thenThrow(new ValidationException("Two or more competitors found"));
+
+        // Act & Assert
+        assertThrows(ValidationException.class,
                 () -> matchCompetitorServiceImpl.resolveCompetitor(null, "123", "Jane Doe"));
     }
 

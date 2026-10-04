@@ -38,9 +38,10 @@ public interface EntityIpscCompetitorService {
      * @return the single matching competitor. Never empty: when no unique match is found, an
      * exception is thrown instead.
      * @throws ValidationException if both the full name and the competitor number are null or
-     *                             blank.
-     * @throws NonFatalException   if no competitor matches, or if more than one competitor
-     *                             matches.
+     *                             blank, or if more than one competitor matches the number, ID
+     *                             number or name, including when the name matches none of the
+     *                             competitors that share the number.
+     * @throws NonFatalException   if no competitor matches the number, ID number or name.
      */
     Optional<Competitor> findCompetitor(String competitorNumber, String fullName)
         throws ValidationException, NonFatalException;
