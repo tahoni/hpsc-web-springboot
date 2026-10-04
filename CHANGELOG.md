@@ -53,7 +53,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Services
 
 - **`EntityIpscCompetitorService`, `EntityIpscCompetitorServiceImpl`:** New `findCompetitor(fullName, competitorNumber)`
-  lookup that resolves a single `Competitor` — by competitor number when exactly one matches (numbers in
+  lookup, registered as a Spring `@Service`, that resolves a single `Competitor` — by competitor number when exactly one matches (numbers in
   `IpscConstants.EXCLUDE_ICS_ALIAS` are skipped), otherwise by full name (narrowed to the number matches when there are
   any), otherwise by the competitors present in both lists — returning an empty `Optional` when no single competitor can
   be determined

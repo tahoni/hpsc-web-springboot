@@ -1,5 +1,6 @@
 package za.co.hpsc.web.services.impl;
 
+import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.repositories.CompetitorRepository;
@@ -8,6 +9,7 @@ import za.co.hpsc.web.services.EntityIpscCompetitorService;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
 public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorService {
     private final CompetitorRepository competitorRepository;
 
@@ -48,16 +50,6 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
             if (competitorsWithFullNameList.size() == 1) {
                 return Optional.of(competitorsWithFullNameList.getFirst());
             }
-
-            // More than one competitor number match or more than one full name match
-            Map<String, List<Competitor>> competitorsByCompetitorNumber = competitorsWithCompetitorNumberList
-                    .stream()
-                    .collect(Collectors.groupingBy(Competitor::getCompetitorNumber));
-
-            Map<String, List<Competitor>> competitorsByFullName = competitorsWithFullNameList
-                    .stream()
-                    .collect(Collectors.groupingBy(competitor ->
-                            (competitor.getFirstName() + " " + competitor.getLastName()).toLowerCase()));
 
             // Find all competitors that are in the competitor number and full name lists
             combinedCompetitorList.addAll(competitorsWithCompetitorNumberList);
