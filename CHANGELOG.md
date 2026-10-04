@@ -80,8 +80,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`CompetitorRepository`:** `findByCompetitorNumber` and `findByFullNameIgnoreCase` renamed to
   `findAllByCompetitorNumber` and `findAllByFullNameIgnoreCase` (callers in `IpscMatchCompetitorServiceImpl` and its
-  tests updated); `findAllByFullNameIgnoreCase` now also matches the competitor's "Nickname LastName" full name,
-  ignoring case
+  tests updated), and the new `findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase` matches a competitor's
+  "FirstName LastName" or "Nickname LastName" full name, ignoring case; `findAllByFullNameIgnoreCase` still matches
+  only "FirstName LastName"
 
 ##### Services
 

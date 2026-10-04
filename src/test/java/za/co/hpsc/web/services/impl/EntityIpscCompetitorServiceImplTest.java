@@ -53,7 +53,7 @@ public class EntityIpscCompetitorServiceImplTest {
         entityIpscCompetitorService.findCompetitor("Jane Doe RO", 42);
 
         // Assert
-        verify(competitorRepository).findAllByFullNameIgnoreCase("Jane Doe");
+        verify(competitorRepository).findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe");
     }
 
     @Test
@@ -65,21 +65,21 @@ public class EntityIpscCompetitorServiceImplTest {
         entityIpscCompetitorService.findCompetitor("  Jane Doe (RO)  ", 42);
 
         // Assert
-        verify(competitorRepository).findAllByFullNameIgnoreCase("Jane Doe");
+        verify(competitorRepository).findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe");
     }
 
     @Test
     void testFindCompetitor_whenTheNumberIsAnExcludedAlias_thenSkipsTheNumberQuery() {
         // Arrange
         int excludedNumber = Integer.parseInt(IpscConstants.EXCLUDE_ICS_ALIAS.getFirst());
-        when(competitorRepository.findAllByFullNameIgnoreCase("Jane Doe")).thenReturn(List.of());
+        when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of());
 
         // Act
         entityIpscCompetitorService.findCompetitor("Jane Doe", excludedNumber);
 
         // Assert
         verify(competitorRepository, never()).findAllByCompetitorNumber(anyString());
-        verify(competitorRepository).findAllByFullNameIgnoreCase("Jane Doe");
+        verify(competitorRepository).findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe");
     }
 
     @Test

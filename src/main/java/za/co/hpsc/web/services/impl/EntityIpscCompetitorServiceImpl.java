@@ -35,7 +35,7 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
 
         // Then try to match using exact full name, narrowed to the number matches when there are any
         List<Competitor> competitorsWithFullNameList = competitorsWithCompetitorNumberList.isEmpty()
-                ? competitorRepository.findAllByFullNameIgnoreCase(competitorFullName)
+                ? competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase(competitorFullName)
                 : competitorsWithCompetitorNumberList
                 .stream()
                 .filter(competitor -> (
