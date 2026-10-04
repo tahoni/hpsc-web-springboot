@@ -64,6 +64,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscConstants.MAX_SAPSA_NUMBER`:** Raised from `99_999` to `999_999`
 
+##### API
+
+- **`IpscCompetitorController`, `IpscMatchController`:** The `POST /bulk` endpoints now consume `text/plain` instead of
+  `text/csv`; the CSV body is unchanged
+
 ##### Repositories
 
 - **`CompetitorRepository`:** `findByCompetitorNumber` and `findByFullNameIgnoreCase` renamed to
