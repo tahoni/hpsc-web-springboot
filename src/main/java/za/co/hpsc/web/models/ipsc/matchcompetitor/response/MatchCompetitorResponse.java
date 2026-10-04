@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 
 /**
  * A persisted IPSC match competitor, as returned by {@code MatchCompetitorController}'s CRUD endpoints.
+ *
+ * @since 9.1.0
  */
 @Getter
 @Setter

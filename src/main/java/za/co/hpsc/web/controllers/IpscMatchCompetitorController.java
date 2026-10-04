@@ -33,6 +33,8 @@ import java.util.List;
  * Provides endpoints for creating, fully or partially updating, retrieving (individually or all
  * at once) and deleting match competitors: one competitor's entry in one match, in one firearm type.
  * </p>
+ *
+ * @since 9.1.0
  */
 @Controller
 @RequestMapping("/ipsc/match-competitors")

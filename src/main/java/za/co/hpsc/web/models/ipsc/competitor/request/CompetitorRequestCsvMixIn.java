@@ -19,6 +19,8 @@ import java.util.List;
  * CSV bulk import only ever creates new competitors, so a {@code CompetitorId} column is bound but never used.
  * {@code EmailAddresses} is a single cell of addresses separated by the shared array separator.
  * </p>
+ *
+ * @since 9.0.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class CompetitorRequestCsvMixIn {

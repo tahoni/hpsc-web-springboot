@@ -20,6 +20,7 @@ import java.util.List;
  * </p>
  *
  * @see CompetitorRequest
+ * @since 9.0.0
  */
 @Getter
 @Setter

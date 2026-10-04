@@ -86,6 +86,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Documentation
 
+- **Class-level `@since` tags:** Added to `IpscMatchCompetitorController`, `CompetitorPatchRequest`,
+  `CompetitorRequestCsvMixIn`, `MatchPatchRequest`, `MatchRequestCsvMixIn`, `MatchCompetitorPatchRequest`,
+  `MatchCompetitorRequestCsvMixIn`, `MatchCompetitorResponse`, `MatchCompetitorResponseHolder`,
+  `IpscMatchCompetitorService` and `TransactionService`, which had none
 - **`EntityIpscCompetitorService`:** Javadoc describing the number-first, full-name-second lookup in `findCompetitor`,
   including the "RO" suffix handling and the empty result for no match or an ambiguous one
 - **`IpscCompetitorServiceImpl.resolveCompetitorNumber`:** Javadoc describing the competitor-number-first,
