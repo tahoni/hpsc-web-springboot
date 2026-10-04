@@ -49,6 +49,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Documentation
+
+- **`EntityIpscCompetitorServiceImpl`:** `findCompetitor` gains Javadoc that inherits the interface documentation
+  (`{@inheritDoc}`) and adds implementation notes on the lookup stages — competitor number, ID number, then full
+  name — the name normalisation, and the `NonFatalException` thrown when no single competitor is found
+
 ### 🧾 [11.0.0] - 2026-10-04
 
 #### ➕ Added
