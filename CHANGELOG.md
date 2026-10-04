@@ -88,12 +88,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `IpscMatchCompetitorController`:** **Breaking:** The `POST /bulk` endpoints now consume `text/plain` instead of
   `text/csv`, so a request sent with `Content-Type: text/csv` is refused with a 415 error; their OpenAPI request-body
   content type matches, and the CSV body is unchanged
-- **`CompetitorRequest`, `CompetitorPatchRequest`, `CompetitorResponse`, `CompetitorRequestCsvMixIn`:** **Breaking:**
-  `competitorNumber` (CSV `CompetitorNumber`) is now a whole number instead of a string; a value that is not a whole
-  number, such as `C-1`, is refused when the request is read
-- **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorRequestCsvMixIn`:** `competitorNumber`
-  (CSV `Mem #`) stays a string in the request, as before; it is read as a whole number to find the competitor, and a
-  value that is not a whole number is refused with a validation error
+- **`CompetitorRequest`, `CompetitorPatchRequest`, `CompetitorRequestCsvMixIn`, `MatchCompetitorRequest`,
+  `MatchCompetitorPatchRequest`, `MatchCompetitorRequestCsvMixIn`:** **Breaking:** `competitorNumber` (CSV
+  `CompetitorNumber`, and `Mem #` for match competitors) stays a string in requests, but must now be a whole number:
+  it is read as one, and a value that is not, such as `C-1`, is refused with a validation error; a blank value is
+  treated as not supplied
+- **`CompetitorResponse`:** **Breaking:** `competitorNumber` is now a whole number instead of a string
 - **`CompetitorRequest`, `CompetitorPatchRequest`, `CompetitorResponse`, `CompetitorRequestCsvMixIn`:** **Breaking:**
   The competitor's nickname property is renamed from `nickname` to `nickName` in JSON, and its CSV column from
   `Nickname` to `NickName`; a CSV that still has a `Nickname` column imports without a nickname, because unknown
@@ -132,7 +132,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   nickname matching, excluded aliases, the "RO" suffix and ambiguous or missing matches), the impl's repository calls
   (normalised arguments and skipped queries) and an end-to-end run against the H2 `test` database
 - **`IpscCompetitorServiceImplTest`:** New `resolveCompetitorNumber` tests covering both arguments `null`, only the
-  competitor number, only the SAPSA number and both supplied (competitor number wins)
+  competitor number, only the SAPSA number, both supplied (competitor number wins), a blank competitor number with and
+  without a SAPSA number and one that is not a whole number, plus `parseCompetitorNumber`
 
 #### 🐛 Fixed
 

@@ -129,8 +129,9 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         if (request.getSapsaNumber() != null) {
             competitor.setSapsaNumber(request.getSapsaNumber());
         }
-        if (request.getCompetitorNumber() != null) {
-            competitor.setCompetitorNumber(request.getCompetitorNumber());
+        Integer competitorNumber = parseCompetitorNumber(request.getCompetitorNumber());
+        if (competitorNumber != null) {
+            competitor.setCompetitorNumber(competitorNumber);
         }
         if ((request.getHomeClub() != null) || (request.getClubNumber() != null)) {
             String clubNumber = (request.getClubNumber() != null) ? request.getClubNumber() : competitor.getClubNumber();
@@ -420,13 +421,39 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * Resolves the competitor number to use for a competitor, preferring an explicit competitor
      * number and falling back to the SAPSA number.
      *
-     * @param competitorNumber the explicit competitor number; may be null.
+     * <p>
+     * A blank competitor number is treated the same as a {@code null} one, and so triggers the
+     * fallback.
+     * </p>
+     *
+     * @param competitorNumber the explicit competitor number, as text; may be null or blank.
      * @param sapsaNumber      the SAPSA number to fall back on; may be null.
-     * @return {@code competitorNumber} if it was supplied, otherwise {@code sapsaNumber},
+     * @return {@code competitorNumber} as a whole number if it was supplied, otherwise {@code sapsaNumber},
      * or {@code null} if neither was supplied.
+     * @throws ValidationException if {@code competitorNumber} is not a whole number.
      */
-    protected Integer resolveCompetitorNumber(Integer competitorNumber, Integer sapsaNumber) {
-        return (competitorNumber != null) ? competitorNumber : sapsaNumber;
+    protected Integer resolveCompetitorNumber(String competitorNumber, Integer sapsaNumber) {
+        Integer parsedCompetitorNumber = parseCompetitorNumber(competitorNumber);
+        return (parsedCompetitorNumber != null) ? parsedCompetitorNumber : sapsaNumber;
+    }
+
+    /**
+     * Converts a competitor number received as text to the whole number it is stored as.
+     *
+     * @param competitorNumber the competitor number as text; surrounding whitespace is ignored. May be null or
+     *                         blank.
+     * @return the competitor number as a whole number, or {@code null} if it is null or blank.
+     * @throws ValidationException if the competitor number is not a whole number.
+     */
+    protected Integer parseCompetitorNumber(String competitorNumber) {
+        if ((competitorNumber == null) || competitorNumber.isBlank()) {
+            return null;
+        }
+        try {
+            return Integer.valueOf(competitorNumber.trim());
+        } catch (NumberFormatException e) {
+            throw new ValidationException("Competitor number must be a whole number: " + competitorNumber.trim());
+        }
     }
 
     /**

@@ -35,7 +35,7 @@ public abstract class CompetitorRequestCsvMixIn {
                               @JsonProperty("Gender") String gender,
                               @JsonProperty("HomeClub") String homeClub,
                               @JsonProperty("SapsaNumber") Integer sapsaNumber,
-                              @JsonProperty("CompetitorNumber") Integer competitorNumber,
+                              @JsonProperty("CompetitorNumber") String competitorNumber,
                               @JsonProperty("ClubNumber") String clubNumber,
                               @JsonProperty("IdNumber") String idNumber,
                               @JsonProperty("CellphoneNumber") String cellphoneNumber,

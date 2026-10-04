@@ -219,7 +219,7 @@ public class IpscCompetitorServiceTest {
         request.setNickName("Janie");
         request.setGender(Gender.Female.toString());
         request.setSapsaNumber(12345);
-        request.setCompetitorNumber(7001);
+        request.setCompetitorNumber("7001");
         request.setIdNumber("9001015800083");
         request.setCellphoneNumber("0821234567");
         request.setEmailAddresses(List.of("jane.doe@example.com"));
@@ -585,6 +585,39 @@ public class IpscCompetitorServiceTest {
     }
 
     @Test
+    void testPatchCompetitor_whenCompetitorNumberIsBlank_thenCompetitorNumberIsUnchanged() {
+        // Arrange
+        Competitor existing = new Competitor();
+        existing.setId(1L);
+        existing.setCompetitorNumber(7001);
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
+        stubSaveReturnsSameEntity();
+
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
+        patch.setCompetitorNumber("  ");
+
+        // Act
+        CompetitorResponse patched = assertDoesNotThrow(() -> ipscCompetitorService.patchCompetitor(1L, patch));
+
+        // Assert
+        assertEquals(7001, patched.getCompetitorNumber());
+    }
+
+    @Test
+    void testPatchCompetitor_whenCompetitorNumberIsNotAWholeNumber_thenThrowsValidationException() {
+        // Arrange
+        Competitor existing = new Competitor();
+        existing.setId(1L);
+        when(competitorRepository.findByIdWithHomeClubAndEmailAddresses(1L)).thenReturn(Optional.of(existing));
+
+        CompetitorPatchRequest patch = new CompetitorPatchRequest();
+        patch.setCompetitorNumber("C-1");
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorService.patchCompetitor(1L, patch));
+    }
+
+    @Test
     void testPatchCompetitor_whenHomeClubChangesToNonHpsc_thenClubNumberBecomesNull() {
         // Arrange
         Club existingClub = new Club();
@@ -785,7 +818,7 @@ public class IpscCompetitorServiceTest {
         patch.setNickName("Janie");
         patch.setDateOfBirth(dateOfBirth);
         patch.setSapsaNumber(12345);
-        patch.setCompetitorNumber(7003);
+        patch.setCompetitorNumber("7003");
         patch.setIdNumber("8001015800083");
         patch.setCellphoneNumber("0821234567");
         patch.setPaidUpSapsa(true);

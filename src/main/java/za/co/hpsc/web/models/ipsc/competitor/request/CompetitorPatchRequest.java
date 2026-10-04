@@ -43,8 +43,8 @@ public class CompetitorPatchRequest {
     private String homeClub;
     /** The competitor's SAPSA membership number; may be null. */
     private Integer sapsaNumber;
-    /** The competitor's number, as assigned for competition; may be null. */
-    private Integer competitorNumber;
+    /** The competitor's number, as assigned for competition; a whole number. May be null or blank to leave it unchanged. */
+    private String competitorNumber;
     /**
      * The competitor's HPSC membership number; must be unique across all competitors. Supplying this or
      * {@code homeClub} re-applies the club number rule: required when the resulting home club is

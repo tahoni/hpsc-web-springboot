@@ -157,7 +157,7 @@ class IpscCompetitorServiceIntegrationTest {
         request.setDateOfBirth(LocalDate.of(1990, 1, 1));
         request.setGender(Gender.Female.toString());
         request.setSapsaNumber(12345);
-        request.setCompetitorNumber(7001);
+        request.setCompetitorNumber("7001");
         request.setIdNumber("9001015800083");
         request.setCellphoneNumber("0821234567");
         request.setPaidUpSapsa(true);

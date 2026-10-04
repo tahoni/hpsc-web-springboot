@@ -40,7 +40,7 @@ class CompetitorRequestCsvMixInTest {
         assertEquals("Female", row.getGender());
         assertEquals("Test Club", row.getHomeClub());
         assertEquals(12345, row.getSapsaNumber());
-        assertEquals(7001, row.getCompetitorNumber());
+        assertEquals("7001", row.getCompetitorNumber());
         assertEquals("HPSC-001", row.getClubNumber());
         assertEquals("9001015800083", row.getIdNumber());
         assertEquals("0821234567", row.getCellphoneNumber());
