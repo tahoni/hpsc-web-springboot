@@ -93,6 +93,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Testing
 
+- **`EntityIpscCompetitorServiceTest`, `EntityIpscCompetitorServiceImplTest`, `EntityIpscCompetitorServiceIntegrationTest`:**
+  New three-tier tests for `findCompetitor` — the interface contract with a mocked repository (number, full-name and
+  nickname matching, excluded aliases, the "RO" suffix and ambiguous or missing matches), the impl's repository calls
+  (normalised arguments and skipped queries) and an end-to-end run against the H2 `test` database
 - **`IpscCompetitorServiceImplTest`:** New `resolveCompetitorNumber` tests covering both arguments `null`, only the
   competitor number, only the SAPSA number, both supplied (competitor number wins), and a blank competitor number with
   and without a SAPSA number
