@@ -17,10 +17,10 @@ public interface CompetitorRepository extends JpaRepository<Competitor, Long> {
     @Query("select c from Competitor c where lower(concat(c.firstName, ' ', c.lastName)) = lower(:name)")
     List<Competitor> findAllByFullNameIgnoreCase(@Param("name") String name);
 
-    // Matches the competitor's "FirstName LastName"/"Nickname LastName" full name, ignoring case.
+    // Matches the competitor's "FirstName LastName"/"NickName LastName" full name, ignoring case.
     @Query("select c from Competitor c " +
             "where (lower(concat(c.firstName, ' ', c.lastName)) = lower(:name)) " +
-            "or (lower(concat(c.nickname, ' ', c.lastName)) = lower(:name))")
+            "or (lower(concat(c.nickName, ' ', c.lastName)) = lower(:name))")
     List<Competitor> findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase(@Param("name") String name);
 
     // Fetch-joins the lazy homeClub and emailAddresses read when mapping a competitor to its

@@ -114,8 +114,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         if (request.getMiddleNames() != null) {
             competitor.setMiddleNames(request.getMiddleNames());
         }
-        if (request.getNickname() != null) {
-            competitor.setNickname(request.getNickname());
+        if (request.getNickName() != null) {
+            competitor.setNickName(request.getNickName());
         }
         if (request.getDateOfBirth() != null) {
             competitor.setDateOfBirth(request.getDateOfBirth());
@@ -269,7 +269,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 StringUtils.toProperCase(csvRow.getFirstName()),
                 CompetitorHelpers.toSentenceCaseLastName(StringUtils.toProperCase(csvRow.getLastName())),
                 StringUtils.toProperCase(csvRow.getMiddleNames()),
-                StringUtils.toProperCase(csvRow.getNickname()),
+                StringUtils.toProperCase(csvRow.getNickName()),
                 csvRow.getDateOfBirth(),
                 StringUtils.toProperCase(csvRow.getGender()),
                 csvRow.getHomeClub(),
@@ -300,7 +300,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor.setFirstName(request.getFirstName());
         competitor.setLastName(request.getLastName());
         competitor.setMiddleNames(request.getMiddleNames());
-        competitor.setNickname(request.getNickname());
+        competitor.setNickName(request.getNickName());
         competitor.setDateOfBirth(request.getDateOfBirth());
         competitor.setGender(resolveGender(request.getGender()));
         Club homeClub = resolveHomeClub(request.getHomeClub());
@@ -469,7 +469,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 competitor.getFirstName(),
                 competitor.getLastName(),
                 competitor.getMiddleNames(),
-                competitor.getNickname(),
+                competitor.getNickName(),
                 competitor.getDateOfBirth(),
                 competitor.getGender(),
                 ((competitor.getHomeClub() != null) ? competitor.getHomeClub().getIdentifier() : null),

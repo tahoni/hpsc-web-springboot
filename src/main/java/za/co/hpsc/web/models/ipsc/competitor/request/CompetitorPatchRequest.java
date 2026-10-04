@@ -33,7 +33,7 @@ public class CompetitorPatchRequest {
     /** The competitor's middle name(s); may be null. */
     private String middleNames;
     /** The competitor's nickname; may be null. */
-    private String nickname;
+    private String nickName;
     /** The competitor's date of birth; may be null. */
     @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT)
     private LocalDate dateOfBirth;

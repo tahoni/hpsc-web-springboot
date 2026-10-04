@@ -29,7 +29,7 @@ public abstract class CompetitorRequestCsvMixIn {
                               @JsonProperty(value = "FirstName", required = true) String firstName,
                               @JsonProperty(value = "LastName", required = true) String lastName,
                               @JsonProperty("MiddleNames") String middleNames,
-                              @JsonProperty("Nickname") String nickname,
+                              @JsonProperty("NickName") String nickName,
                               @JsonProperty("DateOfBirth")
                               @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT) LocalDate dateOfBirth,
                               @JsonProperty("Gender") String gender,

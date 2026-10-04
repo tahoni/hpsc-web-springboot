@@ -33,7 +33,7 @@ public class CompetitorRequest {
     /** The competitor's middle name(s), if any. */
     private String middleNames;
     /** The competitor's nickname, if any. */
-    private String nickname;
+    private String nickName;
     /** The competitor's date of birth. */
     @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT)
     private LocalDate dateOfBirth;
@@ -71,7 +71,7 @@ public class CompetitorRequest {
      * @param firstName        the competitor's first name. Must not be null or blank.
      * @param lastName         the competitor's last name. Must not be null or blank.
      * @param middleNames      the competitor's middle name(s), if any.
-     * @param nickname         the competitor's nickname, if any.
+     * @param nickName         the competitor's nickname, if any.
      * @param dateOfBirth      the competitor's date of birth.
      * @param gender           the competitor's gender; resolved against {@link za.co.hpsc.web.enums.Gender} by name.
      * @param homeClub         the name of the competitor's home club; resolved against existing clubs by name.
@@ -93,7 +93,7 @@ public class CompetitorRequest {
                              @JsonProperty(value = "firstName", required = true) String firstName,
                              @JsonProperty(value = "lastName", required = true) String lastName,
                              @JsonProperty("middleNames") String middleNames,
-                             @JsonProperty("nickname") String nickname,
+                             @JsonProperty("nickName") String nickName,
                              @JsonProperty("dateOfBirth") LocalDate dateOfBirth,
                              @JsonProperty("gender") String gender,
                              @JsonProperty("homeClub") String homeClub,
@@ -110,7 +110,7 @@ public class CompetitorRequest {
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleNames = middleNames;
-        this.nickname = nickname;
+        this.nickName = nickName;
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.homeClub = homeClub;

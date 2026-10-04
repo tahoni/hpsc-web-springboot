@@ -33,7 +33,7 @@ public class CompetitorResponse {
     /** The competitor's middle name(s), if any. */
     private String middleNames;
     /** The competitor's nickname, if any. */
-    private String nickname;
+    private String nickName;
     /** The competitor's date of birth. */
     private LocalDate dateOfBirth;
     /** The competitor's gender. */

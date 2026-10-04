@@ -32,7 +32,8 @@ public class Competitor {
     @Column(name = "middle_names")
     private String middleNames;
 
-    private String nickname;
+    @Column(name = "nick_name")
+    private String nickName;
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;

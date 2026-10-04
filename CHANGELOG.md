@@ -66,6 +66,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### Domain
+
+- **`Competitor`:** **Breaking:** The `nickname` field is renamed `nickName` and its column `nickname` is renamed
+  `nick_name`, by `V11_0_0__rename_competitor_nickname_to_nick_name.sql` (type, nullability and existing values are
+  preserved); `getNickname`/`setNickname` become `getNickName`/`setNickName`, and the repository query and
+  `EntityIpscCompetitorServiceImpl` follow
+
 ##### Constants
 
 - **`IpscConstants.MAX_SAPSA_NUMBER`:** Raised from `99_999` to `999_999`
@@ -76,6 +83,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `IpscMatchCompetitorController`:** **Breaking:** The `POST /bulk` endpoints now consume `text/plain` instead of
   `text/csv`, so a request sent with `Content-Type: text/csv` is refused with a 415 error; their OpenAPI request-body
   content type matches, and the CSV body is unchanged
+- **`CompetitorRequest`, `CompetitorPatchRequest`, `CompetitorResponse`, `CompetitorRequestCsvMixIn`:** **Breaking:**
+  The competitor's nickname property is renamed from `nickname` to `nickName` in JSON, and its CSV column from
+  `Nickname` to `NickName`; a CSV that still has a `Nickname` column imports without a nickname, because unknown
+  columns are ignored
 
 ##### Repositories
 

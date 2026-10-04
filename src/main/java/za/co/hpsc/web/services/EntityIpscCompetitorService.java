@@ -18,7 +18,7 @@ public interface EntityIpscCompetitorService {
      * <p>
      * The competitor number is tried first: if exactly one competitor has it, that competitor is
      * returned. Numbers in {@link za.co.hpsc.web.constants.IpscConstants#EXCLUDE_ICS_ALIAS} are
-     * ignored. Otherwise the full name, either "FirstName LastName" or "Nickname LastName", is
+     * ignored. Otherwise the full name, either "FirstName LastName" or "NickName LastName", is
      * matched ignoring case, after removing the "RO" suffix described by
      * {@link za.co.hpsc.web.constants.IpscConstants#REPLACE_IN_NAMES_REGEX}. When several
      * competitors share the number, the full name only narrows those matches.
