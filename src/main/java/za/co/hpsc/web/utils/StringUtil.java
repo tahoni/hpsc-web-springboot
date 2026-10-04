@@ -90,7 +90,7 @@ public final class StringUtil {
      *
      * @param value the string to check; may be null.
      * @return {@code true} if {@code value} is not null and not blank, {@code false} otherwise.
-     * @since 11.1.0
+     * @since 12.0.0
      */
     public static boolean hasText(String value) {
         return (value != null) && !value.isBlank();
