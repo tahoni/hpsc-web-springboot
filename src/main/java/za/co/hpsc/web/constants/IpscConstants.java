@@ -28,7 +28,7 @@ public final class IpscConstants {
     public static final String IPSC_INPUT_TIME_FORMAT = SystemConstants.TIME_FORMAT;
 
     public static final List<String> EXCLUDE_ICS_ALIAS = List.of("15000", "16000");
-    public static final Integer MAX_SAPSA_NUMBER = 99_999;
+    public static final Integer MAX_SAPSA_NUMBER = 999_999;
 
     public static final String REPLACE_IN_NAMES_REGEX = "(\\(RO\\)|RO)$";
 

@@ -60,6 +60,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### Constants
+
+- **`IpscConstants.MAX_SAPSA_NUMBER`:** Raised from `99_999` to `999_999`
+
 ##### Repositories
 
 - **`CompetitorRepository`:** `findByCompetitorNumber` and `findByFullNameIgnoreCase` renamed to
