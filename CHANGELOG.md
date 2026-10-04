@@ -50,6 +50,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ➕ Added
 
+##### Models
+
+- **`MatchCompetitorResult`, `MatchCompetitorResultHolder`:** New response models for a bulk match competitor import —
+  a `MatchCompetitorResult` records whether one row succeeded, a message and the `MatchCompetitorResponse` it relates
+  to, and the holder carries the results in import order
+
 ##### Services
 
 - **`EntityIpscCompetitorService`, `EntityIpscCompetitorServiceImpl`:** New `findCompetitor(fullName, competitorNumber)`
