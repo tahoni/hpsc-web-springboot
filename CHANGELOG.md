@@ -49,6 +49,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🐛 Fixed
+
+##### Services
+
+- **`EntityIpscCompetitorServiceImpl`:** `findCompetitor` no longer throws a `NumberFormatException` for a numeric
+  value too long for an `int`, such as a 13-digit ID number — it skips the competitor number lookup and matches the
+  value against ID numbers instead
+
 #### 🔄 Changed
 
 ##### Documentation
@@ -56,6 +64,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`EntityIpscCompetitorServiceImpl`:** `findCompetitor` gains Javadoc that inherits the interface documentation
   (`{@inheritDoc}`) and adds implementation notes on the lookup stages — competitor number, ID number, then full
   name — the name normalisation, and the `NonFatalException` thrown when no single competitor is found
+
+##### Tests
+
+- **`EntityIpscCompetitorServiceTest`, `EntityIpscCompetitorServiceImplTest`,
+  `EntityIpscCompetitorServiceIntegrationTest`:** Brought up to date with the `String` competitor number and the
+  `NonFatalException`/`ValidationException` behaviour of `findCompetitor`, and extended to cover the ID number
+  lookup, non-numeric, zero, null and blank numbers, null names and the blank-input validation
 
 ### 🧾 [11.0.0] - 2026-10-04
 
