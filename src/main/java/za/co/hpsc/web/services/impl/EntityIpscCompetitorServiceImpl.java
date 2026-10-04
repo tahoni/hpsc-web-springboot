@@ -19,16 +19,14 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
 
     @Override
     public Optional<Competitor> findCompetitor(String fullName, int competitorNumber) {
-        // Normalised competitor number
-        String competitorNumberString = String.valueOf(competitorNumber);
         // Normalise full name
         String competitorFullName = fullName.trim().replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX, "").trim();
 
         // First try to match using competitor number (SAPSA or club number)
         List<Competitor> competitorsWithCompetitorNumberList =
-                IpscConstants.EXCLUDE_ICS_ALIAS.contains(competitorNumberString)
+                IpscConstants.EXCLUDE_ICS_ALIAS.contains(competitorNumber)
                         ? List.of()
-                        : competitorRepository.findAllByCompetitorNumber(competitorNumberString);
+                        : competitorRepository.findAllByCompetitorNumber(competitorNumber);
         if (competitorsWithCompetitorNumberList.size() == 1) {
             return Optional.of(competitorsWithCompetitorNumberList.getFirst());
         }

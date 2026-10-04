@@ -24,7 +24,7 @@ public abstract class MatchCompetitorRequestCsvMixIn {
     MatchCompetitorRequestCsvMixIn(@JsonProperty("MatchCompetitorId") Long matchCompetitorId,
                                    @JsonProperty("CompetitorId") Long competitorId,
                                    @JsonProperty("Name") String competitorName,
-                                   @JsonProperty("Mem #") String competitorNumber,
+                                   @JsonProperty("Mem #") Integer competitorNumber,
                                    @JsonProperty(value = "MatchId", required = true) Long matchId,
                                    @JsonProperty("Class") String matchClub,
                                    @JsonProperty(value = "Cats", required = true) String competitorCategory,

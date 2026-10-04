@@ -39,7 +39,7 @@ public class MatchCompetitorPatchRequest {
      * is null; may be null.
      */
     @JsonProperty("competitorNumber")
-    private String competitorNumber;
+    private Integer competitorNumber;
     /** The identifier of the match the competitor shot; may be null. */
     private Long matchId;
     /** The club the competitor represented at the match; resolved against {@link za.co.hpsc.web.enums.ClubIdentifier} by name or abbreviation. May be null. */

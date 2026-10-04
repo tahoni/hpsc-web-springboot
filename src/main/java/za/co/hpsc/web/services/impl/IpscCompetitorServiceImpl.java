@@ -419,23 +419,14 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     /**
      * Resolves the competitor number to use for a competitor, preferring an explicit competitor
      * number and falling back to the SAPSA number.
-     * <p>
-     * A blank competitor number is treated the same as a {@code null} one, and so triggers the
-     * fallback.
-     * </p>
      *
-     * @param competitorNumber the explicit competitor number; may be null or blank.
+     * @param competitorNumber the explicit competitor number; may be null.
      * @param sapsaNumber      the SAPSA number to fall back on; may be null.
-     * @return {@code competitorNumber} if it was supplied, otherwise {@code sapsaNumber} as a string,
+     * @return {@code competitorNumber} if it was supplied, otherwise {@code sapsaNumber},
      * or {@code null} if neither was supplied.
      */
-    protected String resolveCompetitorNumber(String competitorNumber, Integer sapsaNumber) {
-        if ((competitorNumber != null) && !competitorNumber.isBlank()) {
-            return competitorNumber;
-        } else if (sapsaNumber != null) {
-            return String.valueOf(sapsaNumber);
-        }
-        return null;
+    protected Integer resolveCompetitorNumber(Integer competitorNumber, Integer sapsaNumber) {
+        return (competitorNumber != null) ? competitorNumber : sapsaNumber;
     }
 
     /**

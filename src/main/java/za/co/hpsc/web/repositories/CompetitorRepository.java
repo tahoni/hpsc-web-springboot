@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface CompetitorRepository extends JpaRepository<Competitor, Long> {
     Optional<Competitor> findByClubNumber(String clubNumber);
 
-    List<Competitor> findAllByCompetitorNumber(String competitorNumber);
+    List<Competitor> findAllByCompetitorNumber(Integer competitorNumber);
 
     // Matches the competitor's "First Last" full name, ignoring case.
     @Query("select c from Competitor c where lower(concat(c.firstName, ' ', c.lastName)) = lower(:name)")

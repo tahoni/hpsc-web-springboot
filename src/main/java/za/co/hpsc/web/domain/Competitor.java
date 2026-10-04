@@ -49,7 +49,7 @@ public class Competitor {
     private Integer sapsaNumber;
 
     @Column(name = "competitor_number")
-    private String competitorNumber;
+    private Integer competitorNumber;
 
     @Column(name = "club_number", unique = true)
     private String clubNumber;

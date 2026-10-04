@@ -44,7 +44,7 @@ public class CompetitorRequest {
     /** The competitor's SAPSA membership number. */
     private Integer sapsaNumber;
     /** The competitor's number, as assigned for competition. */
-    private String competitorNumber;
+    private Integer competitorNumber;
     /**
      * The competitor's HPSC membership number; must be unique across all competitors. Required
      * when {@code homeClub} is {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION},
@@ -98,7 +98,7 @@ public class CompetitorRequest {
                              @JsonProperty("gender") String gender,
                              @JsonProperty("homeClub") String homeClub,
                              @JsonProperty("sapsaNumber") Integer sapsaNumber,
-                             @JsonProperty("competitorNumber") String competitorNumber,
+                             @JsonProperty("competitorNumber") Integer competitorNumber,
                              @JsonProperty("clubNumber") String clubNumber,
                              @JsonProperty("idNumber") String idNumber,
                              @JsonProperty("cellphoneNumber") String cellphoneNumber,

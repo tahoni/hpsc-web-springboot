@@ -27,7 +27,7 @@ public final class IpscConstants {
     /** Bare time-of-day pattern for every IPSC request DTO's time-only fields (match start/end time). */
     public static final String IPSC_INPUT_TIME_FORMAT = SystemConstants.TIME_FORMAT;
 
-    public static final List<String> EXCLUDE_ICS_ALIAS = List.of("15000", "16000");
+    public static final List<Integer> EXCLUDE_ICS_ALIAS = List.of(15000, 16000);
     public static final Integer MAX_SAPSA_NUMBER = 999_999;
 
     public static final String REPLACE_IN_NAMES_REGEX = "(\\(RO\\)|RO)$";

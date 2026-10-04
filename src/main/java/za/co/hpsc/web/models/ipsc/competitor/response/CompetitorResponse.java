@@ -43,7 +43,7 @@ public class CompetitorResponse {
     /** The competitor's SAPSA membership number. */
     private Integer sapsaNumber;
     /** The competitor's number, as assigned for competition. */
-    private String competitorNumber;
+    private Integer competitorNumber;
     /** The competitor's HPSC membership number, or {@code null} for every other home club. */
     private String clubNumber;
     /** The competitor's national identity number. */

@@ -119,7 +119,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     public MatchCompetitorResponse patchMatchCompetitor(Long matchCompetitorId, MatchCompetitorPatchRequest request) {
         MatchCompetitor matchCompetitor = findMatchCompetitorOrThrow(matchCompetitorId);
 
-        if ((request.getCompetitorId() != null) || hasText(request.getCompetitorNumber())
+        if ((request.getCompetitorId() != null) || (request.getCompetitorNumber() != null)
                 || hasText(request.getCompetitorName())) {
             matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
                     request.getCompetitorName()));
@@ -364,17 +364,17 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * @throws ValidationException if none is given, or the number or name matches more than one competitor.
      * @throws NonFatalException   if no competitor matches.
      */
-    protected Competitor resolveCompetitor(Long competitorId, String competitorNumber, String name) {
+    protected Competitor resolveCompetitor(Long competitorId, Integer competitorNumber, String name) {
         if (competitorId != null) {
             return findCompetitorOrThrow(competitorId);
         }
-        if (hasText(competitorNumber)) {
-            List<Competitor> numberMatches = competitorRepository.findAllByCompetitorNumber(competitorNumber.trim());
+        if (competitorNumber != null) {
+            List<Competitor> numberMatches = competitorRepository.findAllByCompetitorNumber(competitorNumber);
             if (numberMatches.isEmpty()) {
-                throw new NonFatalException("No competitor found with number " + competitorNumber.trim());
+                throw new NonFatalException("No competitor found with number " + competitorNumber);
             }
             if (numberMatches.size() > 1) {
-                throw new ValidationException("More than one competitor has the number " + competitorNumber.trim()
+                throw new ValidationException("More than one competitor has the number " + competitorNumber
                         + "; use the competitor ID instead.");
             }
             return numberMatches.getFirst();
@@ -491,7 +491,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request == null) {
             throw new ValidationException("Match competitor request cannot be null.");
         }
-        if ((request.getCompetitorId() == null) && !hasText(request.getCompetitorNumber())
+        if ((request.getCompetitorId() == null) && (request.getCompetitorNumber() == null)
                 && !hasText(request.getCompetitorName())) {
             throw new ValidationException("Competitor ID, number or name is required.");
         }

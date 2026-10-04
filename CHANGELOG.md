@@ -72,10 +72,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `nick_name`, by `V11_0_0__rename_competitor_nickname_to_nick_name.sql` (type, nullability and existing values are
   preserved); `getNickname`/`setNickname` become `getNickName`/`setNickName`, and the repository query and
   `EntityIpscCompetitorServiceImpl` follow
+- **`Competitor`:** **Breaking:** `competitorNumber` changes from a `String` to an `Integer` and its column
+  `competitor_number` from `VARCHAR(255)` to `INT`, by `V11_1_0__change_competitor_number_to_int.sql` (still
+  optional); the migration is refused, and the column left as it was, if any existing value is not a whole number
 
 ##### Constants
 
 - **`IpscConstants.MAX_SAPSA_NUMBER`:** Raised from `99_999` to `999_999`
+- **`IpscConstants.EXCLUDE_ICS_ALIAS`:** Now a `List<Integer>` (`15000`, `16000`) instead of a `List<String>`, to
+  match the numeric competitor number
 
 ##### API
 
@@ -83,6 +88,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `IpscMatchCompetitorController`:** **Breaking:** The `POST /bulk` endpoints now consume `text/plain` instead of
   `text/csv`, so a request sent with `Content-Type: text/csv` is refused with a 415 error; their OpenAPI request-body
   content type matches, and the CSV body is unchanged
+- **`CompetitorRequest`, `CompetitorPatchRequest`, `CompetitorResponse`, `CompetitorRequestCsvMixIn`,
+  `MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorRequestCsvMixIn`:** **Breaking:**
+  `competitorNumber` (CSV `CompetitorNumber`, and `Mem #` for match competitors) is now a whole number instead of a
+  string; a value that is not a whole number, such as `C-1`, is refused when the request is read
 - **`CompetitorRequest`, `CompetitorPatchRequest`, `CompetitorResponse`, `CompetitorRequestCsvMixIn`:** **Breaking:**
   The competitor's nickname property is renamed from `nickname` to `nickName` in JSON, and its CSV column from
   `Nickname` to `NickName`; a CSV that still has a `Nickname` column imports without a nickname, because unknown
@@ -100,8 +109,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscCompetitorServiceImpl.applyFields`, `IpscCompetitorServiceImpl.resolveCompetitorNumber`:** A competitor's
   `competitorNumber` is no longer copied straight from the request — the new `resolveCompetitorNumber` helper uses the
-  request's `competitorNumber` when it is non-blank, otherwise falls back to the request's `sapsaNumber` as a string,
-  and resolves to `null` when neither is supplied; a blank `competitorNumber` is treated the same as a `null` one
+  request's `competitorNumber` when it is supplied, otherwise falls back to the request's `sapsaNumber`, and resolves
+  to `null` when neither is supplied
 
 ##### Documentation
 
@@ -112,7 +121,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`EntityIpscCompetitorService`:** Javadoc describing the number-first, full-name-second lookup in `findCompetitor`,
   including the "RO" suffix handling and the empty result for no match or an ambiguous one
 - **`IpscCompetitorServiceImpl.resolveCompetitorNumber`:** Javadoc describing the competitor-number-first,
-  SAPSA-number-fallback resolution and the blank-as-`null` handling
+  SAPSA-number-fallback resolution and the `null` result when neither is supplied
 
 ##### Testing
 
@@ -121,8 +130,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   nickname matching, excluded aliases, the "RO" suffix and ambiguous or missing matches), the impl's repository calls
   (normalised arguments and skipped queries) and an end-to-end run against the H2 `test` database
 - **`IpscCompetitorServiceImplTest`:** New `resolveCompetitorNumber` tests covering both arguments `null`, only the
-  competitor number, only the SAPSA number, both supplied (competitor number wins), and a blank competitor number with
-  and without a SAPSA number
+  competitor number, only the SAPSA number and both supplied (competitor number wins)
 
 #### 🐛 Fixed
 
