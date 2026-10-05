@@ -46,6 +46,10 @@
 - [ ] Qodana, CodeQL and Docker workflows pass on this PR
 - [x] `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v12/RELEASE_NOTES_v12.0.0.md`
 
+## 👥 Contributors
+
+Leoni Lubbinge, `dependabot[bot]` and Claude Code (Claude Sonnet 5.5, co-author of most commits).
+
 ## 🔗 Related Documentation
 
 - [RELEASE_NOTES.md](/RELEASE_NOTES.md)

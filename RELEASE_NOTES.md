@@ -174,7 +174,9 @@ Four groups of these changes break existing callers — see the Migration Guide.
 
 ## 👥 Contributors
 
-Leoni Lubbinge
+- Leoni Lubbinge
+- `dependabot[bot]` — dependency update commits merged into the release
+- Claude Code (Claude Sonnet 5.5) — co-author of most of the release's commits
 
 ---
 
