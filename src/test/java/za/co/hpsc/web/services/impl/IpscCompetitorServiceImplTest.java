@@ -319,6 +319,54 @@ class IpscCompetitorServiceImplTest {
         assertTrue(ipscCompetitorServiceImpl.isMemberOfHomeClub(club));
     }
 
+    // isMemberOfHomeClub(Club, ClubIdentifier)
+    @Test
+    void testIsMemberOfHomeClubWithIdentifier_whenClubHasThatIdentifier_thenReturnsTrue() {
+        // Arrange
+        Club club = new Club();
+        club.setIdentifier(ClubIdentifier.SOSC);
+
+        // Act & Assert
+        assertTrue(ipscCompetitorServiceImpl.isMemberOfHomeClub(club, ClubIdentifier.SOSC));
+    }
+
+    @Test
+    void testIsMemberOfHomeClubWithIdentifier_whenClubHasDifferentIdentifier_thenReturnsFalse() {
+        // Arrange - the default home club is no longer special once another is passed in
+        Club club = new Club();
+        club.setIdentifier(ClubIdentifier.HPSC);
+
+        // Act & Assert
+        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(club, ClubIdentifier.SOSC));
+    }
+
+    @Test
+    void testIsMemberOfHomeClubWithIdentifier_whenIdentifierIsNull_thenReturnsFalse() {
+        // Arrange
+        Club club = new Club();
+        club.setIdentifier(ClubIdentifier.HPSC);
+
+        // Act & Assert
+        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(club, null));
+    }
+
+    @Test
+    void testIsMemberOfHomeClubWithIdentifier_whenClubIsNull_thenReturnsFalse() {
+        // Act & Assert
+        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(null, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsMemberOfHomeClub_whenNoIdentifierIsGiven_thenDefaultsToTheHomeClubIdentifier() {
+        // Arrange
+        Club club = new Club();
+        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
+
+        // Act & Assert
+        assertTrue(ipscCompetitorServiceImpl.isMemberOfHomeClub(club));
+        assertEquals(ClubIdentifier.HPSC, IpscConstants.HOME_CLUB_IDENTIFIER);
+    }
+
     // newCompetitor()
     @Test
     void testNewCompetitor_whenRequestIsValid_thenBuildsUnsavedCompetitor() {

@@ -370,20 +370,37 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
 
     /**
      * Checks whether a club is HPSC's own club, the home club identified by
-     * {@link IpscConstants#HOME_CLUB_ABBREVIATION}.
+     * {@link IpscConstants#HOME_CLUB_IDENTIFIER}.
      *
      * <p>
-     * The abbreviation is looked up as a {@link ClubIdentifier}, and the club is then compared with it
-     * through {@link ClubService#isSameClub(Club, ClubIdentifier)}, so a {@code null} club, a club with no
-     * identifier or an abbreviation that doesn't match any known identifier is simply not a member.
+     * Shorthand for {@link #isMemberOfHomeClub(Club, ClubIdentifier)} with the default home club.
      * </p>
      *
      * @param club the club to check; may be {@code null}.
-     * @return {@code true} if {@code club} is the home club; {@code false} otherwise.
+     * @return {@code true} if {@code club} is the default home club; {@code false} otherwise.
      */
     protected boolean isMemberOfHomeClub(Club club) {
-        return clubService.isSameClub(club, ClubIdentifier.fromAbbreviation(IpscConstants.HOME_CLUB_ABBREVIATION)
-                .orElse(null));
+        return isMemberOfHomeClub(club, IpscConstants.HOME_CLUB_IDENTIFIER);
+    }
+
+    /**
+     * Checks whether a club is the given home club.
+     *
+     * <p>
+     * The club is compared with {@code homeClubIdentifier} through
+     * {@link ClubService#isSameClub(Club, ClubIdentifier)}, so a {@code null} club, a club with no identifier or a
+     * {@code null} {@code homeClubIdentifier} is simply not a member.
+     * </p>
+     *
+     * @param club               the club to check; may be {@code null}.
+     * @param homeClubIdentifier the identifier of the home club to check against; may be {@code null}, in which case
+     *                           no club is a member. {@link #isMemberOfHomeClub(Club)} passes
+     *                           {@link IpscConstants#HOME_CLUB_IDENTIFIER}, HPSC's own club.
+     * @return {@code true} if {@code club} is the home club identified by {@code homeClubIdentifier}; {@code false}
+     * otherwise.
+     */
+    protected boolean isMemberOfHomeClub(Club club, ClubIdentifier homeClubIdentifier) {
+        return clubService.isSameClub(club, homeClubIdentifier);
     }
 
     /**
