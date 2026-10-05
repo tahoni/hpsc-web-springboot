@@ -92,6 +92,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   are no longer matched by competitor number, so a request that identified a competitor by one of them now resolves
   only if the name matches, and a number that is not a whole number is looked up as an ID number, answering `404`
   when nothing matches, instead of being rejected up front with a `400`
+- **`IpscCompetitorServiceImpl`:** A competitor created or updated without a nickname now takes its first name as
+  the nickname, instead of being saved with none
 
 ##### Models
 
