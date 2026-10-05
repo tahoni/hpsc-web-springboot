@@ -288,7 +288,9 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     /**
      * Copies the fields of a {@link CompetitorRequest} onto a {@link Competitor}, resolving the
      * gender and named home club in the process. An omitted {@code paidUpSapsa} or
-     * {@code paidUpClub} or {@code isVerified} is stored as {@code null}.
+     * {@code paidUpClub} or {@code isVerified} is stored as {@code null}, and a {@code nickName}
+     * that is omitted, empty or blank defaults to the first name, replacing any nickname the
+     * competitor already has, as every field is overwritten.
      *
      * @param competitor the entity to populate; must not be null.
      * @param request    the request carrying the field values; must not be null.

@@ -103,6 +103,76 @@ class IpscCompetitorServiceImplTest {
     }
 
     @Test
+    void testApplyFields_whenNickNameIsNull_thenNickNameDefaultsToTheFirstName() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        Competitor competitor = new Competitor();
+
+        // Act
+        ipscCompetitorServiceImpl.applyFields(competitor, request);
+
+        // Assert
+        assertEquals("Jane", competitor.getNickName());
+    }
+
+    @Test
+    void testApplyFields_whenNickNameIsEmptyOrBlank_thenNickNameDefaultsToTheFirstName() {
+        // Arrange
+        CompetitorRequest emptyNickName = new CompetitorRequest();
+        emptyNickName.setFirstName("Jane");
+        emptyNickName.setLastName("Doe");
+        emptyNickName.setNickName("");
+        CompetitorRequest blankNickName = new CompetitorRequest();
+        blankNickName.setFirstName("John");
+        blankNickName.setLastName("Doe");
+        blankNickName.setNickName("   ");
+        Competitor first = new Competitor();
+        Competitor second = new Competitor();
+
+        // Act
+        ipscCompetitorServiceImpl.applyFields(first, emptyNickName);
+        ipscCompetitorServiceImpl.applyFields(second, blankNickName);
+
+        // Assert
+        assertEquals("Jane", first.getNickName());
+        assertEquals("John", second.getNickName());
+    }
+
+    @Test
+    void testApplyFields_whenNickNameIsNull_thenReplacesAnExistingNickName() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        Competitor competitor = new Competitor();
+        competitor.setNickName("Janie");
+
+        // Act
+        ipscCompetitorServiceImpl.applyFields(competitor, request);
+
+        // Assert
+        assertEquals("Jane", competitor.getNickName());
+    }
+
+    @Test
+    void testApplyFields_whenNickNameIsSupplied_thenKeepsItInsteadOfTheFirstName() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        request.setNickName("Janie");
+        Competitor competitor = new Competitor();
+
+        // Act
+        ipscCompetitorServiceImpl.applyFields(competitor, request);
+
+        // Assert
+        assertEquals("Janie", competitor.getNickName());
+    }
+
+    @Test
     void testApplyFields_whenPaidUpFlagsAreNull_thenCompetitorPaidUpFlagsAreNull() {
         // Arrange
         CompetitorRequest request = new CompetitorRequest();

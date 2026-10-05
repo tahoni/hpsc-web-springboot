@@ -132,6 +132,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Tests
 
+- **`IpscCompetitorServiceImplTest`:** New `applyFields` tests for the nickname defaulting to the first name when
+  it is null, empty or blank, replacing an existing nickname, and a supplied nickname being kept
 - **`IpscMatchCompetitorServiceTest`, `IpscMatchCompetitorServiceImplTest`, `IpscMatchCompetitorServiceIntegrationTest`,
   `IpscMatchCompetitorControllerTest`:** Updated for the partial bulk import and `MatchCompetitorBulkResponseHolder` —
   a failed row is asserted as an unsuccessful `MatchCompetitorBulkResponse` rather than a thrown exception, with new
