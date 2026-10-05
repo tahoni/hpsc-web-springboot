@@ -324,7 +324,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * Resolves a match category by name, defaulting when none is given.
      *
      * <p>
-     * A match category is not mandatory here: when {@code matchCategory} is null, empty or blank, the default,
+     * A match category is not mandatory here: when {@code category} is null, empty or blank, the default,
      * {@link IpscConstants#DEFAULT_MATCH_CATEGORY}, is returned instead of an error. A category that is supplied
      * must still be a known one.
      * </p>
@@ -332,8 +332,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @param category the match category name to look up; may be null or blank, in which case the default
      *                 match category is used.
      * @return the matching {@link MatchCategory}, or {@link IpscConstants#DEFAULT_MATCH_CATEGORY} if
-     * {@code matchCategory} wasn't supplied.
-     * @throws ValidationException if {@code matchCategory} was supplied but no match category matches it.
+     * {@code category} wasn't supplied.
+     * @throws ValidationException if {@code category} was supplied but no match category matches it.
      */
     protected MatchCategory resolveMatchCategory(String category) {
         if (hasText(category)) {
