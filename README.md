@@ -210,7 +210,7 @@ This project's documentation is spread across a few files, each with a distinct 
 
 [`documentation/history/`](documentation/history) holds one of each of the following files per released version, so past
 releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to the next version,
-grouped into one subdirectory per major version (e.g. `documentation/history/v8/`), plus three standing exceptions
+grouped into one subdirectory per major version (e.g. `documentation/history/vN/`), plus three standing exceptions
 living directly in `documentation/history/` — `CHANGELOG_v1-v7.md`, `HISTORY_v1-v7.md` and
 `EVOLUTION_OVERVIEW_v1-v7.md`, single files rather than per-version archives:
 
@@ -218,9 +218,9 @@ living directly in `documentation/history/` — `CHANGELOG_v1-v7.md`, `HISTORY_v
 |------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
 | `RELEASE_NOTES_vX.Y.Z.md`                                                          | Archived snapshot of `RELEASE_NOTES.md` at release time                                                          |
 | `PR_DESCRIPTION_vX.Y.Z.md`                                                         | The release pull request's body, archived for that version (not archived for every early release)                |
-| [`CHANGELOG_v1-v7.md`](documentation/history/CHANGELOG_v1-v7.md)                   | `CHANGELOG.md`'s archive of versions 1.0.0 – 7.4.1, moved unchanged and not edited by releases                   |
-| [`HISTORY_v1-v7.md`](documentation/history/HISTORY_v1-v7.md)                       | `HISTORY.md`'s archive of the per-version v1.0.0 – v7.4.1 entries, moved unchanged and not edited by releases    |
-| [`EVOLUTION_OVERVIEW_v1-v7.md`](documentation/history/EVOLUTION_OVERVIEW_v1-v7.md) | `EVOLUTION_OVERVIEW.md`'s archive of Phases 1 – 18 (v1.0.0 – v7.4.1), moved unchanged and not edited by releases |
+| [`CHANGELOG_v1-v7.md`](documentation/history/CHANGELOG_v1-v7.md)                   | `CHANGELOG.md`'s archive of the earliest versions, moved unchanged and not edited by releases                   |
+| [`HISTORY_v1-v7.md`](documentation/history/HISTORY_v1-v7.md)                       | `HISTORY.md`'s archive of the earliest per-version entries, moved unchanged and not edited by releases    |
+| [`EVOLUTION_OVERVIEW_v1-v7.md`](documentation/history/EVOLUTION_OVERVIEW_v1-v7.md) | `EVOLUTION_OVERVIEW.md`'s archive of the earliest phases, moved unchanged and not edited by releases |
 
 [`documentation/archive/ARCHIVE.md`](documentation/archive/ARCHIVE.md) is the legacy release archive covering releases
 from before the project adopted its current documentation structure (`CHANGELOG.md`, `RELEASE_NOTES.md`, per-version

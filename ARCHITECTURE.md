@@ -62,7 +62,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
 │   ├───archive/                # Legacy release archive (see ARCHIVE.md)
-│   ├───history/                # Archived release notes/PR descriptions by major version, plus the v1–v7 archives
+│   ├───history/                # Archived release notes/PR descriptions by major version, plus the earliest versions' archives
 │   ├───recommendations/        # Fuller rationale/examples behind condensed AGENTS.md conventions
 │   └───roadmap/                # improvement-plan.md and its checkbox-level task breakdown
 ├───src/
@@ -406,18 +406,21 @@ Client uploads CSV (Content-Type: text/plain)
 
 ### 📥 Match Competitor Bulk CSV Import Flow
 
-Handled by `IpscMatchCompetitorController` — same shape as the flows above, with every row also checked against the other rows and the existing entries before anything is saved:
+Handled by `IpscMatchCompetitorController` — same shape as the flows above, except that each row is its own unit of work: a row that fails is reported and skipped while the rest are still saved, and an optional `club` query parameter limits the import to one club (HPSC's own club by default):
 
 ```
-Client uploads CSV (Content-Type: text/plain)
+Client uploads CSV (Content-Type: text/plain, optional ?club=...)
     → IpscMatchCompetitorController.createMatchCompetitors
         → IpscMatchCompetitorService.createMatchCompetitors
-            (parses CSV via Jackson CsvMapper into MatchCompetitorRequest rows, then builds each row with the
-             same validation/competitor/match/enum-resolution logic the single-entry endpoint uses)
-            → TransactionService.saveMatchCompetitors
-                (saves every row in one transaction — a bad or duplicate row fails before anything is saved)
-        ← MatchCompetitorResponseHolder
-    ← ResponseEntity<...>
+            (parses CSV via Jackson CsvMapper into MatchCompetitorRequest rows)
+            → for each row, on its own:
+                a row for another club (its match club, else its competitor's home club, via ClubService)
+                    → reported as skipped
+                otherwise: validate → resolve the competitor (by ID, else through
+                    EntityIpscCompetitorService) and match → resolve the enums
+                    → save in its own transaction (a duplicate or invalid row is reported as failed)
+        ← MatchCompetitorBulkResponseHolder (one MatchCompetitorBulkResponse per row)
+    ← ResponseEntity<...> (201, or 422 if every row failed)
 ← JSON response
 ```
 
