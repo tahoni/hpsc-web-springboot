@@ -90,7 +90,7 @@ public interface IpscMatchCompetitorService {
      * </p>
      *
      * <p>
-     * When {@code club} is null or blank the club imported is HPSC's own club
+     * When {@code club} is null or blank, the club imported is HPSC's own club
      * ({@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}), so the one-argument method imports
      * HPSC's rows.
      * </p>

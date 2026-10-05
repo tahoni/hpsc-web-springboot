@@ -12,7 +12,7 @@ import java.util.List;
  * This class provides a centralised location for settings and configurations
  * used within the IPSC domain: the date and time formats of its request models, the competitor
  * number and name rules applied when matching imported data to a persisted competitor, the default
- * match category and club, the home club, and the scales for rounding score figures.
+ * match category and club, the home club and the scales for rounding score figures.
  * </p>
  *
  * <p>

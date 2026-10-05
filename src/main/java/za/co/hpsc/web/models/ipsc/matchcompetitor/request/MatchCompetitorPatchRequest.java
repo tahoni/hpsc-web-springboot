@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class MatchCompetitorPatchRequest {
     /**
-     * The identifier of the competitor who shot the match; may be null. When all of {@link #competitorId},
+     * The identifier of the competitor who shot the match; may be null. When all of {@code #competitorId},
      * {@link #competitorNumber} and {@link #competitorName} are null, the competitor is left unchanged.
      */
     private Long competitorId;
