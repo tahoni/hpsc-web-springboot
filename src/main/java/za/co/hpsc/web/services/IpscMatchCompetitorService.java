@@ -44,23 +44,22 @@ public interface IpscMatchCompetitorService {
      *
      * <p>
      * Each row is validated and built by the same rules as
-     * {@link #createMatchCompetitor(MatchCompetitorRequest)}. Every row is checked before any is saved, and all
-     * are then saved in a single transaction, so either every row is created or none is. The import only ever
-     * creates entries, so a {@code MatchCompetitorId} column is read but ignored.
+     * {@link #createMatchCompetitor(MatchCompetitorRequest)}, but each row is saved on its own, so a row that
+     * fails is reported and skipped while the rest are still created. A row fails when it is missing a required
+     * field, has an unrecognised enumerated value, refers to a competitor or match that cannot be found, or
+     * duplicates another row, or an existing entry, for the competitor, match and firearm type. The import only
+     * ever creates entries, so a {@code MatchCompetitorId} column is read but ignored.
      * </p>
      *
      * @param csvData the CSV data containing match competitor information, one match competitor per row.
      *                Must not be null or blank.
-     * @return a {@link MatchCompetitorResponseHolder} containing the created match competitors, in the same order
-     * as the CSV rows.
-     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is missing a
-     *                             required field or has an unrecognised enumerated value, or if a row duplicates
-     *                             another row, or an existing entry, for the competitor, match and firearm type.
-     * @throws NonFatalException   if a row's competitor or match cannot be found.
+     * @return a {@link MatchCompetitorBulkResponseHolder} with one {@link MatchCompetitorBulkResponse} per CSV
+     * row, in the same order, each recording whether the row was created and, when it was not, why.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, including when a required
+     *                             column is missing from the header.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      * @since 9.1.0
      */
-    // TODO: fix this method interface, implementation and tests
     MatchCompetitorBulkResponseHolder createMatchCompetitors(String csvData)
             throws ValidationException, NonFatalException, FatalException;
 

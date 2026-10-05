@@ -20,9 +20,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MatchCompetitorBulkResponse {
     /** Whether the match competitor was imported successfully. */
-    private boolean success;
+    private boolean success = true;
     /** A message describing the outcome of the import. */
-    private String message;
+    private String message = "";
     /** The match competitor this result relates to. */
     @NotNull
     private MatchCompetitorResponse matchCompetitor;

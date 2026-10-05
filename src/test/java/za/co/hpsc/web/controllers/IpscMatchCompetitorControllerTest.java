@@ -12,8 +12,9 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
-import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponseHolder;
 import za.co.hpsc.web.services.IpscMatchCompetitorService;
 
 import java.util.List;
@@ -88,10 +89,10 @@ class IpscMatchCompetitorControllerTest {
     void testCreateMatchCompetitors_whenServiceSucceeds_thenReturns201() throws Exception {
         // Arrange
         when(ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV))
-                .thenReturn(new MatchCompetitorResponseHolder(List.of()));
+                .thenReturn(new MatchCompetitorBulkResponseHolder(List.of()));
 
         // Act
-        ResponseEntity<MatchCompetitorResponseHolder> result =
+        ResponseEntity<MatchCompetitorBulkResponseHolder> result =
                 ipscMatchCompetitorController.createMatchCompetitors(VALID_CSV);
 
         // Assert
@@ -101,12 +102,12 @@ class IpscMatchCompetitorControllerTest {
     @Test
     void testCreateMatchCompetitors_whenServiceSucceeds_thenResponseBodyIsReturnedFromService() throws Exception {
         // Arrange
-        MatchCompetitorResponseHolder holder =
-                new MatchCompetitorResponseHolder(List.of(new MatchCompetitorResponse()));
+        MatchCompetitorBulkResponseHolder holder =
+                new MatchCompetitorBulkResponseHolder(List.of(new MatchCompetitorBulkResponse()));
         when(ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV)).thenReturn(holder);
 
         // Act
-        ResponseEntity<MatchCompetitorResponseHolder> result =
+        ResponseEntity<MatchCompetitorBulkResponseHolder> result =
                 ipscMatchCompetitorController.createMatchCompetitors(VALID_CSV);
 
         // Assert
@@ -117,13 +118,47 @@ class IpscMatchCompetitorControllerTest {
     void testCreateMatchCompetitors_whenServiceSucceeds_thenDelegatesToService() throws Exception {
         // Arrange
         when(ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV))
-                .thenReturn(new MatchCompetitorResponseHolder(List.of()));
+                .thenReturn(new MatchCompetitorBulkResponseHolder(List.of()));
 
         // Act
         ipscMatchCompetitorController.createMatchCompetitors(VALID_CSV);
 
         // Assert
         verify(ipscMatchCompetitorService).createMatchCompetitors(VALID_CSV);
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenEveryRowFails_thenReturns422WithTheResults() throws Exception {
+        // Arrange
+        MatchCompetitorBulkResponse failed = new MatchCompetitorBulkResponse(false, "No competitor found",
+                new MatchCompetitorResponse());
+        MatchCompetitorBulkResponseHolder holder = new MatchCompetitorBulkResponseHolder(List.of(failed, failed));
+        when(ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV)).thenReturn(holder);
+
+        // Act
+        ResponseEntity<MatchCompetitorBulkResponseHolder> result =
+                ipscMatchCompetitorController.createMatchCompetitors(VALID_CSV);
+
+        // Assert
+        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, result.getStatusCode());
+        assertSame(holder, result.getBody());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenSomeRowsFail_thenReturns201() throws Exception {
+        // Arrange
+        MatchCompetitorBulkResponse failed = new MatchCompetitorBulkResponse(false, "No competitor found",
+                new MatchCompetitorResponse());
+        MatchCompetitorBulkResponse created = new MatchCompetitorBulkResponse(true, "", new MatchCompetitorResponse());
+        when(ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV))
+                .thenReturn(new MatchCompetitorBulkResponseHolder(List.of(failed, created)));
+
+        // Act
+        ResponseEntity<MatchCompetitorBulkResponseHolder> result =
+                ipscMatchCompetitorController.createMatchCompetitors(VALID_CSV);
+
+        // Assert
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
     }
 
     @Test

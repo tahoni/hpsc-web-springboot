@@ -94,6 +94,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   when nothing matches, instead of being rejected up front with a `400`
 - **`IpscCompetitorServiceImpl`:** A competitor created or updated without a nickname now takes its first name as
   the nickname, instead of being saved with none
+- **`IpscMatchCompetitorServiceImpl.createMatchCompetitors`:** **Breaking:** the bulk import is now a partial import
+  rather than all or nothing — each row is saved on its own, and a row that is missing a required field, has an
+  unrecognised enumerated value, names an unknown competitor or match, or duplicates another entry is skipped and
+  reported in its `MatchCompetitorBulkResponse` (`success` of `false` and a `message`) while the other rows are still
+  created, instead of the whole import answering `400` or `404`. Only unreadable CSV, or a header missing a required
+  column, still answers `400`, and an import in which every row fails answers `422` with the same per-row results.
+  Its interface and controller Javadoc and Swagger descriptions are updated to match
 
 ##### Models
 
@@ -101,6 +108,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `MatchCompetitorBulkResponseHolder`, and the holder's `matchCompetitorResults` field to `matchCompetitors`, so the
   bulk import's response models follow the `*Response`/`*ResponseHolder` naming — a bulk match competitor import's
   response body now carries `matchCompetitors` instead of `matchCompetitorResults`
+- **`MatchCompetitorResponse`:** New `competitorName` and `competitorNumber` fields, so a bulk import result
+  identifies the competitor it relates to even when the row failed; a persisted match competitor's name is its nickname
+  and last name
+- **`MatchCompetitorBulkResponse`:** `success` now defaults to `true` and `message` to an empty string
 
 ##### Utils
 
@@ -121,6 +132,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Tests
 
+- **`IpscMatchCompetitorServiceTest`, `IpscMatchCompetitorServiceImplTest`, `IpscMatchCompetitorServiceIntegrationTest`,
+  `IpscMatchCompetitorControllerTest`:** Updated for the partial bulk import and `MatchCompetitorBulkResponseHolder` —
+  a failed row is asserted as an unsuccessful `MatchCompetitorBulkResponse` rather than a thrown exception, with new
+  cases for a failing row not stopping the others, for a row duplicating an earlier row in the same import, for the
+  `422` when every row fails and for `toFailedResponse`
 - **`CompetitorHelpersTest`:** Cover `getCompetitorNumberAsInteger` for numeric, whitespace-padded, zero-padded, null,
   blank and non-numeric numbers, and for the excluded ICS aliases `15000` and `16000`
 - **`EntityIpscCompetitorServiceTest`, `EntityIpscCompetitorServiceImplTest`,

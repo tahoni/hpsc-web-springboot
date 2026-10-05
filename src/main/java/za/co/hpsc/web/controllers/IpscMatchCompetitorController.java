@@ -20,8 +20,9 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponse;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
-import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponseHolder;
 import za.co.hpsc.web.services.IpscMatchCompetitorService;
 
 import java.util.List;
@@ -81,34 +82,37 @@ public class IpscMatchCompetitorController {
      *
      * @param csvData the CSV content as a string containing details about match competitors, formatted according
      *                to the expected schema. This parameter is required and cannot be null.
-     * @return a {@link MatchCompetitorResponseHolder} containing the created match competitors.
-     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is missing a
-     *                             required field or has an unrecognised enumerated value, or if a row duplicates
-     *                             another row, or an existing entry, for the competitor, match and firearm type.
-     * @throws NonFatalException   if a row's competitor or match cannot be found.
-     * @throws FatalException      if a critical error occurs during processing, that prevents the operation from
+     * @return a {@link MatchCompetitorBulkResponseHolder} with one result per CSV row, each recording whether the
+     * row was created and, when it was not, why — with status {@code 201} unless every row failed, in which case
+     * it is {@code 422}.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
+     * @throws FatalException     if a critical error occurs during processing, that prevents the operation from
      *                             completing successfully.
      */
     @PostMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create match competitors", description = "Create competitors' entries in matches in bulk "
-            + "from CSV data. Every row is checked before any is saved, so either every row is created or none is.")
+            + "from CSV data. Each row is saved on its own, so a row that fails is reported and skipped while the "
+            + "rest are still created.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Match competitors created.",
+            @ApiResponse(responseCode = "201", description = "At least one row was created (or the CSV had no "
+                    + "rows). Each row's result says whether it was created and, if not, why — a missing required "
+                    + "field, an unrecognised enumerated value, an unknown competitor or match, or a duplicate "
+                    + "entry for the competitor, match and firearm type.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = MatchCompetitorResponseHolder.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid CSV data provided, a required field is "
-                    + "missing, an enumerated value is unrecognised, or a row duplicates another entry for the "
-                    + "competitor, match and firearm type.",
+                            schema = @Schema(implementation = MatchCompetitorBulkResponseHolder.class))),
+            @ApiResponse(responseCode = "422", description = "The CSV was readable but no row could be created. "
+                    + "The body lists each row's result and the reason it failed.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ControllerResponse.class))),
-            @ApiResponse(responseCode = "404", description = "A row's competitor or match could not be found.",
+                            schema = @Schema(implementation = MatchCompetitorBulkResponseHolder.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid CSV data provided, or a required column is "
+                    + "missing from the header.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error occurred while processing the CSV data.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<MatchCompetitorResponseHolder> createMatchCompetitors(
+    ResponseEntity<MatchCompetitorBulkResponseHolder> createMatchCompetitors(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(mediaType = "text/plain",
                             schema = @Schema(implementation = String.class),
@@ -118,7 +122,11 @@ public class IpscMatchCompetitorController {
                                     """)))
             @RequestBody String csvData)
             throws ValidationException, NonFatalException, FatalException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(ipscMatchCompetitorService.createMatchCompetitors(csvData));
+        MatchCompetitorBulkResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData);
+
+        List<MatchCompetitorBulkResponse> results = holder.getMatchCompetitors();
+        boolean allFailed = !results.isEmpty() && results.stream().noneMatch(MatchCompetitorBulkResponse::isSuccess);
+        return ResponseEntity.status(allFailed ? HttpStatus.UNPROCESSABLE_ENTITY : HttpStatus.CREATED).body(holder);
     }
 
     /**

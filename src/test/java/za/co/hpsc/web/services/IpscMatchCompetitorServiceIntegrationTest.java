@@ -17,7 +17,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
-import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponseHolder;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
@@ -197,19 +197,20 @@ class IpscMatchCompetitorServiceIntegrationTest {
                 """, first.getId(), match.getId(), second.getId(), match.getId());
 
         // Act
-        MatchCompetitorResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData);
+        MatchCompetitorBulkResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData);
 
         // Assert
         assertEquals(2, holder.getMatchCompetitors().size());
-        assertEquals(first.getId(), holder.getMatchCompetitors().get(0).getCompetitorId());
-        assertEquals(second.getId(), holder.getMatchCompetitors().get(1).getCompetitorId());
+        assertEquals(first.getId(), holder.getMatchCompetitors().get(0).getMatchCompetitor().getCompetitorId());
+        assertEquals(second.getId(), holder.getMatchCompetitors().get(1).getMatchCompetitor().getCompetitorId());
         assertEquals(CompetitorCategory.JUNIOR,
-                holder.getMatchCompetitors().get(0).getCompetitorCategory());
+                holder.getMatchCompetitors().get(0).getMatchCompetitor().getCompetitorCategory());
         assertEquals(2, matchCompetitorRepository.count());
     }
 
     @Test
-    void testCreateMatchCompetitors_whenALaterRowIsInvalid_thenPersistsNone() {
+    void testCreateMatchCompetitors_whenALaterRowIsInvalid_thenPersistsTheValidRowsAndReportsTheFailure()
+            throws Exception {
         // Arrange
         Competitor competitor = createCompetitor("HPSC-MC-012");
         IpscMatch match = createMatch();
@@ -219,13 +220,18 @@ class IpscMatchCompetitorServiceIntegrationTest {
                 %d,%d,Junior,Handgun,Open Division
                 """, competitor.getId(), match.getId(), competitor.getId() + 1000, match.getId());
 
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.createMatchCompetitors(csvData));
-        assertEquals(0, matchCompetitorRepository.count());
+        // Act
+        MatchCompetitorBulkResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData);
+
+        // Assert
+        assertEquals(2, holder.getMatchCompetitors().size());
+        assertTrue(holder.getMatchCompetitors().get(0).isSuccess());
+        assertFalse(holder.getMatchCompetitors().get(1).isSuccess());
+        assertEquals(1, matchCompetitorRepository.count());
     }
 
     @Test
-    void testCreateMatchCompetitors_whenRowDuplicatesAnExistingEntry_thenThrowsValidationException() {
+    void testCreateMatchCompetitors_whenRowDuplicatesAnExistingEntry_thenReportsRowAsFailed() throws Exception {
         // Arrange
         Competitor competitor = createCompetitor("HPSC-MC-013");
         IpscMatch match = createMatch();
@@ -235,8 +241,12 @@ class IpscMatchCompetitorServiceIntegrationTest {
                 %d,%d,Junior,Handgun,Open Division
                 """, competitor.getId(), match.getId());
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitors(csvData));
+        // Act
+        MatchCompetitorBulkResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData);
+
+        // Assert
+        assertFalse(holder.getMatchCompetitors().getFirst().isSuccess());
+        assertEquals(1, matchCompetitorRepository.count());
     }
 
     // updateMatchCompetitor()

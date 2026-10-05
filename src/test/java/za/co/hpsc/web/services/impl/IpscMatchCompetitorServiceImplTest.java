@@ -377,6 +377,44 @@ class IpscMatchCompetitorServiceImplTest {
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(noDivision));
     }
 
+    // toFailedResponse()
+    @Test
+    void testToFailedResponse_whenRequestPresent_thenCopiesOnlyTheIdentifyingFields() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorId(1L);
+        request.setCompetitorName("Jane Doe");
+        request.setCompetitorNumber(" 123 ");
+        request.setMatchId(2L);
+        request.setFirearmType("Not a firearm type");
+        request.setPoints(new BigDecimal("10"));
+
+        // Act
+        MatchCompetitorResponse response = matchCompetitorServiceImpl.toFailedResponse(request);
+
+        // Assert
+        assertEquals(1L, response.getCompetitorId());
+        assertEquals("Jane Doe", response.getCompetitorName());
+        assertEquals(123, response.getCompetitorNumber());
+        assertEquals(2L, response.getMatchId());
+        assertNull(response.getMatchCompetitorId());
+        assertNull(response.getFirearmType());
+        assertNull(response.getPoints());
+    }
+
+    @Test
+    void testToFailedResponse_whenRequestIsNull_thenReturnsEmptyResponse() {
+        // Act
+        MatchCompetitorResponse response = matchCompetitorServiceImpl.toFailedResponse(null);
+
+        // Assert
+        assertNotNull(response);
+        assertNull(response.getCompetitorId());
+        assertNull(response.getMatchId());
+        assertNull(response.getCompetitorName());
+        assertNull(response.getCompetitorNumber());
+    }
+
     // toResponse()
     @Test
     void testToResponse_whenAllFieldsPresent_thenMapsAllFields() {

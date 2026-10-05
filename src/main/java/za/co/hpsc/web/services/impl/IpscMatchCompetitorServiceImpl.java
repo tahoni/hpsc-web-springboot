@@ -14,20 +14,17 @@ import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
-import za.co.hpsc.web.enums.ClubIdentifier;
-import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.helpers.CompetitorHelpers;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequestCsvMixIn;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
-import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponseHolder;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
@@ -37,9 +34,7 @@ import za.co.hpsc.web.services.TransactionService;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 
@@ -83,35 +78,25 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
 
         List<MatchCompetitorRequest> requests = readMatchCompetitors(csvData);
 
-        // Every row is validated and built before any is saved, then all are saved in one
-        // transaction, so a bad row leaves none of them persisted.
-        List<MatchCompetitor> matchCompetitors = new ArrayList<>();
-        Set<List<Object>> entries = new HashSet<>();
+        // Each row is saved in its own transaction, so a bad row is reported and skipped without affecting the
+        // others. save() also refuses a row that duplicates one saved earlier in this import.
+        List<MatchCompetitorBulkResponse> matchCompetitorBulkResponses = new ArrayList<>();
         for (MatchCompetitorRequest request : requests) {
-            validateForCreate(request);
+            try {
+                validateForCreate(request);
 
-            MatchCompetitor matchCompetitor = new MatchCompetitor();
-            applyFields(matchCompetitor, request);
-
-            boolean duplicate = matchCompetitorRepository.findByCompetitorIdAndMatchIdAndFirearmType(
-                            matchCompetitor.getCompetitor().getId(), matchCompetitor.getMatch().getId(),
-                            matchCompetitor.getFirearmType())
-                    .isPresent()
-                    || !entries.add(List.of(matchCompetitor.getCompetitor().getId(),
-                    matchCompetitor.getMatch().getId(), matchCompetitor.getFirearmType()));
-            if (duplicate) {
-                throw duplicateEntry(matchCompetitor, null);
+                MatchCompetitor matchCompetitor = new MatchCompetitor();
+                applyFields(matchCompetitor, request);
+                matchCompetitorBulkResponses.add(
+                        new MatchCompetitorBulkResponse(true, "", toResponse(save(matchCompetitor))));
+            } catch (ValidationException | NonFatalException e) {
+                log.warn("Match competitor skipped: {}", e.getMessage());
+                matchCompetitorBulkResponses.add(
+                        new MatchCompetitorBulkResponse(false, e.getMessage(), toFailedResponse(request)));
             }
-            matchCompetitors.add(matchCompetitor);
         }
 
-        List<MatchCompetitor> saved;
-        try {
-            saved = transactionService.saveMatchCompetitors(matchCompetitors);
-        } catch (DataIntegrityViolationException e) {
-            throw new ValidationException("A match competitor in the CSV data duplicates an existing entry.", e);
-        }
-        return new MatchCompetitorResponseHolder(new ArrayList<>(saved.stream().map(this::toResponse).toList()));
+        return new MatchCompetitorBulkResponseHolder(matchCompetitorBulkResponses);
     }
 
     @Override
@@ -336,6 +321,27 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     }
 
     /**
+     * Builds the response reported for a row that could not be imported, identifying it by what the request said
+     * about the competitor and match. Nothing is resolved or looked up, so this never throws for an unknown
+     * competitor, match or enumerated value — the reason the row failed is in the bulk response's message.
+     *
+     * @param request the request for the row that failed; may be null, as for an empty row.
+     * @return a {@link MatchCompetitorResponse} carrying the requested competitor ID, name, competitor number and
+     * match ID, with every other field unset — or with every field unset if {@code request} is null.
+     */
+    protected MatchCompetitorResponse toFailedResponse(MatchCompetitorRequest request) {
+        MatchCompetitorResponse response = new MatchCompetitorResponse();
+        if (request == null) {
+            return response;
+        }
+        response.setCompetitorId(request.getCompetitorId());
+        response.setCompetitorName(request.getCompetitorName());
+        response.setCompetitorNumber(CompetitorHelpers.getCompetitorNumberAsInteger(request.getCompetitorNumber()));
+        response.setMatchId(request.getMatchId());
+        return response;
+    }
+
+    /**
      * Retrieves an existing match competitor or throws if none exists with the given ID.
      *
      * @param matchCompetitorId the identifier to look up.
@@ -548,6 +554,8 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                 matchCompetitor.getId(),
                 matchCompetitor.getCompetitor().getId(),
                 matchCompetitor.getMatch().getId(),
+                matchCompetitor.getCompetitor().getNickName() + ' ' + matchCompetitor.getCompetitor().getLastName(),
+                matchCompetitor.getCompetitor().getCompetitorNumber(),
                 matchCompetitor.getMatchClub(),
                 matchCompetitor.getCompetitorCategory(),
                 matchCompetitor.getFirearmType(),
