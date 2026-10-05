@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link IpscCompetitorServiceImpl}'s impl-only protected helper methods
- * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code isHpscMember}, {@code newCompetitor},
+ * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code isMemberOfHomeClub}, {@code newCompetitor},
  * {@code readCompetitors},
  * {@code resolveClubNumber}, {@code resolveCompetitorNumber}, {@code resolveGender}, {@code resolveHomeClub},
  * {@code normaliseCsvRequest}, {@code toResponse}, {@code validateForCreate}) -
@@ -279,52 +279,39 @@ class IpscCompetitorServiceImplTest {
         assertSame(competitor, found);
     }
 
-    // isHpscMember()
+    // isMemberOfHomeClub()
     @Test
-    void testIsHpscMember_whenHomeClubIsNull_thenReturnsFalse() {
-        assertFalse(ipscCompetitorServiceImpl.isHpscMember(null, ClubIdentifier.HPSC));
+    void testIsMemberOfHomeClub_whenClubIsNull_thenReturnsFalse() {
+        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(null));
     }
 
     @Test
-    void testIsHpscMember_whenHomeClubIdentifierParamIsNull_thenReturnsFalse() {
-        // Arrange - simulates IpscConstants.HOME_CLUB_IDENTIFIER being null, without needing to
-        // touch that real static final field (not reflectively settable on this JDK)
-        Club club = new Club();
-        club.setIdentifier(ClubIdentifier.HPSC);
-
-        // Act & Assert
-        assertFalse(ipscCompetitorServiceImpl.isHpscMember(club, null));
-    }
-
-    @Test
-    void testIsHpscMember_whenHomeClubIdentifierParamIsNullAndHomeClubIdentifierIsAlsoNull_thenReturnsFalse() {
-        // Arrange - a club with a null identifier (shouldn't occur via a real persisted Club,
-        // whose identifier column is non-null, but must never false-match a null "expected"
-        // identifier either)
+    void testIsMemberOfHomeClub_whenClubHasNoIdentifier_thenReturnsFalse() {
+        // Arrange - shouldn't occur via a real persisted Club, whose identifier column is non-null
         Club club = new Club();
 
         // Act & Assert
-        assertFalse(ipscCompetitorServiceImpl.isHpscMember(club, null));
+        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(club));
     }
 
     @Test
-    void testIsHpscMember_whenHomeClubIdentifierDoesNotMatch_thenReturnsFalse() {
+    void testIsMemberOfHomeClub_whenClubIdentifierDoesNotMatch_thenReturnsFalse() {
         // Arrange
         Club club = new Club();
         club.setIdentifier(ClubIdentifier.SOSC);
 
         // Act & Assert
-        assertFalse(ipscCompetitorServiceImpl.isHpscMember(club, ClubIdentifier.HPSC));
+        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(club));
     }
 
     @Test
-    void testIsHpscMember_whenHomeClubIdentifierMatches_thenReturnsTrue() {
+    void testIsMemberOfHomeClub_whenClubIdentifierMatches_thenReturnsTrue() {
         // Arrange
         Club club = new Club();
         club.setIdentifier(ClubIdentifier.HPSC);
 
         // Act & Assert
-        assertTrue(ipscCompetitorServiceImpl.isHpscMember(club, ClubIdentifier.HPSC));
+        assertTrue(ipscCompetitorServiceImpl.isMemberOfHomeClub(club));
     }
 
     // newCompetitor()

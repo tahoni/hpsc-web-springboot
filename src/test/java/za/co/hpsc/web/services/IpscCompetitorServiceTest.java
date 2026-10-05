@@ -959,6 +959,56 @@ public class IpscCompetitorServiceTest {
         assertNull(updated.getClubNumber());
     }
 
+    // isSameClub()
+    @Test
+    void testIsSameClub_whenClubHasTargetIdentifier_thenReturnsTrue() {
+        // Arrange
+        Club club = new Club();
+        club.setIdentifier(ClubIdentifier.HPSC);
+
+        // Act & Assert
+        assertTrue(ipscCompetitorService.isSameClub(club, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsSameClub_whenClubHasDifferentIdentifier_thenReturnsFalse() {
+        // Arrange
+        Club club = new Club();
+        club.setIdentifier(ClubIdentifier.HPSC);
+
+        // Act & Assert
+        assertFalse(ipscCompetitorService.isSameClub(club, ClubIdentifier.SOSC));
+    }
+
+    @Test
+    void testIsSameClub_whenClubHasNoIdentifier_thenReturnsFalse() {
+        // Act & Assert
+        assertFalse(ipscCompetitorService.isSameClub(new Club(), ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsSameClub_whenClubIsNull_thenReturnsFalse() {
+        // Act & Assert
+        assertFalse(ipscCompetitorService.isSameClub(null, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsSameClub_whenTargetIdentifierIsNull_thenReturnsFalse() {
+        // Arrange
+        Club club = new Club();
+        club.setIdentifier(ClubIdentifier.HPSC);
+
+        // Act & Assert
+        assertFalse(ipscCompetitorService.isSameClub(club, null));
+    }
+
+    @Test
+    void testIsSameClub_whenClubAndTargetIdentifierAreBothNull_thenReturnsFalse() {
+        // Act & Assert
+        assertFalse(ipscCompetitorService.isSameClub(null, null));
+        assertFalse(ipscCompetitorService.isSameClub(new Club(), null));
+    }
+
     // Helpers
     private CompetitorRequest validRequest(String clubNumber) {
         CompetitorRequest request = new CompetitorRequest();

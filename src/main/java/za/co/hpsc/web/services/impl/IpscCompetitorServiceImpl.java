@@ -197,6 +197,11 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         }
     }
 
+    @Override
+    public boolean isSameClub(Club club, ClubIdentifier targetClubIdentifier) {
+        return (targetClubIdentifier != null) && (club != null) && (club.getIdentifier() == targetClubIdentifier);
+    }
+
     /**
      * Validates a request and builds the new, not yet persisted, competitor it describes.
      *
@@ -351,7 +356,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      *                             but {@code clubNumber} is null or blank.
      */
     protected String resolveClubNumber(Club homeClub, String clubNumber) {
-        if (!isHpscMember(homeClub, IpscConstants.HOME_CLUB_IDENTIFIER)) {
+        if (!isMemberOfHomeClub(homeClub)) {
             return null;
         }
 
@@ -364,27 +369,20 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
-     * Determines whether {@code homeClub}'s identifier matches {@code homeClubIdentifier}.
+     * Checks whether a club is HPSC's own club, the home club identified by
+     * {@link IpscConstants#HOME_CLUB_ABBREVIATION}.
      *
      * <p>
-     * {@code homeClubIdentifier} is taken as a parameter, rather than read directly from
-     * {@link IpscConstants#HOME_CLUB_IDENTIFIER} in this method, purely so this check stays unit
-     * testable if that constant were ever null (e.g. if
-     * {@link ClubIdentifier#fromAbbreviation(String)} ever failed to resolve
-     * {@link IpscConstants#HOME_CLUB_ABBREVIATION}, which cannot happen with today's enum values,
-     * but which the constant is deliberately written to tolerate rather than throw on). A null
-     * {@code homeClubIdentifier} always yields {@code false} here, never a false match -- even
-     * against a {@code homeClub} whose own identifier happens to be null.
+     * The abbreviation is looked up as a {@link ClubIdentifier}, and the club is then compared with it
+     * through {@link #isSameClub(Club, ClubIdentifier)}, so a {@code null} club, a club with no
+     * identifier or an abbreviation that doesn't match any known identifier is simply not a member.
      * </p>
      *
-     * @param homeClub           the competitor's resolved home club; may be null.
-     * @param homeClubIdentifier the identifier {@code homeClub} must carry to count as a match;
-     *                           may be null.
-     * @return {@code true} only if both are non-null and {@code homeClub}'s identifier matches
-     * {@code homeClubIdentifier}.
+     * @param club the club to check; may be {@code null}.
+     * @return {@code true} if {@code club} is the home club; {@code false} otherwise.
      */
-    protected boolean isHpscMember(Club homeClub, ClubIdentifier homeClubIdentifier) {
-        return (homeClub != null) && (homeClubIdentifier != null) && (homeClub.getIdentifier() == homeClubIdentifier);
+    protected boolean isMemberOfHomeClub(Club club) {
+        return isSameClub(club, ClubIdentifier.fromAbbreviation(IpscConstants.HOME_CLUB_ABBREVIATION).orElse(null));
     }
 
     /**

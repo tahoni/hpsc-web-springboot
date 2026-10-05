@@ -62,6 +62,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorRepository.findAllByIdNumber`:** New derived query returning every competitor with a given ID number,
   used by `findCompetitor` to match a supplied value against ID numbers
 
+##### Services
+
+- **`IpscCompetitorService.isSameClub`:** New method that returns `true` only when a club's identifier is the given
+  `ClubIdentifier`, `false` when either argument is null or the club has no identifier; `IpscCompetitorServiceImpl`'s
+  `isMemberOfHomeClub` now takes just the club and compares it with the home club through it; includes Javadoc and
+  unit and integration tests
+
 ##### Utils
 
 - **`StringUtil.hasText`:** New helper that returns `true` only when a string is neither null nor blank, replacing the
