@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.SystemConstants;
+import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
@@ -494,12 +495,37 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
 
         // Test the competitor's home club against the target club
         try {
-            Competitor competitor = resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
-                    request.getCompetitorName());
-            return clubService.isSameClub(competitor.getHomeClub(), targetClub);
+            return clubService.isSameClub(resolveCompetitorClub(request), targetClub);
         } catch (ValidationException | NonFatalException e) {
             return false;
         }
+    }
+
+    protected ClubIdentifier resolveMatchCompetitorClub(MatchCompetitorRequest request) {
+        return ClubIdentifier.fromAbbreviation(request.getMatchClub()).orElse(null);
+    }
+
+    /**
+     * Resolves the home club of the competitor a request refers to.
+     *
+     * <p>
+     * The counterpart of {@link #resolveMatchClub(String)} for the competitor's own club rather than the club they
+     * represented at the match: the competitor is resolved as by {@link #resolveCompetitor(Long, String, String)},
+     * and their home club's identifier is returned, or {@code null} when they have no home club.
+     * </p>
+     *
+     * @param request the request whose competitor is to be resolved, by ID, or else by number and name.
+     * @return the {@link ClubIdentifier} of the competitor's home club, or {@code null} if the competitor has no
+     * home club, or the home club has no identifier.
+     * @throws ValidationException if the request's competitor ID, number and name are all null or blank, or if more
+     *                             than one competitor matches the number and name.
+     * @throws NonFatalException   if no competitor matches.
+     */
+    protected ClubIdentifier resolveCompetitorClub(MatchCompetitorRequest request) {
+        Competitor competitor = resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
+                request.getCompetitorName());
+        Club homeClub = competitor.getHomeClub();
+        return (homeClub == null) ? null : homeClub.getIdentifier();
     }
 
     /**
