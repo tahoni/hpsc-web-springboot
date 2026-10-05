@@ -45,8 +45,11 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
      *     repository. When they found several, those candidates are narrowed down by the same
      *     name comparison in memory.</li>
      * </ol>
-     * <p>The full name is normalised before comparison by trimming it and removing the
-     * characters matched by {@link IpscConstants#REPLACE_IN_NAMES_REGEX}.</p>
+     * <p>The full name is normalised before comparison: the range officer marker, "RO" or "(RO)", is
+     * removed wherever it appears in the name (see {@link IpscConstants#REPLACE_IN_NAMES_REGEX}),
+     * runs of whitespace are collapsed to a single space, and the result is trimmed. So
+     * {@code "Jane Doe RO"}, {@code "RO Jane Doe"} and {@code "Jane (RO) Doe"} are all looked up
+     * as {@code "Jane Doe"}.</p>
      * <p>If the final stage does not yield exactly one competitor, an exception is thrown rather
      * than returning an empty {@link Optional}: a {@link NonFatalException} when no competitor
      * matched the number, ID number or name, a {@link ValidationException} when several did, even
@@ -61,7 +64,10 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
         }
 
         // Normalise full name
-        String normalisedCompetitorFullName = StringUtils.trimToEmpty(fullName).replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX, "").trim();
+        String normalisedCompetitorFullName = StringUtils.trimToEmpty(fullName)
+                .replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX, " ")
+                .replaceAll("\\s+", " ")
+                .trim();
         // Normalise competitor number
         String normalisedCompetitorNumber = StringUtils.trimToEmpty(competitorNumber);
         // A numeric value too long for an int (such as an ID number) is not a competitor number

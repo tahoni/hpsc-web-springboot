@@ -366,6 +366,19 @@ public class EntityIpscCompetitorServiceTest {
     }
 
     @Test
+    void testFindCompetitor_whenTheNameHasRoInTheMiddleOrAtTheStart_thenMatchesTheNameWithoutIt() {
+        // Arrange
+        Competitor competitor = competitor("Jane", "Doe", null);
+        when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of());
+        when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe"))
+                .thenReturn(List.of(competitor));
+
+        // Act & Assert
+        assertSame(competitor, entityIpscCompetitorService.findCompetitor("1234", "Jane RO Doe").orElseThrow());
+        assertSame(competitor, entityIpscCompetitorService.findCompetitor("1234", "(RO) Jane Doe").orElseThrow());
+    }
+
+    @Test
     void testFindCompetitor_whenSeveralHaveTheNumberAndTheNameHasAnRoSuffix_thenNarrowsByTheNameWithoutIt() {
         // Arrange
         Competitor jane = competitor("Jane", "Doe", null);

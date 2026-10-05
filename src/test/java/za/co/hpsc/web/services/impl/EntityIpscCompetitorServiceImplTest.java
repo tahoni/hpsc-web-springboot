@@ -70,6 +70,54 @@ public class EntityIpscCompetitorServiceImplTest {
     }
 
     @Test
+    void testFindCompetitor_whenTheNameHasRoAtTheStartOrInTheMiddle_thenQueriesTheNormalisedName() {
+        // Arrange
+        when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe"))
+                .thenReturn(List.of(new Competitor()));
+
+        // Act
+        entityIpscCompetitorService.findCompetitor("42", "RO Jane Doe");
+        entityIpscCompetitorService.findCompetitor("42", "Jane RO Doe");
+        entityIpscCompetitorService.findCompetitor("42", "(RO) Jane Doe");
+        entityIpscCompetitorService.findCompetitor("42", "Jane (RO) Doe");
+        entityIpscCompetitorService.findCompetitor("42", "Jane(RO) Doe");
+
+        // Assert - every position is removed and the spaces left behind are collapsed
+        verify(competitorRepository, times(5))
+                .findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe");
+    }
+
+    @Test
+    void testFindCompetitor_whenTheNameHasBothRoMarkers_thenRemovesThemAll() {
+        // Arrange
+        when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe"))
+                .thenReturn(List.of(new Competitor()));
+
+        // Act
+        entityIpscCompetitorService.findCompetitor("42", "RO Jane (RO) Doe RO");
+
+        // Assert
+        verify(competitorRepository).findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe");
+    }
+
+    @Test
+    void testFindCompetitor_whenANameContainsRoInsideAWord_thenLeavesItAlone() {
+        // Arrange
+        when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase(anyString()))
+                .thenReturn(List.of(new Competitor()));
+
+        // Act
+        entityIpscCompetitorService.findCompetitor("42", "Romeo Doe");
+        entityIpscCompetitorService.findCompetitor("42", "PEDRO Smith");
+        entityIpscCompetitorService.findCompetitor("42", "Jane ROUX");
+
+        // Assert - only a whole-word RO is a marker
+        verify(competitorRepository).findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Romeo Doe");
+        verify(competitorRepository).findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("PEDRO Smith");
+        verify(competitorRepository).findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane ROUX");
+    }
+
+    @Test
     void testFindCompetitor_whenTheNameIsNull_thenQueriesAnEmptyName() {
         // Arrange
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase(""))

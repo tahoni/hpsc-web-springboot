@@ -43,11 +43,14 @@ public final class IpscConstants {
     public static final List<Integer> EXCLUDE_ICS_ALIAS = List.of(15000, 16000);
 
     /**
-     * Regular expression matching the range officer marker some imported names end with, {@code "RO"} or
-     * {@code "(RO)"}, anchored to the end of the name. It is removed, and the name trimmed, before a competitor is
-     * matched by full name, so {@code "Jane Doe (RO)"} matches {@code "Jane Doe"}.
+     * Regular expression matching the range officer marker some imported names carry, {@code "RO"} or
+     * {@code "(RO)"}, anywhere in the name: before, between or after the other parts. {@code "RO"} must be a whole,
+     * upper-case word, so it is not taken from inside a name such as "Romeo" or "PEDRO"; {@code "(RO)"} matches
+     * wherever it appears. Every match is replaced by a space, and the name's whitespace then collapsed and trimmed,
+     * before a competitor is matched by full name, so {@code "Jane Doe (RO)"}, {@code "RO Jane Doe"} and
+     * {@code "Jane RO Doe"} all match {@code "Jane Doe"}.
      */
-    public static final String REPLACE_IN_NAMES_REGEX = "(\\(RO\\)|RO )";
+    public static final String REPLACE_IN_NAMES_REGEX = "(\\(RO\\)|\\bRO\\b)";
 
     /**
      * Number of decimal places for match points. Not currently referenced by any code, along with the other score

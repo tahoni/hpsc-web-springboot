@@ -88,6 +88,19 @@ class EntityIpscCompetitorServiceIntegrationTest {
     }
 
     @Test
+    void testFindCompetitor_whenTheNameHasRoInTheMiddle_thenMatchesTheNameWithoutIt() {
+        // Arrange
+        Competitor saved = saveCompetitor("Jane", "Doe", null, 880005);
+
+        // Act
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("880099", "Jane (RO) Doe");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(saved.getId(), result.get().getId());
+    }
+
+    @Test
     void testFindCompetitor_whenNoCompetitorMatchesTheNumberOrTheName_thenThrowsNonFatalException() {
         // Arrange
         saveCompetitor("Jane", "Doe", null, 880005);

@@ -98,6 +98,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Services
 
+- **`EntityIpscCompetitorServiceImpl.findCompetitor`:** The range officer marker, `RO` or `(RO)`, is now removed from
+  a name wherever it appears — at the start, in the middle or at the end — instead of only at the end, and the
+  whitespace left behind is collapsed, so `RO Jane Doe` and `Jane (RO) Doe` match `Jane Doe`; `RO` must be a whole word,
+  so a name such as `Romeo` or `PEDRO` is left alone. `IpscConstants.REPLACE_IN_NAMES_REGEX` and the Javadoc follow,
+  with unit, service and integration tests
 - **`IpscMatchServiceImpl.resolveMatchCategory`:** A match category that is null, empty or blank now resolves to
   `IpscConstants.DEFAULT_MATCH_CATEGORY` (`Club Shoot`) instead of answering a `ValidationException`, as the club
   already defaults when omitted; a category that is supplied must still be known, by display name or constant name
