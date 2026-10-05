@@ -184,7 +184,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   list `ClubService` in the services table
 - **`IpscConstants`:** Every constant now has Javadoc saying what it is for and where it is used — including the
   alias competitor numbers, the range officer name marker and the home club's role in the bulk import — and the class
-  Javadoc describes what it holds; the `IpscConstants` constants that no code references are marked as such
+  Javadoc describes what it holds
 - **`ClubService`, `IpscMatchCompetitorService`, `IpscMatchCompetitorServiceImpl`:** `ClubService`'s methods,
   `createMatchCompetitors`' club filter (check order, skipped versus failed rows, the HPSC default) and `isForClub`,
   `resolveCompetitorHomeClub` are documented
@@ -239,6 +239,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscConstants.MAX_SAPSA_NUMBER`:** Removed, as nothing referenced it — internal constant only, so there is no API
   change
+- **`IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE`, `PERCENTAGE_SCALE`:** Removed, as nothing
+  referenced them — internal constants only, so there is no API change; the scoring layer can introduce its own scales
+  with the code that applies them
 
 ### 🧾 [11.0.0] - 2026-10-04
 
