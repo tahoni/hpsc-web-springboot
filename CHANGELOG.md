@@ -51,6 +51,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ➕ Added
 
+##### Build & Configuration
+
+- **`qodana.yaml`:** New Qodana configuration for the `code_quality.yml` workflow — the `qodana.starter` profile plus
+  the `JavadocReference` inspection, so broken `{@link}` and `@see` references are reported
+
 ##### Helpers
 
 - **`CompetitorHelpers.getCompetitorNumberAsInteger`:** New helper that converts a competitor number to an `int` —
