@@ -64,6 +64,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Services
 
+- **`IpscMatchCompetitorService.createMatchCompetitors(String, String)`:** New overload with an optional `club` (name or
+  abbreviation) that imports only the rows whose `matchClub` is that club — any other row, including one with no
+  `matchClub`, is reported as skipped rather than created, so there is still one result per CSV row — and answers a
+  `ValidationException` for an unknown club. The one-argument method now delegates to it with no club, and
+  `IpscMatchCompetitorServiceImpl.isForClub` does the per-row check; includes Javadoc and unit and integration tests
 - **`IpscCompetitorService.isSameClub`:** New method that returns `true` only when a club's identifier is the given
   `ClubIdentifier`, `false` when either argument is null or the club has no identifier; `IpscCompetitorServiceImpl`'s
   `isMemberOfHomeClub` now takes just the club and compares it with the home club through it; includes Javadoc and
@@ -79,6 +84,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Controllers
 
+- **`IpscMatchCompetitorController`:** The bulk import endpoint (`POST /bulk`) accepts an optional `club` query
+  parameter that limits the import to rows for that club, as `createMatchCompetitors(String, String)` does
 - **`IpscMatchCompetitorController`:** **Breaking:** the base path moved from `/ipsc/match-competitors` to
   `/ipsc/match-results`, so every match competitor endpoint, including the bulk CSV import, is now served under the new
   path and a caller still using the old one gets a `404`; its Swagger tag is renamed from "IPSC Match Competitor" to

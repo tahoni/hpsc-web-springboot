@@ -329,6 +329,60 @@ public class IpscMatchCompetitorServiceTest {
     }
 
     @Test
+    void testCreateMatchCompetitors_whenClubIsGiven_thenSkipsRowsForOtherClubs() throws Exception {
+        // Arrange
+        stubCompetitorAndMatch();
+        when(matchCompetitorRepository.save(any(MatchCompetitor.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        String csvData = """
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                1,2,HPSC,Junior,Handgun,Open Division
+                1,2,SOSC,Junior,Handgun,Open Division
+                1,2,,Junior,Handgun,Open Division
+                """;
+
+        // Act
+        MatchCompetitorBulkResponseHolder holder =
+                ipscMatchCompetitorService.createMatchCompetitors(csvData, "HPSC");
+
+        // Assert
+        assertEquals(3, holder.getMatchCompetitors().size());
+        assertTrue(holder.getMatchCompetitors().get(0).isSuccess());
+        assertFalse(holder.getMatchCompetitors().get(1).isSuccess());
+        assertTrue(holder.getMatchCompetitors().get(1).getMessage().startsWith("Skipped: match club is not"));
+        assertFalse(holder.getMatchCompetitors().get(2).isSuccess());
+        verify(matchCompetitorRepository, times(1)).save(any(MatchCompetitor.class));
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenClubIsNull_thenCreatesEveryRow() throws Exception {
+        // Arrange
+        stubCompetitorAndMatch();
+        when(matchCompetitorRepository.save(any(MatchCompetitor.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        String csvData = """
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                1,2,HPSC,Junior,Handgun,Open Division
+                1,2,SOSC,Junior,Handgun,Open Division
+                1,2,,Junior,Handgun,Open Division
+                """;
+
+        // Act
+        MatchCompetitorBulkResponseHolder holder =
+                ipscMatchCompetitorService.createMatchCompetitors(csvData, null);
+
+        // Assert
+        assertEquals(3, holder.getMatchCompetitors().size());
+        assertTrue(holder.getMatchCompetitors().stream()
+                .noneMatch(result -> result.getMessage().startsWith("Skipped")));
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenClubIsUnknown_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class,
+                () -> ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV, "Not A Club"));
+    }
+
+    @Test
     void testCreateMatchCompetitors_whenRowHasMatchCompetitorId_thenIgnoresItAndCreates() throws Exception {
         // Arrange
         stubCompetitorAndMatch();

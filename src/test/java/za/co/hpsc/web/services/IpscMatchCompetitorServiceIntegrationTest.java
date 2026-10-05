@@ -209,6 +209,65 @@ class IpscMatchCompetitorServiceIntegrationTest {
     }
 
     @Test
+    void testCreateMatchCompetitors_whenClubIsGiven_thenSkipsRowsForOtherClubs() throws Exception {
+        // Arrange
+        Competitor competitor = createCompetitor("HPSC-MC-020");
+        IpscMatch match = createMatch();
+        String csvData = String.format("""
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                %d,%d,HPSC,Junior,Handgun,Open Division
+                %d,%d,SOSC,Junior,Handgun,Open Division
+                %d,%d,,Junior,Handgun,Open Division
+                """, competitor.getId(), match.getId(), competitor.getId(), match.getId(),
+                competitor.getId(), match.getId());
+
+        // Act
+        MatchCompetitorBulkResponseHolder holder =
+                ipscMatchCompetitorService.createMatchCompetitors(csvData, "HPSC");
+
+        // Assert
+        assertEquals(3, holder.getMatchCompetitors().size());
+        assertTrue(holder.getMatchCompetitors().get(0).isSuccess());
+        assertFalse(holder.getMatchCompetitors().get(1).isSuccess());
+        assertTrue(holder.getMatchCompetitors().get(1).getMessage().startsWith("Skipped: match club is not"));
+        assertFalse(holder.getMatchCompetitors().get(2).isSuccess());
+        assertEquals(1, matchCompetitorRepository.count());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenClubIsNull_thenCreatesEveryRow() throws Exception {
+        // Arrange
+        Competitor competitor = createCompetitor("HPSC-MC-020");
+        IpscMatch match = createMatch();
+        String csvData = String.format("""
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                %d,%d,HPSC,Junior,Handgun,Open Division
+                %d,%d,SOSC,Junior,Handgun,Open Division
+                %d,%d,,Junior,Handgun,Open Division
+                """, competitor.getId(), match.getId(), competitor.getId(), match.getId(),
+                competitor.getId(), match.getId());
+
+        // Act
+        MatchCompetitorBulkResponseHolder holder =
+                ipscMatchCompetitorService.createMatchCompetitors(csvData, null);
+
+        // Assert
+        assertEquals(3, holder.getMatchCompetitors().size());
+        assertTrue(holder.getMatchCompetitors().stream()
+                .noneMatch(result -> result.getMessage().startsWith("Skipped")));
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenClubIsUnknown_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class,
+                () -> ipscMatchCompetitorService.createMatchCompetitors(
+                        "CompetitorId,MatchId,Cats,FirearmType,Div" + System.lineSeparator()
+                                + "1,2,Junior,Handgun,Open Division",
+                        "Not A Club"));
+    }
+
+    @Test
     void testCreateMatchCompetitors_whenALaterRowIsInvalid_thenPersistsTheValidRowsAndReportsTheFailure()
             throws Exception {
         // Arrange

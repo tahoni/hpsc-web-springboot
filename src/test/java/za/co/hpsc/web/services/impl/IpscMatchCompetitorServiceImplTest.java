@@ -272,6 +272,57 @@ class IpscMatchCompetitorServiceImplTest {
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveMatchClub("Nope"));
     }
 
+    // isForClub()
+    @Test
+    void testIsForClub_whenTargetClubIsNull_thenReturnsTrue() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setMatchClub("SOSC");
+
+        // Act & Assert
+        assertTrue(matchCompetitorServiceImpl.isForClub(request, null));
+        assertTrue(matchCompetitorServiceImpl.isForClub(new MatchCompetitorRequest(), null));
+    }
+
+    @Test
+    void testIsForClub_whenRowClubMatchesByNameOrAbbreviation_thenReturnsTrue() {
+        // Arrange
+        MatchCompetitorRequest byAbbreviation = new MatchCompetitorRequest();
+        byAbbreviation.setMatchClub("HPSC");
+        MatchCompetitorRequest byName = new MatchCompetitorRequest();
+        byName.setMatchClub(ClubIdentifier.HPSC.getName());
+
+        // Act & Assert
+        assertTrue(matchCompetitorServiceImpl.isForClub(byAbbreviation, ClubIdentifier.HPSC));
+        assertTrue(matchCompetitorServiceImpl.isForClub(byName, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsForClub_whenRowClubIsDifferent_thenReturnsFalse() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setMatchClub("SOSC");
+
+        // Act & Assert
+        assertFalse(matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsForClub_whenRowHasNoClub_thenReturnsFalse() {
+        // Act & Assert
+        assertFalse(matchCompetitorServiceImpl.isForClub(new MatchCompetitorRequest(), ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsForClub_whenRowClubIsUnknown_thenThrowsValidationException() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setMatchClub("Not A Club");
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
+    }
+
     // resolveCompetitorCategory()
     @Test
     void testResolveCompetitorCategory_whenKnown_thenReturnsCategory() {

@@ -82,10 +82,12 @@ public class IpscMatchCompetitorController {
      *
      * @param csvData the CSV content as a string containing details about match competitors, formatted according
      *                to the expected schema. This parameter is required and cannot be null.
+     * @param club    the name or abbreviation of the club to import rows for; rows for any other club are reported
+     *                as skipped. Every row is imported when it is omitted.
      * @return a {@link MatchCompetitorBulkResponseHolder} with one result per CSV row, each recording whether the
      * row was created and, when it was not, why — with status {@code 201} unless every row failed, in which case
      * it is {@code 422}.
-     * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, or {@code club} is unknown.
      * @throws FatalException     if a critical error occurs during processing, that prevents the operation from
      *                             completing successfully.
      */
@@ -120,9 +122,12 @@ public class IpscMatchCompetitorController {
                                     CompetitorId,Name,Mem #,MatchId,Class,Cats,FirearmType,Div,PF,Pts,%,Time,% psbl,A,C,D,M,NPM,NS,Proc,Apen,OverallRanking,ClubRanking,IsVisitor
                                     0,string,string,0,string,string,string,string,string,0,0,0,0,0,0,0,0,0,0,0,0,0,0,false
                                     """)))
-            @RequestBody String csvData)
+            @RequestBody String csvData,
+            @Parameter(description = "Only import rows whose match club is this club, by name or abbreviation; "
+                    + "other rows are reported as skipped. Every row is imported when omitted.")
+            @RequestParam(required = false) String club)
             throws ValidationException, NonFatalException, FatalException {
-        MatchCompetitorBulkResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData);
+        MatchCompetitorBulkResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData, club);
 
         List<MatchCompetitorBulkResponse> results = holder.getMatchCompetitors();
         boolean allFailed = !results.isEmpty() && results.stream().noneMatch(MatchCompetitorBulkResponse::isSuccess);

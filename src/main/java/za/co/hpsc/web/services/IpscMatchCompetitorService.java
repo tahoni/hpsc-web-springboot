@@ -60,7 +60,32 @@ public interface IpscMatchCompetitorService {
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      * @since 9.1.0
      */
-    MatchCompetitorBulkResponseHolder createMatchCompetitors(String csvData)
+    default MatchCompetitorBulkResponseHolder createMatchCompetitors(String csvData)
+            throws ValidationException, NonFatalException, FatalException {
+        return createMatchCompetitors(csvData, null);
+    }
+
+    /**
+     * Creates a batch of new match competitors from CSV data, optionally only those for one club.
+     *
+     * <p>
+     * Works as {@link #createMatchCompetitors(String)}, except that when {@code club} is given, a row whose
+     * {@code matchClub} is not that club (including a row with no {@code matchClub}) is not created but reported as
+     * skipped, so there is still one result per CSV row.
+     * </p>
+     *
+     * @param csvData the CSV data containing match competitor information, one match competitor per row.
+     *                Must not be null or blank.
+     * @param club    the name or abbreviation of the club to import rows for; may be null or blank, in which case
+     *                every row is imported.
+     * @return a {@link MatchCompetitorBulkResponseHolder} with one {@link MatchCompetitorBulkResponse} per CSV
+     * row, in the same order, each recording whether the row was created and, when it was not, why.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, including when a required
+     *                             column is missing from the header, or if {@code club} is not a known club.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     * @since 12.0.0
+     */
+    MatchCompetitorBulkResponseHolder createMatchCompetitors(String csvData, String club)
             throws ValidationException, NonFatalException, FatalException;
 
     /**

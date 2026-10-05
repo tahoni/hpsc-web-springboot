@@ -70,12 +70,14 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     }
 
     @Override
-    public MatchCompetitorBulkResponseHolder createMatchCompetitors(String csvData) throws FatalException {
+    public MatchCompetitorBulkResponseHolder createMatchCompetitors(String csvData, String club)
+            throws FatalException {
         if (!hasText(csvData)) {
             log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
+        ClubIdentifier targetClub = resolveMatchClub(club);
         List<MatchCompetitorRequest> requests = readMatchCompetitors(csvData);
 
         // Each row is saved in its own transaction, so a bad row is reported and skipped without affecting the
@@ -83,6 +85,11 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         List<MatchCompetitorBulkResponse> matchCompetitorBulkResponses = new ArrayList<>();
         for (MatchCompetitorRequest request : requests) {
             try {
+                if (!isForClub(request, targetClub)) {
+                    matchCompetitorBulkResponses.add(new MatchCompetitorBulkResponse(false,
+                            "Skipped: match club is not " + targetClub.getName(), toFailedResponse(request)));
+                    continue;
+                }
                 validateForCreate(request);
 
                 MatchCompetitor matchCompetitor = new MatchCompetitor();
@@ -440,6 +447,19 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     protected IpscMatch findMatchOrThrow(Long matchId) {
         return ipscMatchRepository.findById(matchId)
                 .orElseThrow(() -> new NonFatalException("No IPSC match found with ID " + matchId));
+    }
+
+    /**
+     * Checks whether a bulk import row is for the club being imported.
+     *
+     * @param request    the row to check.
+     * @param targetClub the club being imported; may be null, in which case every row matches.
+     * @return {@code true} if {@code targetClub} is null, or the row's {@code matchClub} resolves to
+     * {@code targetClub}; {@code false} otherwise, including when the row has no {@code matchClub}.
+     * @throws ValidationException if the row's {@code matchClub} was supplied but isn't a known club.
+     */
+    protected boolean isForClub(MatchCompetitorRequest request, ClubIdentifier targetClub) {
+        return (targetClub == null) || (resolveMatchClub(request.getMatchClub()) == targetClub);
     }
 
     /**
