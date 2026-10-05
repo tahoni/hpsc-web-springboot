@@ -121,7 +121,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
     competitor lookup by number or name and overall-score fields; the shooter-log layer is not)
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
-- **⚪ Open (0):** none
+- **⚪ Open (1):**
+  - #37 `IpscConstants`' four score-scale constants are declared but never used
 
 ### ✅ Completed
 
@@ -1178,7 +1179,25 @@ pin).
 
 ### ⚪ Open
 
-*No gaps are currently open.*
+#### 37. `IpscConstants`' four score-scale constants are declared but never used
+
+**Evidence:** `IpscConstants` declares `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE` and `PERCENTAGE_SCALE`
+(`constants/IpscConstants.java`), the decimal places for rounding score figures. Grepping `src/` for each name finds
+only its own declaration — no main or test code uses any of them — and the Javadoc added to them in this release
+says so ("Not currently referenced by any code"). `CHANGELOG.md` records an earlier sweep that removed unused
+constants of the same kind (`STAGE_POINTS_SCALE` among them) as "nothing references" them, so these four are what is
+left of that groundwork. No scoring or shooter-log service exists yet to apply them (Gap #6).
+
+**Why it matters:** The same shape as Gap #9's unused `DEFAULT_MATCH_CLUB_IDENTIFIER`: inert groundwork that signals a
+rounding rule nothing enforces. A reader of `IpscConstants` assumes score figures are rounded to these scales, while
+`MatchCompetitor`'s score columns and `MatchCompetitorResponse` carry the figures as supplied, so the constants
+document an intention rather than doing anything, and could drift from the scales the scoring layer eventually needs.
+
+**Proposed improvement:** Either apply the scales when the scoring layer lands (Gap #6) — rounding the points, hit
+factor, time and percentage figures on the match competitor request/response — or, if that layer will set its own
+scales, remove the four constants rather than leaving them in place. Decide with Gap #6 and resolve the "Not currently
+referenced" Javadoc either way.
+
 
 ---
 
@@ -1187,7 +1206,7 @@ pin).
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0, the shooter-log service and controller remain                                                                                  |
-| **Next**    | No items currently scoped — #36 closed in v12.0.0                                                                                                                                                                                                  |
+| **Next**    | Apply or remove `IpscConstants`' four unused score-scale constants alongside the scoring layer (#37); #36 closed in v12.0.0                                                                                                                                                                                                  |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -1276,6 +1295,8 @@ pin).
 - ✅ Met in v12.0.0: `EntityIpscCompetitorService.findCompetitor` is called by the match competitor service and the
   bulk match competitor import returns `MatchCompetitorBulkResponseHolder` (the renamed `MatchCompetitorResultHolder`),
   closing Gap #36.
+- `IpscConstants`' `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE` and `PERCENTAGE_SCALE` are either applied by
+  the scoring layer or removed, closing Gap #37.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

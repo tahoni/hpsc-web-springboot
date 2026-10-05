@@ -401,7 +401,13 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-*No gaps are currently open.*
+**Apply or remove the unused score-scale constants** *(improvement-plan.md → Gap #37)*
+
+- [ ] Decide, together with Gap #6, whether the scoring layer rounds points, hit factor, time and percentage figures
+  with `IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE` and `PERCENTAGE_SCALE`
+- [ ] Either apply them where those figures are produced, or remove the four constants from `IpscConstants`
+- [ ] Remove the "Not currently referenced by any code" wording from their Javadoc
+
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.
