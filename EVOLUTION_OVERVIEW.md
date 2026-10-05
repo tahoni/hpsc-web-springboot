@@ -1640,6 +1640,69 @@ Three groups of changes are backward-incompatible, so it is MAJOR under the Sema
 - Three-tier tests for `EntityIpscCompetitorService` and its implementation, and updated request, response, CSV and
   repository tests for the renamed and retyped fields; the suite stands at 1,109 passing tests
 
+### Phase 46: Match Competitor Lookup, Partial Bulk Import & Club Filtering (v12.0.0)
+
+**Duration:** October 5, 2026
+
+A major release: the competitor lookup built in v11.0.0 is wired into the match competitor service, the bulk import
+becomes a partial import limited to one club, and a match no longer needs a category. Four groups of changes are
+backward-incompatible, so it is MAJOR under the Semantic Versioning rules.
+
+**Key Accomplishments:**
+
+**Competitor Lookup**
+
+- `EntityIpscCompetitorService.findCompetitor(competitorNumber, fullName)` is called by `IpscMatchCompetitorServiceImpl`
+  through `resolveCompetitor`: the number, which may also be an ID number, then the full name, narrowing several number
+  matches by name, and an exception rather than an empty result when no single competitor matches
+- **Breaking:** the shared alias numbers 15000 and 16000 are no longer matched by competitor number, and a number that
+  is not a whole number is looked up as an ID number, answering `404` when nothing matches instead of a `400`
+- The range officer marker `RO` or `(RO)` is removed from a name wherever it appears, and a competitor created or
+  updated without a nickname takes its first name as the nickname
+- New `CompetitorHelpers.getCompetitorNumberAsInteger` and `CompetitorRepository.findAllByIdNumber`
+
+**Bulk Import**
+
+- **Breaking:** `createMatchCompetitors` is a partial import — each row is saved on its own and a failed row is
+  reported and skipped while the rest are created; an import in which every row fails answers `422`
+- **Breaking:** `MatchCompetitorResult` and `MatchCompetitorResultHolder` are renamed `MatchCompetitorBulkResponse` and
+  `MatchCompetitorBulkResponseHolder`, the body carries `matchCompetitors` instead of `matchCompetitorResults`, and
+  `MatchCompetitorResponse` gains `competitorName` and `competitorNumber`
+- **Breaking:** the import is limited to one club — HPSC's own club unless the optional `club` query parameter names
+  another — and imports the rows whose match club, or whose competitor's home club, is that club, reporting the rest as
+  skipped
+- New `ClubService`, with `ClubServiceImpl`, holds the null-safe club comparisons, and
+  `IpscCompetitorServiceImpl.isMemberOfHomeClub` takes the home club as a parameter, defaulting to HPSC
+
+**Matches**
+
+- The match category is optional: one that is null, empty or blank takes the default, Club Shoot, and a supplied one may
+  be a display name or a constant name, ignoring case and surrounding whitespace
+
+**Fixes**
+
+- `ControllerResponse` derives `success` from its error the right way round
+- `findCompetitor` no longer throws a `NumberFormatException` for a numeric value too long for an `int`
+
+**Housekeeping**
+
+- `DateUtil`, `NumberUtil`, `StringUtil` and `ValueUtil` are renamed back from their plural names, `StringUtil` gains
+  `hasText`, and `IpscConstants` loses `MAX_SAPSA_NUMBER` and four unused score-scale constants and documents the rest
+- Improvement plan Gaps #36 and #37 are closed, `qodana.yaml` is added and `mysql-connector-j` is pinned to 26.7.0
+
+**Build & Metadata**
+
+- Project version bumped to 12.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Putting the lookup to work, and making an import report each row instead of refusing the file
+
+**Test Coverage:**
+
+- Three-tier tests for the lookup wiring, the partial import, the club filter and `ClubService`; the suite stands at
+  1,227 passing tests
+
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**

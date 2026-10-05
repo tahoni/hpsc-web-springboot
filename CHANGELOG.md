@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 11.0.0](#-1100---2026-10-04) ← Current
+- [🧾 Version 12.0.0](#-1200---2026-10-05) ← Current
+- [🧾 Version 11.0.0](#-1100---2026-10-04)
 - [🧾 Version 10.0.0](#-1000---2026-10-03)
 - [🧾 Version 9.1.0](#-910---2026-10-03)
 - [🧾 Version 9.0.0](#-900---2026-10-01)
@@ -48,6 +49,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [12.0.0] - 2026-10-05
 
 #### ➕ Added
 
