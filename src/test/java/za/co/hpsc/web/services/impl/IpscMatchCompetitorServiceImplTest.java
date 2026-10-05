@@ -364,6 +364,43 @@ class IpscMatchCompetitorServiceImplTest {
     }
 
     @Test
+    void testIsForClub_whenRowClubIsDifferentAndNoCompetitorIsFound_thenReturnsFalse() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorNumber("7001");
+        request.setMatchClub("SOSC");
+        when(entityIpscCompetitorService.findCompetitor("7001", null)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertFalse(matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsForClub_whenRowIdentifiesCompetitorByIdThatDoesNotExist_thenReturnsFalse() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorId(1L);
+        when(competitorRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertFalse(matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsForClub_whenTargetClubIsNullAndRowClubIsUnknown_thenReturnsTrueWithoutInspectingTheRow() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setMatchClub("Not A Club");
+
+        // Act
+        boolean result = matchCompetitorServiceImpl.isForClub(request, null);
+
+        // Assert
+        assertTrue(result);
+        verifyNoInteractions(entityIpscCompetitorService, competitorRepository);
+    }
+
+    @Test
     void testIsForClub_whenRowIdentifiesCompetitorById_thenUsesTheirHomeClub() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();

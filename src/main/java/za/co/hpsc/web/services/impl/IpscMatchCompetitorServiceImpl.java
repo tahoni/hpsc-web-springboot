@@ -458,16 +458,29 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * Checks whether a bulk import row is for the club being imported.
      *
      * <p>
-     * A row is for the club if its {@code matchClub} is that club or, failing that, the home club of the competitor
-     * it identifies is.
+     * The checks run in order, and the first that succeeds decides:
+     * </p>
+     * <ol>
+     *     <li>With no target club there is nothing to filter on, so every row matches and the row isn't inspected at
+     *     all, not even for an unknown {@code matchClub}.</li>
+     *     <li>The row's {@code matchClub}, by name or abbreviation, is the target club.</li>
+     *     <li>Failing that, the home club of the competitor the row identifies is the target club. The competitor is
+     *     resolved as by {@link #resolveCompetitor(Long, String, String)}: by ID when the row has one, otherwise by
+     *     number and name. This is only looked up when the {@code matchClub} check fails.</li>
+     * </ol>
+     *
+     * <p>
+     * A row whose competitor can't be resolved (none found, several found, or no ID, number or name given) is simply
+     * not for the club, rather than an error, so the import reports that row as skipped. The same goes for a
+     * competitor with no home club.
      * </p>
      *
      * @param request    the row to check.
      * @param targetClub the club being imported; may be null, in which case every row matches.
      * @return {@code true} if {@code targetClub} is null, the row's {@code matchClub} resolves to {@code targetClub},
-     * or the row's competitor has {@code targetClub} as their home club; {@code false} otherwise, including when the
-     * row's competitor can't be resolved, so that row is reported as skipped rather than failed.
-     * @throws ValidationException if the row's {@code matchClub} was supplied but isn't a known club.
+     * or the row's competitor has {@code targetClub} as their home club; {@code false} otherwise.
+     * @throws ValidationException if {@code targetClub} is not null and the row's {@code matchClub} was supplied but
+     *                             isn't a known club.
      */
     protected boolean isForClub(MatchCompetitorRequest request, ClubIdentifier targetClub) {
         if (targetClub == null) {
