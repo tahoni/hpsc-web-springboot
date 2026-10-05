@@ -51,6 +51,11 @@ public interface IpscMatchCompetitorService {
      * ever creates entries, so a {@code MatchCompetitorId} column is read but ignored.
      * </p>
      *
+     * <p>
+     * Only rows for HPSC's own club, {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}, are
+     * created; see {@link #createMatchCompetitors(String, String)} for how a row is matched to a club.
+     * </p>
+     *
      * @param csvData the CSV data containing match competitor information, one match competitor per row.
      *                Must not be null or blank.
      * @return a {@link MatchCompetitorBulkResponseHolder} with one {@link MatchCompetitorBulkResponse} per CSV
@@ -66,18 +71,36 @@ public interface IpscMatchCompetitorService {
     }
 
     /**
-     * Creates a batch of new match competitors from CSV data, optionally only those for one club.
+     * Creates a batch of new match competitors from CSV data, limited to the rows for one club.
      *
      * <p>
-     * Works as {@link #createMatchCompetitors(String)}, except that when {@code club} is given, a row whose
-     * {@code matchClub} is not that club (including a row with no {@code matchClub}) is not created but reported as
-     * skipped, so there is still one result per CSV row.
+     * Works as {@link #createMatchCompetitors(String)}, except that a row is only created if it is for the club
+     * being imported. A row is for the club when:
+     * </p>
+     * <ol>
+     *     <li>its {@code matchClub}, the club the competitor represented at the match, given by name or
+     *     abbreviation, is that club; or, failing that,</li>
+     *     <li>the home club of the competitor it identifies is that club. The competitor is found by competitor
+     *     ID when the row has one, otherwise by competitor number and name, as when the row is created.</li>
+     * </ol>
+     * <p>
+     * Any other row is not created but reported as skipped, so there is still one result per CSV row. That includes a
+     * row with no {@code matchClub} whose competitor has no home club, and one whose competitor cannot be found, or
+     * is ambiguous, since the club cannot then be established; the row's own competitor and match errors are
+     * reported only for rows that are for the club. A row whose {@code matchClub} is supplied but is not a known club
+     * is not skipped but reported as failed.
+     * </p>
+     *
+     * <p>
+     * When {@code club} is null or blank the club imported is HPSC's own club
+     * ({@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}), so the one-argument method imports
+     * HPSC's rows.
      * </p>
      *
      * @param csvData the CSV data containing match competitor information, one match competitor per row.
      *                Must not be null or blank.
      * @param club    the name or abbreviation of the club to import rows for; may be null or blank, in which case
-     *                every row is imported.
+     *                HPSC's own club is imported.
      * @return a {@link MatchCompetitorBulkResponseHolder} with one {@link MatchCompetitorBulkResponse} per CSV
      * row, in the same order, each recording whether the row was created and, when it was not, why.
      * @throws ValidationException if the CSV data is null, blank or cannot be parsed, including when a required

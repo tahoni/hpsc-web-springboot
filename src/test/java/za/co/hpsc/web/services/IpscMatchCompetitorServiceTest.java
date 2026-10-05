@@ -283,8 +283,8 @@ public class IpscMatchCompetitorServiceTest {
 
     // createMatchCompetitors()
     private static final String VALID_CSV = """
-            CompetitorId,MatchId,Cats,FirearmType,Div
-            1,2,Junior,Handgun,Open Division
+            CompetitorId,MatchId,Class,Cats,FirearmType,Div
+            1,2,HPSC,Junior,Handgun,Open Division
             """;
 
     @Test
@@ -419,7 +419,7 @@ public class IpscMatchCompetitorServiceTest {
     }
 
     @Test
-    void testCreateMatchCompetitors_whenClubIsNull_thenCreatesEveryRow() throws Exception {
+    void testCreateMatchCompetitors_whenClubIsNull_thenImportsOnlyTheHomeClubsRows() throws Exception {
         // Arrange
         stubCompetitorAndMatch();
         when(matchCompetitorRepository.save(any(MatchCompetitor.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -436,8 +436,10 @@ public class IpscMatchCompetitorServiceTest {
 
         // Assert
         assertEquals(3, holder.getMatchCompetitors().size());
-        assertTrue(holder.getMatchCompetitors().stream()
-                .noneMatch(result -> result.getMessage().startsWith("Skipped")));
+        assertTrue(holder.getMatchCompetitors().get(0).isSuccess());
+        assertFalse(holder.getMatchCompetitors().get(1).isSuccess());
+        assertTrue(holder.getMatchCompetitors().get(1).getMessage().startsWith("Skipped"));
+        assertFalse(holder.getMatchCompetitors().get(2).isSuccess());
     }
 
     @Test
@@ -457,8 +459,8 @@ public class IpscMatchCompetitorServiceTest {
             return saved;
         });
         String csvData = """
-                MatchCompetitorId,CompetitorId,MatchId,Cats,FirearmType,Div
-                99,1,2,Junior,Handgun,Open Division
+                MatchCompetitorId,CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                99,1,2,HPSC,Junior,Handgun,Open Division
                 """;
 
         // Act
@@ -473,8 +475,8 @@ public class IpscMatchCompetitorServiceTest {
     void testCreateMatchCompetitors_whenRowIsMissingRequiredColumn_thenThrowsValidationException() throws Exception {
         // Arrange - Division is absent from the header
         String csvData = """
-                CompetitorId,MatchId,Cats,FirearmType
-                1,2,Junior,Handgun
+                CompetitorId,MatchId,Class,Cats,FirearmType
+                1,2,HPSC,Junior,Handgun
                 """;
 
         // Act & Assert
@@ -486,8 +488,8 @@ public class IpscMatchCompetitorServiceTest {
     void testCreateMatchCompetitors_whenRowHasBlankRequiredValue_thenReportsRowAsFailed() throws Exception {
         // Arrange
         String csvData = """
-                CompetitorId,MatchId,Cats,FirearmType,Div
-                1,2,Junior,Handgun,
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                1,2,HPSC,Junior,Handgun,
                 """;
 
         // Act
@@ -547,9 +549,9 @@ public class IpscMatchCompetitorServiceTest {
             return saved;
         });
         String csvData = """
-                CompetitorId,MatchId,Cats,FirearmType,Div
-                1,2,Junior,Handgun,Open Division
-                1,2,Lady,Handgun,Production Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                1,2,HPSC,Junior,Handgun,Open Division
+                1,2,HPSC,Lady,Handgun,Production Division
                 """;
 
         // Act
@@ -572,9 +574,9 @@ public class IpscMatchCompetitorServiceTest {
             return saved;
         });
         String csvData = """
-                CompetitorId,MatchId,Cats,FirearmType,Div
-                1,2,Junior,Handgun,
-                1,2,Junior,Handgun,Open Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                1,2,HPSC,Junior,Handgun,
+                1,2,HPSC,Junior,Handgun,Open Division
                 """;
 
         // Act

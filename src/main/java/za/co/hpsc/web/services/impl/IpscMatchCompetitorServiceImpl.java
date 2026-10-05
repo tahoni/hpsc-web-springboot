@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
@@ -83,7 +84,8 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
-        ClubIdentifier targetClub = resolveMatchClub(club);
+        // Import the home club's rows unless another club is asked for
+        ClubIdentifier targetClub = hasText(club) ? resolveMatchClub(club) : IpscConstants.HOME_CLUB_IDENTIFIER;
         List<MatchCompetitorRequest> requests = readMatchCompetitors(csvData);
 
         // Each row is saved in its own transaction, so a bad row is reported and skipped without affecting the

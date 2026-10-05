@@ -64,12 +64,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Services
 
-- **`IpscMatchCompetitorService.createMatchCompetitors(String, String)`:** New overload with an optional `club` (name or
-  abbreviation) that imports only the rows whose `matchClub` is that club, or whose competitor's home club is — any
-  other row, including one whose competitor can't be resolved, is reported as skipped rather than created, so there is
-  still one result per CSV row — and answers a `ValidationException` for an unknown club. The one-argument method now
-  delegates to it with no club, and `IpscMatchCompetitorServiceImpl.isForClub` does the per-row check through
-  `ClubService`; includes Javadoc and unit and integration tests
+- **`IpscMatchCompetitorService.createMatchCompetitors(String, String)`:** **Breaking:** the bulk import is now limited
+  to one club — HPSC's own club unless an optional `club` (name or abbreviation) asks for another — and imports only
+  the rows whose `matchClub` is that club, or whose competitor's home club is. Any other row, including one whose
+  competitor can't be resolved, is reported as skipped rather than created, so there is still one result per CSV row,
+  and an unknown club answers a `ValidationException`. A row that used to be created for another club, or for a
+  competitor with no home club, is now skipped unless the matching `club` is given. The one-argument method imports
+  HPSC's rows, and `IpscMatchCompetitorServiceImpl.isForClub` does the per-row check through `ClubService`; includes
+  Javadoc and unit and integration tests
 - **`ClubService`:** New service, with `ClubServiceImpl`, holding the null-safe club comparisons — `isSameClub(Club,
   ClubIdentifier)` returns `true` only when a club's identifier is the given `ClubIdentifier`, and
   `isSameClub(ClubIdentifier, ClubIdentifier)` only when a non-null identifier is the target; `IpscCompetitorServiceImpl`
@@ -87,7 +89,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Controllers
 
 - **`IpscMatchCompetitorController`:** The bulk import endpoint (`POST /bulk`) accepts an optional `club` query
-  parameter that limits the import to rows for that club, as `createMatchCompetitors(String, String)` does
+  parameter that picks the club to import rows for, HPSC's own club when omitted, as
+  `createMatchCompetitors(String, String)` does
 - **`IpscMatchCompetitorController`:** **Breaking:** the base path moved from `/ipsc/match-competitors` to
   `/ipsc/match-results`, so every match competitor endpoint, including the bulk CSV import, is now served under the new
   path and a caller still using the old one gets a `404`; its Swagger tag is renamed from "IPSC Match Competitor" to

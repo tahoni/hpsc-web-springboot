@@ -82,8 +82,9 @@ public class IpscMatchCompetitorController {
      *
      * @param csvData the CSV content as a string containing details about match competitors, formatted according
      *                to the expected schema. This parameter is required and cannot be null.
-     * @param club    the name or abbreviation of the club to import rows for; rows for any other club are reported
-     *                as skipped. Every row is imported when it is omitted.
+     * @param club    the name or abbreviation of the club to import rows for, those whose match club, or whose
+     *                competitor's home club, is that club; any other row is reported as skipped. HPSC's own club is
+     *                imported when it is omitted.
      * @return a {@link MatchCompetitorBulkResponseHolder} with one result per CSV row, each recording whether the
      * row was created and, when it was not, why — with status {@code 201} unless every row failed, in which case
      * it is {@code 422}.
@@ -94,7 +95,9 @@ public class IpscMatchCompetitorController {
     @PostMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create match competitors", description = "Create competitors' entries in matches in bulk "
             + "from CSV data. Each row is saved on its own, so a row that fails is reported and skipped while the "
-            + "rest are still created.")
+            + "rest are still created. Only rows for one club are created, HPSC's own club unless another is asked "
+            + "for with the club parameter: those whose match club or whose competitor's home club is that "
+            + "club. Any other row is reported as skipped.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "At least one row was created (or the CSV had no "
                     + "rows). Each row's result says whether it was created and, if not, why — a missing required "
@@ -123,8 +126,8 @@ public class IpscMatchCompetitorController {
                                     0,string,string,0,string,string,string,string,string,0,0,0,0,0,0,0,0,0,0,0,0,0,0,false
                                     """)))
             @RequestBody String csvData,
-            @Parameter(description = "Only import rows whose match club is this club, by name or abbreviation; "
-                    + "other rows are reported as skipped. Every row is imported when omitted.")
+            @Parameter(description = "The club to import rows for, by name or abbreviation; other rows are "
+                    + "reported as skipped. HPSC's own club is imported when omitted.")
             @RequestParam(required = false) String club)
             throws ValidationException, NonFatalException, FatalException {
         MatchCompetitorBulkResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData, club);
