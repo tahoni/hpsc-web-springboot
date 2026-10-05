@@ -177,6 +177,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Documentation
 
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #36 (`EntityIpscCompetitorService` and the match
+  competitor result models built but not wired in) closed in v12.0.0 — both files, the roadmap and the Success
+  Criteria updated, and the Open section now empty
+- **`ARCHITECTURE.md`, `AGENTS.md`:** Name the renamed `*Util` classes and `MatchCompetitorBulkResponse` models, and
+  list `ClubService` in the services table
 - **`IpscConstants`:** Every constant now has Javadoc saying what it is for and where it is used — including the
   alias competitor numbers, the range officer name marker and the home club's role in the bulk import — and the class
   Javadoc describes what it holds; the `IpscConstants` constants that no code references are marked as such
