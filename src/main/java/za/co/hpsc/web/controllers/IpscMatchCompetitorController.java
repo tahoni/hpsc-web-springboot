@@ -38,8 +38,8 @@ import java.util.List;
  * @since 9.1.0
  */
 @Controller
-@RequestMapping("/ipsc/match-results")
-@Tag(name = "IPSC Match Results", description = "IPSC Match Results API")
+@RequestMapping("/ipsc/match-competitors")
+@Tag(name = "IPSC Match Competitor", description = "IPSC Match Competitor API")
 public class IpscMatchCompetitorController {
     private final IpscMatchCompetitorService ipscMatchCompetitorService;
 

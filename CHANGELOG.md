@@ -91,10 +91,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchCompetitorController`:** The bulk import endpoint (`POST /bulk`) accepts an optional `club` query
   parameter that picks the club to import rows for, HPSC's own club when omitted, as
   `createMatchCompetitors(String, String)` does
-- **`IpscMatchCompetitorController`:** **Breaking:** the base path moved from `/ipsc/match-competitors` to
-  `/ipsc/match-results`, so every match competitor endpoint, including the bulk CSV import, is now served under the new
-  path and a caller still using the old one gets a `404`; its Swagger tag is renamed from "IPSC Match Competitor" to
-  "IPSC Match Results" to match
 
 ##### Services
 

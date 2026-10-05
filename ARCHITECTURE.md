@@ -153,7 +153,7 @@ Handles incoming HTTP requests. Does not contain business logic.
 | `ImageController`               | `/images`                 | Image CSV processing                         |
 | `IpscCompetitorController`      | `/ipsc/competitors`       | IPSC competitor CRUD + bulk CSV import       |
 | `IpscMatchController`           | `/ipsc/matches`           | IPSC match CRUD + bulk CSV import            |
-| `IpscMatchCompetitorController` | `/ipsc/match-results`     | IPSC match competitor CRUD + bulk CSV import |
+| `IpscMatchCompetitorController` | `/ipsc/match-competitors` | IPSC match competitor CRUD + bulk CSV import |
 
 All controllers:
 
