@@ -207,6 +207,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   value too long for an `int`, such as a 13-digit ID number — it skips the competitor number lookup and matches the
   value against ID numbers instead
 
+#### 🗑️ Removed
+
+##### Constants
+
+- **`IpscConstants.MAX_SAPSA_NUMBER`:** Removed, as nothing referenced it — internal constant only, so there is no API
+  change
+
 ### 🧾 [11.0.0] - 2026-10-04
 
 #### ➕ Added

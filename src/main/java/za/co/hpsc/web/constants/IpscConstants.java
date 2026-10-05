@@ -41,8 +41,6 @@ public final class IpscConstants {
      * {@code EntityIpscCompetitorService.findCompetitor}.
      */
     public static final List<Integer> EXCLUDE_ICS_ALIAS = List.of(15000, 16000);
-    /** Highest SAPSA number a competitor can hold. Not currently referenced by any code. */
-    public static final Integer MAX_SAPSA_NUMBER = 999_999;
 
     /**
      * Regular expression matching the range officer marker some imported names end with, {@code "RO"} or
