@@ -95,7 +95,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
             try {
                 if (!isForClub(request, targetClub)) {
                     matchCompetitorBulkResponses.add(new MatchCompetitorBulkResponse(false,
-                            "Skipped: match club is not " + targetClub.getName(), toFailedResponse(request)));
+                            "Skipped: match club is not " + (targetClub != null ? targetClub.getName() : ""), toFailedResponse(request)));
                     continue;
                 }
                 validateForCreate(request);
