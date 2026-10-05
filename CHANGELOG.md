@@ -133,6 +133,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `findCompetitorOrThrow(String, String)` and `resolveCompetitor` gain matching Javadoc
 - **`DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`:** Methods gain `@since` tags, and the class-level Javadoc
   and usage examples name the renamed classes
+- **`ControllerAdvice`, `FatalException`, `NonFatalException`, `ValidationException`, `Request`, `Response`,
+  `TransactionService`:** Methods and constructors that lacked one gain a `@since` tag
 - **`EntityIpscCompetitorServiceImpl`:** `findCompetitor` gains Javadoc that inherits the interface documentation
   (`{@inheritDoc}`) and adds implementation notes on the lookup stages — competitor number, ID number, then full
   name — the name normalisation, and the exception thrown when no single competitor is found

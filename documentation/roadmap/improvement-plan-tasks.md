@@ -349,6 +349,18 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   one sentence in the Award / Image CSV Processing Flow, covering every bulk CSV flow below it
 - [x] Check `README.md` and `CONTRIBUTING.md` for any remaining `text/csv` mention — none found
 
+**Wire in `EntityIpscCompetitorService` and the match competitor result models**
+*(improvement-plan.md → Gap #36)* — ✅ Closed in v12.0.0
+
+- [x] Call `EntityIpscCompetitorService.findCompetitor` from `IpscMatchCompetitorServiceImpl`'s competitor resolution
+  and remove the `TODO` in `EntityIpscCompetitorService` — done through `resolveCompetitor`, which delegates to
+  `findCompetitor`
+- [x] Return `MatchCompetitorResultHolder` from the bulk match competitor import, reporting each row's success or
+  failure — or remove the unused `MatchCompetitorResult`/`MatchCompetitorResultHolder` if that is no longer wanted —
+  done as the first option, with the models renamed to `MatchCompetitorBulkResponse`/
+  `MatchCompetitorBulkResponseHolder`
+- [x] Cover the wiring at all three test tiers, per `AGENTS.md`'s Test Conventions
+
 ---
 
 ## 🟡 Partially Completed
@@ -389,13 +401,7 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-**Wire in `EntityIpscCompetitorService` and the match competitor result models** *(improvement-plan.md → Gap #36)*
-
-- [ ] Call `EntityIpscCompetitorService.findCompetitor` from `IpscMatchCompetitorServiceImpl`'s competitor resolution
-  and remove the `TODO` in `EntityIpscCompetitorService`
-- [ ] Return `MatchCompetitorResultHolder` from the bulk match competitor import, reporting each row's success or
-  failure — or remove the unused `MatchCompetitorResult`/`MatchCompetitorResultHolder` if that is no longer wanted
-- [ ] Cover the wiring at all three test tiers, per `AGENTS.md`'s Test Conventions
+*No gaps are currently open.*
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.
