@@ -101,6 +101,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchServiceImpl.resolveMatchCategory`:** A match category that is null, empty or blank now resolves to
   `IpscConstants.DEFAULT_MATCH_CATEGORY` (`Club Shoot`) instead of answering a `ValidationException`, as the club
   already defaults when omitted; a category that is supplied must still be known. Documented, with a unit test
+- **`IpscMatchServiceImpl.validateForCreate`:** The match category is no longer required to create or replace a
+  match — a request without one answers no `ValidationException` ("Match category is required.") but takes the
+  default match category, as `resolveMatchCategory` already supplies one and the club defaults when omitted; the
+  `IpscMatchService` Javadoc and the unit, service and integration tests expect the default
 - **`EntityIpscCompetitorService.findCompetitor`:** The competitor number is now a `String` that may also be an ID
   number — the lookup tries the competitor number, then the ID number, then the full name, narrowing several number
   matches by name. `null` is accepted for either argument when the other is given, a `ValidationException` is thrown

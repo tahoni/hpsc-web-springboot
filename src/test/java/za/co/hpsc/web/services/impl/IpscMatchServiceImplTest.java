@@ -446,13 +446,16 @@ class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testValidateForCreate_whenMatchCategoryIsBlank_thenThrowsValidationException() {
+    void testValidateForCreate_whenMatchCategoryIsNullOrBlank_thenDoesNotThrow() {
         // Arrange
-        MatchRequest request = validRequest("Test Club");
-        request.setMatchCategory("  ");
+        MatchRequest nullCategory = validRequest("Test Club");
+        nullCategory.setMatchCategory(null);
+        MatchRequest blankCategory = validRequest("Test Club");
+        blankCategory.setMatchCategory("  ");
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.validateForCreate(request));
+        // Act & Assert - the match category defaults when omitted, so it is not required
+        assertDoesNotThrow(() -> ipscMatchServiceImpl.validateForCreate(nullCategory));
+        assertDoesNotThrow(() -> ipscMatchServiceImpl.validateForCreate(blankCategory));
     }
 
     @Test

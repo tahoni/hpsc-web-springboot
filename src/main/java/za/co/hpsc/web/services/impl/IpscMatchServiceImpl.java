@@ -345,7 +345,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
     /**
      * Validates that a request carries every field required to create or fully replace a
-     * match.
+     * match: a name, date and firearm type. The club and match category are not required, as each
+     * defaults when omitted (see {@link #resolveClub(String)} and {@link #resolveMatchCategory(String)}).
      *
      * @param request the request to validate.
      * @throws ValidationException if a required field is missing.
@@ -362,9 +363,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         }
         if (!hasText(request.getMatchFirearmType())) {
             throw new ValidationException("Match firearm type is required.");
-        }
-        if (!hasText(request.getMatchCategory())) {
-            throw new ValidationException("Match category is required.");
         }
     }
 

@@ -21,8 +21,8 @@ public interface IpscMatchService {
     /**
      * Creates a new IPSC match.
      *
-     * @param request the match to create. Must not be null and must carry a match name, date,
-     *                club and firearm type/category.
+     * @param request the match to create. Must not be null and must carry a match name, date
+     *                and firearm type. The club and match category default when omitted.
      * @return the created match, including its generated ID.
      * @throws ValidationException if a required field is missing, or the firearm type/category
      *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
@@ -69,7 +69,7 @@ public interface IpscMatchService {
      *
      * @param matchId the identifier of the match to replace.
      * @param request the match's replacement fields. Must not be null and must carry a match
-     *                name, date, club and firearm type/category.
+     *                name, date and firearm type. The club and match category default when omitted.
      * @return the updated match.
      * @throws ValidationException if a required field is missing, or the firearm type/category
      *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
