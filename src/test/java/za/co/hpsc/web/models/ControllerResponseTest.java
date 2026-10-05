@@ -41,7 +41,7 @@ public class ControllerResponseTest {
 
     // ControllerResponse(LocalDateTime, String, String)
     @Test
-    void testShortConstructor_whenValuesProvided_thenSetsFieldsAndSuccessFalse() {
+    void testShortConstructor_whenErrorIsNull_thenSetsFieldsAndSuccessTrue() {
         // Arrange
         LocalDateTime timestamp = LocalDateTime.of(2026, 4, 24, 10, 15);
         String message = "Operation completed";
@@ -51,13 +51,13 @@ public class ControllerResponseTest {
 
         // Assert
         assertEquals(timestamp, response.getTimestamp());
-        assertFalse(response.isSuccess());
+        assertTrue(response.isSuccess());
         assertEquals(message, response.getMessage());
         assertNull(response.getError());
     }
 
     @Test
-    void testShortConstructor_whenNonNullNonBlankErrorProvided_thenDerivesSuccessTrue() {
+    void testShortConstructor_whenNonBlankErrorProvided_thenDerivesSuccessFalse() {
         // Arrange
         LocalDateTime timestamp = LocalDateTime.of(2026, 4, 24, 10, 30);
         String message = "Operation completed";
@@ -68,13 +68,13 @@ public class ControllerResponseTest {
 
         // Assert
         assertEquals(timestamp, response.getTimestamp());
-        assertTrue(response.isSuccess());
+        assertFalse(response.isSuccess());
         assertEquals(message, response.getMessage());
         assertEquals(error, response.getError());
     }
 
     @Test
-    void testShortConstructor_whenErrorIsBlank_thenDerivesSuccessFalse() {
+    void testShortConstructor_whenErrorIsBlank_thenDerivesSuccessTrue() {
         // Arrange
         LocalDateTime timestamp = LocalDateTime.of(2026, 4, 24, 10, 45);
         String message = "Operation completed";
@@ -83,7 +83,7 @@ public class ControllerResponseTest {
         ControllerResponse response = new ControllerResponse(timestamp, message, "   ");
 
         // Assert
-        assertFalse(response.isSuccess());
+        assertTrue(response.isSuccess());
     }
 
     // ControllerResponse(LocalDateTime, boolean, String, String)

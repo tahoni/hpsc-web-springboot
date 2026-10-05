@@ -152,6 +152,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🐛 Fixed
 
+##### Models
+
+- **`ControllerResponse`:** The constructor taking only a timestamp, message and error derived `success` the wrong way
+  round, so a response with an error was marked successful and one without was not — `success` is now `false` when the
+  error has a value and `true` when it is null or blank; its unit tests are corrected to match
+
 ##### Services
 
 - **`EntityIpscCompetitorServiceImpl`:** `findCompetitor` no longer throws a `NumberFormatException` for a numeric

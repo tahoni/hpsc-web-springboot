@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 /**
  * Represents a standardised response structure typically used by controllers.
  *
@@ -54,7 +56,7 @@ public class ControllerResponse {
      */
     public ControllerResponse(@NotNull LocalDateTime timestamp, String message, String error) {
         this.timestamp = timestamp;
-        this.success = ((error != null) && (!error.isBlank()));
+        this.success = !hasText(error);
         this.message = message;
         this.error = error;
     }
