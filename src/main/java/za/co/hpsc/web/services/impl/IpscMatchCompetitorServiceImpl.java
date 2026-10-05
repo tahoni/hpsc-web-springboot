@@ -462,7 +462,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * The checks run in order, and the first that succeeds decides:
      * </p>
      * <ol>
-     *     <li>With no target club there is nothing to filter on, so every row matches and the row isn't inspected at
+     *     <li>With no target club there is nothing to filter on, so every row matches, and the row isn't inspected at
      *     all, not even for an unknown {@code matchClub}.</li>
      *     <li>The row's {@code matchClub}, by name or abbreviation, is the target club.</li>
      *     <li>Failing that, the home club of the competitor the row identifies is the target club. The competitor is
@@ -488,21 +488,17 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
             return true;
         }
 
-        // Test the match club against the target club
+        // Test the competitor in the match's club against the target club
         if (clubService.isSameClub(resolveMatchClub(request.getMatchClub()), targetClub)) {
             return true;
         }
 
         // Test the competitor's home club against the target club
         try {
-            return clubService.isSameClub(resolveCompetitorClub(request), targetClub);
+            return clubService.isSameClub(resolveCompetitorHomeClub(request), targetClub);
         } catch (ValidationException | NonFatalException e) {
             return false;
         }
-    }
-
-    protected ClubIdentifier resolveMatchCompetitorClub(MatchCompetitorRequest request) {
-        return ClubIdentifier.fromAbbreviation(request.getMatchClub()).orElse(null);
     }
 
     /**
@@ -521,7 +517,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      *                             than one competitor matches the number and name.
      * @throws NonFatalException   if no competitor matches.
      */
-    protected ClubIdentifier resolveCompetitorClub(MatchCompetitorRequest request) {
+    protected ClubIdentifier resolveCompetitorHomeClub(MatchCompetitorRequest request) {
         Competitor competitor = resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
                 request.getCompetitorName());
         Club homeClub = competitor.getHomeClub();

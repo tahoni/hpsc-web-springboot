@@ -277,9 +277,9 @@ class IpscMatchCompetitorServiceImplTest {
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveMatchClub("Nope"));
     }
 
-    // resolveMatchCompetitorClub()
+    // resolveCompetitorHomeClub()
     @Test
-    void testResolveMatchCompetitorClub_whenCompetitorHasHomeClub_thenReturnsItsIdentifier() {
+    void testResolveCompetitorHomeClub_whenCompetitorHasHomeClub_thenReturnsItsIdentifier() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
@@ -288,11 +288,11 @@ class IpscMatchCompetitorServiceImplTest {
                 .thenReturn(Optional.of(competitorWithHomeClub(ClubIdentifier.HPSC)));
 
         // Act & Assert
-        assertEquals(ClubIdentifier.HPSC, matchCompetitorServiceImpl.resolveCompetitorClub(request));
+        assertEquals(ClubIdentifier.HPSC, matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
     }
 
     @Test
-    void testResolveMatchCompetitorClub_whenRequestHasCompetitorId_thenResolvesById() {
+    void testResolveCompetitorHomeClub_whenRequestHasCompetitorId_thenResolvesById() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorId(1L);
@@ -300,12 +300,12 @@ class IpscMatchCompetitorServiceImplTest {
                 .thenReturn(Optional.of(competitorWithHomeClub(ClubIdentifier.SOSC)));
 
         // Act & Assert
-        assertEquals(ClubIdentifier.SOSC, matchCompetitorServiceImpl.resolveCompetitorClub(request));
+        assertEquals(ClubIdentifier.SOSC, matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
         verifyNoInteractions(entityIpscCompetitorService);
     }
 
     @Test
-    void testResolveMatchCompetitorClub_whenCompetitorHasNoHomeClub_thenReturnsNull() {
+    void testResolveCompetitorHomeClub_whenCompetitorHasNoHomeClub_thenReturnsNull() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
@@ -313,11 +313,11 @@ class IpscMatchCompetitorServiceImplTest {
                 .thenReturn(Optional.of(new Competitor()));
 
         // Act & Assert
-        assertNull(matchCompetitorServiceImpl.resolveCompetitorClub(request));
+        assertNull(matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
     }
 
     @Test
-    void testResolveMatchCompetitorClub_whenHomeClubHasNoIdentifier_thenReturnsNull() {
+    void testResolveCompetitorHomeClub_whenHomeClubHasNoIdentifier_thenReturnsNull() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
@@ -326,22 +326,22 @@ class IpscMatchCompetitorServiceImplTest {
         when(entityIpscCompetitorService.findCompetitor("7001", null)).thenReturn(Optional.of(competitor));
 
         // Act & Assert
-        assertNull(matchCompetitorServiceImpl.resolveCompetitorClub(request));
+        assertNull(matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
     }
 
     @Test
-    void testResolveMatchCompetitorClub_whenNoCompetitorIsFound_thenThrowsNonFatalException() {
+    void testResolveCompetitorHomeClub_whenNoCompetitorIsFound_thenThrowsNonFatalException() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
         when(entityIpscCompetitorService.findCompetitor("7001", null)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.resolveCompetitorClub(request));
+        assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
     }
 
     @Test
-    void testResolveMatchCompetitorClub_whenCompetitorIsAmbiguous_thenThrowsValidationException() {
+    void testResolveCompetitorHomeClub_whenCompetitorIsAmbiguous_thenThrowsValidationException() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
@@ -349,7 +349,7 @@ class IpscMatchCompetitorServiceImplTest {
                 .thenThrow(new ValidationException("More than one competitor"));
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitorClub(request));
+        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
     }
 
     // isForClub()
