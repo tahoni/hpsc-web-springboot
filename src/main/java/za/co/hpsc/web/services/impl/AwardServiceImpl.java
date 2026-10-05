@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 @Slf4j
 @Service
 public class AwardServiceImpl implements AwardService {
@@ -30,7 +32,7 @@ public class AwardServiceImpl implements AwardService {
     public AwardCeremonyResponseHolder createAwards(String csvData)
             throws FatalException {
 
-        if (csvData == null || csvData.isBlank()) {
+        if (!hasText(csvData)) {
             log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
         }

@@ -6,6 +6,8 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 /**
  * Enum representing different power factors in the context of shooting sports.
  *
@@ -40,9 +42,10 @@ public enum PowerFactor {
      *             Can be null or empty.
      * @return an {@code Optional} containing the matching {@code PowerFactor} if found,
      * or an empty {@code Optional} otherwise.
+     * @since 1.1.3
      */
     public static Optional<PowerFactor> fromName(String name) {
-        if ((name == null) || (name.isBlank())) {
+        if (!hasText(name)) {
             return Optional.empty();
         }
 
@@ -64,9 +67,10 @@ public enum PowerFactor {
      *                     Can be null or empty.
      * @return an {@code Optional} containing the matching {@code PowerFactor} if found,
      * or an empty {@code Optional} otherwise.
+     * @since 1.1.3
      */
     public static Optional<PowerFactor> fromAbbreviation(String abbreviation) {
-        if ((abbreviation == null) || (abbreviation.isBlank())) {
+        if (!hasText(abbreviation)) {
             return Optional.empty();
         }
 

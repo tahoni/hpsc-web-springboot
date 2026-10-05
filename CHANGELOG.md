@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 11.0.0](#-1100---2026-10-04) ← Current
+- [🧾 Version 12.0.0](#-1200---2026-10-05) ← Current
+- [🧾 Version 11.0.0](#-1100---2026-10-04)
 - [🧾 Version 10.0.0](#-1000---2026-10-03)
 - [🧾 Version 9.1.0](#-910---2026-10-03)
 - [🧾 Version 9.0.0](#-900---2026-10-01)
@@ -48,6 +49,204 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [12.0.0] - 2026-10-05
+
+#### ➕ Added
+
+##### Build & Configuration
+
+- **`qodana.yaml`:** New Qodana configuration for the `code_quality.yml` workflow — the `qodana.starter` profile plus
+  the `JavadocReference` inspection, so broken `{@link}` and `@see` references are reported
+
+##### Helpers
+
+- **`CompetitorHelpers.getCompetitorNumberAsInteger`:** New helper that converts a competitor number to an `int` —
+  surrounding whitespace is ignored, and a number that is null, blank or not a whole number, or one of the shared
+  alias numbers `15000` and `16000`, converts to `0` meaning "no competitor number"; includes Javadoc and unit tests
+
+##### Repositories
+
+- **`CompetitorRepository.findAllByIdNumber`:** New derived query returning every competitor with a given ID number,
+  used by `findCompetitor` to match a supplied value against ID numbers
+
+##### Services
+
+- **`IpscMatchCompetitorService.createMatchCompetitors(String, String)`:** **Breaking:** the bulk import is now limited
+  to one club — HPSC's own club unless an optional `club` (name or abbreviation) asks for another — and imports only
+  the rows whose `matchClub` is that club, or whose competitor's home club is. Any other row, including one whose
+  competitor can't be resolved, is reported as skipped rather than created, so there is still one result per CSV row,
+  and an unknown club answers a `ValidationException`. A row that used to be created for another club, or for a
+  competitor with no home club, is now skipped unless the matching `club` is given. The one-argument method imports
+  HPSC's rows, and `IpscMatchCompetitorServiceImpl.isForClub` does the per-row check through `ClubService`; includes
+  Javadoc and unit and integration tests
+- **`ClubService`:** New service, with `ClubServiceImpl`, holding the null-safe club comparisons — `isSameClub(Club,
+  ClubIdentifier)` returns `true` only when a club's identifier is the given `ClubIdentifier`, and
+  `isSameClub(ClubIdentifier, ClubIdentifier)` only when a non-null identifier is the target; `IpscCompetitorServiceImpl`
+  takes it as a constructor dependency and its `isMemberOfHomeClub` now takes just the club and compares it with the
+  home club through it; includes Javadoc and unit and integration tests
+
+##### Utils
+
+- **`StringUtil.hasText`:** New helper that returns `true` only when a string is neither null nor blank, replacing the
+  private copy in `IpscMatchCompetitorServiceImpl` that checks the competitor number and name on a request; includes
+  Javadoc and unit tests
+
+#### 🔄 Changed
+
+##### Build & Configuration
+
+- **`pom.xml`:** `mysql-connector-j` is now pinned to `26.7.0` instead of the version Spring Boot manages — re-check
+  it against the parent's managed version at each release, per the Release Checklist's override step
+
+##### Controllers
+
+- **`IpscMatchCompetitorController`:** The bulk import endpoint (`POST /bulk`) accepts an optional `club` query
+  parameter that picks the club to import rows for, HPSC's own club when omitted, as
+  `createMatchCompetitors(String, String)` does
+
+##### Services
+
+- **`IpscCompetitorServiceImpl.isMemberOfHomeClub`:** New overload, `isMemberOfHomeClub(Club, ClubIdentifier)`, that
+  checks a club against the home club passed in; `isMemberOfHomeClub(Club)` now delegates to it with the default home
+  club, `IpscConstants.HOME_CLUB_IDENTIFIER` (HPSC), so existing callers behave as before; includes Javadoc and unit
+  tests
+- **`EntityIpscCompetitorServiceImpl.findCompetitor`:** The range officer marker, `RO` or `(RO)`, is now removed from
+  a name wherever it appears — at the start, in the middle or at the end — instead of only at the end, and the
+  whitespace left behind is collapsed, so `RO Jane Doe` and `Jane (RO) Doe` match `Jane Doe`; `RO` must be a whole word,
+  so a name such as `Romeo` or `PEDRO` is left alone. `IpscConstants.REPLACE_IN_NAMES_REGEX` and the Javadoc follow,
+  with unit, service and integration tests
+- **`IpscMatchServiceImpl.resolveMatchCategory`:** A match category that is null, empty or blank now resolves to
+  `IpscConstants.DEFAULT_MATCH_CATEGORY` (`Club Shoot`) instead of answering a `ValidationException`, as the club
+  already defaults when omitted; a category that is supplied must still be known, by display name or constant name
+  (`Club Shoot` or `CLUB_SHOOT`), ignoring case and surrounding whitespace. Documented, with unit tests
+- **`IpscMatchServiceImpl.validateForCreate`:** The match category is no longer required to create or replace a
+  match — a request without one answers no `ValidationException` ("Match category is required.") but takes the
+  default match category, as `resolveMatchCategory` already supplies one and the club defaults when omitted; the
+  `IpscMatchService` Javadoc and the unit, service and integration tests expect the default
+- **`EntityIpscCompetitorService.findCompetitor`:** The competitor number is now a `String` that may also be an ID
+  number — the lookup tries the competitor number, then the ID number, then the full name, narrowing several number
+  matches by name. `null` is accepted for either argument when the other is given, a `ValidationException` is thrown
+  when both are null or blank, and an exception is thrown, rather than an empty `Optional` returned, when no single
+  competitor matches — a `NonFatalException` when none do, a `ValidationException` when several do, including
+  several that share the number but not the name
+- **`EntityIpscCompetitorService.findCompetitor`:** Parameters reordered to `(competitorNumber, fullName)`.
+  `IpscMatchCompetitorServiceImpl` now takes an `EntityIpscCompetitorService`, and its `resolveCompetitor` resolves a
+  competitor by ID, otherwise through the new `findCompetitorOrThrow(String, String)`, which trims the competitor
+  number and matches it, then the ID number, then the full name — an unmatched number and name still throws a
+  `NonFatalException`, while an ambiguous one, including several that share the number but not the name, keeps
+  throwing a `ValidationException`
+- **`IpscMatchCompetitorServiceImpl.resolveCompetitor`:** The match competitor create and patch endpoints now match a
+  competitor given by number and name through `findCompetitor`, so a name also matches a nickname, a number also
+  matches an ID number, several competitors sharing a number are narrowed by name, and a name is tried when the number
+  matches nobody
+- **`IpscMatchCompetitorServiceImpl.resolveCompetitor`:** **Breaking:** the shared alias numbers `15000` and `16000`
+  are no longer matched by competitor number, so a request that identified a competitor by one of them now resolves
+  only if the name matches, and a number that is not a whole number is looked up as an ID number, answering `404`
+  when nothing matches, instead of being rejected up front with a `400`
+- **`IpscCompetitorServiceImpl`:** A competitor created or updated without a nickname, or with an empty or blank
+  one, now takes its first name as the nickname, instead of being saved with none
+- **`IpscMatchCompetitorServiceImpl.createMatchCompetitors`:** **Breaking:** the bulk import is now a partial import
+  rather than all or nothing — each row is saved on its own, and a row that is missing a required field, has an
+  unrecognised enumerated value, names an unknown competitor or match, or duplicates another entry is skipped and
+  reported in its `MatchCompetitorBulkResponse` (`success` of `false` and a `message`) while the other rows are still
+  created, instead of the whole import answering `400` or `404`. Only unreadable CSV, or a header missing a required
+  column, still answers `400`, and an import in which every row fails answers `422` with the same per-row results.
+  Its interface and controller Javadoc and Swagger descriptions are updated to match
+
+##### Models
+
+- **`MatchCompetitorResult`, `MatchCompetitorResultHolder`:** Renamed to `MatchCompetitorBulkResponse` and
+  `MatchCompetitorBulkResponseHolder`, and the holder's `matchCompetitorResults` field to `matchCompetitors`, so the
+  bulk import's response models follow the `*Response`/`*ResponseHolder` naming — a bulk match competitor import's
+  response body now carries `matchCompetitors` instead of `matchCompetitorResults`
+- **`MatchCompetitorResponse`:** New `competitorName` and `competitorNumber` fields, so a bulk import result
+  identifies the competitor it relates to even when the row failed; a persisted match competitor's name is its nickname
+  and last name
+- **`MatchCompetitorBulkResponse`:** `success` now defaults to `true` and `message` to an empty string
+
+##### Utils
+
+- **`StringUtil.hasText`:** The enums, `ControllerResponse`, `ImageResponse` and the service implementations now use it,
+  imported statically, in place of their own null and blank checks — no behaviour change except that
+  `ImageResponse.setMimeType` now also ignores a blank MIME type guessed from the file name
+
+- **`StringUtil.toProperCase`:** `IpscCompetitorServiceImpl` now imports it statically, like `hasText` — no behaviour
+  change
+
+- **`DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`:** Renamed back from `DateUtils`, `NumberUtils`, `StringUtils`
+  and `ValueUtils`, the plural names introduced in 8.12.0 (and their test classes to match) — internal classes
+  only, so there is no API change
+
+##### Documentation
+
+- **`improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #36 (`EntityIpscCompetitorService` and the match
+  competitor result models built but not wired in) closed in v12.0.0 — both files, the roadmap and the Success
+  Criteria updated, and the Open section now empty
+- **`ARCHITECTURE.md`, `AGENTS.md`:** Name the renamed `*Util` classes and `MatchCompetitorBulkResponse` models, and
+  list `ClubService` in the services table
+- **`IpscConstants`:** Every constant now has Javadoc saying what it is for and where it is used — including the
+  alias competitor numbers, the range officer name marker and the home club's role in the bulk import — and the class
+  Javadoc describes what it holds
+- **`ClubService`, `IpscMatchCompetitorService`, `IpscMatchCompetitorServiceImpl`:** `ClubService`'s methods,
+  `createMatchCompetitors`' club filter (check order, skipped versus failed rows, the HPSC default) and `isForClub`,
+  `resolveCompetitorHomeClub` are documented
+- **`EntityIpscCompetitorService`, `IpscMatchCompetitorServiceImpl`:** `findCompetitor`'s interface Javadoc now
+  describes the lookup order, the accepted null and blank arguments and the exceptions thrown, and
+  `findCompetitorOrThrow(String, String)` and `resolveCompetitor` gain matching Javadoc
+- **`DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`:** Methods gain `@since` tags, and the class-level Javadoc
+  and usage examples name the renamed classes
+- **`ControllerAdvice`, `FatalException`, `NonFatalException`, `ValidationException`, `Request`, `Response`,
+  `TransactionService`:** Methods and constructors that lacked one gain a `@since` tag
+- **`EntityIpscCompetitorServiceImpl`:** `findCompetitor` gains Javadoc that inherits the interface documentation
+  (`{@inheritDoc}`) and adds implementation notes on the lookup stages — competitor number, ID number, then full
+  name — the name normalisation, and the exception thrown when no single competitor is found
+
+##### Tests
+
+- **`IpscCompetitorServiceImplTest`:** New `applyFields` tests for the nickname defaulting to the first name when
+  it is null, empty or blank, replacing an existing nickname, and a supplied nickname being kept
+- **`IpscMatchCompetitorServiceTest`, `IpscMatchCompetitorServiceImplTest`, `IpscMatchCompetitorServiceIntegrationTest`,
+  `IpscMatchCompetitorControllerTest`:** Updated for the partial bulk import and `MatchCompetitorBulkResponseHolder` —
+  a failed row is asserted as an unsuccessful `MatchCompetitorBulkResponse` rather than a thrown exception, with new
+  cases for a failing row not stopping the others, for a row duplicating an earlier row in the same import, for the
+  `422` when every row fails and for `toFailedResponse`
+- **`CompetitorHelpersTest`:** Cover `getCompetitorNumberAsInteger` for numeric, whitespace-padded, zero-padded, null,
+  blank and non-numeric numbers, and for the excluded ICS aliases `15000` and `16000`
+- **`EntityIpscCompetitorServiceTest`, `EntityIpscCompetitorServiceImplTest`,
+  `EntityIpscCompetitorServiceIntegrationTest`:** Brought up to date with the `String` competitor number and the
+  `NonFatalException`/`ValidationException` behaviour of `findCompetitor`, and extended to cover the ID number
+  lookup, non-numeric, zero, negative, whitespace-padded, `+`-prefixed, null and blank numbers, null names and the
+  blank-input validation
+- **`IpscMatchCompetitorServiceImplTest`, `IpscMatchCompetitorServiceTest`,
+  `IpscMatchCompetitorServiceIntegrationTest`:** Cover `resolveCompetitor` delegating to `EntityIpscCompetitorService`
+  and the `NonFatalException` and `ValidationException` thrown for an unmatched and an ambiguous name
+
+#### 🐛 Fixed
+
+##### Models
+
+- **`ControllerResponse`:** The constructor taking only a timestamp, message and error derived `success` the wrong way
+  round, so a response with an error was marked successful and one without was not — `success` is now `false` when the
+  error has a value and `true` when it is null or blank; its unit tests are corrected to match
+
+##### Services
+
+- **`EntityIpscCompetitorServiceImpl`:** `findCompetitor` no longer throws a `NumberFormatException` for a numeric
+  value too long for an `int`, such as a 13-digit ID number — it skips the competitor number lookup and matches the
+  value against ID numbers instead
+
+#### 🗑️ Removed
+
+##### Constants
+
+- **`IpscConstants.MAX_SAPSA_NUMBER`:** Removed, as nothing referenced it — internal constant only, so there is no API
+  change
+- **`IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE`, `PERCENTAGE_SCALE`:** Removed, as nothing
+  referenced them — internal constants only, so there is no API change; the scoring layer can introduce its own scales
+  with the code that applies them
 
 ### 🧾 [11.0.0] - 2026-10-04
 

@@ -27,6 +27,7 @@ public interface TransactionService {
      * @param competitor the competitor to save; a new one is created when its ID is
      *                   {@code null}. Must not be null.
      * @return the saved competitor, including its generated ID.
+     * @since 8.9.0
      */
     Competitor saveCompetitor(Competitor competitor);
 
@@ -36,6 +37,7 @@ public interface TransactionService {
      *
      * @param competitors the competitors to save. Must not be null.
      * @return the saved competitors, in the order given.
+     * @since 8.9.0
      */
     List<Competitor> saveCompetitors(List<Competitor> competitors);
 
@@ -46,6 +48,7 @@ public interface TransactionService {
      *                   persisted.
      * @throws org.springframework.dao.DataIntegrityViolationException if another record still
      *                                                                 references the competitor.
+     * @since 8.9.0
      */
     void deleteCompetitor(Competitor competitor);
 
@@ -55,6 +58,7 @@ public interface TransactionService {
      * @param match the match to save; a new one is created when its ID is {@code null}. Must not
      *              be null.
      * @return the saved match, including its generated ID.
+     * @since 8.9.0
      */
     IpscMatch saveMatch(IpscMatch match);
 
@@ -64,6 +68,7 @@ public interface TransactionService {
      *
      * @param matches the matches to save. Must not be null.
      * @return the saved matches, in the order given.
+     * @since 8.9.0
      */
     List<IpscMatch> saveMatches(List<IpscMatch> matches);
 
@@ -73,6 +78,7 @@ public interface TransactionService {
      * @param match the match to delete. Must not be null and must already be persisted.
      * @throws org.springframework.dao.DataIntegrityViolationException if another record still
      *                                                                 references the match.
+     * @since 8.9.0
      */
     void deleteMatch(IpscMatch match);
 
@@ -86,6 +92,7 @@ public interface TransactionService {
      *                                                                 constraint, such as the
      *                                                                 unique competitor, match and
      *                                                                 firearm type key.
+     * @since 8.9.0
      */
     MatchCompetitor saveMatchCompetitor(MatchCompetitor matchCompetitor);
 
@@ -98,6 +105,7 @@ public interface TransactionService {
      * @throws org.springframework.dao.DataIntegrityViolationException if a unique constraint is violated, such as
      *                                                                  a duplicate competitor, match and firearm
      *                                                                  type.
+     * @since 8.9.0
      */
     List<MatchCompetitor> saveMatchCompetitors(List<MatchCompetitor> matchCompetitors);
 
@@ -109,6 +117,7 @@ public interface TransactionService {
      * @throws org.springframework.dao.DataIntegrityViolationException if another record still
      *                                                                 references the match
      *                                                                 competitor.
+     * @since 8.9.0
      */
     void deleteMatchCompetitor(MatchCompetitor matchCompetitor);
 }

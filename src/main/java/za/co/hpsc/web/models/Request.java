@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import za.co.hpsc.web.utils.ValueUtils;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +87,6 @@ public class Request {
         this.summary = summary;
         this.description = description;
         this.category = category;
-        this.tags = ValueUtils.nullAsEmptyList(tags);
+        this.tags = ValueUtil.nullAsEmptyList(tags);
     }
 }

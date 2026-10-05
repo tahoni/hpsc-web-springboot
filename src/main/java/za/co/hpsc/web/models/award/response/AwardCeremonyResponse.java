@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.Response;
 import za.co.hpsc.web.models.award.request.AwardRequest;
-import za.co.hpsc.web.utils.ValueUtils;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -60,8 +60,8 @@ public class AwardCeremonyResponse extends Response {
      */
     public AwardCeremonyResponse(LocalDate date, String imageFilePath, List<AwardResponse> awards) {
         this.date = date;
-        this.imageFilePath = ValueUtils.nullAsEmptyString(imageFilePath);
-        this.awards = ValueUtils.nullAsEmptyList(awards);
+        this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
+        this.awards = ValueUtil.nullAsEmptyList(awards);
     }
 
     /**
@@ -92,8 +92,8 @@ public class AwardCeremonyResponse extends Response {
                                  List<AwardResponse> awards) {
         super(uuid);
         this.date = date;
-        this.imageFilePath = ValueUtils.nullAsEmptyString(imageFilePath);
-        this.awards = ValueUtils.nullAsEmptyList(awards);
+        this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
+        this.awards = ValueUtil.nullAsEmptyList(awards);
     }
 
     /**
@@ -127,8 +127,8 @@ public class AwardCeremonyResponse extends Response {
                                  List<AwardResponse> awards) {
         super(uuid, title);
         this.date = date;
-        this.imageFilePath = ValueUtils.nullAsEmptyString(imageFilePath);
-        this.awards = ValueUtils.nullAsEmptyList(awards);
+        this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
+        this.awards = ValueUtil.nullAsEmptyList(awards);
     }
 
     /**
@@ -163,14 +163,15 @@ public class AwardCeremonyResponse extends Response {
      * @param awards        the list of {@link AwardResponse} objects representing
      *                      individual awards.
      *                      If null, it defaults to an empty list.
+     * @since 1.1.0
      */
     public AwardCeremonyResponse(UUID uuid, String title, String summary, String description,
                                  String category, List<String> tags, LocalDate date, String imageFilePath,
                                  List<AwardResponse> awards) {
         super(uuid, title, summary, description, category, tags);
         this.date = date;
-        this.imageFilePath = ValueUtils.nullAsEmptyString(imageFilePath);
-        this.awards = ValueUtils.nullAsEmptyList(awards);
+        this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
+        this.awards = ValueUtil.nullAsEmptyList(awards);
     }
 
     /**
@@ -202,14 +203,15 @@ public class AwardCeremonyResponse extends Response {
      * @param awards        the list of {@link AwardResponse} objects representing
      *                      individual awards.
      *                      If null, it defaults to an empty list.
+     * @since 1.1.0
      */
     public AwardCeremonyResponse(String title, String summary, String description, String category,
                                  List<String> tags, LocalDate date, String imageFilePath,
                                  List<AwardResponse> awards) {
         super(title, summary, description, category, tags);
         this.date = date;
-        this.imageFilePath = ValueUtils.nullAsEmptyString(imageFilePath);
-        this.awards = ValueUtils.nullAsEmptyList(awards);
+        this.imageFilePath = ValueUtil.nullAsEmptyString(imageFilePath);
+        this.awards = ValueUtil.nullAsEmptyList(awards);
     }
 
     /**
@@ -227,6 +229,7 @@ public class AwardCeremonyResponse extends Response {
      * @param awardRequestList a list of {@link AwardRequest} objects containing details
      *                         of the award ceremony. If null or empty, the instance
      *                         will be initialised with default values.
+     * @since 1.1.0
      */
     public AwardCeremonyResponse(List<AwardRequest> awardRequestList) {
         super();

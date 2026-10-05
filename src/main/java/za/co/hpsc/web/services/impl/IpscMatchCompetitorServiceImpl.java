@@ -10,34 +10,36 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.constants.SystemConstants;
+import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
-import za.co.hpsc.web.enums.ClubIdentifier;
-import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.helpers.CompetitorHelpers;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequestCsvMixIn;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponse;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
-import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponseHolder;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.services.ClubService;
+import za.co.hpsc.web.services.EntityIpscCompetitorService;
 import za.co.hpsc.web.services.IpscMatchCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import static za.co.hpsc.web.utils.StringUtil.hasText;
 
 @Slf4j
 @Service
@@ -45,15 +47,23 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     private final MatchCompetitorRepository matchCompetitorRepository;
     private final CompetitorRepository competitorRepository;
     private final IpscMatchRepository ipscMatchRepository;
+
+    private final EntityIpscCompetitorService entityIpscCompetitorService;
+
+    private final ClubService clubService;
     private final TransactionService transactionService;
 
     public IpscMatchCompetitorServiceImpl(MatchCompetitorRepository matchCompetitorRepository,
                                           CompetitorRepository competitorRepository,
                                           IpscMatchRepository ipscMatchRepository,
+                                          EntityIpscCompetitorService entityIpscCompetitorService,
+                                          ClubService clubService,
                                           TransactionService transactionService) {
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.competitorRepository = competitorRepository;
         this.ipscMatchRepository = ipscMatchRepository;
+        this.entityIpscCompetitorService = entityIpscCompetitorService;
+        this.clubService = clubService;
         this.transactionService = transactionService;
     }
 
@@ -67,43 +77,42 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     }
 
     @Override
-    public MatchCompetitorResponseHolder createMatchCompetitors(String csvData) throws FatalException {
-        if (csvData == null || csvData.isBlank()) {
+    public MatchCompetitorBulkResponseHolder createMatchCompetitors(String csvData, String club)
+            throws FatalException {
+        if (!hasText(csvData)) {
             log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
         }
 
+        // Import the home club's rows unless another club is asked for
+        ClubIdentifier targetClub = hasText(club) ? resolveMatchClub(club) : IpscConstants.HOME_CLUB_IDENTIFIER;
         List<MatchCompetitorRequest> requests = readMatchCompetitors(csvData);
 
-        // Every row is validated and built before any is saved, then all are saved in one
-        // transaction, so a bad row leaves none of them persisted.
-        List<MatchCompetitor> matchCompetitors = new ArrayList<>();
-        Set<List<Object>> entries = new HashSet<>();
+        // Each row is saved in its own transaction, so a bad row is reported and skipped without affecting the
+        // others. save() also refuses a row that duplicates one saved earlier in this import.
+        List<MatchCompetitorBulkResponse> matchCompetitorBulkResponses = new ArrayList<>();
         for (MatchCompetitorRequest request : requests) {
-            validateForCreate(request);
+            try {
+                if (!isForClub(request, targetClub)) {
+                    String targetClubName = (targetClub != null) ? targetClub.getName() : "";
+                    matchCompetitorBulkResponses.add(new MatchCompetitorBulkResponse(false,
+                            "Skipped: match club is not " + targetClubName, toFailedResponse(request)));
+                    continue;
+                }
+                validateForCreate(request);
 
-            MatchCompetitor matchCompetitor = new MatchCompetitor();
-            applyFields(matchCompetitor, request);
-
-            boolean duplicate = matchCompetitorRepository.findByCompetitorIdAndMatchIdAndFirearmType(
-                            matchCompetitor.getCompetitor().getId(), matchCompetitor.getMatch().getId(),
-                            matchCompetitor.getFirearmType())
-                    .isPresent()
-                    || !entries.add(List.of(matchCompetitor.getCompetitor().getId(),
-                    matchCompetitor.getMatch().getId(), matchCompetitor.getFirearmType()));
-            if (duplicate) {
-                throw duplicateEntry(matchCompetitor, null);
+                MatchCompetitor matchCompetitor = new MatchCompetitor();
+                applyFields(matchCompetitor, request);
+                matchCompetitorBulkResponses.add(
+                        new MatchCompetitorBulkResponse(true, "", toResponse(save(matchCompetitor))));
+            } catch (ValidationException | NonFatalException e) {
+                log.warn("Match competitor skipped: {}", e.getMessage());
+                matchCompetitorBulkResponses.add(
+                        new MatchCompetitorBulkResponse(false, e.getMessage(), toFailedResponse(request)));
             }
-            matchCompetitors.add(matchCompetitor);
         }
 
-        List<MatchCompetitor> saved;
-        try {
-            saved = transactionService.saveMatchCompetitors(matchCompetitors);
-        } catch (DataIntegrityViolationException e) {
-            throw new ValidationException("A match competitor in the CSV data duplicates an existing entry.", e);
-        }
-        return new MatchCompetitorResponseHolder(new ArrayList<>(saved.stream().map(this::toResponse).toList()));
+        return new MatchCompetitorBulkResponseHolder(matchCompetitorBulkResponses);
     }
 
     @Override
@@ -119,8 +128,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     public MatchCompetitorResponse patchMatchCompetitor(Long matchCompetitorId, MatchCompetitorPatchRequest request) {
         MatchCompetitor matchCompetitor = findMatchCompetitorOrThrow(matchCompetitorId);
 
-        if ((request.getCompetitorId() != null) || hasText(request.getCompetitorNumber())
-                || hasText(request.getCompetitorName())) {
+        if ((request.getCompetitorId() != null) || hasText(request.getCompetitorNumber()) || hasText(request.getCompetitorName())) {
             matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
                     request.getCompetitorName()));
         }
@@ -130,13 +138,13 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request.getMatchClub() != null) {
             matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
         }
-        if ((request.getCompetitorCategory() != null) && !request.getCompetitorCategory().isBlank()) {
+        if (hasText(request.getCompetitorCategory())) {
             matchCompetitor.setCompetitorCategory(resolveCompetitorCategory(request.getCompetitorCategory()));
         }
-        if ((request.getFirearmType() != null) && !request.getFirearmType().isBlank()) {
+        if (hasText(request.getFirearmType())) {
             matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
         }
-        if ((request.getDivision() != null) && !request.getDivision().isBlank()) {
+        if (hasText(request.getDivision())) {
             matchCompetitor.setDivision(resolveDivision(request.getDivision()));
         }
         if (request.getPowerFactor() != null) {
@@ -328,6 +336,27 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     }
 
     /**
+     * Builds the response reported for a row that could not be imported, identifying it by what the request said
+     * about the competitor and match. Nothing is resolved or looked up, so this never throws for an unknown
+     * competitor, match or enumerated value — the reason the row failed is in the bulk response's message.
+     *
+     * @param request the request for the row that failed; may be null, as for an empty row.
+     * @return a {@link MatchCompetitorResponse} carrying the requested competitor ID, name, competitor number and
+     * match ID, with every other field unset — or with every field unset if {@code request} is null.
+     */
+    protected MatchCompetitorResponse toFailedResponse(MatchCompetitorRequest request) {
+        MatchCompetitorResponse response = new MatchCompetitorResponse();
+        if (request == null) {
+            return response;
+        }
+        response.setCompetitorId(request.getCompetitorId());
+        response.setCompetitorName(request.getCompetitorName());
+        response.setCompetitorNumber(CompetitorHelpers.getCompetitorNumberAsInteger(request.getCompetitorNumber()));
+        response.setMatchId(request.getMatchId());
+        return response;
+    }
+
+    /**
      * Retrieves an existing match competitor or throws if none exists with the given ID.
      *
      * @param matchCompetitorId the identifier to look up.
@@ -352,6 +381,33 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     }
 
     /**
+     * Retrieves the single existing competitor that matches the given competitor number and name, or throws if
+     * there is none.
+     *
+     * <p>
+     * The lookup is delegated to {@link EntityIpscCompetitorService#findCompetitor(String, String)}, which tries the
+     * competitor number first, then the ID number, then the full name and itself throws when it does not find
+     * exactly one competitor. The {@link NonFatalException} thrown here is therefore a safeguard for an empty result.
+     * </p>
+     *
+     * @param competitorNumber the competitor's number (SAPSA or club number); surrounding whitespace is ignored.
+     * @param competitorName   the competitor's full name, "FirstName LastName" or "NickName LastName", matched
+     *                         ignoring case.
+     * @return the matching {@link Competitor}.
+     * @throws ValidationException if both the competitor number and the name are null or blank, or if more than one
+     *                             competitor matches, including when the name matches none of the competitors that
+     *                             share the number.
+     * @throws NonFatalException   if no competitor matches.
+     */
+    protected Competitor findCompetitorOrThrow(String competitorNumber, String competitorName) {
+        String trimmedCompetitorNumber = (competitorNumber == null) ? null : competitorNumber.trim();
+        return entityIpscCompetitorService.findCompetitor(trimmedCompetitorNumber, competitorName)
+                .orElseThrow(() -> new NonFatalException(
+                        String.format("No competitor found with competitor number of %s or name %s ",
+                                competitorNumber, competitorName)));
+    }
+
+    /**
      * Converts a competitor number received as text to the whole number it is stored as.
      *
      * @param competitorNumber the competitor number as text; surrounding whitespace is ignored.
@@ -367,50 +423,27 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     }
 
     /**
-     * Resolves the competitor a request refers to: by ID when one is given, otherwise by competitor number,
-     * otherwise by full name.
+     * Resolves the competitor a request refers to: by ID when one is given, otherwise by competitor number and
+     * name through {@link #findCompetitorOrThrow(String, String)}.
      *
      * @param competitorId     the identifier to look up; takes precedence over the number and name when not null.
-     * @param competitorNumber the competitor's number, a whole number, matched exactly; takes precedence over {@code name}, and is
-     *                         only used when {@code competitorId} is null.
-     * @param name             the competitor's full name, "First Last", matched case-insensitively; only used when
-     *                         {@code competitorId} and {@code competitorNumber} are both null or blank.
+     * @param competitorNumber the competitor's number (SAPSA or club number) or ID number; only used when
+     *                         {@code competitorId} is null. May be null or blank when {@code name} is given.
+     * @param name             the competitor's full name, "FirstName LastName" or "NickName LastName", matched
+     *                         ignoring case; only used when {@code competitorId} is null. May be null or blank when
+     *                         {@code competitorNumber} is given.
      * @return the matching {@link Competitor}.
-     * @throws ValidationException if none is given, the number is not a whole number, or the number or name matches
-     *                             more than one competitor.
-     * @throws NonFatalException   if no competitor matches.
+     * @throws ValidationException if {@code competitorId}, {@code competitorNumber} and {@code name} are all null
+     *                             or blank, or if more than one competitor matches the number and name, including when
+     *                             the name matches none of the competitors that share the number.
+     * @throws NonFatalException   if no competitor matches the number and name.
      */
     protected Competitor resolveCompetitor(Long competitorId, String competitorNumber, String name) {
         if (competitorId != null) {
             return findCompetitorOrThrow(competitorId);
         }
-        if (hasText(competitorNumber)) {
-            List<Competitor> numberMatches = competitorRepository.findAllByCompetitorNumber(parseCompetitorNumber(competitorNumber));
-            if (numberMatches.isEmpty()) {
-                throw new NonFatalException("No competitor found with number " + competitorNumber.trim());
-            }
-            if (numberMatches.size() > 1) {
-                throw new ValidationException("More than one competitor has the number " + competitorNumber.trim()
-                        + "; use the competitor ID instead.");
-            }
-            return numberMatches.getFirst();
-        }
-        if (!hasText(name)) {
-            throw new ValidationException("Competitor ID, number or name is required.");
-        }
-        List<Competitor> matches = competitorRepository.findAllByFullNameIgnoreCase(name.trim());
-        if (matches.isEmpty()) {
-            throw new NonFatalException("No competitor found with name " + name.trim());
-        }
-        if (matches.size() > 1) {
-            throw new ValidationException("More than one competitor is named " + name.trim()
-                    + "; use the competitor ID instead.");
-        }
-        return matches.getFirst();
-    }
 
-    private static boolean hasText(String value) {
-        return (value != null) && !value.isBlank();
+        return findCompetitorOrThrow(competitorNumber, name);
     }
 
     /**
@@ -426,6 +459,75 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     }
 
     /**
+     * Checks whether a bulk import row is for the club being imported.
+     *
+     * <p>
+     * The checks run in order, and the first that succeeds decides:
+     * </p>
+     * <ol>
+     *     <li>With no target club there is nothing to filter on, so every row matches, and the row isn't inspected at
+     *     all, not even for an unknown {@code matchClub}.</li>
+     *     <li>The row's {@code matchClub}, by name or abbreviation, is the target club.</li>
+     *     <li>Failing that, the home club of the competitor the row identifies is the target club. The competitor is
+     *     resolved as by {@link #resolveCompetitor(Long, String, String)}: by ID when the row has one, otherwise by
+     *     number and name. This is only looked up when the {@code matchClub} check fails.</li>
+     * </ol>
+     *
+     * <p>
+     * A row whose competitor can't be resolved (none found, several found, or no ID, number or name given) is simply
+     * not for the club, rather than an error, so the import reports that row as skipped. The same goes for a
+     * competitor with no home club.
+     * </p>
+     *
+     * @param request    the row to check.
+     * @param targetClub the club being imported; may be null, in which case every row matches.
+     * @return {@code true} if {@code targetClub} is null, the row's {@code matchClub} resolves to {@code targetClub},
+     * or the row's competitor has {@code targetClub} as their home club; {@code false} otherwise.
+     * @throws ValidationException if {@code targetClub} is not null and the row's {@code matchClub} was supplied but
+     *                             isn't a known club.
+     */
+    protected boolean isForClub(MatchCompetitorRequest request, ClubIdentifier targetClub) {
+        if (targetClub == null) {
+            return true;
+        }
+
+        // Test the competitor in the match's club against the target club
+        if (clubService.isSameClub(resolveMatchClub(request.getMatchClub()), targetClub)) {
+            return true;
+        }
+
+        // Test the competitor's home club against the target club
+        try {
+            return clubService.isSameClub(resolveCompetitorHomeClub(request), targetClub);
+        } catch (ValidationException | NonFatalException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Resolves the home club of the competitor a request refers to.
+     *
+     * <p>
+     * The counterpart of {@link #resolveMatchClub(String)} for the competitor's own club rather than the club they
+     * represented at the match: the competitor is resolved as by {@link #resolveCompetitor(Long, String, String)},
+     * and their home club's identifier is returned, or {@code null} when they have no home club.
+     * </p>
+     *
+     * @param request the request whose competitor is to be resolved, by ID, or else by number and name.
+     * @return the {@link ClubIdentifier} of the competitor's home club, or {@code null} if the competitor has no
+     * home club, or the home club has no identifier.
+     * @throws ValidationException if the request's competitor ID, number and name are all null or blank, or if more
+     *                             than one competitor matches the number and name.
+     * @throws NonFatalException   if no competitor matches.
+     */
+    protected ClubIdentifier resolveCompetitorHomeClub(MatchCompetitorRequest request) {
+        Competitor competitor = resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
+                request.getCompetitorName());
+        Club homeClub = competitor.getHomeClub();
+        return (homeClub == null) ? null : homeClub.getIdentifier();
+    }
+
+    /**
      * Resolves the club a competitor represented at a match, by name or abbreviation.
      *
      * @param matchClub the club name or abbreviation to look up; may be null or blank, in which case no club is
@@ -434,7 +536,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * @throws ValidationException if {@code matchClub} was supplied but doesn't match a known club.
      */
     protected ClubIdentifier resolveMatchClub(String matchClub) {
-        if ((matchClub == null) || matchClub.isBlank()) {
+        if (!hasText(matchClub)) {
             return null;
         }
 
@@ -514,13 +616,13 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request.getMatchId() == null) {
             throw new ValidationException("Match ID is required.");
         }
-        if ((request.getCompetitorCategory() == null) || request.getCompetitorCategory().isBlank()) {
+        if (!hasText(request.getCompetitorCategory())) {
             throw new ValidationException("Competitor category is required.");
         }
-        if ((request.getFirearmType() == null) || request.getFirearmType().isBlank()) {
+        if (!hasText(request.getFirearmType())) {
             throw new ValidationException("Firearm type is required.");
         }
-        if ((request.getDivision() == null) || request.getDivision().isBlank()) {
+        if (!hasText(request.getDivision())) {
             throw new ValidationException("Division is required.");
         }
     }
@@ -536,6 +638,8 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                 matchCompetitor.getId(),
                 matchCompetitor.getCompetitor().getId(),
                 matchCompetitor.getMatch().getId(),
+                matchCompetitor.getCompetitor().getNickName() + ' ' + matchCompetitor.getCompetitor().getLastName(),
+                matchCompetitor.getCompetitor().getCompetitorNumber(),
                 matchCompetitor.getMatchClub(),
                 matchCompetitor.getCompetitorCategory(),
                 matchCompetitor.getFirearmType(),

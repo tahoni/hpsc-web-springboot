@@ -31,14 +31,17 @@ import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
+import za.co.hpsc.web.services.ClubService;
 import za.co.hpsc.web.services.IpscCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
-import za.co.hpsc.web.utils.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+import static za.co.hpsc.web.utils.StringUtil.toProperCase;
 
 @Slf4j
 @Service
@@ -48,18 +51,22 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     private final MatchCompetitorRepository matchCompetitorRepository;
     private final ShooterLogCompetitorRepository shooterLogCompetitorRepository;
     private final ShooterLogOverallRepository shooterLogOverallRepository;
+
+    private final ClubService clubService;
     private final TransactionService transactionService;
 
     public IpscCompetitorServiceImpl(CompetitorRepository competitorRepository, ClubRepository clubRepository,
                                      MatchCompetitorRepository matchCompetitorRepository,
                                      ShooterLogCompetitorRepository shooterLogCompetitorRepository,
                                      ShooterLogOverallRepository shooterLogOverallRepository,
+                                     ClubService clubService,
                                      TransactionService transactionService) {
         this.competitorRepository = competitorRepository;
         this.clubRepository = clubRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.shooterLogCompetitorRepository = shooterLogCompetitorRepository;
         this.shooterLogOverallRepository = shooterLogOverallRepository;
+        this.clubService = clubService;
         this.transactionService = transactionService;
     }
 
@@ -72,7 +79,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     public CompetitorResponseHolder createCompetitors(String csvData)
             throws FatalException {
 
-        if (csvData == null || csvData.isBlank()) {
+        if (!hasText(csvData)) {
             log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
         }
@@ -253,7 +260,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * {@code competitorId}.
      *
      * <p>
-     * Every name column and the gender are proper-cased (see {@link StringUtils#toProperCase(String)}). The
+     * Every name column and the gender are proper-cased (see {@link za.co.hpsc.web.utils.StringUtil#toProperCase(String)}). The
      * home club name, which must match an existing club's name exactly, the competitor and club
      * numbers, which are codes (club numbers must also stay unique), the ID and cellphone numbers and the
      * email addresses are kept as supplied. The last name then gets surname casing (see
@@ -267,12 +274,12 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     protected CompetitorRequest normaliseCsvRequest(@NotNull CompetitorRequest csvRow) {
         return new CompetitorRequest(
                 csvRow.getCompetitorId(),
-                StringUtils.toProperCase(csvRow.getFirstName()),
-                CompetitorHelpers.toSentenceCaseLastName(StringUtils.toProperCase(csvRow.getLastName())),
-                StringUtils.toProperCase(csvRow.getMiddleNames()),
-                StringUtils.toProperCase(csvRow.getNickName()),
+                toProperCase(csvRow.getFirstName()),
+                CompetitorHelpers.toSentenceCaseLastName(toProperCase(csvRow.getLastName())),
+                toProperCase(csvRow.getMiddleNames()),
+                toProperCase(csvRow.getNickName()),
                 csvRow.getDateOfBirth(),
-                StringUtils.toProperCase(csvRow.getGender()),
+                toProperCase(csvRow.getGender()),
                 csvRow.getHomeClub(),
                 csvRow.getSapsaNumber(),
                 csvRow.getCompetitorNumber(),
@@ -288,7 +295,9 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     /**
      * Copies the fields of a {@link CompetitorRequest} onto a {@link Competitor}, resolving the
      * gender and named home club in the process. An omitted {@code paidUpSapsa} or
-     * {@code paidUpClub} or {@code isVerified} is stored as {@code null}.
+     * {@code paidUpClub} or {@code isVerified} is stored as {@code null}, and a {@code nickName}
+     * that is omitted, empty or blank defaults to the first name, replacing any nickname the
+     * competitor already has, as every field is overwritten.
      *
      * @param competitor the entity to populate; must not be null.
      * @param request    the request carrying the field values; must not be null.
@@ -301,7 +310,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor.setFirstName(request.getFirstName());
         competitor.setLastName(request.getLastName());
         competitor.setMiddleNames(request.getMiddleNames());
-        competitor.setNickName(request.getNickName());
+        competitor.setNickName(hasText(request.getNickName()) ? request.getNickName() : request.getFirstName());
         competitor.setDateOfBirth(request.getDateOfBirth());
         competitor.setGender(resolveGender(request.getGender()));
         Club homeClub = resolveHomeClub(request.getHomeClub());
@@ -347,11 +356,11 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      *                             but {@code clubNumber} is null or blank.
      */
     protected String resolveClubNumber(Club homeClub, String clubNumber) {
-        if (!isHpscMember(homeClub, IpscConstants.HOME_CLUB_IDENTIFIER)) {
+        if (!isMemberOfHomeClub(homeClub)) {
             return null;
         }
 
-        if ((clubNumber == null) || clubNumber.isBlank()) {
+        if (!hasText(clubNumber)) {
             throw new ValidationException(String.format("Club number is required for %s competitors.",
                     IpscConstants.HOME_CLUB_ABBREVIATION));
         }
@@ -360,27 +369,38 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
-     * Determines whether {@code homeClub}'s identifier matches {@code homeClubIdentifier}.
+     * Checks whether a club is HPSC's own club, the home club identified by
+     * {@link IpscConstants#HOME_CLUB_IDENTIFIER}.
      *
      * <p>
-     * {@code homeClubIdentifier} is taken as a parameter, rather than read directly from
-     * {@link IpscConstants#HOME_CLUB_IDENTIFIER} in this method, purely so this check stays unit
-     * testable if that constant were ever null (e.g. if
-     * {@link ClubIdentifier#fromAbbreviation(String)} ever failed to resolve
-     * {@link IpscConstants#HOME_CLUB_ABBREVIATION}, which cannot happen with today's enum values,
-     * but which the constant is deliberately written to tolerate rather than throw on). A null
-     * {@code homeClubIdentifier} always yields {@code false} here, never a false match -- even
-     * against a {@code homeClub} whose own identifier happens to be null.
+     * Shorthand for {@link #isMemberOfHomeClub(Club, ClubIdentifier)} with the default home club.
      * </p>
      *
-     * @param homeClub           the competitor's resolved home club; may be null.
-     * @param homeClubIdentifier the identifier {@code homeClub} must carry to count as a match;
-     *                           may be null.
-     * @return {@code true} only if both are non-null and {@code homeClub}'s identifier matches
-     * {@code homeClubIdentifier}.
+     * @param club the club to check; may be {@code null}.
+     * @return {@code true} if {@code club} is the default home club; {@code false} otherwise.
      */
-    protected boolean isHpscMember(Club homeClub, ClubIdentifier homeClubIdentifier) {
-        return (homeClub != null) && (homeClubIdentifier != null) && (homeClub.getIdentifier() == homeClubIdentifier);
+    protected boolean isMemberOfHomeClub(Club club) {
+        return isMemberOfHomeClub(club, IpscConstants.HOME_CLUB_IDENTIFIER);
+    }
+
+    /**
+     * Checks whether a club is the given home club.
+     *
+     * <p>
+     * The club is compared with {@code homeClubIdentifier} through
+     * {@link ClubService#isSameClub(Club, ClubIdentifier)}, so a {@code null} club, a club with no identifier or a
+     * {@code null} {@code homeClubIdentifier} is simply not a member.
+     * </p>
+     *
+     * @param club               the club to check; may be {@code null}.
+     * @param homeClubIdentifier the identifier of the home club to check against; may be {@code null}, in which case
+     *                           no club is a member. {@link #isMemberOfHomeClub(Club)} passes
+     *                           {@link IpscConstants#HOME_CLUB_IDENTIFIER}, HPSC's own club.
+     * @return {@code true} if {@code club} is the home club identified by {@code homeClubIdentifier}; {@code false}
+     * otherwise.
+     */
+    protected boolean isMemberOfHomeClub(Club club, ClubIdentifier homeClubIdentifier) {
+        return clubService.isSameClub(club, homeClubIdentifier);
     }
 
     /**
@@ -392,7 +412,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @throws ValidationException if {@code gender} was supplied but doesn't match a known gender.
      */
     protected Gender resolveGender(String gender) {
-        if ((gender == null) || gender.isBlank()) {
+        if (!hasText(gender)) {
             return null;
         }
 
@@ -409,7 +429,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @throws NonFatalException if {@code clubName} was supplied but doesn't match an existing club.
      */
     protected Club resolveHomeClub(String clubName) {
-        if ((clubName == null) || clubName.isBlank()) {
+        if (!hasText(clubName)) {
             return null;
         }
 
@@ -446,7 +466,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @throws ValidationException if the competitor number is not a whole number.
      */
     protected Integer parseCompetitorNumber(String competitorNumber) {
-        if ((competitorNumber == null) || competitorNumber.isBlank()) {
+        if (!hasText(competitorNumber)) {
             return null;
         }
         try {
@@ -467,10 +487,10 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         if (request == null) {
             throw new ValidationException("Competitor request cannot be null.");
         }
-        if ((request.getFirstName() == null) || request.getFirstName().isBlank()) {
+        if (!hasText(request.getFirstName())) {
             throw new ValidationException("First name is required.");
         }
-        if ((request.getLastName() == null) || request.getLastName().isBlank()) {
+        if (!hasText(request.getLastName())) {
             throw new ValidationException("Last name is required.");
         }
     }

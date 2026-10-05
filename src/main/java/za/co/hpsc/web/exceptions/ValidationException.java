@@ -14,6 +14,8 @@ package za.co.hpsc.web.exceptions;
 public class ValidationException extends IllegalArgumentException {
     /**
      * Constructs a new {@code ValidationException} with no detail message or cause.
+     *
+     * @since 1.0.0
      */
     public ValidationException() {
         super();
@@ -23,6 +25,7 @@ public class ValidationException extends IllegalArgumentException {
      * Constructs a new {@code ValidationException} with the specified detail message.
      *
      * @param message the detail message.
+     * @since 1.0.0
      */
     public ValidationException(String message) {
         super(message);
@@ -33,6 +36,7 @@ public class ValidationException extends IllegalArgumentException {
      *
      * @param message the detail message.
      * @param cause   the cause. May be {@code null} if the cause is nonexistent or unknown.
+     * @since 1.0.0
      */
     public ValidationException(String message, Throwable cause) {
         super(message, cause);
@@ -42,6 +46,7 @@ public class ValidationException extends IllegalArgumentException {
      * Constructs a new {@code ValidationException} with the specified cause.
      *
      * @param cause the cause. May be {@code null} if the cause is nonexistent or unknown.
+     * @since 1.0.0
      */
     public ValidationException(Throwable cause) {
         super(cause);
