@@ -51,6 +51,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ➕ Added
 
+##### Helpers
+
+- **`CompetitorHelpers.getCompetitorNumberAsInteger`:** New helper that converts a competitor number to an `int` —
+  surrounding whitespace is ignored, and a number that is null, blank or not a whole number, or one of the shared
+  alias numbers `15000` and `16000`, converts to `0` meaning "no competitor number"; includes Javadoc and unit tests
+
 ##### Repositories
 
 - **`CompetitorRepository.findAllByIdNumber`:** New derived query returning every competitor with a given ID number,
@@ -113,6 +119,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Tests
 
+- **`CompetitorHelpersTest`:** Cover `getCompetitorNumberAsInteger` for numeric, whitespace-padded, zero-padded, null,
+  blank and non-numeric numbers, and for the excluded ICS aliases `15000` and `16000`
 - **`EntityIpscCompetitorServiceTest`, `EntityIpscCompetitorServiceImplTest`,
   `EntityIpscCompetitorServiceIntegrationTest`:** Brought up to date with the `String` competitor number and the
   `NonFatalException`/`ValidationException` behaviour of `findCompetitor`, and extended to cover the ID number

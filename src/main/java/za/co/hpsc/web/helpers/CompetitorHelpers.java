@@ -1,5 +1,9 @@
 package za.co.hpsc.web.helpers;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import za.co.hpsc.web.constants.IpscConstants;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,6 +63,30 @@ public final class CompetitorHelpers {
             lastEnd = matcher.end();
         }
         return result.append(value.substring(lastEnd)).toString();
+    }
+
+    /**
+     * Converts a competitor number to an integer, for matching against a stored competitor number.
+     *
+     * <p>
+     * Leading and trailing whitespace is ignored. A competitor number that is null, blank or not a valid integer
+     * converts to {@code 0}, meaning "no competitor number". The ICS alias numbers listed in
+     * {@link IpscConstants#EXCLUDE_ICS_ALIAS} are placeholders rather than real competitor numbers, so they also
+     * convert to {@code 0}.
+     * </p>
+     *
+     * @param competitorNumber the competitor number to convert; may be null.
+     * @return the competitor number as an integer, or {@code 0} if it is null, blank, not numeric or an excluded
+     * ICS alias.
+     * @since 12.0.0
+     */
+    public static int getCompetitorNumberAsInteger(String competitorNumber) {
+        String normalisedCompetitorNumber = StringUtils.trimToEmpty(competitorNumber);
+        int competitorNumberInt = NumberUtils.toInt(normalisedCompetitorNumber, 0);
+        if (IpscConstants.EXCLUDE_ICS_ALIAS.contains(competitorNumberInt)) {
+            competitorNumberInt = 0;
+        }
+        return competitorNumberInt;
     }
 
     private static int lastWordEnd(String value) {

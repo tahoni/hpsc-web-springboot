@@ -6,6 +6,60 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CompetitorHelpersTest {
 
+    // getCompetitorNumberAsInteger(String)
+    @Test
+    void testGetCompetitorNumberAsInteger_whenNumeric_thenReturnsInteger() {
+        // Act & Assert
+        assertEquals(123, CompetitorHelpers.getCompetitorNumberAsInteger("123"));
+    }
+
+    @Test
+    void testGetCompetitorNumberAsInteger_whenSurroundedByWhitespace_thenTrimsAndReturnsInteger() {
+        // Act & Assert
+        assertEquals(123, CompetitorHelpers.getCompetitorNumberAsInteger("  123 "));
+    }
+
+    @Test
+    void testGetCompetitorNumberAsInteger_whenLeadingZeros_thenReturnsInteger() {
+        // Act & Assert
+        assertEquals(42, CompetitorHelpers.getCompetitorNumberAsInteger("0042"));
+    }
+
+    @Test
+    void testGetCompetitorNumberAsInteger_whenNull_thenReturnsZero() {
+        // Act & Assert
+        assertEquals(0, CompetitorHelpers.getCompetitorNumberAsInteger(null));
+    }
+
+    @Test
+    void testGetCompetitorNumberAsInteger_whenEmptyOrBlank_thenReturnsZero() {
+        // Act & Assert
+        assertEquals(0, CompetitorHelpers.getCompetitorNumberAsInteger(""));
+        assertEquals(0, CompetitorHelpers.getCompetitorNumberAsInteger("   "));
+    }
+
+    @Test
+    void testGetCompetitorNumberAsInteger_whenNotNumeric_thenReturnsZero() {
+        // Act & Assert
+        assertEquals(0, CompetitorHelpers.getCompetitorNumberAsInteger("abc"));
+        assertEquals(0, CompetitorHelpers.getCompetitorNumberAsInteger("12a"));
+        assertEquals(0, CompetitorHelpers.getCompetitorNumberAsInteger("1.5"));
+    }
+
+    @Test
+    void testGetCompetitorNumberAsInteger_whenExcludedIcsAlias_thenReturnsZero() {
+        // Act & Assert
+        assertEquals(0, CompetitorHelpers.getCompetitorNumberAsInteger("15000"));
+        assertEquals(0, CompetitorHelpers.getCompetitorNumberAsInteger(" 16000 "));
+    }
+
+    @Test
+    void testGetCompetitorNumberAsInteger_whenNextToExcludedIcsAlias_thenReturnsInteger() {
+        // Act & Assert
+        assertEquals(14999, CompetitorHelpers.getCompetitorNumberAsInteger("14999"));
+        assertEquals(15001, CompetitorHelpers.getCompetitorNumberAsInteger("15001"));
+    }
+
     // toSentenceCaseLastName(String)
     @Test
     void testToSentenceCaseLastName_whenNull_thenReturnsNull() {
