@@ -33,7 +33,6 @@ import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.services.IpscCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
-import za.co.hpsc.web.utils.StringUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,6 +40,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
+import static za.co.hpsc.web.utils.StringUtil.toProperCase;
 
 @Slf4j
 @Service
@@ -255,7 +255,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * {@code competitorId}.
      *
      * <p>
-     * Every name column and the gender are proper-cased (see {@link StringUtil#toProperCase(String)}). The
+     * Every name column and the gender are proper-cased (see {@link za.co.hpsc.web.utils.StringUtil#toProperCase(String)}). The
      * home club name, which must match an existing club's name exactly, the competitor and club
      * numbers, which are codes (club numbers must also stay unique), the ID and cellphone numbers and the
      * email addresses are kept as supplied. The last name then gets surname casing (see
@@ -269,12 +269,12 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     protected CompetitorRequest normaliseCsvRequest(@NotNull CompetitorRequest csvRow) {
         return new CompetitorRequest(
                 csvRow.getCompetitorId(),
-                StringUtil.toProperCase(csvRow.getFirstName()),
-                CompetitorHelpers.toSentenceCaseLastName(StringUtil.toProperCase(csvRow.getLastName())),
-                StringUtil.toProperCase(csvRow.getMiddleNames()),
-                StringUtil.toProperCase(csvRow.getNickName()),
+                toProperCase(csvRow.getFirstName()),
+                CompetitorHelpers.toSentenceCaseLastName(toProperCase(csvRow.getLastName())),
+                toProperCase(csvRow.getMiddleNames()),
+                toProperCase(csvRow.getNickName()),
                 csvRow.getDateOfBirth(),
-                StringUtil.toProperCase(csvRow.getGender()),
+                toProperCase(csvRow.getGender()),
                 csvRow.getHomeClub(),
                 csvRow.getSapsaNumber(),
                 csvRow.getCompetitorNumber(),

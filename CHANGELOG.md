@@ -119,6 +119,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   imported statically, in place of their own null and blank checks — no behaviour change except that
   `ImageResponse.setMimeType` now also ignores a blank MIME type guessed from the file name
 
+- **`StringUtil.toProperCase`:** `IpscCompetitorServiceImpl` now imports it statically, like `hasText` — no behaviour
+  change
+
 - **`DateUtil`, `NumberUtil`, `StringUtil`, `ValueUtil`:** Renamed back from `DateUtils`, `NumberUtils`, `StringUtils`
   and `ValueUtils`, the plural names introduced in 8.12.0 (and their test classes to match) — internal classes
   only, so there is no API change
