@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 @Slf4j
 @Service
 public class IpscMatchServiceImpl implements IpscMatchService {
@@ -68,7 +70,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
     @Override
     public MatchResponseHolder createMatches(String csvData) throws FatalException {
-        if (csvData == null || csvData.isBlank()) {
+        if (!hasText(csvData)) {
             log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
         }
@@ -293,7 +295,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      *                           is null.
      */
     protected Club resolveClub(String clubName, ClubIdentifier defaultIdentifier) throws FatalException {
-        if ((clubName == null) || clubName.isBlank()) {
+        if (!hasText(clubName)) {
             if (defaultIdentifier == null) {
                 throw new FatalException("IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER is not configured.");
             }
@@ -341,16 +343,16 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         if (request == null) {
             throw new ValidationException("Match request cannot be null.");
         }
-        if ((request.getMatchName() == null) || request.getMatchName().isBlank()) {
+        if (!hasText(request.getMatchName())) {
             throw new ValidationException("Match name is required.");
         }
         if (request.getMatchDate() == null) {
             throw new ValidationException("Match date is required.");
         }
-        if ((request.getMatchFirearmType() == null) || request.getMatchFirearmType().isBlank()) {
+        if (!hasText(request.getMatchFirearmType())) {
             throw new ValidationException("Match firearm type is required.");
         }
-        if ((request.getMatchCategory() == null) || request.getMatchCategory().isBlank()) {
+        if (!hasText(request.getMatchCategory())) {
             throw new ValidationException("Match category is required.");
         }
     }

@@ -5,6 +5,8 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 /**
  * Enum representing various categories of competitors.
  *
@@ -55,7 +57,7 @@ public enum CompetitorCategory {
      * @since 1.1.3
      */
     public static Optional<CompetitorCategory> fromName(String name) {
-        if ((name == null) || (name.isBlank())) {
+        if (!hasText(name)) {
             return Optional.of(NONE);
         }
 

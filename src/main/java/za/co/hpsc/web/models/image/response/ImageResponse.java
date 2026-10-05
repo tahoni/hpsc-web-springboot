@@ -14,6 +14,8 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.UUID;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 /**
  * Represents a response object specifically designed for handling images.
  * This class extends the functionality of the {@link Response} superclass
@@ -180,15 +182,15 @@ public class ImageResponse extends Response {
      * @since 1.0.0
      */
     public void setMimeType(String mimeType) {
-        if ((mimeType != null) && (!mimeType.isBlank())) {
+        if (hasText(mimeType)) {
             // Set the MIME type directly
             this.mimeType = mimeType;
 
         } else {
-            if ((this.fileName != null) && (!this.fileName.isBlank())) {
+            if (hasText(this.fileName)) {
                 // Infer MIME type from the file name
                 String fileNameMimeType = URLConnection.guessContentTypeFromName(this.fileName);
-                if ((fileNameMimeType != null) && (!fileNameMimeType.isEmpty())) {
+                if (hasText(fileNameMimeType)) {
                     this.mimeType = fileNameMimeType;
                 }
             }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 /**
  * Enum representing different divisions in the sport of shooting.
  *
@@ -58,7 +60,7 @@ public enum FirearmType {
      * @since 1.1.3
      */
     public static Optional<FirearmType> fromName(String name) {
-        if ((name == null) || (name.isBlank())) {
+        if (!hasText(name)) {
             return Optional.empty();
         }
 

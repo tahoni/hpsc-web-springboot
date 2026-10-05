@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 @Service
 public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorService {
     private final CompetitorRepository competitorRepository;
@@ -54,8 +56,7 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
     public Optional<Competitor> findCompetitor(String competitorNumber, String fullName)
             throws ValidationException, NonFatalException {
         // Either the competitor number or full name must be supplied
-        if (((fullName == null) || (fullName.isBlank())) &&
-                ((competitorNumber == null) || ((competitorNumber.isBlank())))) {
+        if (!hasText(fullName) && !hasText(competitorNumber)) {
             throw new ValidationException("Full name or competitor number is required");
         }
 

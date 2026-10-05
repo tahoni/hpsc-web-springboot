@@ -71,7 +71,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
 
     @Override
     public MatchCompetitorBulkResponseHolder createMatchCompetitors(String csvData) throws FatalException {
-        if (csvData == null || csvData.isBlank()) {
+        if (!hasText(csvData)) {
             log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
         }
@@ -112,8 +112,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     public MatchCompetitorResponse patchMatchCompetitor(Long matchCompetitorId, MatchCompetitorPatchRequest request) {
         MatchCompetitor matchCompetitor = findMatchCompetitorOrThrow(matchCompetitorId);
 
-        if ((request.getCompetitorId() != null) || hasText(request.getCompetitorNumber())
-                || hasText(request.getCompetitorName())) {
+        if ((request.getCompetitorId() != null) || hasText(request.getCompetitorNumber()) || hasText(request.getCompetitorName())) {
             matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
                     request.getCompetitorName()));
         }
@@ -123,13 +122,13 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request.getMatchClub() != null) {
             matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
         }
-        if ((request.getCompetitorCategory() != null) && !request.getCompetitorCategory().isBlank()) {
+        if (hasText(request.getCompetitorCategory())) {
             matchCompetitor.setCompetitorCategory(resolveCompetitorCategory(request.getCompetitorCategory()));
         }
-        if ((request.getFirearmType() != null) && !request.getFirearmType().isBlank()) {
+        if (hasText(request.getFirearmType())) {
             matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
         }
-        if ((request.getDivision() != null) && !request.getDivision().isBlank()) {
+        if (hasText(request.getDivision())) {
             matchCompetitor.setDivision(resolveDivision(request.getDivision()));
         }
         if (request.getPowerFactor() != null) {
@@ -452,7 +451,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * @throws ValidationException if {@code matchClub} was supplied but doesn't match a known club.
      */
     protected ClubIdentifier resolveMatchClub(String matchClub) {
-        if ((matchClub == null) || matchClub.isBlank()) {
+        if (!hasText(matchClub)) {
             return null;
         }
 
@@ -532,13 +531,13 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request.getMatchId() == null) {
             throw new ValidationException("Match ID is required.");
         }
-        if ((request.getCompetitorCategory() == null) || request.getCompetitorCategory().isBlank()) {
+        if (!hasText(request.getCompetitorCategory())) {
             throw new ValidationException("Competitor category is required.");
         }
-        if ((request.getFirearmType() == null) || request.getFirearmType().isBlank()) {
+        if (!hasText(request.getFirearmType())) {
             throw new ValidationException("Firearm type is required.");
         }
-        if ((request.getDivision() == null) || request.getDivision().isBlank()) {
+        if (!hasText(request.getDivision())) {
             throw new ValidationException("Division is required.");
         }
     }

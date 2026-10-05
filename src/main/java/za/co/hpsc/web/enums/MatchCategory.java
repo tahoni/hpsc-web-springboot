@@ -6,6 +6,8 @@ import lombok.Getter;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 /**
  * Enum representing categories of shooting matches.
  *
@@ -41,7 +43,7 @@ public enum MatchCategory {
      * @since 1.1.3
      */
     public static Optional<MatchCategory> fromName(String name) {
-        if ((name == null) || (name.isBlank())) {
+        if (!hasText(name)) {
             return Optional.empty();
         }
 

@@ -40,6 +40,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 @Slf4j
 @Service
 public class IpscCompetitorServiceImpl implements IpscCompetitorService {
@@ -72,7 +74,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     public CompetitorResponseHolder createCompetitors(String csvData)
             throws FatalException {
 
-        if (csvData == null || csvData.isBlank()) {
+        if (!hasText(csvData)) {
             log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
         }
@@ -303,7 +305,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor.setFirstName(request.getFirstName());
         competitor.setLastName(request.getLastName());
         competitor.setMiddleNames(request.getMiddleNames());
-        competitor.setNickName(StringUtil.hasText(request.getNickName()) ? request.getNickName() : request.getFirstName());
+        competitor.setNickName(hasText(request.getNickName()) ? request.getNickName() : request.getFirstName());
         competitor.setDateOfBirth(request.getDateOfBirth());
         competitor.setGender(resolveGender(request.getGender()));
         Club homeClub = resolveHomeClub(request.getHomeClub());
@@ -353,7 +355,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             return null;
         }
 
-        if ((clubNumber == null) || clubNumber.isBlank()) {
+        if (!hasText(clubNumber)) {
             throw new ValidationException(String.format("Club number is required for %s competitors.",
                     IpscConstants.HOME_CLUB_ABBREVIATION));
         }
@@ -394,7 +396,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @throws ValidationException if {@code gender} was supplied but doesn't match a known gender.
      */
     protected Gender resolveGender(String gender) {
-        if ((gender == null) || gender.isBlank()) {
+        if (!hasText(gender)) {
             return null;
         }
 
@@ -411,7 +413,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @throws NonFatalException if {@code clubName} was supplied but doesn't match an existing club.
      */
     protected Club resolveHomeClub(String clubName) {
-        if ((clubName == null) || clubName.isBlank()) {
+        if (!hasText(clubName)) {
             return null;
         }
 
@@ -448,7 +450,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @throws ValidationException if the competitor number is not a whole number.
      */
     protected Integer parseCompetitorNumber(String competitorNumber) {
-        if ((competitorNumber == null) || competitorNumber.isBlank()) {
+        if (!hasText(competitorNumber)) {
             return null;
         }
         try {
@@ -469,10 +471,10 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         if (request == null) {
             throw new ValidationException("Competitor request cannot be null.");
         }
-        if ((request.getFirstName() == null) || request.getFirstName().isBlank()) {
+        if (!hasText(request.getFirstName())) {
             throw new ValidationException("First name is required.");
         }
-        if ((request.getLastName() == null) || request.getLastName().isBlank()) {
+        if (!hasText(request.getLastName())) {
             throw new ValidationException("Last name is required.");
         }
     }
