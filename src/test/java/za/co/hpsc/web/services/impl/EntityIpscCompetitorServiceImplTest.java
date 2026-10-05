@@ -125,6 +125,56 @@ public class EntityIpscCompetitorServiceImplTest {
     }
 
     @Test
+    void testFindCompetitor_whenTheNumberHasSurroundingWhitespace_thenQueriesTheTrimmedNumber() {
+        // Arrange
+        when(competitorRepository.findAllByCompetitorNumber(42)).thenReturn(List.of(new Competitor()));
+
+        // Act
+        entityIpscCompetitorService.findCompetitor("  42  ", "Jane Doe");
+
+        // Assert
+        verify(competitorRepository).findAllByCompetitorNumber(42);
+    }
+
+    @Test
+    void testFindCompetitor_whenTheNumberHasALeadingPlus_thenSkipsTheNumberQueryAndQueriesItAsAnIdNumber() {
+        // Arrange
+        when(competitorRepository.findAllByIdNumber("+42")).thenReturn(List.of(new Competitor()));
+
+        // Act
+        entityIpscCompetitorService.findCompetitor("+42", "Jane Doe");
+
+        // Assert
+        verify(competitorRepository, never()).findAllByCompetitorNumber(any());
+        verify(competitorRepository).findAllByIdNumber("+42");
+    }
+
+    @Test
+    void testFindCompetitor_whenTheNumberIsNegative_thenSkipsTheNumberQueryAndQueriesItAsAnIdNumber() {
+        // Arrange
+        when(competitorRepository.findAllByIdNumber("-5")).thenReturn(List.of(new Competitor()));
+
+        // Act
+        entityIpscCompetitorService.findCompetitor("-5", "Jane Doe");
+
+        // Assert
+        verify(competitorRepository, never()).findAllByCompetitorNumber(any());
+        verify(competitorRepository).findAllByIdNumber("-5");
+    }
+
+    @Test
+    void testFindCompetitor_whenTheNumberHasLettersAmongTheDigits_thenSkipsTheNumberQuery() {
+        // Arrange
+        when(competitorRepository.findAllByIdNumber("12a")).thenReturn(List.of(new Competitor()));
+
+        // Act
+        entityIpscCompetitorService.findCompetitor("12a", "Jane Doe");
+
+        // Assert
+        verify(competitorRepository, never()).findAllByCompetitorNumber(any());
+    }
+
+    @Test
     void testFindCompetitor_whenTheNumberIsZero_thenSkipsTheNumberQuery() {
         // Arrange
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe"))

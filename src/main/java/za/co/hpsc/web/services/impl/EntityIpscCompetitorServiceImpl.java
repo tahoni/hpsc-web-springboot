@@ -28,9 +28,14 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
      * <p><b>Implementation notes:</b> the lookup is attempted in stages, returning as soon as a
      * stage yields exactly one competitor:</p>
      * <ol>
-     *     <li>Competitor number (SAPSA or club number): only when the number is numeric and
-     *     greater than zero. Numbers in {@link IpscConstants#EXCLUDE_ICS_ALIAS} are ignored,
-     *     as they are shared aliases and cannot identify a single competitor.</li>
+     *     <li>Competitor number (SAPSA or club number): only when the number is made up entirely
+     *     of digits and converts to a value greater than zero. Surrounding whitespace is ignored,
+     *     so {@code " 42 "} is looked up as {@code 42}. A number with any other character (such
+     *     as {@code "12a"}, {@code "1.5"}, {@code "+42"} or {@code "-5"}), a zero, or a value too
+     *     long for an {@code int} (such as a 13-digit ID number) skips this stage, and is still
+     *     tried as an ID number below. Numbers in
+     *     {@link IpscConstants#EXCLUDE_ICS_ALIAS} are ignored, as they are shared aliases and
+     *     cannot identify a single competitor.</li>
      *     <li>ID number: the supplied competitor number is also matched against the
      *     competitors' ID numbers.</li>
      *     <li>Full name: when the number lookups found no competitor, an exact,

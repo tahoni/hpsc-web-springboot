@@ -142,7 +142,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`EntityIpscCompetitorServiceTest`, `EntityIpscCompetitorServiceImplTest`,
   `EntityIpscCompetitorServiceIntegrationTest`:** Brought up to date with the `String` competitor number and the
   `NonFatalException`/`ValidationException` behaviour of `findCompetitor`, and extended to cover the ID number
-  lookup, non-numeric, zero, null and blank numbers, null names and the blank-input validation
+  lookup, non-numeric, zero, negative, whitespace-padded, `+`-prefixed, null and blank numbers, null names and the
+  blank-input validation
 - **`IpscMatchCompetitorServiceImplTest`, `IpscMatchCompetitorServiceTest`,
   `IpscMatchCompetitorServiceIntegrationTest`:** Cover `resolveCompetitor` delegating to `EntityIpscCompetitorService`
   and the `NonFatalException` and `ValidationException` thrown for an unmatched and an ambiguous name

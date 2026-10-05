@@ -282,6 +282,33 @@ public class EntityIpscCompetitorServiceTest {
     }
 
     @Test
+    void testFindCompetitor_whenTheNumberHasSurroundingWhitespace_thenMatchesTheNumber() {
+        // Arrange
+        Competitor competitor = competitor("Jane", "Doe", null);
+        when(competitorRepository.findAllByCompetitorNumber(1234)).thenReturn(List.of(competitor));
+
+        // Act
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor(" 1234 ", "Someone Else");
+
+        // Assert
+        assertSame(competitor, result.orElseThrow());
+    }
+
+    @Test
+    void testFindCompetitor_whenTheNumberIsNegative_thenMatchesByIdNumberThenName() {
+        // Arrange
+        Competitor competitor = competitor("Jane", "Doe", null);
+        when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
+
+        // Act
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor("-5", "Jane Doe");
+
+        // Assert
+        assertSame(competitor, result.orElseThrow());
+        verify(competitorRepository, never()).findAllByCompetitorNumber(any());
+    }
+
+    @Test
     void testFindCompetitor_whenTheNumberIsZero_thenMatchesByNameOnly() {
         // Arrange
         Competitor competitor = competitor("Jane", "Doe", null);
