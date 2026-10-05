@@ -115,12 +115,14 @@ Four groups of these changes break existing callers — see the Migration Guide.
 
 ## 📊 Statistics
 
-- **Files Changed:** 81 on the release branch against `develop` (counted before the release documentation was
-  written); 3,045 insertions and 675 deletions
-- **New Source Files:** 2 (`ClubService` and `ClubServiceImpl`), plus `qodana.yaml` and two test classes
-- **Renamed Source Files:** the four `*Utils` classes and their tests, and the two bulk response models
+- **Files Changed:** 89 on the release branch against `develop` (counted with the release documentation included);
+  3,787 insertions and 1,013 deletions
+- **New Source Files:** 2 (`ClubService` and `ClubServiceImpl`), plus `qodana.yaml`, two test classes
+  (`ClubServiceTest` and `ClubServiceIntegrationTest`) and the archived release notes and PR description
+- **Renamed Source Files:** 10 — the four `*Utils` classes and their four test classes, and the two bulk response
+  models
 - **Deleted Source Files:** 0
-- **New Dependencies:** 0
+- **New Dependencies:** 0 (`mysql-connector-j` is now pinned to `26.7.0`)
 
 ---
 
