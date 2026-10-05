@@ -91,6 +91,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### Build & Configuration
+
+- **`pom.xml`:** `mysql-connector-j` is now pinned to `26.7.0` instead of the version Spring Boot manages — re-check
+  it against the parent's managed version at each release, per the Release Checklist's override step
+
 ##### Controllers
 
 - **`IpscMatchCompetitorController`:** The bulk import endpoint (`POST /bulk`) accepts an optional `club` query
