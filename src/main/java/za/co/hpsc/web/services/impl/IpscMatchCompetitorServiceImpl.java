@@ -28,6 +28,7 @@ import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorRespon
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.services.ClubService;
 import za.co.hpsc.web.services.EntityIpscCompetitorService;
 import za.co.hpsc.web.services.IpscMatchCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
@@ -46,17 +47,21 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     private final IpscMatchRepository ipscMatchRepository;
 
     private final EntityIpscCompetitorService entityIpscCompetitorService;
+
+    private final ClubService clubService;
     private final TransactionService transactionService;
 
     public IpscMatchCompetitorServiceImpl(MatchCompetitorRepository matchCompetitorRepository,
                                           CompetitorRepository competitorRepository,
                                           IpscMatchRepository ipscMatchRepository,
                                           EntityIpscCompetitorService entityIpscCompetitorService,
+                                          ClubService clubService,
                                           TransactionService transactionService) {
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.competitorRepository = competitorRepository;
         this.ipscMatchRepository = ipscMatchRepository;
         this.entityIpscCompetitorService = entityIpscCompetitorService;
+        this.clubService = clubService;
         this.transactionService = transactionService;
     }
 
@@ -452,14 +457,36 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     /**
      * Checks whether a bulk import row is for the club being imported.
      *
+     * <p>
+     * A row is for the club if its {@code matchClub} is that club or, failing that, the home club of the competitor
+     * it identifies is.
+     * </p>
+     *
      * @param request    the row to check.
      * @param targetClub the club being imported; may be null, in which case every row matches.
-     * @return {@code true} if {@code targetClub} is null, or the row's {@code matchClub} resolves to
-     * {@code targetClub}; {@code false} otherwise, including when the row has no {@code matchClub}.
+     * @return {@code true} if {@code targetClub} is null, the row's {@code matchClub} resolves to {@code targetClub},
+     * or the row's competitor has {@code targetClub} as their home club; {@code false} otherwise, including when the
+     * row's competitor can't be resolved, so that row is reported as skipped rather than failed.
      * @throws ValidationException if the row's {@code matchClub} was supplied but isn't a known club.
      */
     protected boolean isForClub(MatchCompetitorRequest request, ClubIdentifier targetClub) {
-        return (targetClub == null) || (resolveMatchClub(request.getMatchClub()) == targetClub);
+        if (targetClub == null) {
+            return true;
+        }
+
+        // Test the match club against the target club
+        if (clubService.isSameClub(resolveMatchClub(request.getMatchClub()), targetClub)) {
+            return true;
+        }
+
+        // Test the competitor's home club against the target club
+        try {
+            Competitor competitor = resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
+                    request.getCompetitorName());
+            return clubService.isSameClub(competitor.getHomeClub(), targetClub);
+        } catch (ValidationException | NonFatalException e) {
+            return false;
+        }
     }
 
     /**
