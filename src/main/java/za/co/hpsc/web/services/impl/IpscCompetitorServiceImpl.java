@@ -301,7 +301,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         competitor.setFirstName(request.getFirstName());
         competitor.setLastName(request.getLastName());
         competitor.setMiddleNames(request.getMiddleNames());
-        competitor.setNickName(request.getNickName() != null ? request.getNickName() : request.getFirstName());
+        competitor.setNickName(StringUtil.hasText(request.getNickName()) ? request.getNickName() : request.getFirstName());
         competitor.setDateOfBirth(request.getDateOfBirth());
         competitor.setGender(resolveGender(request.getGender()));
         Club homeClub = resolveHomeClub(request.getHomeClub());

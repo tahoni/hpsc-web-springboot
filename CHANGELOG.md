@@ -92,8 +92,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   are no longer matched by competitor number, so a request that identified a competitor by one of them now resolves
   only if the name matches, and a number that is not a whole number is looked up as an ID number, answering `404`
   when nothing matches, instead of being rejected up front with a `400`
-- **`IpscCompetitorServiceImpl`:** A competitor created or updated without a nickname now takes its first name as
-  the nickname, instead of being saved with none
+- **`IpscCompetitorServiceImpl`:** A competitor created or updated without a nickname, or with an empty or blank
+  one, now takes its first name as the nickname, instead of being saved with none
 - **`IpscMatchCompetitorServiceImpl.createMatchCompetitors`:** **Breaking:** the bulk import is now a partial import
   rather than all or nothing — each row is saved on its own, and a row that is missing a required field, has an
   unrecognised enumerated value, names an unknown competitor or match, or duplicates another entry is skipped and
