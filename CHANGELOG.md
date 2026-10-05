@@ -100,7 +100,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscMatchServiceImpl.resolveMatchCategory`:** A match category that is null, empty or blank now resolves to
   `IpscConstants.DEFAULT_MATCH_CATEGORY` (`Club Shoot`) instead of answering a `ValidationException`, as the club
-  already defaults when omitted; a category that is supplied must still be known. Documented, with a unit test
+  already defaults when omitted; a category that is supplied must still be known, by display name or constant name
+  (`Club Shoot` or `CLUB_SHOOT`), ignoring case and surrounding whitespace. Documented, with unit tests
 - **`IpscMatchServiceImpl.validateForCreate`:** The match category is no longer required to create or replace a
   match — a request without one answers no `ValidationException` ("Match category is required.") but takes the
   default match category, as `resolveMatchCategory` already supplies one and the club defaults when omitted; the

@@ -36,6 +36,7 @@ import za.co.hpsc.web.services.TransactionService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 
@@ -326,7 +327,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * <p>
      * A match category is not mandatory here: when {@code category} is null, empty or blank, the default,
      * {@link IpscConstants#DEFAULT_MATCH_CATEGORY}, is returned instead of an error. A category that is supplied
-     * must still be a known one.
+     * must still be a known one: its display name (such as {@code "Club Shoot"}) or its constant name (such as
+     * {@code "CLUB_SHOOT"}), matched ignoring case and surrounding whitespace.
      * </p>
      *
      * @param category the match category name to look up; may be null or blank, in which case the default
@@ -336,11 +338,16 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @throws ValidationException if {@code category} was supplied but no match category matches it.
      */
     protected MatchCategory resolveMatchCategory(String category) {
-        if (hasText(category)) {
-            return MatchCategory.fromName(category)
-                    .orElseThrow(() -> new ValidationException("Unknown match category: " + category));
+        if (!hasText(category)) {
+            return IpscConstants.DEFAULT_MATCH_CATEGORY;
         }
-        return IpscConstants.DEFAULT_MATCH_CATEGORY;
+
+        String trimmedCategory = category.trim();
+        return MatchCategory.fromName(trimmedCategory)
+                .or(() -> Stream.of(MatchCategory.values())
+                        .filter(matchCategory -> matchCategory.name().equalsIgnoreCase(trimmedCategory))
+                        .findFirst())
+                .orElseThrow(() -> new ValidationException("Unknown match category: " + category));
     }
 
     /**
