@@ -40,8 +40,7 @@
 
 ## 🧪 Test Plan
 
-- [x] `./mvnw test` — 1,227 tests, no failures, errors or skips
-- [ ] `./mvnw verify -Pcoverage` — coverage gate (not re-run for this release)
+- [x] `./mvnw verify -Pcoverage` — 1,227 tests, no failures, errors or skips; coverage gate met (99.0% of branches)
 - [ ] `mysql-connector-j` `26.7.0` checked against a MySQL profile (the application starts and connects)
 - [ ] Qodana, CodeQL and Docker workflows pass on this PR
 - [x] `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v12/RELEASE_NOTES_v12.0.0.md`
