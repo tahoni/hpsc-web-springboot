@@ -24,6 +24,7 @@ import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
+import za.co.hpsc.web.services.impl.ClubServiceImpl;
 import za.co.hpsc.web.services.impl.IpscCompetitorServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
@@ -74,7 +75,7 @@ public class IpscCompetitorServiceTest {
                 ipscMatchRepository, matchCompetitorRepository, transactionManager);
         ipscCompetitorService = new IpscCompetitorServiceImpl(competitorRepository, clubRepository,
                 matchCompetitorRepository, shooterLogCompetitorRepository, shooterLogOverallRepository,
-                transactionService);
+                new ClubServiceImpl(), transactionService);
     }
 
     // createCompetitor()
@@ -957,56 +958,6 @@ public class IpscCompetitorServiceTest {
         // Assert
         assertEquals(ClubIdentifier.SOSC, updated.getHomeClub());
         assertNull(updated.getClubNumber());
-    }
-
-    // isSameClub()
-    @Test
-    void testIsSameClub_whenClubHasTargetIdentifier_thenReturnsTrue() {
-        // Arrange
-        Club club = new Club();
-        club.setIdentifier(ClubIdentifier.HPSC);
-
-        // Act & Assert
-        assertTrue(ipscCompetitorService.isSameClub(club, ClubIdentifier.HPSC));
-    }
-
-    @Test
-    void testIsSameClub_whenClubHasDifferentIdentifier_thenReturnsFalse() {
-        // Arrange
-        Club club = new Club();
-        club.setIdentifier(ClubIdentifier.HPSC);
-
-        // Act & Assert
-        assertFalse(ipscCompetitorService.isSameClub(club, ClubIdentifier.SOSC));
-    }
-
-    @Test
-    void testIsSameClub_whenClubHasNoIdentifier_thenReturnsFalse() {
-        // Act & Assert
-        assertFalse(ipscCompetitorService.isSameClub(new Club(), ClubIdentifier.HPSC));
-    }
-
-    @Test
-    void testIsSameClub_whenClubIsNull_thenReturnsFalse() {
-        // Act & Assert
-        assertFalse(ipscCompetitorService.isSameClub(null, ClubIdentifier.HPSC));
-    }
-
-    @Test
-    void testIsSameClub_whenTargetIdentifierIsNull_thenReturnsFalse() {
-        // Arrange
-        Club club = new Club();
-        club.setIdentifier(ClubIdentifier.HPSC);
-
-        // Act & Assert
-        assertFalse(ipscCompetitorService.isSameClub(club, null));
-    }
-
-    @Test
-    void testIsSameClub_whenClubAndTargetIdentifierAreBothNull_thenReturnsFalse() {
-        // Act & Assert
-        assertFalse(ipscCompetitorService.isSameClub(null, null));
-        assertFalse(ipscCompetitorService.isSameClub(new Club(), null));
     }
 
     // Helpers

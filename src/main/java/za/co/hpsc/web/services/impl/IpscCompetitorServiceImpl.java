@@ -31,6 +31,7 @@ import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
+import za.co.hpsc.web.services.ClubService;
 import za.co.hpsc.web.services.IpscCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
 
@@ -50,18 +51,22 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     private final MatchCompetitorRepository matchCompetitorRepository;
     private final ShooterLogCompetitorRepository shooterLogCompetitorRepository;
     private final ShooterLogOverallRepository shooterLogOverallRepository;
+
+    private final ClubService clubService;
     private final TransactionService transactionService;
 
     public IpscCompetitorServiceImpl(CompetitorRepository competitorRepository, ClubRepository clubRepository,
                                      MatchCompetitorRepository matchCompetitorRepository,
                                      ShooterLogCompetitorRepository shooterLogCompetitorRepository,
                                      ShooterLogOverallRepository shooterLogOverallRepository,
+                                     ClubService clubService,
                                      TransactionService transactionService) {
         this.competitorRepository = competitorRepository;
         this.clubRepository = clubRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.shooterLogCompetitorRepository = shooterLogCompetitorRepository;
         this.shooterLogOverallRepository = shooterLogOverallRepository;
+        this.clubService = clubService;
         this.transactionService = transactionService;
     }
 
@@ -195,11 +200,6 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             throw new ValidationException("Competitor with ID " + competitorId
                     + " cannot be deleted: it is referenced by other records.", e);
         }
-    }
-
-    @Override
-    public boolean isSameClub(Club club, ClubIdentifier targetClubIdentifier) {
-        return (targetClubIdentifier != null) && (club != null) && (club.getIdentifier() == targetClubIdentifier);
     }
 
     /**
@@ -374,7 +374,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      *
      * <p>
      * The abbreviation is looked up as a {@link ClubIdentifier}, and the club is then compared with it
-     * through {@link #isSameClub(Club, ClubIdentifier)}, so a {@code null} club, a club with no
+     * through {@link ClubService#isSameClub(Club, ClubIdentifier)}, so a {@code null} club, a club with no
      * identifier or an abbreviation that doesn't match any known identifier is simply not a member.
      * </p>
      *
@@ -382,7 +382,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @return {@code true} if {@code club} is the home club; {@code false} otherwise.
      */
     protected boolean isMemberOfHomeClub(Club club) {
-        return isSameClub(club, ClubIdentifier.fromAbbreviation(IpscConstants.HOME_CLUB_ABBREVIATION).orElse(null));
+        return clubService.isSameClub(club, ClubIdentifier.fromAbbreviation(IpscConstants.HOME_CLUB_ABBREVIATION)
+                .orElse(null));
     }
 
     /**

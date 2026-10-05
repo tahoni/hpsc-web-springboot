@@ -69,10 +69,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `matchClub`, is reported as skipped rather than created, so there is still one result per CSV row — and answers a
   `ValidationException` for an unknown club. The one-argument method now delegates to it with no club, and
   `IpscMatchCompetitorServiceImpl.isForClub` does the per-row check; includes Javadoc and unit and integration tests
-- **`IpscCompetitorService.isSameClub`:** New method that returns `true` only when a club's identifier is the given
-  `ClubIdentifier`, `false` when either argument is null or the club has no identifier; `IpscCompetitorServiceImpl`'s
-  `isMemberOfHomeClub` now takes just the club and compares it with the home club through it; includes Javadoc and
-  unit and integration tests
+- **`ClubService`:** New service, with `ClubServiceImpl`, holding the null-safe club comparisons — `isSameClub(Club,
+  ClubIdentifier)` returns `true` only when a club's identifier is the given `ClubIdentifier`, and
+  `isSameClub(ClubIdentifier, ClubIdentifier)` only when a non-null identifier is the target; `IpscCompetitorServiceImpl`
+  takes it as a constructor dependency and its `isMemberOfHomeClub` now takes just the club and compares it with the
+  home club through it; includes Javadoc and unit and integration tests
 
 ##### Utils
 

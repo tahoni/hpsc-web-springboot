@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
@@ -16,6 +17,7 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
+import za.co.hpsc.web.services.ClubService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -46,6 +48,9 @@ class IpscCompetitorServiceImplTest {
 
     @Mock
     private ClubRepository clubRepository;
+
+    @Spy
+    private ClubService clubService = new ClubServiceImpl();
 
     @InjectMocks
     private IpscCompetitorServiceImpl ipscCompetitorServiceImpl;

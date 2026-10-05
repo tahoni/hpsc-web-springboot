@@ -179,6 +179,7 @@ Contains all business logic.
 | `IpscCompetitorService`       | `IpscCompetitorServiceImpl`       | IPSC competitor CRUD + bulk CSV import                                               |
 | `IpscMatchCompetitorService`  | `IpscMatchCompetitorServiceImpl`  | IPSC match competitor CRUD + bulk CSV import                                         |
 | `EntityIpscCompetitorService` | `EntityIpscCompetitorServiceImpl` | Looks up a persisted competitor from the loosely-specified identity in imported data |
+| `ClubService`                 | `ClubServiceImpl`                 | Null-safe comparisons of clubs and club identifiers                                  |
 | `TransactionService`          | `TransactionServiceImpl`          | Commits competitor/match/match competitor writes, each in its own transaction        |
 
 > `AwardService.createAwards()`/`ImageService.createImages()` are stateless by design, not an unfinished persistence
