@@ -94,6 +94,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Services
 
+- **`IpscCompetitorServiceImpl.isMemberOfHomeClub`:** New overload, `isMemberOfHomeClub(Club, ClubIdentifier)`, that
+  checks a club against the home club passed in; `isMemberOfHomeClub(Club)` now delegates to it with the default home
+  club, `IpscConstants.HOME_CLUB_IDENTIFIER` (HPSC), so existing callers behave as before; includes Javadoc and unit
+  tests
 - **`EntityIpscCompetitorServiceImpl.findCompetitor`:** The range officer marker, `RO` or `(RO)`, is now removed from
   a name wherever it appears — at the start, in the middle or at the end — instead of only at the end, and the
   whitespace left behind is collapsed, so `RO Jane Doe` and `Jane (RO) Doe` match `Jane Doe`; `RO` must be a whole word,
@@ -163,6 +167,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Documentation
 
+- **`IpscConstants`:** Every constant now has Javadoc saying what it is for and where it is used — including the
+  alias competitor numbers, the range officer name marker and the home club's role in the bulk import — and the class
+  Javadoc describes what it holds; the `IpscConstants` constants that no code references are marked as such
+- **`ClubService`, `IpscMatchCompetitorService`, `IpscMatchCompetitorServiceImpl`:** `ClubService`'s methods,
+  `createMatchCompetitors`' club filter (check order, skipped versus failed rows, the HPSC default) and `isForClub`,
+  `resolveCompetitorHomeClub` are documented
 - **`EntityIpscCompetitorService`, `IpscMatchCompetitorServiceImpl`:** `findCompetitor`'s interface Javadoc now
   describes the lookup order, the accepted null and blank arguments and the exceptions thrown, and
   `findCompetitorOrThrow(String, String)` and `resolveCompetitor` gain matching Javadoc
