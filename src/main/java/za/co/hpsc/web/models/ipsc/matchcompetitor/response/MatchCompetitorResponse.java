@@ -18,7 +18,6 @@ import java.math.BigDecimal;
  *
  * @since 9.1.0
  */
-// TODO: Javadoc
 @Getter
 @Setter
 @AllArgsConstructor
