@@ -321,15 +321,26 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Resolves a match category by name.
+     * Resolves a match category by name, defaulting when none is given.
      *
-     * @param matchCategory the match category name to look up.
-     * @return the matching {@link MatchCategory}.
-     * @throws ValidationException if no match category matches {@code matchCategory}.
+     * <p>
+     * A match category is not mandatory here: when {@code matchCategory} is null, empty or blank, the default,
+     * {@link IpscConstants#DEFAULT_MATCH_CATEGORY}, is returned instead of an error. A category that is supplied
+     * must still be a known one.
+     * </p>
+     *
+     * @param category the match category name to look up; may be null or blank, in which case the default
+     *                 match category is used.
+     * @return the matching {@link MatchCategory}, or {@link IpscConstants#DEFAULT_MATCH_CATEGORY} if
+     * {@code matchCategory} wasn't supplied.
+     * @throws ValidationException if {@code matchCategory} was supplied but no match category matches it.
      */
-    protected MatchCategory resolveMatchCategory(String matchCategory) {
-        return MatchCategory.fromName(matchCategory)
-                .orElseThrow(() -> new ValidationException("Unknown match category: " + matchCategory));
+    protected MatchCategory resolveMatchCategory(String category) {
+        if (hasText(category)) {
+            return MatchCategory.fromName(category)
+                    .orElseThrow(() -> new ValidationException("Unknown match category: " + category));
+        }
+        return IpscConstants.DEFAULT_MATCH_CATEGORY;
     }
 
     /**

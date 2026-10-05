@@ -63,7 +63,7 @@ public final class IpscConstants {
     /** Number of decimal places for a percentage. */
     public static final int PERCENTAGE_SCALE = 2;
 
-    /** Match category a match defaults to when none is given. Not currently referenced by any code. */
+    /** Match category a match defaults to when none is given, by {@code IpscMatchServiceImpl.resolveMatchCategory}. */
     public static final MatchCategory DEFAULT_MATCH_CATEGORY = MatchCategory.CLUB_SHOOT;
     /**
      * Club identifier a match defaults to when its {@code club} field is omitted — the seeded joint-club record

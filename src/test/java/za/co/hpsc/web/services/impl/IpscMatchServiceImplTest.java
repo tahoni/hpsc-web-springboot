@@ -353,6 +353,14 @@ class IpscMatchServiceImplTest {
     }
 
     @Test
+    void testResolveMatchCategory_whenMatchCategoryIsNullEmptyOrBlank_thenReturnsTheDefaultCategory() {
+        // Act & Assert
+        assertEquals(IpscConstants.DEFAULT_MATCH_CATEGORY, ipscMatchServiceImpl.resolveMatchCategory(null));
+        assertEquals(IpscConstants.DEFAULT_MATCH_CATEGORY, ipscMatchServiceImpl.resolveMatchCategory(""));
+        assertEquals(IpscConstants.DEFAULT_MATCH_CATEGORY, ipscMatchServiceImpl.resolveMatchCategory("  	 "));
+    }
+
+    @Test
     void testResolveMatchCategory_whenMatchCategoryIsUnrecognised_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.resolveMatchCategory("Not A Category"));
