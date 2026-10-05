@@ -8,18 +8,18 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * A container class holding the {@link MatchCompetitorResult}s of a bulk match competitor import,
+ * A container class holding the {@link MatchCompetitorBulkResponse}s of a bulk match competitor import,
  * one per imported row, each recording whether that row succeeded.
  *
- * @see MatchCompetitorResult
+ * @see MatchCompetitorBulkResponse
  * @see MatchCompetitorResponseHolder
  * @since 11.0.0
  */
 @Getter
 @Setter
 @AllArgsConstructor
-public class MatchCompetitorResultHolder {
+public class MatchCompetitorBulkResponseHolder {
     /** The result of each imported match competitor, in the same order as the import. */
     @NotNull
-    private List<MatchCompetitorResult> matchCompetitorResults;
+    private List<MatchCompetitorBulkResponse> matchCompetitors;
 }

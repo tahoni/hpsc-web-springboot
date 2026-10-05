@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 @Slf4j
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -29,7 +31,7 @@ public class ImageServiceImpl implements ImageService {
     public ImageResponseHolder createImages(String csvData)
             throws FatalException {
 
-        if (csvData == null || csvData.isBlank()) {
+        if (!hasText(csvData)) {
             log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
         }

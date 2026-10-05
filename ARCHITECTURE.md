@@ -62,7 +62,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 ├───.mvn/wrapper/               # Maven wrapper
 ├───documentation/
 │   ├───archive/                # Legacy release archive (see ARCHIVE.md)
-│   ├───history/                # Archived release notes/PR descriptions by major version, plus the v1–v7 archives
+│   ├───history/                # Archived release notes/PR descriptions by major version, plus the earliest versions' archives
 │   ├───recommendations/        # Fuller rationale/examples behind condensed AGENTS.md conventions
 │   └───roadmap/                # improvement-plan.md and its checkbox-level task breakdown
 ├───src/
@@ -179,6 +179,7 @@ Contains all business logic.
 | `IpscCompetitorService`       | `IpscCompetitorServiceImpl`       | IPSC competitor CRUD + bulk CSV import                                               |
 | `IpscMatchCompetitorService`  | `IpscMatchCompetitorServiceImpl`  | IPSC match competitor CRUD + bulk CSV import                                         |
 | `EntityIpscCompetitorService` | `EntityIpscCompetitorServiceImpl` | Looks up a persisted competitor from the loosely-specified identity in imported data |
+| `ClubService`                 | `ClubServiceImpl`                 | Null-safe comparisons of clubs and club identifiers                                  |
 | `TransactionService`          | `TransactionServiceImpl`          | Commits competitor/match/match competitor writes, each in its own transaction        |
 
 > `AwardService.createAwards()`/`ImageService.createImages()` are stateless by design, not an unfinished persistence
@@ -266,7 +267,7 @@ envelope.
 DTOs for the IPSC module rebuild — `MatchRequest`, `MatchPatchRequest` and `MatchResponse` (consumed by `IpscMatchController`'s
 single-match CRUD endpoints) and `MatchResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchRequest` through a Jackson mix-in), `CompetitorRequest`, `CompetitorPatchRequest` and `CompetitorResponse` (consumed by
 `IpscCompetitorController`'s single-competitor CRUD endpoints) and `CompetitorResponseHolder`
-(its bulk CSV import endpoint, which reads rows into `CompetitorRequest` through a Jackson mix-in), `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and `MatchCompetitorResponse` (consumed by `IpscMatchCompetitorController`'s single-entry CRUD endpoints) and `MatchCompetitorResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchCompetitorRequest` through a Jackson mix-in), `MatchCompetitorResult` and `MatchCompetitorResultHolder` (the per-row outcome of a match competitor bulk import), and the
+(its bulk CSV import endpoint, which reads rows into `CompetitorRequest` through a Jackson mix-in), `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and `MatchCompetitorResponse` (consumed by `IpscMatchCompetitorController`'s single-entry CRUD endpoints) and `MatchCompetitorResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchCompetitorRequest` through a Jackson mix-in), `MatchCompetitorBulkResponse` and `MatchCompetitorBulkResponseHolder` (the per-row outcome of a match competitor bulk import), and the
 shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
 
 ---
@@ -287,12 +288,12 @@ shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchS
 
 #### Utilities (`za.co.hpsc.web.utils`)
 
-| Class         | Responsibility                                              |
-|---------------|-------------------------------------------------------------|
-| `DateUtils`   | Date formatting and parsing helpers                         |
-| `NumberUtils` | Numeric parsing and formatting helpers                      |
-| `StringUtils` | String normalisation helpers                                |
-| `ValueUtils`  | Null-safe default-value helpers (`nullAsEmptyString`, etc.) |
+| Class        | Responsibility                                              |
+|--------------|-------------------------------------------------------------|
+| `DateUtil`   | Date formatting and parsing helpers                         |
+| `NumberUtil` | Numeric parsing and formatting helpers                      |
+| `StringUtil` | String normalisation helpers                                |
+| `ValueUtil`  | Null-safe default-value helpers (`nullAsEmptyString`, etc.) |
 
 #### Helpers (`za.co.hpsc.web.helpers`)
 
@@ -405,18 +406,21 @@ Client uploads CSV (Content-Type: text/plain)
 
 ### 📥 Match Competitor Bulk CSV Import Flow
 
-Handled by `IpscMatchCompetitorController` — same shape as the flows above, with every row also checked against the other rows and the existing entries before anything is saved:
+Handled by `IpscMatchCompetitorController` — same shape as the flows above, except that each row is its own unit of work: a row that fails is reported and skipped while the rest are still saved, and an optional `club` query parameter limits the import to one club (HPSC's own club by default):
 
 ```
-Client uploads CSV (Content-Type: text/plain)
+Client uploads CSV (Content-Type: text/plain, optional ?club=...)
     → IpscMatchCompetitorController.createMatchCompetitors
         → IpscMatchCompetitorService.createMatchCompetitors
-            (parses CSV via Jackson CsvMapper into MatchCompetitorRequest rows, then builds each row with the
-             same validation/competitor/match/enum-resolution logic the single-entry endpoint uses)
-            → TransactionService.saveMatchCompetitors
-                (saves every row in one transaction — a bad or duplicate row fails before anything is saved)
-        ← MatchCompetitorResponseHolder
-    ← ResponseEntity<...>
+            (parses CSV via Jackson CsvMapper into MatchCompetitorRequest rows)
+            → for each row, on its own:
+                a row for another club (its match club, else its competitor's home club, via ClubService)
+                    → reported as skipped
+                otherwise: validate → resolve the competitor (by ID, else through
+                    EntityIpscCompetitorService) and match → resolve the enums
+                    → save in its own transaction (a duplicate or invalid row is reported as failed)
+        ← MatchCompetitorBulkResponseHolder (one MatchCompetitorBulkResponse per row)
+    ← ResponseEntity<...> (201, or 422 if every row failed)
 ← JSON response
 ```
 
@@ -428,7 +432,7 @@ Client uploads CSV (Content-Type: text/plain)
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------|
 | **Scalability**     | Stateless REST design; database-backed persistence allows horizontal scaling                                                          |
 | **Maintainability** | Strict layering, package-by-feature model structure, Javadoc and CLAUDE.md guidance                                                   |
-| **Robustness**      | Multi-layered validation (controller, service, entity), global exception mapping, `ValueUtils` null-safe helpers                      |
+| **Robustness**      | Multi-layered validation (controller, service, entity), global exception mapping, `ValueUtil` null-safe helpers                       |
 | **Testability**     | Interface-based design, Mockito-based unit tests for controllers and services, H2 integration tests for the full persistence pipeline |
 | **Extensibility**   | Firearm-type enums + division mappings, enum `AttributeConverter`s with `fromX` lookups                                               |
 | **Data Integrity**  | Reject-not-cascade deletes, `TransactionService` commits, attribute converters                                                        |

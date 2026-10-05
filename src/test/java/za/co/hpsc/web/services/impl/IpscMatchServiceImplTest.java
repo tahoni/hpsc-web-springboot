@@ -353,9 +353,49 @@ class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testResolveMatchCategory_whenMatchCategoryIsUnrecognised_thenThrowsValidationException() {
+    void testResolveMatchCategory_whenMatchCategoryIsNullEmptyOrBlank_thenReturnsTheDefaultCategory() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.resolveMatchCategory("Not A Category"));
+        assertEquals(IpscConstants.DEFAULT_MATCH_CATEGORY, ipscMatchServiceImpl.resolveMatchCategory(null));
+        assertEquals(IpscConstants.DEFAULT_MATCH_CATEGORY, ipscMatchServiceImpl.resolveMatchCategory(""));
+        assertEquals(IpscConstants.DEFAULT_MATCH_CATEGORY, ipscMatchServiceImpl.resolveMatchCategory("  	 "));
+    }
+
+    @Test
+    void testResolveMatchCategory_whenMatchCategoryIsUnrecognised_thenThrowsValidationException() {
+        // Act
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> ipscMatchServiceImpl.resolveMatchCategory("Not A Category"));
+
+        // Assert - a supplied category that doesn't resolve is an error, not a fall back to the default
+        assertEquals("Unknown match category: Not A Category", exception.getMessage());
+    }
+
+    @Test
+    void testResolveMatchCategory_whenMatchCategoryIsTheEnumConstantName_thenReturnsMatchingCategory() {
+        // Arrange - the constant name differs from the display name, "Club Shoot"
+        assertNotEquals(MatchCategory.CLUB_SHOOT.getName(), MatchCategory.CLUB_SHOOT.name());
+
+        // Act & Assert
+        assertEquals(MatchCategory.CLUB_SHOOT, ipscMatchServiceImpl.resolveMatchCategory("CLUB_SHOOT"));
+        assertEquals(MatchCategory.CLUB_SHOOT, ipscMatchServiceImpl.resolveMatchCategory("club_shoot"));
+    }
+
+    @Test
+    void testResolveMatchCategory_whenMatchCategoryHasSurroundingWhitespace_thenReturnsMatchingCategory() {
+        // Act & Assert
+        assertEquals(MatchCategory.CLUB_SHOOT,
+                ipscMatchServiceImpl.resolveMatchCategory(" " + MatchCategory.CLUB_SHOOT.getName() + "	"));
+        assertEquals(MatchCategory.CLUB_SHOOT, ipscMatchServiceImpl.resolveMatchCategory("  CLUB_SHOOT  "));
+    }
+
+    @Test
+    void testResolveMatchCategory_whenUnrecognisedCategoryHasSurroundingWhitespace_thenMessageKeepsTheSuppliedValue() {
+        // Act
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> ipscMatchServiceImpl.resolveMatchCategory(" Not A Category "));
+
+        // Assert
+        assertEquals("Unknown match category:  Not A Category ", exception.getMessage());
     }
 
     // toResponse()
@@ -438,13 +478,16 @@ class IpscMatchServiceImplTest {
     }
 
     @Test
-    void testValidateForCreate_whenMatchCategoryIsBlank_thenThrowsValidationException() {
+    void testValidateForCreate_whenMatchCategoryIsNullOrBlank_thenDoesNotThrow() {
         // Arrange
-        MatchRequest request = validRequest("Test Club");
-        request.setMatchCategory("  ");
+        MatchRequest nullCategory = validRequest("Test Club");
+        nullCategory.setMatchCategory(null);
+        MatchRequest blankCategory = validRequest("Test Club");
+        blankCategory.setMatchCategory("  ");
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.validateForCreate(request));
+        // Act & Assert - the match category defaults when omitted, so it is not required
+        assertDoesNotThrow(() -> ipscMatchServiceImpl.validateForCreate(nullCategory));
+        assertDoesNotThrow(() -> ipscMatchServiceImpl.validateForCreate(blankCategory));
     }
 
     @Test

@@ -21,6 +21,42 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 12.0.0 (October 5, 2026)
+
+**Theme:** Match Competitor Lookup, Partial Bulk Import & Club Filtering
+
+**Key Focus:**
+
+- `EntityIpscCompetitorService.findCompetitor(competitorNumber, fullName)` is wired into the match competitor service:
+  the number is a string that may also be an ID number, the lookup tries the competitor number, the ID number and then
+  the full name, and a lookup that does not find exactly one competitor throws instead of returning an empty result
+- **Breaking:** the shared alias numbers 15000 and 16000 no longer match a competitor by number, and a number that is
+  not a whole number is looked up as an ID number, so an unmatched one answers `404` instead of being refused up front
+  with a `400`
+- **Breaking:** the match competitor bulk import is a partial import — each row is saved on its own, and a row that
+  fails is reported and skipped while the rest are created; an import in which every row fails answers `422`
+- **Breaking:** the bulk response models are renamed `MatchCompetitorBulkResponse` and
+  `MatchCompetitorBulkResponseHolder`, and the response body carries `matchCompetitors` instead of
+  `matchCompetitorResults`, with each result naming its competitor by `competitorName` and `competitorNumber`
+- **Breaking:** the bulk import is limited to one club, HPSC's own club unless an optional `club` query parameter asks
+  for another: only the rows whose match club, or whose competitor's home club, is that club are created, and the rest
+  are reported as skipped; a new `ClubService` holds the null-safe club comparisons
+- A competitor created or updated without a nickname takes its first name as the nickname, and the range officer marker
+  `RO` or `(RO)` is removed from a name wherever it appears when a competitor is looked up by name
+- A match no longer needs a match category: one that is omitted takes the default, Club Shoot, and a supplied one may be
+  given by display name or constant name, ignoring case and surrounding whitespace
+- `ControllerResponse` derives `success` from its error the right way round, and `findCompetitor` no longer fails on a
+  numeric value too long for an `int`
+- The `*Utils` classes are renamed back to `DateUtil`, `NumberUtil`, `StringUtil` and `ValueUtil`, `StringUtil` gains
+  `hasText` and the unused `MAX_SAPSA_NUMBER` and four score-scale constants are removed from `IpscConstants`, whose
+  remaining members are documented
+- Improvement plan Gaps #36 and #37 are closed, and a Qodana configuration and a `mysql-connector-j` pin are added
+- Scoped as `v12.0.0` **MAJOR**: four groups of changes are backward-incompatible and flagged `**Breaking:**` in
+  `CHANGELOG.md` — the alias numbers and ID-number lookup, the partial bulk import, the renamed response field and
+  the HPSC-limited bulk import
+- Project version bumped to 12.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- The suite stands at 1,227 passing tests
+
 ### Version 11.0.0 (October 4, 2026)
 
 **Theme:** Competitor Contract Tightening & Competitor Lookup Service
@@ -1159,6 +1195,20 @@ have run.
 number — and built the lookup that depends on it, with a migration that refuses data it cannot convert rather than
 losing it.
 
+### Milestone 46: Match Competitor Lookup, Partial Import & Club Filtering (v12.0.0)
+
+- A match competitor request can name its competitor by number, ID number or name, and the lookup that finds it is the
+  one `EntityIpscCompetitorService` built in the previous release, now with a caller
+- The bulk import reports each row on its own, so one bad row no longer costs the whole file, and it imports one club's
+  rows, HPSC's unless another is asked for
+- A match no longer has to carry a category, and the club comparisons live in one `ClubService` instead of being
+  repeated
+- Project's fourth MAJOR release in a row, with four groups of breaking changes flagged `**Breaking:**` in
+  `CHANGELOG.md` as they landed
+
+**Achievement:** Put the competitor lookup to work and made the bulk import tolerant — a row is created, skipped or
+failed, and said so — while narrowing it to the club the data is for.
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1298,6 +1348,35 @@ CompetitorRepository.findAll… / findAllByFirstNameLastNameOrNickNameLastNameIg
 - The lookup sits behind the entity service layer and is not yet called, so the competitor and match competitor
   services still resolve competitors as v10.0.0 did
 - Every bulk endpoint reads `text/plain`, so the content type is the same for all five, whatever the resource
+
+### v12.0.0: Partial Bulk Import & Club-Filtered Match Competitors
+
+```
+POST /ipsc/match-competitors/bulk?club=...  (CSV as text/plain)
+                          ↓
+IpscMatchCompetitorServiceImpl.createMatchCompetitors(csvData, club)
+        club → target club (HPSC's own club by default)
+                          ↓  for each row, on its own
+isForClub: matchClub is the target club, else the competitor's home club is  (ClubService.isSameClub)
+                          ↓                       ↓ no → "Skipped" result
+validateForCreate → applyFields → resolveCompetitor
+        competitor ID, else EntityIpscCompetitorService.findCompetitor(number, fullName)
+                          ↓
+save (own transaction)  →  MatchCompetitorBulkResponse(success, message, row)
+                          ↓
+MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
+```
+
+**Characteristics:**
+
+- Each row is its own unit of work, so a row that fails or is skipped is reported with its reason and the rest are
+  still created; only unreadable CSV or a missing header column fails the whole request
+- The club filter runs before a row is validated, so a row for another club is skipped rather than failed, while a row
+  for the club that is invalid is still reported as failed
+- Club comparisons go through `ClubService`, so `IpscCompetitorServiceImpl` and the match competitor service no longer
+  each repeat the null checks
+- A match's category and club both default when omitted, so a match request needs only a name, a date and a firearm
+  type
 
 ---
 
@@ -1523,6 +1602,12 @@ CompetitorRepository.findAll… / findAllByFirstNameLastNameOrNickNameLastNameIg
   that changes the content type the bulk endpoints accept, renames a JSON property and a CSV column and refuses a
   competitor number that is not a whole number, the release is the project's third consecutive MAJOR, with each
   breaking change flagged in `CHANGELOG.md` as it landed.
+- **Version 12.x (v12.0.0):** Put the competitor lookup to work and make the bulk import tolerant — a match competitor
+  request finds its competitor by number, ID number or name, each row of a bulk import is created, skipped or failed on
+  its own, and the import is limited to one club, HPSC's unless another is asked for. Because that changes how a
+  competitor number is matched, what a bulk import answers, the name of a response field and which rows an import
+  creates, the release is the project's fourth consecutive MAJOR, with each breaking change flagged in `CHANGELOG.md`
+  as it landed.
 
 ### Initial Phase (v1.0.0)
 
@@ -1821,7 +1906,7 @@ CompetitorRepository.findAll… / findAllByFirstNameLastNameOrNickNameLastNameIg
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v11.0.0, the following areas are identified for future enhancement:
+Based on the evolution to v12.0.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/history/HISTORY_v1-v7.md`](/documentation/history/HISTORY_v1-v7.md).
@@ -2061,7 +2146,22 @@ The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived,
 - Gap #31 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v11.0.0)
+### Recently Completed (v12.0.0)
+
+- `EntityIpscCompetitorService.findCompetitor(competitorNumber, fullName)` wired into the match competitor service,
+  matching the number, then the ID number, then the full name, with the alias numbers 15000 and 16000 no longer matched
+- Match competitor bulk import made a partial import with per-row results, the response models renamed
+  `MatchCompetitorBulkResponse` and `MatchCompetitorBulkResponseHolder` and an import in which every row fails answering
+  `422`
+- Bulk import limited to one club, HPSC's unless a `club` parameter asks for another, with a new `ClubService`
+- Competitor nickname defaulting to the first name, the RO marker removed from a name wherever it appears, an optional
+  match category and `ControllerResponse.success` fixed
+- `*Util` classes renamed back to the singular, `StringUtil.hasText` added and `IpscConstants` documented and pruned
+- Improvement plan Gaps #36 and #37 closed, a Qodana configuration added and `mysql-connector-j` pinned
+- The suite stands at 1,227 passing tests
+- Project version bumped to 12.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v11.0.0)
 
 - Every `POST /bulk` endpoint consumes `text/plain` instead of `text/csv`, answering `415` otherwise
 - Competitor `nickname` renamed `nickName` in the entity, the JSON property and the CSV column (`NickName`), with the
@@ -2283,3 +2383,9 @@ Version 11.0.0 settles the competitor's contract and builds the lookup that depe
 the table, with a new service that finds a competitor by number and then by name. It is a MAJOR release, because the
 bulk endpoints' content type, the nickname's JSON property and CSV column and the whole-number rule for
 `competitorNumber` all change for existing callers.
+
+Version 12.0.0 puts the lookup to work and makes the bulk import tolerant: a match competitor request finds its
+competitor by number, ID number or name, each row of an import is created, skipped or failed on its own, and the import
+is limited to the club the data is for, HPSC's unless another is asked for. It is a MAJOR release, because the way a
+competitor number is matched, what a bulk import answers, the name of a response field and which rows an import
+creates all change for existing callers.

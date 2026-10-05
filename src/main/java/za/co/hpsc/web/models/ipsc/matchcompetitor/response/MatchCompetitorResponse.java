@@ -32,6 +32,10 @@ public class MatchCompetitorResponse {
     /** The identifier of the match the competitor shot. */
     @NotNull
     private Long matchId;
+
+    private String competitorName;
+    private Integer competitorNumber;
+
     /** The club the competitor represented at the match, if any. */
     private ClubIdentifier matchClub;
     /** The competitor's category at the match. */
@@ -45,6 +49,7 @@ public class MatchCompetitorResponse {
     private Division division;
     /** The competitor's power factor, if any. */
     private PowerFactor powerFactor;
+
     /** The competitor's match points, if any. */
     private BigDecimal points;
     /** The competitor's overall match score as a percentage of the match winner's score, if any. */

@@ -10,14 +10,14 @@ import java.util.List;
  * Utility class providing methods for numeric calculations and operations.
  *
  * <p>
- * The {@code NumberUtils} class offers static methods for common numerical tasks. These methods
+ * The {@code NumberUtil} class offers static methods for common numerical tasks. These methods
  * are designed to handle various use cases where numerical computations are required.
  * </p>
  *
  * @since 1.1.3
  */
-public final class NumberUtils {
-    private NumberUtils() {
+public final class NumberUtil {
+    private NumberUtil() {
         // Utility class, not to be instantiated
     }
 
@@ -35,6 +35,7 @@ public final class NumberUtils {
      *              Can be null or zero.
      * @return the percentage of {@code part} relative to {@code total}, scaled to the default scale.
      * If {@code total} is null or zero, returns zero.
+     * @since 1.1.3
      */
     public static BigDecimal calculatePercentage(BigDecimal part, BigDecimal whole) {
         BigDecimal result = BigDecimal.ZERO;
@@ -86,7 +87,7 @@ public final class NumberUtils {
      * @since 4.1.0
      */
     public static String formatBigDecimal(BigDecimal value, int scale) {
-        BigDecimal result = ValueUtils.nullAsDefault(value, BigDecimal.ZERO);
+        BigDecimal result = ValueUtil.nullAsDefault(value, BigDecimal.ZERO);
         // Scales the result to the default scale
         return result.setScale(scale, RoundingMode.HALF_UP).toString();
     }

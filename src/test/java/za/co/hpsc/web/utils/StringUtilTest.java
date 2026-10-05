@@ -7,7 +7,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class StringUtilsTest {
+public class StringUtilTest {
 
     // formatStringWithNamedParameters(String, Map)
     @Test
@@ -21,7 +21,7 @@ public class StringUtilsTest {
         }
 
         // Act
-        String result = StringUtils.formatStringWithNamedParameters(template, parameters);
+        String result = StringUtil.formatStringWithNamedParameters(template, parameters);
 
         // Assert
         assertEquals("Hello, Alice! Welcome to Wonderland.", result);
@@ -38,7 +38,7 @@ public class StringUtilsTest {
         }
 
         // Act
-        String result = StringUtils.formatStringWithNamedParameters(template, parameters);
+        String result = StringUtil.formatStringWithNamedParameters(template, parameters);
 
         // Assert
         assertEquals("Hello, Alice! Alice, you are amazing!", result);
@@ -55,7 +55,7 @@ public class StringUtilsTest {
         }
 
         // Act
-        String result = StringUtils.formatStringWithNamedParameters(template, parameters);
+        String result = StringUtil.formatStringWithNamedParameters(template, parameters);
 
         // Assert
         assertEquals("Welcome, JohnDoe!", result);
@@ -72,7 +72,7 @@ public class StringUtilsTest {
         }
 
         // Act
-        String result = StringUtils.formatStringWithNamedParameters(template, parameters);
+        String result = StringUtil.formatStringWithNamedParameters(template, parameters);
 
         // Assert
         assertEquals("Hello, Alice! Welcome to ${place}.", result);
@@ -89,7 +89,7 @@ public class StringUtilsTest {
         }
 
         // Act
-        String result = StringUtils.formatStringWithNamedParameters(template, parameters);
+        String result = StringUtil.formatStringWithNamedParameters(template, parameters);
 
         // Assert
         assertEquals("Hello, ${missingKey}.", result);
@@ -106,7 +106,7 @@ public class StringUtilsTest {
         }
 
         // Act
-        String result = StringUtils.formatStringWithNamedParameters(template, parameters);
+        String result = StringUtil.formatStringWithNamedParameters(template, parameters);
 
         // Assert
         assertEquals("Simple text without placeholders.", result);
@@ -123,7 +123,7 @@ public class StringUtilsTest {
         }
 
         // Act
-        String result = StringUtils.formatStringWithNamedParameters(template, parameters);
+        String result = StringUtil.formatStringWithNamedParameters(template, parameters);
 
         // Assert
         assertEquals("", result);
@@ -136,7 +136,7 @@ public class StringUtilsTest {
         Map<String, String> parameters = new HashMap<>();
 
         // Act
-        String result = StringUtils.formatStringWithNamedParameters(template, parameters);
+        String result = StringUtil.formatStringWithNamedParameters(template, parameters);
 
         // Assert
         assertEquals(template, result);
@@ -148,7 +148,7 @@ public class StringUtilsTest {
         String template = "Hello, ${name}! Welcome to ${place}.";
 
         // Act
-        String result = StringUtils.formatStringWithNamedParameters(template, null);
+        String result = StringUtil.formatStringWithNamedParameters(template, null);
 
         // Assert
         assertEquals(template, result);
@@ -165,7 +165,7 @@ public class StringUtilsTest {
 
         // Act & Assert
         assertThrows(NullPointerException.class, () ->
-                StringUtils.formatStringWithNamedParameters(null, parameters));
+                StringUtil.formatStringWithNamedParameters(null, parameters));
     }
 
     // toString(Object)
@@ -175,7 +175,7 @@ public class StringUtilsTest {
         Object obj = 123;
 
         // Act
-        String result = StringUtils.toString(obj);
+        String result = StringUtil.toString(obj);
 
         // Assert
         assertEquals("123", result);
@@ -192,7 +192,7 @@ public class StringUtilsTest {
         };
 
         // Act
-        String result = StringUtils.toString(obj);
+        String result = StringUtil.toString(obj);
 
         // Assert
         assertEquals("CustomToString", result);
@@ -201,44 +201,76 @@ public class StringUtilsTest {
     @Test
     void testToString_whenNullObject_thenReturnsNull() {
         // Act & Assert
-        assertNull(StringUtils.toString(null));
+        assertNull(StringUtil.toString(null));
     }
 
     // toProperCase(String)
     @Test
     void testToProperCase_whenNull_thenReturnsNull() {
         // Act & Assert
-        assertNull(StringUtils.toProperCase(null));
+        assertNull(StringUtil.toProperCase(null));
     }
 
     @Test
     void testToProperCase_whenMixedCaseWords_thenCapitalisesEachWord() {
         // Act & Assert
-        assertEquals("Jane Ann Doe", StringUtils.toProperCase("jANE ann DOE"));
+        assertEquals("Jane Ann Doe", StringUtil.toProperCase("jANE ann DOE"));
     }
 
     @Test
     void testToProperCase_whenHyphenatedOrApostrophised_thenCapitalisesEachPart() {
         // Act & Assert
-        assertEquals("O'Neil-Smith", StringUtils.toProperCase("o'NEIL-SMITH"));
+        assertEquals("O'Neil-Smith", StringUtil.toProperCase("o'NEIL-SMITH"));
     }
 
     @Test
     void testToProperCase_whenCurlyApostrophe_thenCapitalisesTheNextLetter() {
         // Act & Assert
-        assertEquals("O’Neil", StringUtils.toProperCase("o’NEIL"));
+        assertEquals("O’Neil", StringUtil.toProperCase("o’NEIL"));
     }
 
     @Test
     void testToProperCase_whenDigitsOnly_thenReturnsUnchanged() {
         // Act & Assert
-        assertEquals("0821234567", StringUtils.toProperCase("0821234567"));
+        assertEquals("0821234567", StringUtil.toProperCase("0821234567"));
     }
 
     @Test
     void testToProperCase_whenEmpty_thenReturnsEmpty() {
         // Act & Assert
-        assertEquals("", StringUtils.toProperCase(""));
+        assertEquals("", StringUtil.toProperCase(""));
+    }
+
+    // hasText(String)
+    @Test
+    void testHasText_whenNull_thenReturnsFalse() {
+        // Act & Assert
+        assertFalse(StringUtil.hasText(null));
+    }
+
+    @Test
+    void testHasText_whenEmpty_thenReturnsFalse() {
+        // Act & Assert
+        assertFalse(StringUtil.hasText(""));
+    }
+
+    @Test
+    void testHasText_whenOnlyWhitespace_thenReturnsFalse() {
+        // Act & Assert
+        assertFalse(StringUtil.hasText("   "));
+        assertFalse(StringUtil.hasText(" \t\r\n "));
+    }
+
+    @Test
+    void testHasText_whenNonBlank_thenReturnsTrue() {
+        // Act & Assert
+        assertTrue(StringUtil.hasText("text"));
+        assertTrue(StringUtil.hasText("0"));
+    }
+
+    @Test
+    void testHasText_whenTextSurroundedByWhitespace_thenReturnsTrue() {
+        // Act & Assert
+        assertTrue(StringUtil.hasText("  text \t"));
     }
 }
-

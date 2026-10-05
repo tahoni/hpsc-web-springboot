@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
@@ -20,18 +22,19 @@ import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorRespon
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.services.ClubService;
+import za.co.hpsc.web.services.EntityIpscCompetitorService;
 import za.co.hpsc.web.services.IpscMatchCompetitorService;
 import za.co.hpsc.web.services.IpscMatchCompetitorServiceTest;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -54,6 +57,12 @@ class IpscMatchCompetitorServiceImplTest {
 
     @Mock
     private IpscMatchRepository ipscMatchRepository;
+
+    @Mock
+    private EntityIpscCompetitorService entityIpscCompetitorService;
+
+    @Spy
+    private ClubService clubService = new ClubServiceImpl();
 
     @InjectMocks
     private IpscMatchCompetitorServiceImpl matchCompetitorServiceImpl;
@@ -143,7 +152,7 @@ class IpscMatchCompetitorServiceImplTest {
 
     // resolveCompetitor()
     @Test
-    void testResolveCompetitor_whenIdGiven_thenUsesIdAndIgnoresName() {
+    void testResolveCompetitor_whenIdGiven_thenUsesIdAndIgnoresNumberAndName() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -151,86 +160,77 @@ class IpscMatchCompetitorServiceImplTest {
 
         // Act & Assert
         assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(1L, "1", "Someone Else"));
-        verify(competitorRepository, never()).findAllByFullNameIgnoreCase(anyString());
+        verifyNoInteractions(entityIpscCompetitorService);
     }
 
     @Test
-    void testResolveCompetitor_whenOnlyNameGiven_thenFindsCompetitorByTrimmedName() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        competitor.setId(3L);
-        when(competitorRepository.findAllByFullNameIgnoreCase("Jane Doe")).thenReturn(List.of(competitor));
-
-        // Act & Assert
-        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, null, "  Jane Doe "));
-    }
-
-    @Test
-    void testResolveCompetitor_whenNumberGiven_thenFindsCompetitorByTrimmedNumberBeforeName() {
+    void testResolveCompetitor_whenNoIdGiven_thenDelegatesTheNumberAndNameToTheEntityService() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(4L);
-        when(competitorRepository.findAllByCompetitorNumber(123)).thenReturn(List.of(competitor));
+        when(entityIpscCompetitorService.findCompetitor("123", "Jane Doe")).thenReturn(Optional.of(competitor));
 
         // Act & Assert
-        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, " 123 ", "Someone Else"));
-        verify(competitorRepository, never()).findAllByFullNameIgnoreCase(anyString());
+        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, "123", "Jane Doe"));
+        verify(competitorRepository, never()).findById(any());
     }
 
     @Test
-    void testResolveCompetitor_whenNumberIsNotAWholeNumber_thenThrowsValidationException() {
+    void testResolveCompetitor_whenOnlyNameGiven_thenDelegatesTheNameToTheEntityService() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setId(3L);
+        when(entityIpscCompetitorService.findCompetitor(null, "Jane Doe")).thenReturn(Optional.of(competitor));
+
+        // Act & Assert
+        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, null, "Jane Doe"));
+    }
+
+    @Test
+    void testResolveCompetitor_whenOnlyNumberGiven_thenDelegatesTheNumberToTheEntityService() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setId(5L);
+        when(entityIpscCompetitorService.findCompetitor("123", null)).thenReturn(Optional.of(competitor));
+
+        // Act & Assert
+        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, "123", null));
+    }
+
+    @Test
+    void testResolveCompetitor_whenTheEntityServiceFindsNoCompetitor_thenThrowsNonFatalException() {
+        // Arrange
+        when(entityIpscCompetitorService.findCompetitor("123", "Jane Doe"))
+                .thenThrow(new NonFatalException("No competitors found"));
+
+        // Act & Assert
+        assertThrows(NonFatalException.class,
+                () -> matchCompetitorServiceImpl.resolveCompetitor(null, "123", "Jane Doe"));
+    }
+
+    @Test
+    void testResolveCompetitor_whenTheEntityServiceFindsSeveralCompetitors_thenThrowsValidationException() {
+        // Arrange
+        when(entityIpscCompetitorService.findCompetitor("123", "Jane Doe"))
+                .thenThrow(new ValidationException("Two or more competitors found"));
+
         // Act & Assert
         assertThrows(ValidationException.class,
-                () -> matchCompetitorServiceImpl.resolveCompetitor(null, "A123", null));
-        verify(competitorRepository, never()).findAllByCompetitorNumber(any());
+                () -> matchCompetitorServiceImpl.resolveCompetitor(null, "123", "Jane Doe"));
     }
 
     @Test
-    void testResolveCompetitor_whenNumberMatchesNobody_thenThrowsNonFatalException() {
+    void testResolveCompetitor_whenTheEntityServiceRejectsBlankInput_thenThrowsValidationException() {
         // Arrange
-        when(competitorRepository.findAllByCompetitorNumber(123)).thenReturn(List.of());
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, "123", null));
-    }
-
-    @Test
-    void testResolveCompetitor_whenNumberMatchesSeveral_thenThrowsValidationException() {
-        // Arrange
-        when(competitorRepository.findAllByCompetitorNumber(123))
-                .thenReturn(List.of(new Competitor(), new Competitor()));
+        when(entityIpscCompetitorService.findCompetitor("", "  "))
+                .thenThrow(new ValidationException("Full name or competitor number is required"));
 
         // Act & Assert
         assertThrows(ValidationException.class,
-                () -> matchCompetitorServiceImpl.resolveCompetitor(null, "123", null));
+                () -> matchCompetitorServiceImpl.resolveCompetitor(null, "  ", "  "));
     }
 
-    @Test
-    void testResolveCompetitor_whenNameMatchesNobody_thenThrowsNonFatalException() {
-        // Arrange
-        when(competitorRepository.findAllByFullNameIgnoreCase("Jane Doe")).thenReturn(List.of());
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, null, "Jane Doe"));
-    }
-
-    @Test
-    void testResolveCompetitor_whenNameMatchesSeveral_thenThrowsValidationException() {
-        // Arrange
-        when(competitorRepository.findAllByFullNameIgnoreCase("Jane Doe"))
-                .thenReturn(List.of(new Competitor(), new Competitor()));
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, null, "Jane Doe"));
-    }
-
-    @Test
-    void testResolveCompetitor_whenNeitherIdNorNameGiven_thenThrowsValidationException() {
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitor(null, "  ", "  "));
-    }
-
-    // findCompetitorOrThrow()
+    // findCompetitorOrThrow(Long)
     @Test
     void testFindCompetitorOrThrow_whenItDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
@@ -275,6 +275,240 @@ class IpscMatchCompetitorServiceImplTest {
     void testResolveMatchClub_whenUnknown_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveMatchClub("Nope"));
+    }
+
+    // resolveCompetitorHomeClub()
+    @Test
+    void testResolveCompetitorHomeClub_whenCompetitorHasHomeClub_thenReturnsItsIdentifier() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorNumber("7001");
+        request.setCompetitorName("Jane Doe");
+        when(entityIpscCompetitorService.findCompetitor("7001", "Jane Doe"))
+                .thenReturn(Optional.of(competitorWithHomeClub(ClubIdentifier.HPSC)));
+
+        // Act & Assert
+        assertEquals(ClubIdentifier.HPSC, matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
+    }
+
+    @Test
+    void testResolveCompetitorHomeClub_whenRequestHasCompetitorId_thenResolvesById() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorId(1L);
+        when(competitorRepository.findById(1L))
+                .thenReturn(Optional.of(competitorWithHomeClub(ClubIdentifier.SOSC)));
+
+        // Act & Assert
+        assertEquals(ClubIdentifier.SOSC, matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
+        verifyNoInteractions(entityIpscCompetitorService);
+    }
+
+    @Test
+    void testResolveCompetitorHomeClub_whenCompetitorHasNoHomeClub_thenReturnsNull() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorNumber("7001");
+        when(entityIpscCompetitorService.findCompetitor("7001", null))
+                .thenReturn(Optional.of(new Competitor()));
+
+        // Act & Assert
+        assertNull(matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
+    }
+
+    @Test
+    void testResolveCompetitorHomeClub_whenHomeClubHasNoIdentifier_thenReturnsNull() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorNumber("7001");
+        Competitor competitor = new Competitor();
+        competitor.setHomeClub(new Club());
+        when(entityIpscCompetitorService.findCompetitor("7001", null)).thenReturn(Optional.of(competitor));
+
+        // Act & Assert
+        assertNull(matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
+    }
+
+    @Test
+    void testResolveCompetitorHomeClub_whenNoCompetitorIsFound_thenThrowsNonFatalException() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorNumber("7001");
+        when(entityIpscCompetitorService.findCompetitor("7001", null)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
+    }
+
+    @Test
+    void testResolveCompetitorHomeClub_whenCompetitorIsAmbiguous_thenThrowsValidationException() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorNumber("7001");
+        when(entityIpscCompetitorService.findCompetitor("7001", null))
+                .thenThrow(new ValidationException("More than one competitor"));
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
+    }
+
+    // isForClub()
+    @Test
+    void testIsForClub_whenTargetClubIsNull_thenReturnsTrue() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setMatchClub("SOSC");
+
+        // Act & Assert
+        assertTrue(matchCompetitorServiceImpl.isForClub(request, null));
+        assertTrue(matchCompetitorServiceImpl.isForClub(new MatchCompetitorRequest(), null));
+    }
+
+    @Test
+    void testIsForClub_whenRowClubMatchesByNameOrAbbreviation_thenReturnsTrue() {
+        // Arrange
+        MatchCompetitorRequest byAbbreviation = new MatchCompetitorRequest();
+        byAbbreviation.setMatchClub("HPSC");
+        MatchCompetitorRequest byName = new MatchCompetitorRequest();
+        byName.setMatchClub(ClubIdentifier.HPSC.getName());
+
+        // Act & Assert
+        assertTrue(matchCompetitorServiceImpl.isForClub(byAbbreviation, ClubIdentifier.HPSC));
+        assertTrue(matchCompetitorServiceImpl.isForClub(byName, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsForClub_whenRowClubIsDifferent_thenReturnsFalse() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setMatchClub("SOSC");
+
+        // Act & Assert
+        assertFalse(matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsForClub_whenRowClubIsDifferentButCompetitorHomeClubMatches_thenReturnsTrue() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorNumber("7001");
+        request.setCompetitorName("Jane Doe");
+        request.setMatchClub("SOSC");
+        when(entityIpscCompetitorService.findCompetitor("7001", "Jane Doe"))
+                .thenReturn(Optional.of(competitorWithHomeClub(ClubIdentifier.HPSC)));
+
+        // Act & Assert
+        assertTrue(matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsForClub_whenRowHasNoClubAndCompetitorHomeClubIsDifferent_thenReturnsFalse() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorNumber("7001");
+        when(entityIpscCompetitorService.findCompetitor("7001", null))
+                .thenReturn(Optional.of(competitorWithHomeClub(ClubIdentifier.SOSC)));
+
+        // Act & Assert
+        assertFalse(matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsForClub_whenRowHasNoClubAndCompetitorHasNoHomeClub_thenReturnsFalse() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorNumber("7001");
+        when(entityIpscCompetitorService.findCompetitor("7001", null))
+                .thenReturn(Optional.of(new Competitor()));
+
+        // Act & Assert
+        assertFalse(matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsForClub_whenRowClubIsDifferentAndCompetitorCannotBeResolved_thenReturnsFalse() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setMatchClub("SOSC");
+        when(entityIpscCompetitorService.findCompetitor(null, null))
+                .thenThrow(new ValidationException("Competitor number or name is required"));
+
+        // Act & Assert
+        assertFalse(matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsForClub_whenRowClubIsDifferentAndNoCompetitorIsFound_thenReturnsFalse() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorNumber("7001");
+        request.setMatchClub("SOSC");
+        when(entityIpscCompetitorService.findCompetitor("7001", null)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertFalse(matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsForClub_whenRowIdentifiesCompetitorByIdThatDoesNotExist_thenReturnsFalse() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorId(1L);
+        when(competitorRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertFalse(matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsForClub_whenTargetClubIsNullAndRowClubIsUnknown_thenReturnsTrueWithoutInspectingTheRow() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setMatchClub("Not A Club");
+
+        // Act
+        boolean result = matchCompetitorServiceImpl.isForClub(request, null);
+
+        // Assert
+        assertTrue(result);
+        verifyNoInteractions(entityIpscCompetitorService, competitorRepository);
+    }
+
+    @Test
+    void testIsForClub_whenRowIdentifiesCompetitorById_thenUsesTheirHomeClub() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorId(1L);
+        request.setMatchClub("SOSC");
+        Competitor competitor = competitorWithHomeClub(ClubIdentifier.HPSC);
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
+
+        // Act & Assert
+        assertTrue(matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsForClub_whenRowClubMatches_thenDoesNotLookUpTheCompetitor() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setMatchClub("HPSC");
+
+        // Act
+        boolean result = matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC);
+
+        // Assert
+        assertTrue(result);
+        verifyNoInteractions(entityIpscCompetitorService);
+    }
+
+    @Test
+    void testIsForClub_whenRowClubIsUnknown_thenThrowsValidationException() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setMatchClub("Not A Club");
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
     }
 
     // resolveCompetitorCategory()
@@ -382,6 +616,44 @@ class IpscMatchCompetitorServiceImplTest {
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(noDivision));
     }
 
+    // toFailedResponse()
+    @Test
+    void testToFailedResponse_whenRequestPresent_thenCopiesOnlyTheIdentifyingFields() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorId(1L);
+        request.setCompetitorName("Jane Doe");
+        request.setCompetitorNumber(" 123 ");
+        request.setMatchId(2L);
+        request.setFirearmType("Not a firearm type");
+        request.setPoints(new BigDecimal("10"));
+
+        // Act
+        MatchCompetitorResponse response = matchCompetitorServiceImpl.toFailedResponse(request);
+
+        // Assert
+        assertEquals(1L, response.getCompetitorId());
+        assertEquals("Jane Doe", response.getCompetitorName());
+        assertEquals(123, response.getCompetitorNumber());
+        assertEquals(2L, response.getMatchId());
+        assertNull(response.getMatchCompetitorId());
+        assertNull(response.getFirearmType());
+        assertNull(response.getPoints());
+    }
+
+    @Test
+    void testToFailedResponse_whenRequestIsNull_thenReturnsEmptyResponse() {
+        // Act
+        MatchCompetitorResponse response = matchCompetitorServiceImpl.toFailedResponse(null);
+
+        // Assert
+        assertNotNull(response);
+        assertNull(response.getCompetitorId());
+        assertNull(response.getMatchId());
+        assertNull(response.getCompetitorName());
+        assertNull(response.getCompetitorNumber());
+    }
+
     // toResponse()
     @Test
     void testToResponse_whenAllFieldsPresent_thenMapsAllFields() {
@@ -453,5 +725,13 @@ class IpscMatchCompetitorServiceImplTest {
         request.setFirearmType("Handgun");
         request.setDivision("Open Division");
         return request;
+    }
+
+    private Competitor competitorWithHomeClub(ClubIdentifier identifier) {
+        Club club = new Club();
+        club.setIdentifier(identifier);
+        Competitor competitor = new Competitor();
+        competitor.setHomeClub(club);
+        return competitor;
     }
 }

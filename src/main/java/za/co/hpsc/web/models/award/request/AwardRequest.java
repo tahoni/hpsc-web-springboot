@@ -62,6 +62,7 @@ public class AwardRequest extends Request {
      *                        Can be null.
      * @param thirdPlaceName  the name of the third-place recipient.
      *                        Can be null.
+     * @since 1.1.0
      */
     public AwardRequest(@NotNull @NotBlank String title, @NotNull String ceremonyTitle,
                         @NotNull String firstPlaceName, String secondPlaceName, String thirdPlaceName) {

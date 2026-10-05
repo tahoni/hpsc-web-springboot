@@ -138,14 +138,17 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testCreateMatch_whenMatchCategoryIsMissing_thenThrowsValidationException() {
+    void testCreateMatch_whenMatchCategoryIsMissing_thenDefaultsToDefaultMatchCategory() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchRequest request = validRequest("Test Club");
         request.setMatchCategory(null);
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchService.createMatch(request));
+        // Act
+        MatchResponse response = assertDoesNotThrow(() -> ipscMatchService.createMatch(request));
+
+        // Assert
+        assertEquals(IpscConstants.DEFAULT_MATCH_CATEGORY, response.getMatchCategory());
     }
 
     @Test

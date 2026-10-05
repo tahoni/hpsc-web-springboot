@@ -5,6 +5,8 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 /**
  * Enum representing different divisions in sports shooting.
  *
@@ -84,9 +86,10 @@ public enum Division {
      *             Can be null or empty.
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or empty otherwise.
+     * @since 1.1.3
      */
     public static Optional<Division> fromName(String name) {
-        if ((name == null) || (name.isBlank())) {
+        if (!hasText(name)) {
             return Optional.empty();
         }
 
@@ -108,9 +111,10 @@ public enum Division {
      *                     Can be null or empty.
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or empty otherwise.
+     * @since 1.1.3
      */
     public static Optional<Division> fromAbbreviation(String abbreviation) {
-        if ((abbreviation == null) || (abbreviation.isBlank())) {
+        if (!hasText(abbreviation)) {
             return Optional.empty();
         }
 
@@ -132,9 +136,10 @@ public enum Division {
      *              Can be null or empty.
      * @return an {@code Optional} containing the matching {@code Division} if found,
      * or empty if no match is found.
+     * @since 1.1.3
      */
     public static Optional<Division> fromAbbreviationOrName(String value) {
-        if ((value == null) || (value.isBlank())) {
+        if (!hasText(value)) {
             return Optional.empty();
         }
 

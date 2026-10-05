@@ -5,6 +5,8 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 /**
  * Enum representing the practical shooting clubs recognised by the HPSC platform.
  *
@@ -56,9 +58,10 @@ public enum ClubIdentifier {
      *             Can be null or blank.
      * @return an {@code Optional} containing the matching {@code ClubIdentifier} if found,
      * or empty otherwise.
+     * @since 5.0.0
      */
     public static Optional<ClubIdentifier> fromName(String name) {
-        if ((name == null) || (name.isBlank())) {
+        if (!hasText(name)) {
             return Optional.empty();
         }
 
@@ -82,7 +85,7 @@ public enum ClubIdentifier {
      * @since 5.4.0
      */
     public static Optional<ClubIdentifier> fromAbbreviation(String abbreviation) {
-        if ((abbreviation == null) || (abbreviation.isBlank())) {
+        if (!hasText(abbreviation)) {
             return Optional.empty();
         }
 
@@ -103,9 +106,10 @@ public enum ClubIdentifier {
      *             Can be null or blank.
      * @return an {@code Optional} containing the matching {@code ClubIdentifier} if found,
      * or empty otherwise.
+     * @since 5.0.0
      */
     public static Optional<ClubIdentifier> fromCode(String code) {
-        if ((code == null) || (code.isBlank())) {
+        if (!hasText(code)) {
             return Optional.empty();
         }
 

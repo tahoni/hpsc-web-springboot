@@ -8,11 +8,13 @@ import lombok.Setter;
 import org.springframework.http.MediaTypeFactory;
 import za.co.hpsc.web.models.Response;
 import za.co.hpsc.web.models.image.request.ImageRequest;
-import za.co.hpsc.web.utils.ValueUtils;
+import za.co.hpsc.web.utils.ValueUtil;
 
 import java.net.URLConnection;
 import java.util.List;
 import java.util.UUID;
+
+import static za.co.hpsc.web.utils.StringUtil.hasText;
 
 /**
  * Represents a response object specifically designed for handling images.
@@ -68,8 +70,8 @@ public class ImageResponse extends Response {
     public ImageResponse(UUID uuid, @NotNull @NotBlank String title, String filePath, String fileName,
                          String mimeType) {
         super(uuid, title);
-        this.filePath = ValueUtils.nullAsEmptyString(filePath);
-        this.fileName = ValueUtils.nullAsEmptyString(fileName);
+        this.filePath = ValueUtil.nullAsEmptyString(filePath);
+        this.fileName = ValueUtil.nullAsEmptyString(fileName);
         setMimeType(mimeType);
     }
 
@@ -108,8 +110,8 @@ public class ImageResponse extends Response {
                          String description, String category, List<String> tags, String filePath,
                          String fileName, String mimeType) {
         super(uuid, title, summary, description, category, tags);
-        this.filePath = ValueUtils.nullAsEmptyString(filePath);
-        this.fileName = ValueUtils.nullAsEmptyString(fileName);
+        this.filePath = ValueUtil.nullAsEmptyString(filePath);
+        this.fileName = ValueUtil.nullAsEmptyString(fileName);
         setMimeType(mimeType);
     }
 
@@ -142,8 +144,8 @@ public class ImageResponse extends Response {
     public ImageResponse(@NotNull @NotBlank String title, String summary, String description,
                          String category, List<String> tags, String filePath, String fileName) {
         super(null, title, summary, description, category, tags);
-        this.filePath = ValueUtils.nullAsEmptyString(filePath);
-        this.fileName = ValueUtils.nullAsEmptyString(fileName);
+        this.filePath = ValueUtil.nullAsEmptyString(filePath);
+        this.fileName = ValueUtil.nullAsEmptyString(fileName);
         setMimeType();
     }
 
@@ -177,17 +179,18 @@ public class ImageResponse extends Response {
      *
      * @param mimeType the MIME type to be set; if null or blank, an attempt will be made
      *                 to infer it from the file name.
+     * @since 1.0.0
      */
     public void setMimeType(String mimeType) {
-        if ((mimeType != null) && (!mimeType.isBlank())) {
+        if (hasText(mimeType)) {
             // Set the MIME type directly
             this.mimeType = mimeType;
 
         } else {
-            if ((this.fileName != null) && (!this.fileName.isBlank())) {
+            if (hasText(this.fileName)) {
                 // Infer MIME type from the file name
                 String fileNameMimeType = URLConnection.guessContentTypeFromName(this.fileName);
-                if ((fileNameMimeType != null) && (!fileNameMimeType.isEmpty())) {
+                if (hasText(fileNameMimeType)) {
                     this.mimeType = fileNameMimeType;
                 }
             }
@@ -203,6 +206,8 @@ public class ImageResponse extends Response {
      * This method delegates to {@link #setMimeType(String)} with a null argument.
      * As a result, it attempts to determine the MIME type based on the file name
      * if no specific MIME type is provided.
+     *
+     * @since 1.0.0
      */
     public void setMimeType() {
         setMimeType(null);

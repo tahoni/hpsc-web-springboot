@@ -36,6 +36,9 @@ import za.co.hpsc.web.services.TransactionService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
+
+import static za.co.hpsc.web.utils.StringUtil.hasText;
 
 @Slf4j
 @Service
@@ -68,7 +71,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
     @Override
     public MatchResponseHolder createMatches(String csvData) throws FatalException {
-        if (csvData == null || csvData.isBlank()) {
+        if (!hasText(csvData)) {
             log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
         }
@@ -293,7 +296,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      *                           is null.
      */
     protected Club resolveClub(String clubName, ClubIdentifier defaultIdentifier) throws FatalException {
-        if ((clubName == null) || clubName.isBlank()) {
+        if (!hasText(clubName)) {
             if (defaultIdentifier == null) {
                 throw new FatalException("IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER is not configured.");
             }
@@ -319,20 +322,38 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Resolves a match category by name.
+     * Resolves a match category by name, defaulting when none is given.
      *
-     * @param matchCategory the match category name to look up.
-     * @return the matching {@link MatchCategory}.
-     * @throws ValidationException if no match category matches {@code matchCategory}.
+     * <p>
+     * A match category is not mandatory here: when {@code category} is null, empty or blank, the default,
+     * {@link IpscConstants#DEFAULT_MATCH_CATEGORY}, is returned instead of an error. A category that is supplied
+     * must still be a known one: its display name (such as {@code "Club Shoot"}) or its constant name (such as
+     * {@code "CLUB_SHOOT"}), matched ignoring case and surrounding whitespace.
+     * </p>
+     *
+     * @param category the match category name to look up; may be null or blank, in which case the default
+     *                 match category is used.
+     * @return the matching {@link MatchCategory}, or {@link IpscConstants#DEFAULT_MATCH_CATEGORY} if
+     * {@code category} wasn't supplied.
+     * @throws ValidationException if {@code category} was supplied but no match category matches it.
      */
-    protected MatchCategory resolveMatchCategory(String matchCategory) {
-        return MatchCategory.fromName(matchCategory)
-                .orElseThrow(() -> new ValidationException("Unknown match category: " + matchCategory));
+    protected MatchCategory resolveMatchCategory(String category) {
+        if (!hasText(category)) {
+            return IpscConstants.DEFAULT_MATCH_CATEGORY;
+        }
+
+        String trimmedCategory = category.trim();
+        return MatchCategory.fromName(trimmedCategory)
+                .or(() -> Stream.of(MatchCategory.values())
+                        .filter(matchCategory -> matchCategory.name().equalsIgnoreCase(trimmedCategory))
+                        .findFirst())
+                .orElseThrow(() -> new ValidationException("Unknown match category: " + category));
     }
 
     /**
      * Validates that a request carries every field required to create or fully replace a
-     * match.
+     * match: a name, date and firearm type. The club and match category are not required, as each
+     * defaults when omitted (see {@link #resolveClub(String)} and {@link #resolveMatchCategory(String)}).
      *
      * @param request the request to validate.
      * @throws ValidationException if a required field is missing.
@@ -341,17 +362,14 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         if (request == null) {
             throw new ValidationException("Match request cannot be null.");
         }
-        if ((request.getMatchName() == null) || request.getMatchName().isBlank()) {
+        if (!hasText(request.getMatchName())) {
             throw new ValidationException("Match name is required.");
         }
         if (request.getMatchDate() == null) {
             throw new ValidationException("Match date is required.");
         }
-        if ((request.getMatchFirearmType() == null) || request.getMatchFirearmType().isBlank()) {
+        if (!hasText(request.getMatchFirearmType())) {
             throw new ValidationException("Match firearm type is required.");
-        }
-        if ((request.getMatchCategory() == null) || request.getMatchCategory().isBlank()) {
-            throw new ValidationException("Match category is required.");
         }
     }
 

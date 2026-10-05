@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (33):**
+- **✅ Completed (35):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -112,14 +112,17 @@ number or a newly met precondition on an existing gap — see the `update-improv
     v10.0.0 (tree and section corrected)
   - #35 `ARCHITECTURE.md`'s bulk CSV import flows still show `Content-Type: text/csv` — closed v11.0.0 (four
     diagrams corrected to `text/plain`)
+  - #36 `EntityIpscCompetitorService` and the match competitor result models are built but not wired in — closed
+    v12.0.0 (wired into `IpscMatchCompetitorServiceImpl`; the bulk import returns
+    `MatchCompetitorBulkResponseHolder` per row)
+  - #37 `IpscConstants`' four score-scale constants are declared but never used — closed v12.0.0 (constants removed)
 - **🟡 Partially Completed (2):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v10.0.0 (the
     match competitor service and `/ipsc/match-competitors` controller are built, extended in v10.0.0 with
     competitor lookup by number or name and overall-score fields; the shooter-log layer is not)
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
-- **⚪ Open (1):**
-  - #36 `EntityIpscCompetitorService` and the match competitor result models are built but not wired in
+- **⚪ Open (0):** none
 
 ### ✅ Completed
 
@@ -1068,6 +1071,64 @@ CSV text sent as plain text (and why, per the `CHANGELOG.md` entry). Check `READ
 every bulk CSV flow sends the CSV text as the request body with `Content-Type: text/plain`. A search of `README.md`
 and `CONTRIBUTING.md` found no `text/csv` mention to correct. No code change was needed.
 
+#### 36. `EntityIpscCompetitorService` and the match competitor result models are built but not wired in — ✅ Closed in v12.0.0
+
+**Evidence:** v11.0.0 adds `EntityIpscCompetitorService`/`EntityIpscCompetitorServiceImpl` (`findCompetitor(fullName,
+competitorNumber)`, matching by number, then by full name or nickname) and the `MatchCompetitorResult`/
+`MatchCompetitorResultHolder` response models. The interface carries the marker `// TODO: wire this into
+MatchCompetitorServiceImpl` (`services/EntityIpscCompetitorService.java:32`), and `grep` finds no caller of
+`findCompetitor` and no use of either result model anywhere under `src/main` — `IpscMatchCompetitorServiceImpl` still
+resolves competitors through its own `CompetitorRepository` finders. `CHANGELOG.md` records the models as the response
+for a bulk match competitor import, which does not yet return them.
+
+**Why it matters:** Both are inert groundwork — the same shape as Gap #9's unused `DEFAULT_MATCH_CLUB_IDENTIFIER` —
+so the lookup logic is tested in isolation but changes nothing for a client, and the three-tier tests it carries
+cover a path no request reaches. Left unwired, the duplicated resolution logic in the match competitor service
+and the new service can drift apart, and Gap #6's match competitor half does not get the number-or-name matching this
+service was written to provide.
+
+**Proposed improvement:** Wire `EntityIpscCompetitorService.findCompetitor` into `IpscMatchCompetitorServiceImpl`'s
+competitor resolution and return `MatchCompetitorResultHolder` from the bulk match competitor import, reporting each
+row's success or failure rather than failing the whole import — or, if that is no longer wanted, remove the unused
+classes rather than leaving them in place. Resolve the `TODO` either way, and cover the wiring at all three test tiers
+per `AGENTS.md`'s Test Conventions.
+
+**Outcome:** Done as proposed in v12.0.0, taking the wire-it-in option. `IpscMatchCompetitorServiceImpl` now takes an
+`EntityIpscCompetitorService` and resolves a competitor given by number and name through it, and
+`EntityIpscCompetitorService.findCompetitor` was reworked on the way — the competitor number is a `String` that may
+also be an ID number, the lookup tries the competitor number, then the ID number, then the full name, and an unmatched or
+ambiguous lookup throws a `NonFatalException` or `ValidationException` (commits `5bba113f`, `2d97e6c5`, `ef88c759`). The
+bulk match competitor import returns `MatchCompetitorBulkResponseHolder`, the renamed `MatchCompetitorResultHolder`, and
+is now a partial import that reports each row's success or failure (commits `a0781aea`, `1e7959fe`, `d5f27236`). The
+`TODO` marker is gone, and the wiring is covered by unit, mocked-repository and `@SpringBootTest` integration tests.
+`CHANGELOG.md`'s `[Unreleased]` section flags the `resolveCompetitor` matching and bulk import changes as breaking.
+
+#### 37. `IpscConstants`' four score-scale constants are declared but never used — ✅ Closed in v12.0.0
+
+**Evidence:** `IpscConstants` declares `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE` and `PERCENTAGE_SCALE`
+(`constants/IpscConstants.java`), the decimal places for rounding score figures. Grepping `src/` for each name finds
+only its own declaration — no main or test code uses any of them — and the Javadoc added to them in this release
+says so ("Not currently referenced by any code"). `CHANGELOG.md` records an earlier sweep that removed unused
+constants of the same kind (`STAGE_POINTS_SCALE` among them) as "nothing references" them, so these four are what is
+left of that groundwork. No scoring or shooter-log service exists yet to apply them (Gap #6).
+
+**Why it matters:** The same shape as Gap #9's unused `DEFAULT_MATCH_CLUB_IDENTIFIER`: inert groundwork that signals a
+rounding rule nothing enforces. A reader of `IpscConstants` assumes score figures are rounded to these scales, while
+`MatchCompetitor`'s score columns and `MatchCompetitorResponse` carry the figures as supplied, so the constants
+document an intention rather than doing anything, and could drift from the scales the scoring layer eventually needs.
+
+**Proposed improvement:** Either apply the scales when the scoring layer lands (Gap #6) — rounding the points, hit
+factor, time and percentage figures on the match competitor request/response — or, if that layer will set its own
+scales, remove the four constants rather than leaving them in place. Decide with Gap #6 and resolve the "Not currently
+referenced" Javadoc either way.
+
+**Outcome:** Done as proposed, taking the remove option, in v12.0.0. `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`,
+`TIME_SCALE` and `PERCENTAGE_SCALE` are deleted from `constants/IpscConstants.java`, so there is no "Not currently
+referenced by any code" wording left to resolve, and nothing else needed to change because nothing referenced them.
+If the scoring layer (Gap #6) needs rounding scales it can introduce its own, together with the code that applies
+them. The `IpscConstants` Javadoc no longer lists them.
+
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -1143,27 +1204,7 @@ pin).
 
 ### ⚪ Open
 
-#### 36. `EntityIpscCompetitorService` and the match competitor result models are built but not wired in
-
-**Evidence:** v11.0.0 adds `EntityIpscCompetitorService`/`EntityIpscCompetitorServiceImpl` (`findCompetitor(fullName,
-competitorNumber)`, matching by number, then by full name or nickname) and the `MatchCompetitorResult`/
-`MatchCompetitorResultHolder` response models. The interface carries the marker `// TODO: wire this into
-MatchCompetitorServiceImpl` (`services/EntityIpscCompetitorService.java:32`), and `grep` finds no caller of
-`findCompetitor` and no use of either result model anywhere under `src/main` — `IpscMatchCompetitorServiceImpl` still
-resolves competitors through its own `CompetitorRepository` finders. `CHANGELOG.md` records the models as the response
-for a bulk match competitor import, which does not yet return them.
-
-**Why it matters:** Both are inert groundwork — the same shape as Gap #9's unused `DEFAULT_MATCH_CLUB_IDENTIFIER` —
-so the lookup logic is tested in isolation but changes nothing for a client, and the three-tier tests it carries
-cover a path no request reaches. Left unwired, the duplicated resolution logic in the match competitor service
-and the new service can drift apart, and Gap #6's match competitor half does not get the number-or-name matching this
-service was written to provide.
-
-**Proposed improvement:** Wire `EntityIpscCompetitorService.findCompetitor` into `IpscMatchCompetitorServiceImpl`'s
-competitor resolution and return `MatchCompetitorResultHolder` from the bulk match competitor import, reporting each
-row's success or failure rather than failing the whole import — or, if that is no longer wanted, remove the unused
-classes rather than leaving them in place. Resolve the `TODO` either way, and cover the wiring at all three test tiers
-per `AGENTS.md`'s Test Conventions.
+*No gaps are currently open.*
 
 ---
 
@@ -1172,7 +1213,7 @@ per `AGENTS.md`'s Test Conventions.
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0, the shooter-log service and controller remain                                                                                  |
-| **Next**    | Wire `EntityIpscCompetitorService` and the match competitor result models into the match competitor service (#36)                                                                                                                                  |
+| **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0                                                                                                                                                                                                                                                                    |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -1258,8 +1299,11 @@ per `AGENTS.md`'s Test Conventions.
   DTOs groundwork, closing Gap #34.
 - ✅ Met in v11.0.0: `ARCHITECTURE.md`'s four bulk CSV import diagrams show `Content-Type: text/plain`, matching
   every `POST /bulk` endpoint, closing Gap #35.
-- `EntityIpscCompetitorService.findCompetitor` is called by the match competitor service and the bulk match competitor
-  import returns `MatchCompetitorResultHolder` (or the unused classes are removed), closing Gap #36.
+- ✅ Met in v12.0.0: `EntityIpscCompetitorService.findCompetitor` is called by the match competitor service and the
+  bulk match competitor import returns `MatchCompetitorBulkResponseHolder` (the renamed `MatchCompetitorResultHolder`),
+  closing Gap #36.
+- ✅ Met in v12.0.0: `IpscConstants`' `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE` and `PERCENTAGE_SCALE`
+  are removed rather than left unused, closing Gap #37.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

@@ -13,6 +13,8 @@ public interface CompetitorRepository extends JpaRepository<Competitor, Long> {
 
     List<Competitor> findAllByCompetitorNumber(Integer competitorNumber);
 
+    List<Competitor> findAllByIdNumber(String idNumber);
+
     // Matches the competitor's "First Last" full name, ignoring case.
     @Query("select c from Competitor c where lower(concat(c.firstName, ' ', c.lastName)) = lower(:name)")
     List<Competitor> findAllByFullNameIgnoreCase(@Param("name") String name);

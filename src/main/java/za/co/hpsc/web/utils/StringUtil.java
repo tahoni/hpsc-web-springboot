@@ -8,14 +8,14 @@ import java.util.Map;
  * Utility class for string operations.
  *
  * <p>
- * The {@code StringUtils} class offers static methods for common string-related tasks. These methods
+ * The {@code StringUtil} class offers static methods for common string-related tasks. These methods
  * are designed to handle various use cases where string manipulation is required.
  * </p>
  *
  * @since 1.1.3
  */
-public final class StringUtils {
-    private StringUtils() {
+public final class StringUtil {
+    private StringUtil() {
         // Utility class, not to be instantiated
     }
 
@@ -36,6 +36,7 @@ public final class StringUtils {
      *                   Can be null.
      * @return a formatted string with placeholders replaced by corresponding values from the map, or
      * the original template if no replacements are made.
+     * @since 1.1.3
      */
     public static String formatStringWithNamedParameters(String template, Map<String, String> parameters) {
         String result = template;
@@ -79,5 +80,19 @@ public final class StringUtils {
         }
 
         return WordUtils.capitalizeFully(value, ' ', '\t', '-', '\'', '’');
+    }
+
+    /**
+     * Checks whether a string contains at least one non-whitespace character.
+     *
+     * <p>A string made up only of whitespace characters, as defined by {@link String#isBlank()},
+     * is treated as having no text.</p>
+     *
+     * @param value the string to check; may be null.
+     * @return {@code true} if {@code value} is not null and not blank, {@code false} otherwise.
+     * @since 12.0.0
+     */
+    public static boolean hasText(String value) {
+        return (value != null) && !value.isBlank();
     }
 }

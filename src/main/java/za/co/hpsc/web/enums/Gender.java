@@ -5,6 +5,8 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static za.co.hpsc.web.utils.StringUtil.hasText;
+
 /**
  * Enum representing the gender of a competitor.
  *
@@ -43,7 +45,7 @@ public enum Gender {
      * @since 8.0.0
      */
     public static Optional<Gender> fromName(String name) {
-        if ((name == null) || (name.isBlank())) {
+        if (!hasText(name)) {
             return Optional.empty();
         }
 

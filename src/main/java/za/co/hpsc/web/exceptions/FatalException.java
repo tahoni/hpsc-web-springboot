@@ -14,6 +14,8 @@ package za.co.hpsc.web.exceptions;
 public class FatalException extends Exception {
     /**
      * Constructs a new {@code FatalException} with no detail message or cause.
+     *
+     * @since 1.0.0
      */
     public FatalException() {
         super();
@@ -23,6 +25,7 @@ public class FatalException extends Exception {
      * Constructs a new {@code FatalException} with the specified detail message.
      *
      * @param message the detail message.
+     * @since 1.0.0
      */
     public FatalException(String message) {
         super(message);
@@ -33,6 +36,7 @@ public class FatalException extends Exception {
      *
      * @param message the detail message.
      * @param cause   the cause. May be {@code null} if the cause is nonexistent or unknown.
+     * @since 1.0.0
      */
     public FatalException(String message, Throwable cause) {
         super(message, cause);
@@ -42,6 +46,7 @@ public class FatalException extends Exception {
      * Constructs a new {@code FatalException} with the specified cause.
      *
      * @param cause the cause. May be {@code null} if the cause is nonexistent or unknown.
+     * @since 1.0.0
      */
     public FatalException(Throwable cause) {
         super(cause);
@@ -55,6 +60,7 @@ public class FatalException extends Exception {
      * @param cause              the cause. May be {@code null} if the cause is nonexistent or unknown.
      * @param enableSuppression  whether suppression is enabled.
      * @param writableStackTrace whether the stack trace should be writable.
+     * @since 1.0.0
      */
     public FatalException(String message, Throwable cause, boolean enableSuppression,
                           boolean writableStackTrace) {

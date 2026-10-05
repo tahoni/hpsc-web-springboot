@@ -3,7 +3,7 @@ package za.co.hpsc.web.converters;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.utils.ValueUtils;
+import za.co.hpsc.web.utils.ValueUtil;
 
 /**
  * JPA {@link AttributeConverter} that maps a {@link Division} to and from its display
@@ -20,7 +20,7 @@ import za.co.hpsc.web.utils.ValueUtils;
 public class DivisionConverter implements AttributeConverter<Division, String> {
     @Override
     public String convertToDatabaseColumn(Division attribute) {
-        return ValueUtils.nullAsDefaultString(attribute, null);
+        return ValueUtil.nullAsDefaultString(attribute, null);
     }
 
     @Override

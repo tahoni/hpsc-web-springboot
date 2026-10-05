@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
  * Utility class providing methods to handle date and time formatting.
  *
  * <p>
- * The {@code DateUtils} class contains static utility methods to format
+ * The {@code DateUtil} class contains static utility methods to format
  * {@link LocalDate} and {@link LocalDateTime} objects into strings using
  * specified patterns. This class is designed to simplify date and time
  * formatting operations and handles null values gracefully by returning
@@ -17,8 +17,8 @@ import java.time.format.DateTimeFormatter;
  *
  * @since 4.1.0
  */
-public final class DateUtils {
-    private DateUtils() {
+public final class DateUtil {
+    private DateUtil() {
         // Utility class, not to be instantiated
     }
 
@@ -32,6 +32,7 @@ public final class DateUtils {
      *                   must be a valid {@link DateTimeFormatter} pattern;
      *                   may be null.
      * @return the formatted date as a string, or an empty string if the input date or date format is null.
+     * @since 4.1.0
      */
     public static String formatDate(LocalDate date, String dateFormat) {
         if ((date == null) || (dateFormat == null)) {
@@ -51,6 +52,7 @@ public final class DateUtils {
      *                   must be a valid {@link DateTimeFormatter} pattern;
      *                   may be null
      * @return the formatted date-time as a string, or an empty string if the input date or date format is null
+     * @since 4.1.0
      */
     public static String formatDateTime(LocalDateTime date, String dateFormat) {
         if ((date == null) || (dateFormat == null)) {

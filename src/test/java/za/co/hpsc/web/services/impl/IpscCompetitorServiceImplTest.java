@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
@@ -16,6 +17,7 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
+import za.co.hpsc.web.services.ClubService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,7 +32,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link IpscCompetitorServiceImpl}'s impl-only protected helper methods
- * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code isHpscMember}, {@code newCompetitor},
+ * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code isMemberOfHomeClub}, {@code newCompetitor},
  * {@code readCompetitors},
  * {@code resolveClubNumber}, {@code resolveCompetitorNumber}, {@code resolveGender}, {@code resolveHomeClub},
  * {@code normaliseCsvRequest}, {@code toResponse}, {@code validateForCreate}) -
@@ -46,6 +48,9 @@ class IpscCompetitorServiceImplTest {
 
     @Mock
     private ClubRepository clubRepository;
+
+    @Spy
+    private ClubService clubService = new ClubServiceImpl();
 
     @InjectMocks
     private IpscCompetitorServiceImpl ipscCompetitorServiceImpl;
@@ -100,6 +105,76 @@ class IpscCompetitorServiceImplTest {
         assertEquals(Boolean.TRUE, competitor.getPaidUpClub());
         assertEquals(Boolean.TRUE, competitor.getIsVerified());
         assertEquals(List.of("jane.doe@example.com"), competitor.getEmailAddresses());
+    }
+
+    @Test
+    void testApplyFields_whenNickNameIsNull_thenNickNameDefaultsToTheFirstName() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        Competitor competitor = new Competitor();
+
+        // Act
+        ipscCompetitorServiceImpl.applyFields(competitor, request);
+
+        // Assert
+        assertEquals("Jane", competitor.getNickName());
+    }
+
+    @Test
+    void testApplyFields_whenNickNameIsEmptyOrBlank_thenNickNameDefaultsToTheFirstName() {
+        // Arrange
+        CompetitorRequest emptyNickName = new CompetitorRequest();
+        emptyNickName.setFirstName("Jane");
+        emptyNickName.setLastName("Doe");
+        emptyNickName.setNickName("");
+        CompetitorRequest blankNickName = new CompetitorRequest();
+        blankNickName.setFirstName("John");
+        blankNickName.setLastName("Doe");
+        blankNickName.setNickName("   ");
+        Competitor first = new Competitor();
+        Competitor second = new Competitor();
+
+        // Act
+        ipscCompetitorServiceImpl.applyFields(first, emptyNickName);
+        ipscCompetitorServiceImpl.applyFields(second, blankNickName);
+
+        // Assert
+        assertEquals("Jane", first.getNickName());
+        assertEquals("John", second.getNickName());
+    }
+
+    @Test
+    void testApplyFields_whenNickNameIsNull_thenReplacesAnExistingNickName() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        Competitor competitor = new Competitor();
+        competitor.setNickName("Janie");
+
+        // Act
+        ipscCompetitorServiceImpl.applyFields(competitor, request);
+
+        // Assert
+        assertEquals("Jane", competitor.getNickName());
+    }
+
+    @Test
+    void testApplyFields_whenNickNameIsSupplied_thenKeepsItInsteadOfTheFirstName() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        request.setNickName("Janie");
+        Competitor competitor = new Competitor();
+
+        // Act
+        ipscCompetitorServiceImpl.applyFields(competitor, request);
+
+        // Assert
+        assertEquals("Janie", competitor.getNickName());
     }
 
     @Test
@@ -209,52 +284,87 @@ class IpscCompetitorServiceImplTest {
         assertSame(competitor, found);
     }
 
-    // isHpscMember()
+    // isMemberOfHomeClub()
     @Test
-    void testIsHpscMember_whenHomeClubIsNull_thenReturnsFalse() {
-        assertFalse(ipscCompetitorServiceImpl.isHpscMember(null, ClubIdentifier.HPSC));
+    void testIsMemberOfHomeClub_whenClubIsNull_thenReturnsFalse() {
+        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(null));
     }
 
     @Test
-    void testIsHpscMember_whenHomeClubIdentifierParamIsNull_thenReturnsFalse() {
-        // Arrange - simulates IpscConstants.HOME_CLUB_IDENTIFIER being null, without needing to
-        // touch that real static final field (not reflectively settable on this JDK)
-        Club club = new Club();
-        club.setIdentifier(ClubIdentifier.HPSC);
-
-        // Act & Assert
-        assertFalse(ipscCompetitorServiceImpl.isHpscMember(club, null));
-    }
-
-    @Test
-    void testIsHpscMember_whenHomeClubIdentifierParamIsNullAndHomeClubIdentifierIsAlsoNull_thenReturnsFalse() {
-        // Arrange - a club with a null identifier (shouldn't occur via a real persisted Club,
-        // whose identifier column is non-null, but must never false-match a null "expected"
-        // identifier either)
+    void testIsMemberOfHomeClub_whenClubHasNoIdentifier_thenReturnsFalse() {
+        // Arrange - shouldn't occur via a real persisted Club, whose identifier column is non-null
         Club club = new Club();
 
         // Act & Assert
-        assertFalse(ipscCompetitorServiceImpl.isHpscMember(club, null));
+        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(club));
     }
 
     @Test
-    void testIsHpscMember_whenHomeClubIdentifierDoesNotMatch_thenReturnsFalse() {
+    void testIsMemberOfHomeClub_whenClubIdentifierDoesNotMatch_thenReturnsFalse() {
         // Arrange
         Club club = new Club();
         club.setIdentifier(ClubIdentifier.SOSC);
 
         // Act & Assert
-        assertFalse(ipscCompetitorServiceImpl.isHpscMember(club, ClubIdentifier.HPSC));
+        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(club));
     }
 
     @Test
-    void testIsHpscMember_whenHomeClubIdentifierMatches_thenReturnsTrue() {
+    void testIsMemberOfHomeClub_whenClubIdentifierMatches_thenReturnsTrue() {
         // Arrange
         Club club = new Club();
         club.setIdentifier(ClubIdentifier.HPSC);
 
         // Act & Assert
-        assertTrue(ipscCompetitorServiceImpl.isHpscMember(club, ClubIdentifier.HPSC));
+        assertTrue(ipscCompetitorServiceImpl.isMemberOfHomeClub(club));
+    }
+
+    // isMemberOfHomeClub(Club, ClubIdentifier)
+    @Test
+    void testIsMemberOfHomeClubWithIdentifier_whenClubHasThatIdentifier_thenReturnsTrue() {
+        // Arrange
+        Club club = new Club();
+        club.setIdentifier(ClubIdentifier.SOSC);
+
+        // Act & Assert
+        assertTrue(ipscCompetitorServiceImpl.isMemberOfHomeClub(club, ClubIdentifier.SOSC));
+    }
+
+    @Test
+    void testIsMemberOfHomeClubWithIdentifier_whenClubHasDifferentIdentifier_thenReturnsFalse() {
+        // Arrange - the default home club is no longer special once another is passed in
+        Club club = new Club();
+        club.setIdentifier(ClubIdentifier.HPSC);
+
+        // Act & Assert
+        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(club, ClubIdentifier.SOSC));
+    }
+
+    @Test
+    void testIsMemberOfHomeClubWithIdentifier_whenIdentifierIsNull_thenReturnsFalse() {
+        // Arrange
+        Club club = new Club();
+        club.setIdentifier(ClubIdentifier.HPSC);
+
+        // Act & Assert
+        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(club, null));
+    }
+
+    @Test
+    void testIsMemberOfHomeClubWithIdentifier_whenClubIsNull_thenReturnsFalse() {
+        // Act & Assert
+        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(null, ClubIdentifier.HPSC));
+    }
+
+    @Test
+    void testIsMemberOfHomeClub_whenNoIdentifierIsGiven_thenDefaultsToTheHomeClubIdentifier() {
+        // Arrange
+        Club club = new Club();
+        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
+
+        // Act & Assert
+        assertTrue(ipscCompetitorServiceImpl.isMemberOfHomeClub(club));
+        assertEquals(ClubIdentifier.HPSC, IpscConstants.HOME_CLUB_IDENTIFIER);
     }
 
     // newCompetitor()

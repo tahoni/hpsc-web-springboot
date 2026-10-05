@@ -20,8 +20,9 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponse;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
-import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponseHolder;
 import za.co.hpsc.web.services.IpscMatchCompetitorService;
 
 import java.util.List;
@@ -54,6 +55,7 @@ public class IpscMatchCompetitorController {
      * @throws ValidationException if a required field is missing, an enumerated value is unrecognised, or the
      *                             competitor already has an entry for the match and firearm type.
      * @throws NonFatalException   if the competitor or match cannot be found.
+     * @since 9.1.0
      */
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create match competitor", description = "Create a competitor's entry in a match. A "
@@ -80,34 +82,42 @@ public class IpscMatchCompetitorController {
      *
      * @param csvData the CSV content as a string containing details about match competitors, formatted according
      *                to the expected schema. This parameter is required and cannot be null.
-     * @return a {@link MatchCompetitorResponseHolder} containing the created match competitors.
-     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is missing a
-     *                             required field or has an unrecognised enumerated value, or if a row duplicates
-     *                             another row, or an existing entry, for the competitor, match and firearm type.
-     * @throws NonFatalException   if a row's competitor or match cannot be found.
-     * @throws FatalException      if a critical error occurs during processing, that prevents the operation from
+     * @param club    the name or abbreviation of the club to import rows for, those whose match club, or whose
+     *                competitor's home club, is that club; any other row is reported as skipped. HPSC's own club is
+     *                imported when it is omitted.
+     * @return a {@link MatchCompetitorBulkResponseHolder} with one result per CSV row, each recording whether the
+     * row was created and, when it was not, why — with status {@code 201} unless every row failed, in which case
+     * it is {@code 422}.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, or {@code club} is unknown.
+     * @throws FatalException     if a critical error occurs during processing, that prevents the operation from
      *                             completing successfully.
      */
     @PostMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create match competitors", description = "Create competitors' entries in matches in bulk "
-            + "from CSV data. Every row is checked before any is saved, so either every row is created or none is.")
+            + "from CSV data. Each row is saved on its own, so a row that fails is reported and skipped while the "
+            + "rest are still created. Only rows for one club are created, HPSC's own club unless another is asked "
+            + "for with the club parameter: those whose match club or whose competitor's home club is that "
+            + "club. Any other row is reported as skipped.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Match competitors created.",
+            @ApiResponse(responseCode = "201", description = "At least one row was created (or the CSV had no "
+                    + "rows). Each row's result says whether it was created and, if not, why — a missing required "
+                    + "field, an unrecognised enumerated value, an unknown competitor or match, or a duplicate "
+                    + "entry for the competitor, match and firearm type.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = MatchCompetitorResponseHolder.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid CSV data provided, a required field is "
-                    + "missing, an enumerated value is unrecognised, or a row duplicates another entry for the "
-                    + "competitor, match and firearm type.",
+                            schema = @Schema(implementation = MatchCompetitorBulkResponseHolder.class))),
+            @ApiResponse(responseCode = "422", description = "The CSV was readable but no row could be created. "
+                    + "The body lists each row's result and the reason it failed.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ControllerResponse.class))),
-            @ApiResponse(responseCode = "404", description = "A row's competitor or match could not be found.",
+                            schema = @Schema(implementation = MatchCompetitorBulkResponseHolder.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid CSV data provided, or a required column is "
+                    + "missing from the header.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error occurred while processing the CSV data.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<MatchCompetitorResponseHolder> createMatchCompetitors(
+    ResponseEntity<MatchCompetitorBulkResponseHolder> createMatchCompetitors(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(mediaType = "text/plain",
                             schema = @Schema(implementation = String.class),
@@ -115,9 +125,16 @@ public class IpscMatchCompetitorController {
                                     CompetitorId,Name,Mem #,MatchId,Class,Cats,FirearmType,Div,PF,Pts,%,Time,% psbl,A,C,D,M,NPM,NS,Proc,Apen,OverallRanking,ClubRanking,IsVisitor
                                     0,string,string,0,string,string,string,string,string,0,0,0,0,0,0,0,0,0,0,0,0,0,0,false
                                     """)))
-            @RequestBody String csvData)
+            @RequestBody String csvData,
+            @Parameter(description = "The club to import rows for, by name or abbreviation; other rows are "
+                    + "reported as skipped. HPSC's own club is imported when omitted.")
+            @RequestParam(required = false) String club)
             throws ValidationException, NonFatalException, FatalException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(ipscMatchCompetitorService.createMatchCompetitors(csvData));
+        MatchCompetitorBulkResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData, club);
+
+        List<MatchCompetitorBulkResponse> results = holder.getMatchCompetitors();
+        boolean allFailed = !results.isEmpty() && results.stream().noneMatch(MatchCompetitorBulkResponse::isSuccess);
+        return ResponseEntity.status(allFailed ? HttpStatus.UNPROCESSABLE_ENTITY : HttpStatus.CREATED).body(holder);
     }
 
     /**
@@ -221,6 +238,7 @@ public class IpscMatchCompetitorController {
      * Retrieves every match competitor.
      *
      * @return the list of {@link MatchCompetitorResponse}.
+     * @since 9.1.0
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all match competitors", description = "Retrieve every match competitor.")

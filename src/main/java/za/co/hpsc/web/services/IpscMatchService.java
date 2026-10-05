@@ -21,8 +21,8 @@ public interface IpscMatchService {
     /**
      * Creates a new IPSC match.
      *
-     * @param request the match to create. Must not be null and must carry a match name, date,
-     *                club and firearm type/category.
+     * @param request the match to create. Must not be null and must carry a match name, date
+     *                and firearm type. The club and match category default when omitted.
      * @return the created match, including its generated ID.
      * @throws ValidationException if a required field is missing, or the firearm type/category
      *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
@@ -31,6 +31,7 @@ public interface IpscMatchService {
      * @throws FatalException      if no club is named and
      *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
      *                             is null.
+     * @since 8.0.0
      */
     MatchResponse createMatch(MatchRequest request)
             throws ValidationException, NonFatalException, FatalException;
@@ -58,6 +59,7 @@ public interface IpscMatchService {
      *                             no club and
      *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
      *                             is null.
+     * @since 8.0.0
      */
     MatchResponseHolder createMatches(String csvData)
             throws ValidationException, NonFatalException, FatalException;
@@ -67,7 +69,7 @@ public interface IpscMatchService {
      *
      * @param matchId the identifier of the match to replace.
      * @param request the match's replacement fields. Must not be null and must carry a match
-     *                name, date, club and firearm type/category.
+     *                name, date and firearm type. The club and match category default when omitted.
      * @return the updated match.
      * @throws ValidationException if a required field is missing, or the firearm type/category
      *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
@@ -77,6 +79,7 @@ public interface IpscMatchService {
      * @throws FatalException      if no club is named and
      *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
      *                             is null.
+     * @since 8.0.0
      */
     MatchResponse updateMatch(Long matchId, MatchRequest request)
             throws ValidationException, NonFatalException, FatalException;
@@ -102,6 +105,7 @@ public interface IpscMatchService {
      * @throws FatalException      if the request's {@code club} is blank and
      *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
      *                             is null.
+     * @since 8.0.0
      */
     MatchResponse patchMatch(Long matchId, MatchPatchRequest request)
             throws ValidationException, NonFatalException, FatalException;
@@ -112,6 +116,7 @@ public interface IpscMatchService {
      * @param matchId the identifier of the match to retrieve.
      * @return the match.
      * @throws NonFatalException if no match with {@code matchId} exists.
+     * @since 8.0.0
      */
     MatchResponse getMatch(Long matchId)
             throws NonFatalException;
@@ -120,6 +125,7 @@ public interface IpscMatchService {
      * Retrieves every IPSC match.
      *
      * @return all persisted matches.
+     * @since 8.0.0
      */
     List<MatchResponse> getAllMatches();
 
@@ -138,6 +144,8 @@ public interface IpscMatchService {
      *                             entries, or is otherwise still referenced when the
      *                             delete is flushed.
      * @throws NonFatalException   if no match with {@code matchId} exists.
+     * @since 8.0.0
      */
-    void deleteMatch(Long matchId) throws ValidationException, NonFatalException;
+    void deleteMatch(Long matchId)
+            throws ValidationException, NonFatalException;
 }
