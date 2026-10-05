@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.PlatformTransactionManager;
+import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
@@ -352,6 +353,69 @@ public class IpscMatchCompetitorServiceTest {
         assertTrue(holder.getMatchCompetitors().get(1).getMessage().startsWith("Skipped: match club is not"));
         assertFalse(holder.getMatchCompetitors().get(2).isSuccess());
         verify(matchCompetitorRepository, times(1)).save(any(MatchCompetitor.class));
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenClubIsGiven_thenCreatesRowsForCompetitorsFromThatClubWhateverTheirMatchClub()
+            throws Exception {
+        // Arrange
+        Competitor homeClubCompetitor = competitor(1L);
+        Club club = new Club();
+        club.setIdentifier(ClubIdentifier.HPSC);
+        homeClubCompetitor.setHomeClub(club);
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(homeClubCompetitor));
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match(2L)));
+        when(matchCompetitorRepository.save(any(MatchCompetitor.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        String csvData = """
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                1,2,SOSC,Junior,Handgun,Open Division
+                """;
+
+        // Act
+        MatchCompetitorBulkResponseHolder holder =
+                ipscMatchCompetitorService.createMatchCompetitors(csvData, "HPSC");
+
+        // Assert
+        assertEquals(1, holder.getMatchCompetitors().size());
+        assertTrue(holder.getMatchCompetitors().getFirst().isSuccess());
+        assertEquals(ClubIdentifier.SOSC, holder.getMatchCompetitors().getFirst().getMatchCompetitor().getMatchClub());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenClubIsGivenAndRowCompetitorDoesNotExist_thenSkipsTheRow() throws Exception {
+        // Arrange
+        when(competitorRepository.findById(9L)).thenReturn(Optional.empty());
+        String csvData = """
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                9,2,SOSC,Junior,Handgun,Open Division
+                """;
+
+        // Act
+        MatchCompetitorBulkResponseHolder holder =
+                ipscMatchCompetitorService.createMatchCompetitors(csvData, "HPSC");
+
+        // Assert
+        assertFalse(holder.getMatchCompetitors().getFirst().isSuccess());
+        assertTrue(holder.getMatchCompetitors().getFirst().getMessage().startsWith("Skipped: match club is not"));
+        verify(matchCompetitorRepository, never()).save(any(MatchCompetitor.class));
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenClubIsGivenAndRowClubIsUnknown_thenReportsTheRowAsFailed() throws Exception {
+        // Arrange
+        String csvData = """
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                1,2,Not A Club,Junior,Handgun,Open Division
+                """;
+
+        // Act
+        MatchCompetitorBulkResponseHolder holder =
+                ipscMatchCompetitorService.createMatchCompetitors(csvData, "HPSC");
+
+        // Assert
+        assertFalse(holder.getMatchCompetitors().getFirst().isSuccess());
+        assertTrue(holder.getMatchCompetitors().getFirst().getMessage().contains("Unknown match club"));
+        verify(matchCompetitorRepository, never()).save(any(MatchCompetitor.class));
     }
 
     @Test

@@ -7,8 +7,10 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
@@ -18,6 +20,7 @@ import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRe
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponseHolder;
+import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
@@ -39,6 +42,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 class IpscMatchCompetitorServiceIntegrationTest {
+
+    @Autowired
+    private ClubRepository clubRepository;
 
     @Autowired
     private IpscMatchCompetitorService ipscMatchCompetitorService;
@@ -232,6 +238,51 @@ class IpscMatchCompetitorServiceIntegrationTest {
         assertTrue(holder.getMatchCompetitors().get(1).getMessage().startsWith("Skipped: match club is not"));
         assertFalse(holder.getMatchCompetitors().get(2).isSuccess());
         assertEquals(1, matchCompetitorRepository.count());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenClubIsGiven_thenCreatesRowsForCompetitorsFromThatClubWhateverTheirMatchClub()
+            throws Exception {
+        // Arrange
+        Club club = new Club();
+        club.setName("Hartbeespoortdam Practical Shooting Club");
+        club.setIdentifier(ClubIdentifier.HPSC);
+        club = clubRepository.save(club);
+        Competitor competitor = createCompetitor("HPSC-MC-030");
+        competitor.setHomeClub(club);
+        competitor = competitorRepository.save(competitor);
+        IpscMatch match = createMatch();
+        String csvData = String.format("""
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                %d,%d,SOSC,Junior,Handgun,Open Division
+                """, competitor.getId(), match.getId());
+
+        // Act
+        MatchCompetitorBulkResponseHolder holder =
+                ipscMatchCompetitorService.createMatchCompetitors(csvData, "HPSC");
+
+        // Assert
+        assertTrue(holder.getMatchCompetitors().getFirst().isSuccess());
+        assertEquals(1, matchCompetitorRepository.count());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenClubIsGivenAndRowCompetitorDoesNotExist_thenSkipsTheRow() throws Exception {
+        // Arrange
+        IpscMatch match = createMatch();
+        String csvData = String.format("""
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                999999,%d,SOSC,Junior,Handgun,Open Division
+                """, match.getId());
+
+        // Act
+        MatchCompetitorBulkResponseHolder holder =
+                ipscMatchCompetitorService.createMatchCompetitors(csvData, "HPSC");
+
+        // Assert
+        assertFalse(holder.getMatchCompetitors().getFirst().isSuccess());
+        assertTrue(holder.getMatchCompetitors().getFirst().getMessage().startsWith("Skipped: match club is not"));
+        assertEquals(0, matchCompetitorRepository.count());
     }
 
     @Test
