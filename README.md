@@ -214,13 +214,13 @@ grouped into one subdirectory per major version (e.g. `documentation/history/vN/
 living directly in `documentation/history/` — `CHANGELOG_v1-v7.md`, `HISTORY_v1-v7.md` and
 `EVOLUTION_OVERVIEW_v1-v7.md`, single files rather than per-version archives:
 
-| File                                                                               | Purpose                                                                                                          |
-|------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
-| `RELEASE_NOTES_vX.Y.Z.md`                                                          | Archived snapshot of `RELEASE_NOTES.md` at release time                                                          |
-| `PR_DESCRIPTION_vX.Y.Z.md`                                                         | The release pull request's body, archived for that version (not archived for every early release)                |
-| [`CHANGELOG_v1-v7.md`](documentation/history/CHANGELOG_v1-v7.md)                   | `CHANGELOG.md`'s archive of the earliest versions, moved unchanged and not edited by releases                   |
-| [`HISTORY_v1-v7.md`](documentation/history/HISTORY_v1-v7.md)                       | `HISTORY.md`'s archive of the earliest per-version entries, moved unchanged and not edited by releases    |
-| [`EVOLUTION_OVERVIEW_v1-v7.md`](documentation/history/EVOLUTION_OVERVIEW_v1-v7.md) | `EVOLUTION_OVERVIEW.md`'s archive of the earliest phases, moved unchanged and not edited by releases |
+| File                                                                               | Purpose                                                                                                |
+|------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| `RELEASE_NOTES_vX.Y.Z.md`                                                          | Archived snapshot of `RELEASE_NOTES.md` at release time                                                |
+| `PR_DESCRIPTION_vX.Y.Z.md`                                                         | The release pull request's body, archived for that version (not archived for every early release)      |
+| [`CHANGELOG_v1-v7.md`](documentation/history/CHANGELOG_v1-v7.md)                   | `CHANGELOG.md`'s archive of the earliest versions, moved unchanged and not edited by releases          |
+| [`HISTORY_v1-v7.md`](documentation/history/HISTORY_v1-v7.md)                       | `HISTORY.md`'s archive of the earliest per-version entries, moved unchanged and not edited by releases |
+| [`EVOLUTION_OVERVIEW_v1-v7.md`](documentation/history/EVOLUTION_OVERVIEW_v1-v7.md) | `EVOLUTION_OVERVIEW.md`'s archive of the earliest phases, moved unchanged and not edited by releases   |
 
 [`documentation/archive/ARCHIVE.md`](documentation/archive/ARCHIVE.md) is the legacy release archive covering releases
 from before the project adopted its current documentation structure (`CHANGELOG.md`, `RELEASE_NOTES.md`, per-version
