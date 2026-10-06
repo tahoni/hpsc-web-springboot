@@ -118,7 +118,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Enums
 
-- **`ClubIdentifier`:** The `code` values are now `"C SASC"` (SOSC), `"B HPSC"`, `"A PMPSC"` and `"U VISITOR"`
+- **`ClubIdentifier`:** The `code` values are now `"C SOSC"` (SOSC), `"B HPSC"`, `"A PMPSC"` and `"U VISITOR"`
 - **`CompetitorCategory`:** The `SENIOR_LADY` name is now `"Lady Senior"` (was `"Lady, Senior"`), and the
   `fromName` Javadoc says "category" rather than "division"; the converter tests use the new name
 - **`PowerFactor`:** **Breaking:** Removed the `abbreviation` field and `fromAbbreviation(String)`
