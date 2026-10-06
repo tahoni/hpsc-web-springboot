@@ -23,7 +23,7 @@ public enum CompetitorCategory {
     JUNIOR("Junior", 2),
     SUPER_JUNIOR("Super Junior", 5),
     LADY("Lady", 1),
-    SENIOR_LADY("Lady, Senior", 7),
+    SENIOR_LADY("Lady Senior", 7),
     SENIOR("Senior", 3),
     SUPER_SENIOR("Super Senior", 4),
     GRAND_SENIOR("Grand Senior", 6),
@@ -46,11 +46,11 @@ public enum CompetitorCategory {
      * Retrieves an optional {@code CompetitorCategory} instance based on the provided name.
      *
      * <p>
-     * The method performs a case-insensitive match to find a division with the given name.
-     * If no match is found or the input is null/blank, a {@link CompetitorCategory#NONE} is returned.
+     * The method performs a case-insensitive match to find a category with the given name.
+     * If no match is found or the input is null/blank, {@link CompetitorCategory#NONE} is returned.
      * </p>
      *
-     * @param name the name of the division to search for.
+     * @param name the name of the category to search for.
      *             Can be null or empty.
      * @return an {@code Optional} containing the matching {@code CompetitorCategory} if found,
      * or {@link CompetitorCategory#NONE} otherwise.

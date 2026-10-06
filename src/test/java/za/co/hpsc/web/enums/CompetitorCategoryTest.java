@@ -114,7 +114,7 @@ class CompetitorCategoryTest {
     @Test
     void testFromName_withMatchWithSpecialCharacters_thenReturnsCorrectCategory() {
         // Act
-        Optional<CompetitorCategory> result = CompetitorCategory.fromName("Lady, Senior");
+        Optional<CompetitorCategory> result = CompetitorCategory.fromName("Lady Senior");
 
         // Assert
         assertTrue(result.isPresent());

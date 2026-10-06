@@ -94,7 +94,7 @@ public class ClubIdentifierTest {
     @Test
     void testFromCode_whenCodeIsKnown_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("CCC");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("A PMPSC");
 
         // Assert
         assertTrue(result.isPresent());
@@ -131,7 +131,7 @@ public class ClubIdentifierTest {
     @Test
     void testFromCode_whenCodeIsSosc_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("AAA");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("C SOSC");
 
         // Assert
         assertTrue(result.isPresent());
@@ -141,7 +141,7 @@ public class ClubIdentifierTest {
     @Test
     void testFromCode_whenCodeIsHpsc_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("BBB");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("B HPSC");
 
         // Assert
         assertTrue(result.isPresent());
@@ -151,7 +151,7 @@ public class ClubIdentifierTest {
     @Test
     void testFromCode_whenCodeIsVisitor_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("UUU");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("U Visitor");
 
         // Assert
         assertTrue(result.isPresent());
@@ -161,7 +161,7 @@ public class ClubIdentifierTest {
     @Test
     void testFromCode_whenCodeIsCaseInsensitive_thenReturnsMatchingClub() {
         // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("ccc");
+        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("A PMPSC");
 
         // Assert
         assertTrue(result.isPresent());

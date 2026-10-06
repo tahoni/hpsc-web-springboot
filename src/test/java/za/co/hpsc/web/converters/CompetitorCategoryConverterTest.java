@@ -17,7 +17,7 @@ class CompetitorCategoryConverterTest {
         String databaseValue = converter.convertToDatabaseColumn(CompetitorCategory.SENIOR_LADY);
 
         // Assert
-        assertEquals("Lady, Senior", databaseValue);
+        assertEquals("Lady Senior", databaseValue);
     }
 
     @Test
@@ -49,9 +49,9 @@ class CompetitorCategoryConverterTest {
     }
 
     @Test
-    void testConvertToEntityAttribute_whenNameContainsSpecialCharacters_thenReturnsCategory() {
+    void testConvertToEntityAttribute_whenNameContainsMultipleWords_thenReturnsCategory() {
         // Act
-        CompetitorCategory entityValue = converter.convertToEntityAttribute("Lady, Senior");
+        CompetitorCategory entityValue = converter.convertToEntityAttribute("Lady Senior");
 
         // Assert
         assertEquals(CompetitorCategory.SENIOR_LADY, entityValue);
