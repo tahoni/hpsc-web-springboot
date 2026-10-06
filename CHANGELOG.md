@@ -86,10 +86,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `power_factor` become `NOT NULL`, reversing `V8_1_0`'s `firearm_type` change and restoring one entry per competitor,
   match and firearm type; the migration is refused, leaving the columns as they were, if any existing row has a `NULL`
   in either — backfill those rows first
+- **`V11_3_0__add_match_competitor_date_calculated.sql`:** Adds the nullable `match_competitor.date_calculated`
+  column after `is_visitor`, so it sits before `date_created`; existing rows stay `NULL`
 
 ##### Domain
 
 - **`MatchCompetitor`:** `firearmType` and `powerFactor` are now `nullable = false`
+- **`MatchCompetitor.dateCalculated`:** New optional `date_calculated` column, placed before `dateCreated`, recording
+  when the row's scores were calculated — as `ShooterLogCompetitor` and `ShooterLogOverall` already do
 
 ##### Helpers
 

@@ -94,6 +94,7 @@ current at the time it's authored. Treat any resemblance between the two as coin
 | `V11_0_0__rename_competitor_nickname_to_nick_name.sql`            | v11.0.0                | Renames `competitor.nickname` to `nick_name`                                                                                                                                  |
 | `V11_1_0__change_competitor_number_to_int.sql`                    | v11.0.0                | Changes `competitor.competitor_number` from `VARCHAR(255)` to `INT`; refused if a value is not a whole number                                                                 |
 | `V11_2_0__make_match_competitor_firearm_type_and_power_factor_required.sql`| Unreleased             | Makes `match_competitor.firearm_type` and `power_factor` `NOT NULL` (reversing `V8_1_0`'s `firearm_type` change); refused if any row has a `NULL`                             |
+| `V11_3_0__add_match_competitor_date_calculated.sql`               | Unreleased             | Adds the optional `match_competitor.date_calculated` column, placed before `date_created`                                                                                     |
 
 ---
 

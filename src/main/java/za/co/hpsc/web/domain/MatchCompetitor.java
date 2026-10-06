@@ -95,6 +95,9 @@ public class MatchCompetitor {
     @Column(name = "is_visitor")
     private Boolean isVisitor;
 
+    @Column(name = "date_calculated")
+    private LocalDateTime dateCalculated;
+
     @CreationTimestamp
     @Column(name = "date_created", updatable = false)
     private LocalDateTime dateCreated;
