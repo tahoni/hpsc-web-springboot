@@ -58,6 +58,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   inspection with `licenseRules` that allow permissive licences (Apache-2.0, MIT, BSD, EPL-2.0, ISC) and prohibit GPL
   and AGPL dependencies, plus further Java best-practice inspections alongside `JavadocReference`
 
+##### Constants
+
+- **`SystemConstants`:** Now `final`, as it is a utility class with a private constructor
+
 ##### Converters
 
 - **`ClubIdentifierConverter`, `FirearmTypeConverter`:** Conversion methods that can return `null` are now annotated
