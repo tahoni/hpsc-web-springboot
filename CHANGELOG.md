@@ -85,8 +85,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorHelpers.toSentenceCaseLastName`:** A null last name now returns an empty string instead of `null`;
   Javadoc and unit test updated
 
+##### Models
+
+- **`CompetitorResponse`, `MatchResponse`:** Each gains a constructor that builds the response from its entity, and
+  its Javadoc now states which fields may be null
+
 ##### Services
 
+- **`IpscCompetitorServiceImpl`, `IpscMatchServiceImpl`:** Map entities with the new response constructors instead of
+  long all-args calls
 - **`IpscCompetitorServiceImpl`:** `resolveClubNumber`, `resolveGender`, `resolveHomeClub` and `parseCompetitorNumber`
   are now annotated `@Nullable`, so the null contract is explicit
 - **`IpscMatchCompetitorServiceImpl`:** `resolveCompetitorHomeClub`, `resolveMatchClub` and `resolvePowerFactor` are now

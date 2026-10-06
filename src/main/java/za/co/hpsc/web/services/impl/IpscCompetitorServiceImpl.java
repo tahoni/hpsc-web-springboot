@@ -503,23 +503,6 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @return the mapped {@link CompetitorResponse}.
      */
     protected CompetitorResponse toResponse(Competitor competitor) {
-        return new CompetitorResponse(
-                competitor.getId(),
-                competitor.getFirstName(),
-                competitor.getLastName(),
-                competitor.getMiddleNames(),
-                competitor.getNickName(),
-                competitor.getDateOfBirth(),
-                competitor.getGender(),
-                ((competitor.getHomeClub() != null) ? competitor.getHomeClub().getIdentifier() : null),
-                competitor.getSapsaNumber(),
-                competitor.getCompetitorNumber(),
-                competitor.getClubNumber(),
-                competitor.getIdNumber(),
-                competitor.getCellphoneNumber(),
-                competitor.getEmailAddresses(),
-                competitor.getPaidUpSapsa(),
-                competitor.getPaidUpClub(),
-                competitor.getIsVerified());
+        return new CompetitorResponse(competitor);
     }
 }

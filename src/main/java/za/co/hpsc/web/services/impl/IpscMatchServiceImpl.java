@@ -380,15 +380,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @return the mapped {@link MatchResponse}.
      */
     protected MatchResponse toResponse(IpscMatch match) {
-        return new MatchResponse(
-                match.getId(),
-                match.getName(),
-                match.getScheduledDate().toLocalDate(),
-                match.getStartTime(),
-                match.getEndTime(),
-                ((match.getClub() != null) ? match.getClub().getIdentifier() : null),
-                match.getMatchFirearmType(),
-                match.getMatchCategory(),
-                match.getUrl());
+        return new MatchResponse(match);
     }
 }
