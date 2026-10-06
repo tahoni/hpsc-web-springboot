@@ -8,44 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FirearmTypeTest {
 
-    // fromCode()
-    @Test
-    void testFromCode_withMatch_thenReturnsCorrectFirearmType() {
-        // Act
-        Optional<FirearmType> result = FirearmType.fromCode(7);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(FirearmType.PCC, result.get());
-    }
-
-    @Test
-    void testFromCode_withNullInput_thenReturnsEmptyOptional() {
-        // Act
-        Optional<FirearmType> result = FirearmType.fromCode(null);
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testFromCode_withZeroInput_thenReturnsEmptyOptional() {
-        // Act
-        Optional<FirearmType> result = FirearmType.fromCode(0);
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testFromCode_withNoMatch_returnsEmptyOptional() {
-        // Act
-        Optional<FirearmType> result = FirearmType.fromCode(100);
-
-        // Assert
-        assertTrue(result.isEmpty());
-    }
-    
     // fromName()
     @Test
     void testFromName_withExactMatch_thenReturnsCorrectFirearmType() {

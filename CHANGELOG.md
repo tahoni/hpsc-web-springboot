@@ -125,6 +125,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `abbreviation` field (`J`, `SJ`, `L`, `LS`, `S`, `SS`, `GS`)
 - **`Division`:** **Breaking:** Removed the `abbreviation` and `code` fields and `fromAbbreviation(String)`,
   `fromAbbreviationOrName(String)` and `fromCode(Integer)`; `fromName(String)` is unchanged
+- **`FirearmType`:** **Breaking:** Removed the `code` field and `fromCode(Integer)`
 - **`PowerFactor`:** **Breaking:** Removed the `abbreviation` field and `fromAbbreviation(String)`
 
 ##### Helpers
