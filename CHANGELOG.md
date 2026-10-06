@@ -116,6 +116,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchCompetitor.dateCalculated`:** New optional `date_calculated` column, placed before `dateCreated`, recording
   when the row's scores were calculated — as `ShooterLogCompetitor` and `ShooterLogOverall` already do
 
+##### Enums
+
+- **`PowerFactor`:** **Breaking:** Removed the `abbreviation` field and `fromAbbreviation(String)`
+
 ##### Helpers
 
 - **`CompetitorHelpers.toSentenceCaseLastName`:** A null last name now returns an empty string instead of `null`;
