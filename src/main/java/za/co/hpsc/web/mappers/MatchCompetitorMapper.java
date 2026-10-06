@@ -50,7 +50,8 @@ public class MatchCompetitorMapper {
      *
      * @param matchCompetitor the entity to populate; must not be null.
      * @param request         the request carrying the field values; must not be null.
-     * @throws ValidationException if an enumerated value doesn't match a known one.
+     * @throws ValidationException if an enumerated value doesn't match a known one, or the division doesn't
+     *                             belong to the firearm type.
      * @throws NonFatalException   if the competitor or match cannot be found.
      */
     public void applyFields(@NotNull MatchCompetitor matchCompetitor, @NotNull MatchCompetitorRequest request) {
@@ -61,6 +62,7 @@ public class MatchCompetitorMapper {
         matchCompetitor.setCompetitorCategory(resolveCompetitorCategory(request.getCompetitorCategory()));
         matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
         matchCompetitor.setDivision(resolveDivision(request.getDivision()));
+        validateDivisionMatchesFirearmType(matchCompetitor.getDivision(), matchCompetitor.getFirearmType());
         matchCompetitor.setPowerFactor(resolvePowerFactor(request.getPowerFactor()));
         matchCompetitor.setPoints(request.getPoints());
         matchCompetitor.setPercentage(request.getPercentage());
@@ -86,8 +88,9 @@ public class MatchCompetitorMapper {
      *
      * @param matchCompetitor the entity to patch; must not be null.
      * @param request         the request carrying the field values; must not be null.
-     * @throws ValidationException if an enumerated value doesn't match a known one, or the competitor number and
-     *                             name match more than one competitor.
+     * @throws ValidationException if an enumerated value doesn't match a known one, the division doesn't belong
+     *                             to the firearm type, or the competitor number and name match more than one
+     *                             competitor.
      * @throws NonFatalException   if the competitor or match cannot be found.
      */
     public void applyPatchFields(@NotNull MatchCompetitor matchCompetitor,
@@ -110,6 +113,9 @@ public class MatchCompetitorMapper {
         }
         if (hasText(request.getDivision())) {
             matchCompetitor.setDivision(resolveDivision(request.getDivision()));
+        }
+        if (hasText(request.getFirearmType()) || hasText(request.getDivision())) {
+            validateDivisionMatchesFirearmType(matchCompetitor.getDivision(), matchCompetitor.getFirearmType());
         }
         if (hasText(request.getPowerFactor())) {
             matchCompetitor.setPowerFactor(resolvePowerFactor(request.getPowerFactor()));
@@ -278,6 +284,19 @@ public class MatchCompetitorMapper {
     public FirearmType resolveFirearmType(String firearmType) {
         return FirearmType.fromName(firearmType)
                 .orElseThrow(() -> new ValidationException("Unknown firearm type: " + firearmType));
+    }
+
+    /**
+     * Checks that a division is one shot with the given firearm type.
+     *
+     * @param division    the division to check; ignored if null.
+     * @param firearmType the firearm type it must belong to; ignored if null.
+     * @throws ValidationException if {@code division} belongs to a different firearm type.
+     */
+    public void validateDivisionMatchesFirearmType(@Nullable Division division, @Nullable FirearmType firearmType) {
+        if ((division != null) && (firearmType != null) && (division.getFirearmType() != firearmType)) {
+            throw new ValidationException("Division " + division + " is not a " + firearmType + " division");
+        }
     }
 
     /**

@@ -142,6 +142,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorHelpers.toSentenceCaseLastName`:** A null last name now returns an empty string instead of `null`;
   Javadoc and unit test updated
 
+##### Mappers
+
+- **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now reject a division that does not belong to the
+  firearm type, through the new `validateDivisionMatchesFirearmType`; a patch that changes either one is checked against
+  the other's current value
+
 ##### Models
 
 - **`IpscCommonScore`, `IpscMatchScore`, `IpscMatchStageScore`:** `weightedPoints` is renamed `points`, and

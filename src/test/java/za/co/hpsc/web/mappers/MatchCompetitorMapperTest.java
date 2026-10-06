@@ -67,7 +67,7 @@ class MatchCompetitorMapperTest {
         request.setMatchClub("HPSC");
         request.setCompetitorCategory("Lady");
         request.setFirearmType("PCC");
-        request.setDivision("Production Division");
+        request.setDivision("PCC Iron Division");
         request.setPowerFactor("Minor");
         request.setPoints(new BigDecimal("50"));
         request.setPercentage(new BigDecimal("98.25"));
@@ -95,7 +95,7 @@ class MatchCompetitorMapperTest {
         assertEquals(ClubIdentifier.HPSC, matchCompetitor.getMatchClub());
         assertEquals(CompetitorCategory.LADY, matchCompetitor.getCompetitorCategory());
         assertEquals(FirearmType.PCC, matchCompetitor.getFirearmType());
-        assertEquals(Division.PRODUCTION, matchCompetitor.getDivision());
+        assertEquals(Division.PCC_IRON, matchCompetitor.getDivision());
         assertEquals(PowerFactor.MINOR, matchCompetitor.getPowerFactor());
         assertEquals(new BigDecimal("50"), matchCompetitor.getPoints());
         assertEquals(new BigDecimal("98.25"), matchCompetitor.getPercentage());
@@ -130,7 +130,7 @@ class MatchCompetitorMapperTest {
         request.setMatchClub("HPSC");
         request.setCompetitorCategory("Lady");
         request.setFirearmType("PCC");
-        request.setDivision("Production Division");
+        request.setDivision("PCC Iron Division");
         request.setPowerFactor("Minor");
         request.setPoints(new BigDecimal("50"));
         request.setPercentage(new BigDecimal("98.25"));
@@ -158,7 +158,7 @@ class MatchCompetitorMapperTest {
         assertEquals(ClubIdentifier.HPSC, matchCompetitor.getMatchClub());
         assertEquals(CompetitorCategory.LADY, matchCompetitor.getCompetitorCategory());
         assertEquals(FirearmType.PCC, matchCompetitor.getFirearmType());
-        assertEquals(Division.PRODUCTION, matchCompetitor.getDivision());
+        assertEquals(Division.PCC_IRON, matchCompetitor.getDivision());
         assertEquals(PowerFactor.MINOR, matchCompetitor.getPowerFactor());
         assertEquals(new BigDecimal("50"), matchCompetitor.getPoints());
         assertEquals(new BigDecimal("98.25"), matchCompetitor.getPercentage());
@@ -277,6 +277,66 @@ class MatchCompetitorMapperTest {
         // Act & Assert
         assertThrows(ValidationException.class,
                 () -> matchCompetitorMapper.applyPatchFields(new MatchCompetitor(), request));
+    }
+
+    @Test
+    void testApplyPatchFields_whenDivisionDoesNotMatchExistingFirearmType_thenThrowsValidationException() {
+        // Arrange
+        MatchCompetitor matchCompetitor = existingMatchCompetitor();
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setDivision("Shotgun Open Division");
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> matchCompetitorMapper.applyPatchFields(matchCompetitor, request));
+    }
+
+    @Test
+    void testApplyPatchFields_whenFirearmTypeDoesNotMatchExistingDivision_thenThrowsValidationException() {
+        // Arrange
+        MatchCompetitor matchCompetitor = existingMatchCompetitor();
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setFirearmType("Shotgun");
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> matchCompetitorMapper.applyPatchFields(matchCompetitor, request));
+    }
+
+    @Test
+    void testApplyPatchFields_whenFirearmTypeAndDivisionAreChangedTogether_thenAcceptsThem() {
+        // Arrange
+        MatchCompetitor matchCompetitor = existingMatchCompetitor();
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setFirearmType("Shotgun");
+        request.setDivision("Shotgun Open Division");
+
+        // Act
+        matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(FirearmType.SHOTGUN, matchCompetitor.getFirearmType());
+        assertEquals(Division.SHOTGUN_OPEN, matchCompetitor.getDivision());
+    }
+
+    // validateDivisionMatchesFirearmType()
+    @Test
+    void testValidateDivisionMatchesFirearmType_whenTheyMatch_thenDoesNotThrow() {
+        // Act & Assert
+        assertDoesNotThrow(() -> matchCompetitorMapper
+                .validateDivisionMatchesFirearmType(Division.SHOTGUN_OPEN, FirearmType.SHOTGUN));
+    }
+
+    @Test
+    void testValidateDivisionMatchesFirearmType_whenTheyDiffer_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> matchCompetitorMapper
+                .validateDivisionMatchesFirearmType(Division.OPEN, FirearmType.SHOTGUN));
+    }
+
+    @Test
+    void testValidateDivisionMatchesFirearmType_whenEitherIsNull_thenDoesNotThrow() {
+        // Act & Assert
+        assertDoesNotThrow(() -> matchCompetitorMapper.validateDivisionMatchesFirearmType(null, FirearmType.RIFLE));
+        assertDoesNotThrow(() -> matchCompetitorMapper.validateDivisionMatchesFirearmType(Division.OPEN, null));
     }
 
     // findCompetitorOrThrow(Long)
