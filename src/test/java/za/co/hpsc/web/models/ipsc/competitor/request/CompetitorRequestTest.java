@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
+import za.co.hpsc.web.exceptions.ValidationException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -259,5 +260,61 @@ class CompetitorRequestTest {
 
         // Act & Assert
         assertThrows(MismatchedInputException.class, () -> mapper.readValue("{}", CompetitorRequest.class));
+    }
+
+    // validate()
+    @Test
+    void testValidate_whenFirstAndLastNameHaveText_thenDoesNotThrow() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+
+        // Act & Assert
+        assertDoesNotThrow(request::validate);
+    }
+
+    @Test
+    void testValidate_whenFirstNameIsNullEmptyOrBlank_thenThrowsValidationException() {
+        for (String firstName : new String[]{null, "", "   "}) {
+            // Arrange
+            CompetitorRequest request = new CompetitorRequest();
+            request.setFirstName(firstName);
+            request.setLastName("Doe");
+
+            // Act
+            ValidationException exception = assertThrows(ValidationException.class, request::validate);
+
+            // Assert
+            assertEquals("First name is required.", exception.getMessage());
+        }
+    }
+
+    @Test
+    void testValidate_whenLastNameIsNullEmptyOrBlank_thenThrowsValidationException() {
+        for (String lastName : new String[]{null, "", "   "}) {
+            // Arrange
+            CompetitorRequest request = new CompetitorRequest();
+            request.setFirstName("Jane");
+            request.setLastName(lastName);
+
+            // Act
+            ValidationException exception = assertThrows(ValidationException.class, request::validate);
+
+            // Assert
+            assertEquals("Last name is required.", exception.getMessage());
+        }
+    }
+
+    @Test
+    void testValidate_whenBothNamesMissing_thenReportsTheFirstName() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+
+        // Act
+        ValidationException exception = assertThrows(ValidationException.class, request::validate);
+
+        // Assert
+        assertEquals("First name is required.", exception.getMessage());
     }
 }
