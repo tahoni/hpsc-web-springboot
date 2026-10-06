@@ -13,7 +13,8 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
  * <p>
  * A division defines a specific type of competition or category
  * in which participants can compete.
- * Each division is associated with a name.
+ * Each division is associated with a name, which is unique across all divisions, and the
+ * {@link FirearmType} it is shot with.
  * </p>
  *
  * @since 1.1.3
@@ -21,46 +22,48 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
 @Getter
 public enum Division {
     // Handgun Divisions
-    OPEN("Open Division"),
-    STANDARD("Standard Division"),
-    MODIFIED("Modified Division"),
-    CLASSIC("Classic Division"),
-    PRODUCTION("Production Division"),
-    PRODUCTION_OPTICS("Production Optics Division"),
-    PRODUCTION_OPTICS_LIGHT("Production Optics Light Division"),
-    OPTICS("Optics Division"),
-    REVOLVER("Revolver Division"),
+    OPEN("Open Division", FirearmType.HANDGUN),
+    STANDARD("Standard Division", FirearmType.HANDGUN),
+    MODIFIED("Modified Division", FirearmType.HANDGUN),
+    CLASSIC("Classic Division", FirearmType.HANDGUN),
+    PRODUCTION("Production Division", FirearmType.HANDGUN),
+    PRODUCTION_OPTICS("Production Optics Division", FirearmType.HANDGUN),
+    PRODUCTION_OPTICS_LIGHT("Production Optics Light Division", FirearmType.HANDGUN),
+    OPTICS("Optics Division", FirearmType.HANDGUN),
+    REVOLVER("Revolver Division", FirearmType.HANDGUN),
 
     // Rifle Divisions
-    RIFLE_SEMI_AUTO_OPEN("Semi Auto Open Division"),
-    RIFLE_SEMI_AUTO_STANDARD("Semi Auto Standard Division"),
-    RIFLE_MANUAL_ACTION_CONTEMPORARY("Manual Action Contemporary Division"),
-    RIFLE_MANUAL_ACTION_BOLT("Manual Action Bolt Division"),
+    RIFLE_SEMI_AUTO_OPEN("Semi Auto Open Division", FirearmType.RIFLE),
+    RIFLE_SEMI_AUTO_STANDARD("Semi Auto Standard Division", FirearmType.RIFLE),
+    RIFLE_MANUAL_ACTION_CONTEMPORARY("Manual Action Contemporary Division", FirearmType.RIFLE),
+    RIFLE_MANUAL_ACTION_BOLT("Manual Action Bolt Division", FirearmType.RIFLE),
 
     // Shotgun Divisions
-    SHOTGUN_OPEN("Open Division"),
-    SHOTGUN_MODIFIED("Modified Division"),
-    SHOTGUN_STANDARD("Standard Division"),
-    SHOTGUN_STANDARD_MANUAL("Standard Manual Division"),
+    SHOTGUN_OPEN("Shotgun Open Division", FirearmType.SHOTGUN),
+    SHOTGUN_MODIFIED("Shotgun Modified Division", FirearmType.SHOTGUN),
+    SHOTGUN_STANDARD("Shotgun Standard Division", FirearmType.SHOTGUN),
+    SHOTGUN_STANDARD_MANUAL("Standard Manual Division", FirearmType.SHOTGUN),
 
     // PCC Divisions
-    PCC_OPTICS("PCC Optic Division"),
-    PCC_IRON("PCC Iron Division"),
+    PCC_OPTICS("PCC Optic Division", FirearmType.PCC),
+    PCC_IRON("PCC Iron Division", FirearmType.PCC),
 
     // .22 Divisions
-    OPEN_22("Open Division"),
-    STANDARD_22("Standard Division"),
-    CLASSIC_22("Classic Division"),
-    OPTICS_22("Optics Division"),
+    OPEN_22(".22 Open Division", FirearmType.HANDGUN_22),
+    STANDARD_22(".22 Standard Division", FirearmType.HANDGUN_22),
+    CLASSIC_22(".22 Classic Division", FirearmType.HANDGUN_22),
+    OPTICS_22(".22 Optics Division", FirearmType.HANDGUN_22),
 
     // Mini Rifle Divisions
-    MINI_RIFLE_OPEN("Open Division"),
-    MINI_RIFLE_STANDARD("Standard Division");
+    MINI_RIFLE_OPEN("Mini Rifle Open Division", FirearmType.MINI_RIFLE),
+    MINI_RIFLE_STANDARD("Mini Rifle Standard Division", FirearmType.MINI_RIFLE);
 
     private final String name;
+    private final FirearmType firearmType;
 
-    Division(String name) {
+    Division(String name, FirearmType firearmType) {
         this.name = name;
+        this.firearmType = firearmType;
     }
 
     /**

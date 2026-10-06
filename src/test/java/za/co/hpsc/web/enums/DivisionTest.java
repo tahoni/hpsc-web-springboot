@@ -74,4 +74,35 @@ class DivisionTest {
         // Assert
         assertFalse(result.isPresent());
     }
+
+    // getFirearmType()
+    @Test
+    void testGetFirearmType_withEachDivision_thenReturnsFirearmTypeItIsShotWith() {
+        // Act & Assert
+        assertEquals(FirearmType.HANDGUN, Division.OPEN.getFirearmType());
+        assertEquals(FirearmType.HANDGUN, Division.REVOLVER.getFirearmType());
+        assertEquals(FirearmType.RIFLE, Division.RIFLE_SEMI_AUTO_OPEN.getFirearmType());
+        assertEquals(FirearmType.SHOTGUN, Division.SHOTGUN_STANDARD_MANUAL.getFirearmType());
+        assertEquals(FirearmType.PCC, Division.PCC_IRON.getFirearmType());
+        assertEquals(FirearmType.HANDGUN_22, Division.CLASSIC_22.getFirearmType());
+        assertEquals(FirearmType.MINI_RIFLE, Division.MINI_RIFLE_OPEN.getFirearmType());
+    }
+
+    // names
+    @Test
+    void testNames_acrossAllDivisions_areUnique() {
+        // Act
+        long distinctNames = java.util.Arrays.stream(Division.values()).map(Division::getName).distinct().count();
+
+        // Assert
+        assertEquals(Division.values().length, distinctNames);
+    }
+
+    @Test
+    void testFromName_withNonHandgunName_thenReturnsThatDivision() {
+        // Act & Assert
+        assertEquals(Division.SHOTGUN_OPEN, Division.fromName("Shotgun Open Division").orElseThrow());
+        assertEquals(Division.OPEN_22, Division.fromName(".22 Open Division").orElseThrow());
+        assertEquals(Division.MINI_RIFLE_STANDARD, Division.fromName("Mini Rifle Standard Division").orElseThrow());
+    }
 }
