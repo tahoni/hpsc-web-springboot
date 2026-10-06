@@ -86,7 +86,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Utils
 
+- **`NumberUtil`:** `calculatePercentage` and `calculateSum` now take a `scale` parameter instead of always using
+  `SystemConstants.DEFAULT_SCALE`, so callers choose the result's decimal places; Javadoc updated and unit tests added
+  for non-default scales
 - **`StringUtil`:** `toString` and `toProperCase` are now annotated `@Nullable`, as both return `null` for a null input
+
+#### 🐛 Fixed
+
+##### Utils
+
+- **`NumberUtil.calculatePercentage`:** The intermediate division now uses `scale + 2` digits instead of `scale * 2` —
+  a scale below 2 rounded the ratio too early (2/3 at scale 0 gave `100` instead of `67`); results at the default scale
+  are unchanged
 
 ---
 
