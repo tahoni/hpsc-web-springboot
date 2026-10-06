@@ -8,6 +8,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
@@ -520,7 +521,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      *                             than one competitor matches the number and name.
      * @throws NonFatalException   if no competitor matches.
      */
-    protected ClubIdentifier resolveCompetitorHomeClub(MatchCompetitorRequest request) {
+    protected @Nullable ClubIdentifier resolveCompetitorHomeClub(MatchCompetitorRequest request) {
         Competitor competitor = resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
                 request.getCompetitorName());
         Club homeClub = competitor.getHomeClub();
@@ -535,7 +536,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * @return the matching {@link ClubIdentifier}, or {@code null} if {@code matchClub} wasn't supplied.
      * @throws ValidationException if {@code matchClub} was supplied but doesn't match a known club.
      */
-    protected ClubIdentifier resolveMatchClub(String matchClub) {
+    protected @Nullable ClubIdentifier resolveMatchClub(String matchClub) {
         if (!hasText(matchClub)) {
             return null;
         }
@@ -590,7 +591,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * @return the matching {@link PowerFactor}, or {@code null} if {@code powerFactor} wasn't supplied.
      * @throws ValidationException if {@code powerFactor} was supplied but doesn't match a known power factor.
      */
-    protected PowerFactor resolvePowerFactor(String powerFactor) {
+    protected @Nullable PowerFactor resolvePowerFactor(String powerFactor) {
         if ((powerFactor == null) || powerFactor.isBlank()) {
             return null;
         }

@@ -76,6 +76,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscCompetitorServiceImpl`:** `resolveClubNumber`, `resolveGender`, `resolveHomeClub` and `parseCompetitorNumber`
   are now annotated `@Nullable`, so the null contract is explicit
+- **`IpscMatchCompetitorServiceImpl`:** `resolveCompetitorHomeClub`, `resolveMatchClub` and `resolvePowerFactor` are now
+  annotated `@Nullable`, so the null contract is explicit
+
+##### Utils
+
+- **`StringUtil`:** `toString` and `toProperCase` are now annotated `@Nullable`, as both return `null` for a null input
 
 ---
 
