@@ -71,11 +71,13 @@ public class MatchCompetitorResponse {
     /**
      * The firearm type the competitor shot.
      */
+    @NotNull
     private FirearmType firearmType;
     /** The division the competitor shot. */
     @NotNull
     private Division division;
-    /** The competitor's power factor, if any. */
+    /** The competitor's power factor. */
+    @NotNull
     private PowerFactor powerFactor;
 
     /** The competitor's match points, if any. */

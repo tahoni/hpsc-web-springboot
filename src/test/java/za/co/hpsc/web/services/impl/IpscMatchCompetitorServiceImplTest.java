@@ -590,6 +590,7 @@ class IpscMatchCompetitorServiceImplTest {
         request.setCompetitorCategory("Junior");
         request.setFirearmType("Handgun");
         request.setDivision("Open Division");
+        request.setPowerFactor("Major");
 
         // Act & Assert
         assertDoesNotThrow(() -> matchCompetitorServiceImpl.validateForCreate(request));
@@ -608,6 +609,10 @@ class IpscMatchCompetitorServiceImplTest {
         noFirearm.setFirearmType(null);
         MatchCompetitorRequest noDivision = completeRequest();
         noDivision.setDivision(null);
+        MatchCompetitorRequest noPowerFactor = completeRequest();
+        noPowerFactor.setPowerFactor(null);
+        MatchCompetitorRequest blankPowerFactor = completeRequest();
+        blankPowerFactor.setPowerFactor("  ");
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(noCompetitor));
@@ -615,6 +620,8 @@ class IpscMatchCompetitorServiceImplTest {
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(noCategory));
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(noFirearm));
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(noDivision));
+        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(noPowerFactor));
+        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(blankPowerFactor));
     }
 
     // toFailedResponse()
@@ -767,6 +774,7 @@ class IpscMatchCompetitorServiceImplTest {
         request.setCompetitorCategory("Junior");
         request.setFirearmType("Handgun");
         request.setDivision("Open Division");
+        request.setPowerFactor("Major");
         return request;
     }
 

@@ -80,6 +80,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ClubIdentifierConverter`, `FirearmTypeConverter`:** Conversion methods that can return `null` are now annotated
   `@Nullable` (JSpecify), so the null contract is explicit
 
+##### Database
+
+- **`V11_2_0__make_match_competitor_firearm_type_and_power_factor_required.sql`:** `match_competitor.firearm_type` and
+  `power_factor` become `NOT NULL`, reversing `V8_1_0`'s `firearm_type` change and restoring one entry per competitor,
+  match and firearm type; the migration is refused, leaving the columns as they were, if any existing row has a `NULL`
+  in either — backfill those rows first
+
+##### Domain
+
+- **`MatchCompetitor`:** `firearmType` and `powerFactor` are now `nullable = false`
+
 ##### Helpers
 
 - **`CompetitorHelpers.toSentenceCaseLastName`:** A null last name now returns an empty string instead of `null`;
@@ -94,10 +105,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   the JSON of `/ipsc/match-competitors` responses and bulk import results changes shape; also gains a constructor that
   builds it from a `MatchCompetitor`, and its Javadoc now covers the partly set response for a failed bulk import row
 
+- **`MatchCompetitorRequest.validate`:** New method, with Javadoc, holding the required-field checks that
+  `IpscMatchCompetitorServiceImpl.validateForCreate` repeated inline; `validateForCreate` now calls it
+- **`MatchCompetitorRequest`, `MatchCompetitorResponse`:** **Breaking:** `powerFactor` is now required, as
+  `firearmType` already was — `validate()` rejects a request without one ("Power factor is required."), so bulk import
+  rows and API calls that omit it now fail; `firearmType` and `powerFactor` are `@NotNull` on the response
+
 ##### Services
 
 - **`IpscCompetitorServiceImpl`, `IpscMatchServiceImpl`:** Map entities with the new response constructors instead of
   long all-args calls
+- **`IpscMatchCompetitorServiceImpl`:** `patchMatchCompetitor` ignores a blank `powerFactor` instead of clearing the
+  power factor
 - **`IpscMatchCompetitorServiceImpl`:** `toResponse` uses the new constructor, and `toFailedResponse` wraps the
   requested name in a list, or leaves it empty when the request has none
 - **`IpscCompetitorServiceImpl`:** `resolveClubNumber`, `resolveGender`, `resolveHomeClub` and `parseCompetitorNumber`

@@ -5,9 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
 
 import java.math.BigDecimal;
+
+import static za.co.hpsc.web.utils.StringUtil.hasText;
 
 /**
  * Request to create or fully replace an IPSC match competitor: one competitor's entry in one match, in one firearm
@@ -53,11 +56,13 @@ public class MatchCompetitorRequest {
     @JsonProperty(required = true)
     private String competitorCategory;
     /** The firearm type the competitor shot; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. */
+    @JsonProperty(required = true)
     private String firearmType;
     /** The division the competitor shot; resolved against {@link za.co.hpsc.web.enums.Division} by name. */
     @JsonProperty(required = true)
     private String division;
     /** The competitor's power factor; resolved against {@link za.co.hpsc.web.enums.PowerFactor} by name. */
+    @JsonProperty(required = true)
     private String powerFactor;
     /** The competitor's match points. */
     private BigDecimal points;
@@ -180,5 +185,50 @@ public class MatchCompetitorRequest {
         this.overallRanking = overallRanking;
         this.clubRanking = clubRanking;
         this.isVisitor = isVisitor;
+    }
+
+    /**
+     * Checks that the request carries what is needed to identify the competitor and the match, before any of it is
+     * resolved. Nothing is looked up, so this only checks that values are present.
+     *
+     * <p>
+     * The request is valid when:
+     * </p>
+     * <ul>
+     *     <li>{@code competitorId} is set, or {@code competitorNumber} or {@code competitorName} has text;</li>
+     *     <li>{@code matchId} is set; and</li>
+     *     <li>{@code competitorCategory}, {@code firearmType}, {@code division} and {@code powerFactor} each have text.</li>
+     * </ul>
+     *
+     * <p>
+     * The category, firearm type, division, club and power factor are resolved against their enums later, so a value
+     * that is present but unknown is not caught here.
+     * </p>
+     *
+     * @return always {@code true}; an invalid request throws instead of returning {@code false}.
+     * @throws ValidationException if the competitor ID, number and name are all missing, or if the match ID,
+     *                             competitor category, firearm type, division or power factor is missing.
+     */
+    public boolean validate() {
+        if ((getCompetitorId() == null) && !hasText(getCompetitorNumber())
+                && !hasText(getCompetitorName())) {
+            throw new ValidationException("Competitor ID, number or name is required.");
+        }
+        if (getMatchId() == null) {
+            throw new ValidationException("Match ID is required.");
+        }
+        if (!hasText(getCompetitorCategory())) {
+            throw new ValidationException("Competitor category is required.");
+        }
+        if (!hasText(getFirearmType())) {
+            throw new ValidationException("Firearm type is required.");
+        }
+        if (!hasText(getDivision())) {
+            throw new ValidationException("Division is required.");
+        }
+        if (!hasText(getPowerFactor())) {
+            throw new ValidationException("Power factor is required.");
+        }
+        return true;
     }
 }

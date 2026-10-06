@@ -148,7 +148,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (hasText(request.getDivision())) {
             matchCompetitor.setDivision(resolveDivision(request.getDivision()));
         }
-        if (request.getPowerFactor() != null) {
+        if (hasText(request.getPowerFactor())) {
             matchCompetitor.setPowerFactor(resolvePowerFactor(request.getPowerFactor()));
         }
         if (request.getPoints() != null) {
@@ -612,22 +612,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         if (request == null) {
             throw new ValidationException("Match competitor request cannot be null.");
         }
-        if ((request.getCompetitorId() == null) && !hasText(request.getCompetitorNumber())
-                && !hasText(request.getCompetitorName())) {
-            throw new ValidationException("Competitor ID, number or name is required.");
-        }
-        if (request.getMatchId() == null) {
-            throw new ValidationException("Match ID is required.");
-        }
-        if (!hasText(request.getCompetitorCategory())) {
-            throw new ValidationException("Competitor category is required.");
-        }
-        if (!hasText(request.getFirearmType())) {
-            throw new ValidationException("Firearm type is required.");
-        }
-        if (!hasText(request.getDivision())) {
-            throw new ValidationException("Division is required.");
-        }
+        request.validate();
     }
 
     /**
