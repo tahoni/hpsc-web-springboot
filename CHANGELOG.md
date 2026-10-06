@@ -126,6 +126,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscCommonScore`, `IpscMatchScore`, `IpscMatchStageScore`:** `weightedPoints` is renamed `points`, and
   `powerFactor` is removed from the score, which the competitor's entry holds instead; the fields are now `protected`
   so subclasses can use them, and the constructors lose their `powerFactor` parameter
+- **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`:** Extend `IpscMatchScore` instead of declaring their own
+  copies of the score fields (`points`, `percentage`, `time`, the hit counts and penalties); the JSON is unchanged
 - **`CompetitorResponse`, `MatchResponse`:** Each gains a constructor that builds the response from its entity, and
   its Javadoc now states which fields may be null
 - **`MatchCompetitorResponse`:** **Breaking:** The `competitorName` string is replaced by a `competitorNames` list

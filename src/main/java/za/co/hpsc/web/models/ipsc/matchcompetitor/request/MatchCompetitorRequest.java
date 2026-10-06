@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
+import za.co.hpsc.web.models.ipsc.shared.IpscMatchScore;
 
 import java.math.BigDecimal;
 
@@ -27,7 +28,7 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
 @Getter
 @Setter
 @NoArgsConstructor
-public class MatchCompetitorRequest {
+public class MatchCompetitorRequest extends IpscMatchScore {
     /** Identifier of the match competitor to update, or {@code null} when creating a new match competitor. */
     private Long matchCompetitorId;
     /**
@@ -64,30 +65,6 @@ public class MatchCompetitorRequest {
     /** The competitor's power factor; resolved against {@link za.co.hpsc.web.enums.PowerFactor} by name. */
     @JsonProperty(required = true)
     private String powerFactor;
-    /** The competitor's match points. */
-    private BigDecimal points;
-    /** The competitor's overall match score as a percentage of the match winner's score. */
-    private BigDecimal percentage;
-    /** The competitor's total time, in seconds, taken across the match's stages. */
-    private BigDecimal time;
-    /** The competitor's total hits as a percentage of the maximum points available in the match. */
-    private BigDecimal percentageOfPossiblePoints;
-    /** The competitor's total A-zone (alpha) hits across the match. */
-    private Integer alpha;
-    /** The competitor's total C-zone (charlie) hits across the match. */
-    private Integer charlie;
-    /** The competitor's total D-zone (delta) hits across the match. */
-    private Integer delta;
-    /** The competitor's total required hits not scored (misses) across the match. */
-    private Integer misses;
-    /** The competitor's total misses that did not attract the usual miss penalty. */
-    private Integer noPenaltyMisses;
-    /** The competitor's total no-shoot penalty hits across the match. */
-    private Integer noShoots;
-    /** The competitor's total procedural penalties applied across the match. */
-    private Integer proceduralErrors;
-    /** The competitor's total additional penalties applied across the match. */
-    private Integer additionalPenalties;
     /** The competitor's overall ranking in the match. */
     private BigDecimal overallRanking;
     /** The competitor's ranking among their club's competitors in the match. */
