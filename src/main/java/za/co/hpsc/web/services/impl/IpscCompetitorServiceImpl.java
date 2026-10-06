@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
@@ -355,7 +356,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @throws ValidationException if {@code homeClub} is {@link IpscConstants#HOME_CLUB_ABBREVIATION}
      *                             but {@code clubNumber} is null or blank.
      */
-    protected String resolveClubNumber(Club homeClub, String clubNumber) {
+    protected @Nullable String resolveClubNumber(Club homeClub, String clubNumber) {
         if (!isMemberOfHomeClub(homeClub)) {
             return null;
         }
@@ -411,7 +412,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @return the matching {@link Gender}, or {@code null} if {@code gender} wasn't supplied.
      * @throws ValidationException if {@code gender} was supplied but doesn't match a known gender.
      */
-    protected Gender resolveGender(String gender) {
+    protected @Nullable Gender resolveGender(String gender) {
         if (!hasText(gender)) {
             return null;
         }
@@ -428,7 +429,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @return the matching {@link Club}, or {@code null} if {@code clubName} wasn't supplied.
      * @throws NonFatalException if {@code clubName} was supplied but doesn't match an existing club.
      */
-    protected Club resolveHomeClub(String clubName) {
+    protected @Nullable Club resolveHomeClub(String clubName) {
         if (!hasText(clubName)) {
             return null;
         }
@@ -465,7 +466,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @return the competitor number as a whole number, or {@code null} if it is null or blank.
      * @throws ValidationException if the competitor number is not a whole number.
      */
-    protected Integer parseCompetitorNumber(String competitorNumber) {
+    protected @Nullable Integer parseCompetitorNumber(String competitorNumber) {
         if (!hasText(competitorNumber)) {
             return null;
         }

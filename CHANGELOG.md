@@ -58,6 +58,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   inspection with `licenseRules` that allow permissive licences (Apache-2.0, MIT, BSD, EPL-2.0, ISC) and prohibit GPL
   and AGPL dependencies, plus further Java best-practice inspections alongside `JavadocReference`
 
+##### Converters
+
+- **`ClubIdentifierConverter`, `FirearmTypeConverter`:** Conversion methods that can return `null` are now annotated
+  `@Nullable` (JSpecify), so the null contract is explicit
+
+##### Services
+
+- **`IpscCompetitorServiceImpl`:** `resolveClubNumber`, `resolveGender`, `resolveHomeClub` and `parseCompetitorNumber`
+  are now annotated `@Nullable`, so the null contract is explicit
+
 ---
 
 ### 🧾 [12.0.0] - 2026-10-05
