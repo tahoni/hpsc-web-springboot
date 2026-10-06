@@ -488,12 +488,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         if (request == null) {
             throw new ValidationException("Competitor request cannot be null.");
         }
-        if (!hasText(request.getFirstName())) {
-            throw new ValidationException("First name is required.");
-        }
-        if (!hasText(request.getLastName())) {
-            throw new ValidationException("Last name is required.");
-        }
+        request.validate();
     }
 
     /**

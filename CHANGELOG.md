@@ -109,6 +109,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   the JSON of `/ipsc/match-competitors` responses and bulk import results changes shape; also gains a constructor that
   builds it from a `MatchCompetitor`, and its Javadoc now covers the partly set response for a failed bulk import row
 
+- **`CompetitorRequest.validate`, `MatchRequest.validate`:** Now documented in Javadoc, and unit tests added for them
+  and for `MatchCompetitorRequest.validate`
 - **`MatchCompetitorRequest.validate`:** New method, with Javadoc, holding the required-field checks that
   `IpscMatchCompetitorServiceImpl.validateForCreate` repeated inline; `validateForCreate` now calls it
 - **`MatchCompetitorRequest`, `MatchCompetitorResponse`:** **Breaking:** `powerFactor` is now required, as
@@ -119,6 +121,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscCompetitorServiceImpl`, `IpscMatchServiceImpl`:** Map entities with the new response constructors instead of
   long all-args calls
+- **`IpscCompetitorServiceImpl`, `IpscMatchServiceImpl`:** `validateForCreate` calls `CompetitorRequest.validate` and
+  `MatchRequest.validate` instead of repeating the required-field checks inline; the rules and messages are unchanged
 - **`IpscMatchCompetitorServiceImpl`:** `patchMatchCompetitor` ignores a blank `powerFactor` instead of clearing the
   power factor
 - **`IpscMatchCompetitorServiceImpl`:** `toResponse` uses the new constructor, and `toFailedResponse` wraps the

@@ -362,15 +362,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         if (request == null) {
             throw new ValidationException("Match request cannot be null.");
         }
-        if (!hasText(request.getMatchName())) {
-            throw new ValidationException("Match name is required.");
-        }
-        if (request.getMatchDate() == null) {
-            throw new ValidationException("Match date is required.");
-        }
-        if (!hasText(request.getMatchFirearmType())) {
-            throw new ValidationException("Match firearm type is required.");
-        }
+        request.validate();
     }
 
     /**

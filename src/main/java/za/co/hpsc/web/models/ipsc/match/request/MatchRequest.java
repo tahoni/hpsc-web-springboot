@@ -7,9 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
+import za.co.hpsc.web.exceptions.ValidationException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import static za.co.hpsc.web.utils.StringUtil.hasText;
 
 /**
  * Request to create or update an IPSC match.
@@ -86,5 +89,30 @@ public class MatchRequest {
         this.matchFirearmType = matchFirearmType;
         this.matchCategory = matchCategory;
         this.url = url;
+    }
+
+    /**
+     * Checks that the request carries what is needed to create a match, before any of it is used. Nothing is looked
+     * up, so this only checks that values are present.
+     *
+     * <p>
+     * The request is valid when {@code matchName} and {@code matchFirearmType} have text, so a null, empty or
+     * whitespace-only value is rejected, and {@code matchDate} is set. Every other field is optional; the club, firearm
+     * type and category are resolved against their enums or the database later, so a value that is present but
+     * unknown is not caught here.
+     * </p>
+     *
+     * @throws ValidationException if the match name, match date or match firearm type is missing.
+     */
+    public void validate() {
+        if (!hasText(getMatchName())) {
+            throw new ValidationException("Match name is required.");
+        }
+        if (getMatchDate() == null) {
+            throw new ValidationException("Match date is required.");
+        }
+        if (!hasText(getMatchFirearmType())) {
+            throw new ValidationException("Match firearm type is required.");
+        }
     }
 }
