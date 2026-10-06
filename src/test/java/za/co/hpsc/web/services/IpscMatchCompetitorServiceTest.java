@@ -18,6 +18,7 @@ import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.mappers.MatchCompetitorMapper;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
@@ -67,8 +68,9 @@ public class IpscMatchCompetitorServiceTest {
     void setUp() {
         TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
                 ipscMatchRepository, matchCompetitorRepository, transactionManager);
-        ipscMatchCompetitorService = new IpscMatchCompetitorServiceImpl(matchCompetitorRepository, competitorRepository,
-                ipscMatchRepository, entityIpscCompetitorService, new ClubServiceImpl(), transactionService);
+        ipscMatchCompetitorService = new IpscMatchCompetitorServiceImpl(matchCompetitorRepository,
+                new MatchCompetitorMapper(competitorRepository, ipscMatchRepository, entityIpscCompetitorService),
+                new ClubServiceImpl(), transactionService);
     }
 
     // createMatchCompetitor()

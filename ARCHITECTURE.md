@@ -75,7 +75,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   ├───enums/              # Domain enumerations
 │   │   ├───exceptions/         # Custom exception hierarchy + ControllerAdvice mapping
 │   │   ├───helpers/            # Domain-specific normalisation helpers
-│   │   ├───mappers/            # Request-to-entity mappers that resolve lookups (clubs, gender)
+│   │   ├───mappers/            # Request-to-entity mappers that resolve lookups (clubs, competitors, enums)
 │   │   ├───models/             # DTOs, request/response models
 │   │   │   ├───award/          # Award request/response/shared models
 │   │   │   ├───image/          # Image gallery request/response models
@@ -308,6 +308,8 @@ shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchS
 | Class                   | Responsibility                                                                                             |
 |-------------------------|------------------------------------------------------------------------------------------------------------|
 | `CompetitorMapper`      | Copies competitor request fields onto a `Competitor`, resolving gender, home club and club number          |
+| `MatchMapper`           | Copies match request fields onto an `IpscMatch`, resolving the club, firearm type and match category       |
+| `MatchCompetitorMapper` | Copies match competitor request fields onto a `MatchCompetitor`, resolving the competitor, match and enums |
 
 #### Constants (`za.co.hpsc.web.constants`)
 

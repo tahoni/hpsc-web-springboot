@@ -1,8 +1,8 @@
 package za.co.hpsc.web.services.impl;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,6 +17,7 @@ import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.mappers.MatchCompetitorMapper;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
 import za.co.hpsc.web.repositories.CompetitorRepository;
@@ -32,18 +33,15 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link IpscMatchCompetitorServiceImpl}'s impl-only protected helper methods
- * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code findMatchCompetitorOrThrow},
- * {@code findMatchOrThrow}, {@code resolveMatchClub}, {@code resolveCompetitorCategory},
- * {@code resolveFirearmType}, {@code resolveDivision}, {@code resolvePowerFactor}, {@code toResponse},
- * {@code validateForCreate}) - not declared on {@link IpscMatchCompetitorService}.
+ * ({@code findMatchCompetitorOrThrow}, {@code isForClub}, {@code resolveCompetitorHomeClub},
+ * {@code toFailedResponse}, {@code toResponse}, {@code validateForCreate}) - not declared on
+ * {@link IpscMatchCompetitorService}. The field-copying and lookup helpers are covered by
+ * {@link za.co.hpsc.web.mappers.MatchCompetitorMapperTest}.
  * The interface's create/update/patch/get/delete contract is covered by
  * {@link IpscMatchCompetitorServiceTest}.
  */
@@ -65,70 +63,13 @@ class IpscMatchCompetitorServiceImplTest {
     @Spy
     private ClubService clubService = new ClubServiceImpl();
 
-    @InjectMocks
     private IpscMatchCompetitorServiceImpl matchCompetitorServiceImpl;
 
-    // applyFields()
-    @Test
-    void testApplyFields_whenAllFieldsPresent_thenCopiesAndResolvesThemOntoEntity() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        competitor.setId(1L);
-        IpscMatch match = new IpscMatch();
-        match.setId(2L);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
-        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
-        MatchCompetitorRequest request = new MatchCompetitorRequest();
-        request.setCompetitorId(1L);
-        request.setMatchId(2L);
-        request.setMatchClub("HPSC");
-        request.setCompetitorCategory("Lady");
-        request.setFirearmType("PCC");
-        request.setDivision("Production Division");
-        request.setPowerFactor("Minor");
-        request.setPoints(new BigDecimal("50"));
-        request.setPercentage(new BigDecimal("98.25"));
-        request.setTime(new BigDecimal("41.5"));
-        request.setPercentageOfPossiblePoints(new BigDecimal("93.75"));
-        request.setAlpha(30);
-        request.setCharlie(4);
-        request.setDelta(1);
-        request.setMisses(2);
-        request.setNoPenaltyMisses(1);
-        request.setNoShoots(0);
-        request.setProceduralErrors(3);
-        request.setAdditionalPenalties(5);
-        request.setOverallRanking(new BigDecimal("3"));
-        request.setClubRanking(new BigDecimal("2"));
-        request.setIsVisitor(true);
-        MatchCompetitor matchCompetitor = new MatchCompetitor();
-
-        // Act
-        matchCompetitorServiceImpl.applyFields(matchCompetitor, request);
-
-        // Assert
-        assertSame(competitor, matchCompetitor.getCompetitor());
-        assertSame(match, matchCompetitor.getMatch());
-        assertEquals(ClubIdentifier.HPSC, matchCompetitor.getMatchClub());
-        assertEquals(CompetitorCategory.LADY, matchCompetitor.getCompetitorCategory());
-        assertEquals(FirearmType.PCC, matchCompetitor.getFirearmType());
-        assertEquals(Division.PRODUCTION, matchCompetitor.getDivision());
-        assertEquals(PowerFactor.MINOR, matchCompetitor.getPowerFactor());
-        assertEquals(new BigDecimal("50"), matchCompetitor.getPoints());
-        assertEquals(new BigDecimal("98.25"), matchCompetitor.getPercentage());
-        assertEquals(new BigDecimal("41.5"), matchCompetitor.getTime());
-        assertEquals(new BigDecimal("93.75"), matchCompetitor.getPercentageOfPossiblePoints());
-        assertEquals(30, matchCompetitor.getAlpha());
-        assertEquals(4, matchCompetitor.getCharlie());
-        assertEquals(1, matchCompetitor.getDelta());
-        assertEquals(2, matchCompetitor.getMisses());
-        assertEquals(1, matchCompetitor.getNoPenaltyMisses());
-        assertEquals(0, matchCompetitor.getNoShoots());
-        assertEquals(3, matchCompetitor.getProceduralErrors());
-        assertEquals(5, matchCompetitor.getAdditionalPenalties());
-        assertEquals(new BigDecimal("3"), matchCompetitor.getOverallRanking());
-        assertEquals(new BigDecimal("2"), matchCompetitor.getClubRanking());
-        assertEquals(Boolean.TRUE, matchCompetitor.getIsVisitor());
+    @BeforeEach
+    void setUp() {
+        matchCompetitorServiceImpl = new IpscMatchCompetitorServiceImpl(matchCompetitorRepository,
+                new MatchCompetitorMapper(competitorRepository, ipscMatchRepository, entityIpscCompetitorService),
+                clubService, null);
     }
 
     // findMatchCompetitorOrThrow()
@@ -149,133 +90,6 @@ class IpscMatchCompetitorServiceImplTest {
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.findMatchCompetitorOrThrow(5L));
-    }
-
-    // resolveCompetitor()
-    @Test
-    void testResolveCompetitor_whenIdGiven_thenUsesIdAndIgnoresNumberAndName() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        competitor.setId(1L);
-        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
-
-        // Act & Assert
-        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(1L, "1", "Someone Else"));
-        verifyNoInteractions(entityIpscCompetitorService);
-    }
-
-    @Test
-    void testResolveCompetitor_whenNoIdGiven_thenDelegatesTheNumberAndNameToTheEntityService() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        competitor.setId(4L);
-        when(entityIpscCompetitorService.findCompetitor("123", "Jane Doe")).thenReturn(Optional.of(competitor));
-
-        // Act & Assert
-        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, "123", "Jane Doe"));
-        verify(competitorRepository, never()).findById(any());
-    }
-
-    @Test
-    void testResolveCompetitor_whenOnlyNameGiven_thenDelegatesTheNameToTheEntityService() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        competitor.setId(3L);
-        when(entityIpscCompetitorService.findCompetitor(null, "Jane Doe")).thenReturn(Optional.of(competitor));
-
-        // Act & Assert
-        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, null, "Jane Doe"));
-    }
-
-    @Test
-    void testResolveCompetitor_whenOnlyNumberGiven_thenDelegatesTheNumberToTheEntityService() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        competitor.setId(5L);
-        when(entityIpscCompetitorService.findCompetitor("123", null)).thenReturn(Optional.of(competitor));
-
-        // Act & Assert
-        assertSame(competitor, matchCompetitorServiceImpl.resolveCompetitor(null, "123", null));
-    }
-
-    @Test
-    void testResolveCompetitor_whenTheEntityServiceFindsNoCompetitor_thenThrowsNonFatalException() {
-        // Arrange
-        when(entityIpscCompetitorService.findCompetitor("123", "Jane Doe"))
-                .thenThrow(new NonFatalException("No competitors found"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class,
-                () -> matchCompetitorServiceImpl.resolveCompetitor(null, "123", "Jane Doe"));
-    }
-
-    @Test
-    void testResolveCompetitor_whenTheEntityServiceFindsSeveralCompetitors_thenThrowsValidationException() {
-        // Arrange
-        when(entityIpscCompetitorService.findCompetitor("123", "Jane Doe"))
-                .thenThrow(new ValidationException("Two or more competitors found"));
-
-        // Act & Assert
-        assertThrows(ValidationException.class,
-                () -> matchCompetitorServiceImpl.resolveCompetitor(null, "123", "Jane Doe"));
-    }
-
-    @Test
-    void testResolveCompetitor_whenTheEntityServiceRejectsBlankInput_thenThrowsValidationException() {
-        // Arrange
-        when(entityIpscCompetitorService.findCompetitor("", "  "))
-                .thenThrow(new ValidationException("Full name or competitor number is required"));
-
-        // Act & Assert
-        assertThrows(ValidationException.class,
-                () -> matchCompetitorServiceImpl.resolveCompetitor(null, "  ", "  "));
-    }
-
-    // findCompetitorOrThrow(Long)
-    @Test
-    void testFindCompetitorOrThrow_whenItDoesNotExist_thenThrowsNonFatalException() {
-        // Arrange
-        when(competitorRepository.findById(1L)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.findCompetitorOrThrow(1L));
-    }
-
-    // findMatchOrThrow()
-    @Test
-    void testFindMatchOrThrow_whenItDoesNotExist_thenThrowsNonFatalException() {
-        // Arrange
-        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.findMatchOrThrow(2L));
-    }
-
-    // resolveMatchClub()
-    @Test
-    void testResolveMatchClub_whenNullOrBlank_thenReturnsNull() {
-        // Act & Assert
-        assertNull(matchCompetitorServiceImpl.resolveMatchClub(null));
-        assertNull(matchCompetitorServiceImpl.resolveMatchClub("  "));
-    }
-
-    @Test
-    void testResolveMatchClub_whenAbbreviationMatches_thenReturnsClub() {
-        // Act & Assert
-        assertEquals(ClubIdentifier.HPSC, matchCompetitorServiceImpl.resolveMatchClub("HPSC"));
-    }
-
-    @Test
-    void testResolveMatchClub_whenNameMatches_thenReturnsClub() {
-        // Act & Assert
-        assertEquals(ClubIdentifier.HPSC,
-                matchCompetitorServiceImpl.resolveMatchClub("Hartbeespoortdam Practical Shooting Club"));
-    }
-
-    @Test
-    void testResolveMatchClub_whenUnknown_thenThrowsValidationException() {
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveMatchClub("Nope"));
     }
 
     // resolveCompetitorHomeClub()
@@ -510,68 +324,6 @@ class IpscMatchCompetitorServiceImplTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
-    }
-
-    // resolveCompetitorCategory()
-    @Test
-    void testResolveCompetitorCategory_whenKnown_thenReturnsCategory() {
-        // Act & Assert
-        assertEquals(CompetitorCategory.SUPER_SENIOR, matchCompetitorServiceImpl.resolveCompetitorCategory("Super Senior"));
-    }
-
-    @Test
-    void testResolveCompetitorCategory_whenUnknownOrNull_thenThrowsValidationException() {
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitorCategory("Nope"));
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveCompetitorCategory(null));
-    }
-
-    // resolveFirearmType()
-    @Test
-    void testResolveFirearmType_whenKnown_thenReturnsFirearmType() {
-        // Act & Assert
-        assertEquals(FirearmType.SHOTGUN, matchCompetitorServiceImpl.resolveFirearmType("Shotgun"));
-    }
-
-    @Test
-    void testResolveFirearmType_whenUnknownOrNull_thenThrowsValidationException() {
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveFirearmType("Nope"));
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveFirearmType(null));
-    }
-
-    // resolveDivision()
-    @Test
-    void testResolveDivision_whenKnown_thenReturnsDivision() {
-        // Act & Assert
-        assertEquals(Division.CLASSIC, matchCompetitorServiceImpl.resolveDivision("Classic Division"));
-    }
-
-    @Test
-    void testResolveDivision_whenUnknownOrNull_thenThrowsValidationException() {
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveDivision("Nope"));
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolveDivision(null));
-    }
-
-    // resolvePowerFactor()
-    @Test
-    void testResolvePowerFactor_whenNullOrBlank_thenReturnsNull() {
-        // Act & Assert
-        assertNull(matchCompetitorServiceImpl.resolvePowerFactor(null));
-        assertNull(matchCompetitorServiceImpl.resolvePowerFactor("  "));
-    }
-
-    @Test
-    void testResolvePowerFactor_whenKnown_thenReturnsPowerFactor() {
-        // Act & Assert
-        assertEquals(PowerFactor.MAJOR, matchCompetitorServiceImpl.resolvePowerFactor("Major"));
-    }
-
-    @Test
-    void testResolvePowerFactor_whenUnknown_thenThrowsValidationException() {
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.resolvePowerFactor("Nope"));
     }
 
     // validateForCreate()

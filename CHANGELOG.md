@@ -63,11 +63,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorMapper`:** New component holding `applyFields`, the new `applyPatchFields` and the gender, home club,
   club number and competitor number lookups that `IpscCompetitorServiceImpl` carried, so a request model no longer
   needs a repository to be copied onto an entity
+- **`MatchMapper`:** New component holding `applyFields`, the new `applyPatchFields` and the club, firearm type and
+  match category lookups that `IpscMatchServiceImpl` carried
+- **`MatchCompetitorMapper`:** New component holding `applyFields`, the new `applyPatchFields` and the competitor,
+  match, match club, competitor category, firearm type, division and power factor lookups that
+  `IpscMatchCompetitorServiceImpl` carried
 
 ##### Tests
 
-- **`CompetitorMapperTest`:** The unit tests for the moved helpers, plus new `applyPatchFields` tests covering
-  unchanged fields, partial patches, club number re-resolution and the lookup failures
+- **`CompetitorMapperTest`, `MatchMapperTest`, `MatchCompetitorMapperTest`:** The unit tests for the moved helpers,
+  plus new `applyPatchFields` tests covering unchanged fields, partial patches, club number re-resolution and the
+  lookup failures
 
 #### 🔄 Changed
 
@@ -148,6 +154,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   annotated `@Nullable`, so the null contract is explicit
 - **`IpscCompetitorServiceImpl`:** Delegates field copying and lookups to `CompetitorMapper`; its constructor takes the
   mapper in place of `ClubRepository` and `ClubService`, and `patchCompetitor` calls `applyPatchFields`
+- **`IpscMatchServiceImpl`:** Delegates field copying and lookups to `MatchMapper`; its constructor takes the mapper in
+  place of `ClubRepository`, and `patchMatch` calls `applyPatchFields`
+- **`IpscMatchCompetitorServiceImpl`:** Delegates field copying and lookups to `MatchCompetitorMapper`; its
+  constructor takes the mapper in place of `CompetitorRepository`, `IpscMatchRepository` and
+  `EntityIpscCompetitorService`, and `patchMatchCompetitor` calls `applyPatchFields`
+- **`IpscMatchCompetitorServiceImpl`:** Removed the unused `parseCompetitorNumber`; `toFailedResponse` still uses the
+  lenient `CompetitorHelpers.getCompetitorNumberAsInteger`
 
 ##### Utils
 
