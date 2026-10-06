@@ -62,6 +62,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`SystemConstants`:** Now `final`, as it is a utility class with a private constructor
 
+##### Controllers
+
+- **`IpscMatchCompetitorController.createMatchCompetitors`:** Now uses `HttpStatus.UNPROCESSABLE_CONTENT` instead of the
+  deprecated `UNPROCESSABLE_ENTITY` when every row fails — the response is still `422`, so the API is unchanged
+
 ##### Converters
 
 - **`ClubIdentifierConverter`, `FirearmTypeConverter`:** Conversion methods that can return `null` are now annotated

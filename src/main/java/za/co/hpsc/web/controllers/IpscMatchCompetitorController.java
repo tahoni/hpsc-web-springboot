@@ -134,7 +134,7 @@ public class IpscMatchCompetitorController {
 
         List<MatchCompetitorBulkResponse> results = holder.getMatchCompetitors();
         boolean allFailed = !results.isEmpty() && results.stream().noneMatch(MatchCompetitorBulkResponse::isSuccess);
-        return ResponseEntity.status(allFailed ? HttpStatus.UNPROCESSABLE_ENTITY : HttpStatus.CREATED).body(holder);
+        return ResponseEntity.status(allFailed ? HttpStatus.UNPROCESSABLE_CONTENT : HttpStatus.CREATED).body(holder);
     }
 
     /**

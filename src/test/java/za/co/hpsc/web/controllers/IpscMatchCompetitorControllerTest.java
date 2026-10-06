@@ -155,7 +155,7 @@ class IpscMatchCompetitorControllerTest {
                 ipscMatchCompetitorController.createMatchCompetitors(VALID_CSV, null);
 
         // Assert
-        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, result.getStatusCode());
+        assertEquals(HttpStatus.UNPROCESSABLE_CONTENT, result.getStatusCode());
         assertSame(holder, result.getBody());
     }
 
