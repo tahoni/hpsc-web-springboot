@@ -79,6 +79,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Build & Configuration
 
+- **`.gitattributes`:** Added `* text=auto eol=lf` so text files are checked out with LF line endings regardless of
+  `core.autocrlf`; the `mvnw` and `*.cmd` rules still apply
 - **`qodana.yaml`:** Switched from the `qodana.starter` to the `qodana.recommended` profile — adds the `LicenseAudit`
   inspection with `licenseRules` that allow permissive licences (Apache-2.0, MIT, BSD, EPL-2.0, ISC) and prohibit GPL
   and AGPL dependencies, plus further Java best-practice inspections alongside `JavadocReference`
