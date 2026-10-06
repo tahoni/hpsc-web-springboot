@@ -1,7 +1,6 @@
 package za.co.hpsc.web.models.ipsc.shared;
 
 import org.junit.jupiter.api.Test;
-import za.co.hpsc.web.enums.PowerFactor;
 
 import java.math.BigDecimal;
 
@@ -9,24 +8,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class IpscCommonScoreTest {
 
-    // IpscCommonScore(BigDecimal, BigDecimal, BigDecimal, PowerFactor, Integer, Integer, Integer, Integer, Integer,
+    // IpscCommonScore(BigDecimal, BigDecimal, BigDecimal, Integer, Integer, Integer, Integer, Integer,
     // Integer, Integer, Integer)
     @Test
     void testConstructor_whenAllFieldsProvided_thenMapsAllFields() {
         // Arrange
         BigDecimal percentage = new BigDecimal("95.50");
-        BigDecimal weightedPoints = new BigDecimal("85.00");
+        BigDecimal points = new BigDecimal("85.00");
         BigDecimal time = new BigDecimal("12.34");
 
         // Act
-        IpscCommonScore score = new IpscCommonScore(percentage, weightedPoints, time, PowerFactor.MAJOR,
+        IpscCommonScore score = new IpscCommonScore(percentage, points, time,
                 8, 1, 0, 0, 0, 0, 1, 2);
 
         // Assert
         assertEquals(percentage, score.getPercentage());
-        assertEquals(weightedPoints, score.getWeightedPoints());
+        assertEquals(points, score.getPoints());
         assertEquals(time, score.getTime());
-        assertEquals(PowerFactor.MAJOR, score.getPowerFactor());
         assertEquals(8, score.getAlpha());
         assertEquals(1, score.getCharlie());
         assertEquals(0, score.getDelta());

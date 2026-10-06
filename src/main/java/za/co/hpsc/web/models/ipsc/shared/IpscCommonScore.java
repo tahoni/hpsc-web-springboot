@@ -3,7 +3,6 @@ package za.co.hpsc.web.models.ipsc.shared;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.enums.PowerFactor;
 
 import java.math.BigDecimal;
 
@@ -15,8 +14,8 @@ import java.math.BigDecimal;
  * rounds (as many as needed to score all required hits, plus make-up shots) and is timed
  * from the start signal to the last shot. Each scoring hit is graded {@link #alpha},
  * {@link #charlie}, or {@link #delta} depending on where it lands in the target zones, and
- * the raw points awarded per hit depend on the target's {@link #powerFactor} (Major hits
- * score more per zone than Minor hits). {@link #noShoots}, {@link #misses}, and any
+ * the raw points awarded per hit depend on the power factor of the competitor's entry, which
+ * is not held here (Major hits score more per zone than Minor hits). {@link #noShoots}, {@link #misses}, and any
  * {@link #proceduralErrors} or {@link #additionalPenalties} are deducted from the raw score.
  * </p>
  *
@@ -24,7 +23,7 @@ import java.math.BigDecimal;
  * For a single stage, dividing the resulting raw score by the time taken yields the "hit
  * factor" (see {@code IpscMatchStageScore}), which is why Comstock is often called
  * hit-factor scoring. Within each stage/match category, the competitor with the highest raw
- * score (or hit factor) becomes the 100% benchmark; every other competitor's {@link #weightedPoints}
+ * score (or hit factor) becomes the 100% benchmark; every other competitor's {@link #points}
  * is expressed as a {@link #percentage} of that benchmark, and match-level totals
  * ({@code IpscMatchScore}) sum the stage percentages/points across the whole match.
  * </p>
@@ -37,43 +36,40 @@ import java.math.BigDecimal;
 public class IpscCommonScore {
     /** This competitor's score expressed as a percentage of the stage/match winner's score
      * (winner = 100%). */
-    private BigDecimal percentage;
+    protected BigDecimal percentage;
     /** The weighted score points awarded to this competitor for the stage/match. */
-    private BigDecimal weightedPoints;
+    protected BigDecimal points;
     /** Time, in seconds, taken to complete the course of fire; divided into the raw score
      * to produce the Comstock hit factor. */
-    private BigDecimal time;
-    /** Major or Minor — determines how many raw points each alpha/charlie/delta hit is worth. */
-    private PowerFactor powerFactor;
+    protected BigDecimal time;
     /** Number of hits in the A-zone (highest-value scoring zone). */
-    private Integer alpha;
+    protected Integer alpha;
     /** Number of hits in the C-zone (mid-value scoring zone). */
-    private Integer charlie;
+    protected Integer charlie;
     /** Number of hits in the D-zone (lowest-value scoring zone). */
-    private Integer delta;
+    protected Integer delta;
     /** Number of penalty hits scored on no-shoot targets; each deducts points from
      * the raw score. */
-    private Integer noShoots;
+    protected Integer noShoots;
     /** Number of required hits not scored on a target (misses); each deducts points from
      * the raw score. */
-    private Integer misses;
+    protected Integer misses;
     /** Misses that, under the applicable rules, did not attract the usual miss penalty. */
-    private Integer noPenaltyMisses;
+    protected Integer noPenaltyMisses;
     /** Count of procedural penalties (rule infractions) applied, each deducting a fixed
      * number of points. */
-    private Integer proceduralErrors;
+    protected Integer proceduralErrors;
     /** Count of other additional penalties (e.g. safety, range command) applied on top of
      * scoring/procedurals. */
-    private Integer additionalPenalties;
+    protected Integer additionalPenalties;
 
-    public IpscCommonScore(BigDecimal percentage, BigDecimal weightedPoints, BigDecimal time,
-                           PowerFactor powerFactor, Integer alpha, Integer charlie, Integer delta,
+    public IpscCommonScore(BigDecimal percentage, BigDecimal points, BigDecimal time,
+                           Integer alpha, Integer charlie, Integer delta,
                            Integer noShoots, Integer misses, Integer noPenaltyMisses,
                            Integer proceduralErrors, Integer additionalPenalties) {
         this.percentage = percentage;
-        this.weightedPoints = weightedPoints;
+        this.points = points;
         this.time = time;
-        this.powerFactor = powerFactor;
         this.alpha = alpha;
         this.charlie = charlie;
         this.delta = delta;
