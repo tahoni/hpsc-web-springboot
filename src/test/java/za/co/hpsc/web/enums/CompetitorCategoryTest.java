@@ -9,47 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CompetitorCategoryTest {
 
-    // fromCode()
-    @Test
-    void testFromCode_withMatch_thenReturnsCorrectCategory() {
-        // Act
-        Optional<CompetitorCategory> result = CompetitorCategory.fromCode(7);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(CompetitorCategory.SENIOR_LADY, result.get());
-    }
-
-    @Test
-    void testFromCode_withNullInput_thenReturnsNoneCategory() {
-        // Act
-        Optional<CompetitorCategory> result = CompetitorCategory.fromCode(null);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(CompetitorCategory.NONE, result.get());
-    }
-
-    @Test
-    void testFromCode_withZeroInput_thenReturnsNoneCategory() {
-        // Act
-        Optional<CompetitorCategory> result = CompetitorCategory.fromCode(0);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(CompetitorCategory.NONE, result.get());
-    }
-
-    @Test
-    void testFromCode_withNoMatch_returnsNoneCategory() {
-        // Act
-        Optional<CompetitorCategory> result = CompetitorCategory.fromCode(10);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(CompetitorCategory.NONE, result.get());
-    }
-
     // fromName()
     @Test
     void testFromName_withExactMatch_thenReturnsCorrectCategory() {

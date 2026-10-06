@@ -11,7 +11,8 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
  * Enum representing various categories of competitors.
  *
  * <p>
- * Each category is associated with a display name that represents its descriptive value.
+ * Each category is associated with a display name that represents its descriptive value and
+ * an abbreviation.
  * The enum provides utility methods for retrieving a specific category by its name.
  * If no match is found, the default category is {@code NONE}.
  * </p>
@@ -20,26 +21,26 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
  */
 @Getter
 public enum CompetitorCategory {
-    JUNIOR("Junior", 2),
-    SUPER_JUNIOR("Super Junior", 5),
-    LADY("Lady", 1),
-    SENIOR_LADY("Lady Senior", 7),
-    SENIOR("Senior", 3),
-    SUPER_SENIOR("Super Senior", 4),
-    GRAND_SENIOR("Grand Senior", 6),
+    JUNIOR("Junior", "Jun"),
+    SUPER_JUNIOR("Super Junior", "S/Jun"),
+    LADY("Lady", "Lady"),
+    SENIOR_LADY("Lady Senior", "S/Lady"),
+    SENIOR("Senior", "Sen"),
+    SUPER_SENIOR("Super Senior", "S/Sen"),
+    GRAND_SENIOR("Grand Senior", "G/Sen"),
     NONE;
 
     private final String name;
-    private final int code;
+    private final String abbreviation;
 
     CompetitorCategory() {
         this.name = "";
-        this.code = 0;
+        this.abbreviation = "";
     }
 
-    CompetitorCategory(String name, int code) {
+    CompetitorCategory(String name, String abbreviation) {
         this.name = name;
-        this.code = code;
+        this.abbreviation = abbreviation;
     }
 
     /**
@@ -63,32 +64,6 @@ public enum CompetitorCategory {
 
         Optional<CompetitorCategory> optionalCompetitorCategory = Arrays.stream(CompetitorCategory.values())
                 .filter(competitorCategory -> competitorCategory.isNameMatch(name))
-                .findFirst();
-        return optionalCompetitorCategory.isPresent() ? optionalCompetitorCategory : Optional.of(NONE);
-    }
-
-    /**
-     * Retrieves an optional {@code CompetitorCategory} instance based on the provided code.
-     *
-     * <p>
-     * The method searches for a category with a code matching the provided input.
-     * If no match is found, an {@link CompetitorCategory#NONE} is returned.
-     * </p>
-     *
-     * @param code the code of the division to search for.
-     *             The code can be {@code null} or negative, in which case
-     *             a {@link CompetitorCategory#NONE}} is returned.
-     * @return an {@code Optional} containing the matching {@code Division} if found,
-     * or {@link CompetitorCategory#NONE} otherwise.
-     * @since 2.0.0
-     */
-    public static Optional<CompetitorCategory> fromCode(Integer code) {
-        if ((code == null) || (code == 0)) {
-            return Optional.of(NONE);
-        }
-
-        Optional<CompetitorCategory> optionalCompetitorCategory = Arrays.stream(CompetitorCategory.values())
-                .filter(competitorCategory -> code.equals(competitorCategory.getCode()))
                 .findFirst();
         return optionalCompetitorCategory.isPresent() ? optionalCompetitorCategory : Optional.of(NONE);
     }

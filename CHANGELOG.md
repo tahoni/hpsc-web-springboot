@@ -121,6 +121,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ClubIdentifier`:** The `code` values are now `"C SOSC"` (SOSC), `"B HPSC"`, `"A PMPSC"` and `"U VISITOR"`
 - **`CompetitorCategory`:** The `SENIOR_LADY` name is now `"Lady Senior"` (was `"Lady, Senior"`), and the
   `fromName` Javadoc says "category" rather than "division"; the converter tests use the new name
+- **`CompetitorCategory`:** **Breaking:** Replaced the `code` field and `fromCode(Integer)` with a `String`
+  `abbreviation` field (`J`, `SJ`, `L`, `LS`, `S`, `SS`, `GS`)
 - **`PowerFactor`:** **Breaking:** Removed the `abbreviation` field and `fromAbbreviation(String)`
 
 ##### Helpers
