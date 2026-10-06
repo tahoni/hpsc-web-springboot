@@ -50,6 +50,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Documentation
+
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** New open Gap #38 — eight utility and
+  enum methods and `SystemConstants.DEFAULT_SCALE` are used only by tests, with a matching task block, Roadmap row and
+  Success Criteria entry
+
 #### 🔄 Changed
 
 ##### Build & Configuration

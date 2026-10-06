@@ -410,7 +410,16 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-*No gaps are currently open.*
+**Test-only utility methods and `DEFAULT_SCALE`** *(improvement-plan.md → Gap #38)*
+
+- [ ] Confirm with the IDE's find-usages that `NumberUtil.calculatePercentage`, `calculateSum` and `formatBigDecimal`,
+  `DateUtil.formatDate` and `formatDateTime`, `StringUtil.formatStringWithNamedParameters`,
+  `ValueUtil.nullAsZeroBigDecimal` and `Division.fromAbbreviationOrName` have no production caller
+- [ ] For each, either keep it because a planned caller exists (e.g. the scoring layer, Gap #6) or remove it together
+  with its unit tests
+- [ ] Correct `SystemConstants.DEFAULT_SCALE`'s Javadoc, which still describes it as `NumberUtil`'s default scale, or
+  remove the constant if nothing is going to use it
+- [ ] Correct `ARCHITECTURE.md`'s `utils/` table, which calls `NumberUtil` "Numeric parsing and formatting helpers"
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

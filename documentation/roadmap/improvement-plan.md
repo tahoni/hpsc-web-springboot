@@ -122,7 +122,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
     competitor lookup by number or name and overall-score fields; the shooter-log layer is not)
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
-- **⚪ Open (0):** none
+- **⚪ Open (1):**
+  - #38 Eight utility and enum methods and `SystemConstants.DEFAULT_SCALE` are used only by tests
 
 ### ✅ Completed
 
@@ -1204,7 +1205,27 @@ pin).
 
 ### ⚪ Open
 
-*No gaps are currently open.*
+#### 38. Eight utility and enum methods and `SystemConstants.DEFAULT_SCALE` are used only by tests
+
+**Evidence:** Grepping `src/main` for each name finds only its own declaration, while each has a test class exercising
+it: `NumberUtil.calculatePercentage`, `NumberUtil.calculateSum` and `NumberUtil.formatBigDecimal`,
+`DateUtil.formatDate` and `DateUtil.formatDateTime`, `StringUtil.formatStringWithNamedParameters`,
+`ValueUtil.nullAsZeroBigDecimal` and `Division.fromAbbreviationOrName`. `SystemConstants.DEFAULT_SCALE` is in the same
+position: the `feature/qodana` branch gave `NumberUtil.calculatePercentage` and `calculateSum` a `scale` parameter, so
+nothing in `src/main` reads the constant any more, yet its Javadoc still says it is the scale "`NumberUtil`'s
+calculations round/format to by default". `ARCHITECTURE.md` (the `utils/` table) describes `NumberUtil` as "Numeric
+parsing and formatting helpers", though it has no parsing method. The scan was name-based, so each result should be
+confirmed with the IDE's find-usages before anything is deleted.
+
+**Why it matters:** The same shape as Gaps #9 and #37: inert code that a reader assumes is part of the production
+behaviour. Passing coverage hides it, because the tests keep these methods "used", and each one is a public API that
+has to be kept working and documented without delivering any behaviour. The stale `DEFAULT_SCALE` Javadoc already
+misdescribes the code.
+
+**Proposed improvement:** Decide per method whether a caller is coming (the scoring layer in Gap #6 would use the
+percentage and sum helpers) or whether it should be removed together with its tests. Delete what has no planned
+caller, correct the `DEFAULT_SCALE` Javadoc (or remove the constant) either way, and correct `ARCHITECTURE.md`'s
+`NumberUtil` description to match whatever remains.
 
 ---
 
@@ -1213,7 +1234,7 @@ pin).
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0, the shooter-log service and controller remain                                                                                  |
-| **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0                                                                                                                                                                                                                                                                    |
+| **Next**    | Decide which test-only utility methods and `SystemConstants.DEFAULT_SCALE` to keep or remove (#38); #36 and #37 closed in v12.0.0                                                                                                                                                                                                                                                                    |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -1304,6 +1325,9 @@ pin).
   closing Gap #36.
 - ✅ Met in v12.0.0: `IpscConstants`' `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE` and `PERCENTAGE_SCALE`
   are removed rather than left unused, closing Gap #37.
+- ⚪ Open: every method in `src/main` that only tests call is either given a production caller or removed with its
+  tests, `SystemConstants.DEFAULT_SCALE`'s Javadoc matches how the constant is used, and `ARCHITECTURE.md`'s
+  `NumberUtil` description matches the class, closing Gap #38.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.
