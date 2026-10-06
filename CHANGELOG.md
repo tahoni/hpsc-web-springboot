@@ -89,11 +89,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`CompetitorResponse`, `MatchResponse`:** Each gains a constructor that builds the response from its entity, and
   its Javadoc now states which fields may be null
+- **`MatchCompetitorResponse`:** **Breaking:** The `competitorName` string is replaced by a `competitorNames` list
+  holding the competitor's "First Last" and "Nick Last" names once each (a null or duplicate nickname is skipped), so
+  the JSON of `/ipsc/match-competitors` responses and bulk import results changes shape; also gains a constructor that
+  builds it from a `MatchCompetitor`, and its Javadoc now covers the partly set response for a failed bulk import row
 
 ##### Services
 
 - **`IpscCompetitorServiceImpl`, `IpscMatchServiceImpl`:** Map entities with the new response constructors instead of
   long all-args calls
+- **`IpscMatchCompetitorServiceImpl`:** `toResponse` uses the new constructor, and `toFailedResponse` wraps the
+  requested name in a list, or leaves it empty when the request has none
 - **`IpscCompetitorServiceImpl`:** `resolveClubNumber`, `resolveGender`, `resolveHomeClub` and `parseCompetitorNumber`
   are now annotated `@Nullable`, so the null contract is explicit
 - **`IpscMatchCompetitorServiceImpl`:** `resolveCompetitorHomeClub`, `resolveMatchClub` and `resolvePowerFactor` are now

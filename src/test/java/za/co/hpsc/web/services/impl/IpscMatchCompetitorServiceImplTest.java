@@ -28,6 +28,7 @@ import za.co.hpsc.web.services.IpscMatchCompetitorService;
 import za.co.hpsc.web.services.IpscMatchCompetitorServiceTest;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -633,7 +634,7 @@ class IpscMatchCompetitorServiceImplTest {
 
         // Assert
         assertEquals(1L, response.getCompetitorId());
-        assertEquals("Jane Doe", response.getCompetitorName());
+        assertEquals(List.of("Jane Doe"), response.getCompetitorNames());
         assertEquals(123, response.getCompetitorNumber());
         assertEquals(2L, response.getMatchId());
         assertNull(response.getMatchCompetitorId());
@@ -650,7 +651,7 @@ class IpscMatchCompetitorServiceImplTest {
         assertNotNull(response);
         assertNull(response.getCompetitorId());
         assertNull(response.getMatchId());
-        assertNull(response.getCompetitorName());
+        assertTrue(response.getCompetitorNames().isEmpty());
         assertNull(response.getCompetitorNumber());
     }
 
@@ -660,6 +661,9 @@ class IpscMatchCompetitorServiceImplTest {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
+        competitor.setFirstName("Jane");
+        competitor.setLastName("Doe");
+        competitor.setNickName("JD");
         IpscMatch match = new IpscMatch();
         match.setId(2L);
         MatchCompetitor matchCompetitor = new MatchCompetitor();
@@ -694,6 +698,7 @@ class IpscMatchCompetitorServiceImplTest {
         assertEquals(5L, response.getMatchCompetitorId());
         assertEquals(1L, response.getCompetitorId());
         assertEquals(2L, response.getMatchId());
+        assertEquals(List.of("Jane Doe", "JD Doe"), response.getCompetitorNames());
         assertEquals(ClubIdentifier.HPSC, response.getMatchClub());
         assertEquals(CompetitorCategory.JUNIOR, response.getCompetitorCategory());
         assertEquals(FirearmType.RIFLE, response.getFirearmType());
@@ -716,7 +721,45 @@ class IpscMatchCompetitorServiceImplTest {
         assertEquals(Boolean.FALSE, response.getIsVisitor());
     }
 
+    @Test
+    void testToResponse_whenNickNameMatchesFirstName_thenCompetitorNamesAreUnique() {
+        // Arrange
+        MatchCompetitor matchCompetitor = matchCompetitorFor("Jane", "Doe", "Jane");
+
+        // Act
+        MatchCompetitorResponse response = matchCompetitorServiceImpl.toResponse(matchCompetitor);
+
+        // Assert
+        assertEquals(List.of("Jane Doe"), response.getCompetitorNames());
+    }
+
+    @Test
+    void testToResponse_whenNickNameIsNull_thenCompetitorNamesHoldOnlyTheFirstAndLastName() {
+        // Arrange
+        MatchCompetitor matchCompetitor = matchCompetitorFor("Jane", "Doe", null);
+
+        // Act
+        MatchCompetitorResponse response = matchCompetitorServiceImpl.toResponse(matchCompetitor);
+
+        // Assert
+        assertEquals(List.of("Jane Doe"), response.getCompetitorNames());
+    }
+
     // Helpers
+    private MatchCompetitor matchCompetitorFor(String firstName, String lastName, String nickName) {
+        Competitor competitor = new Competitor();
+        competitor.setId(1L);
+        competitor.setFirstName(firstName);
+        competitor.setLastName(lastName);
+        competitor.setNickName(nickName);
+        IpscMatch match = new IpscMatch();
+        match.setId(2L);
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.setCompetitor(competitor);
+        matchCompetitor.setMatch(match);
+        return matchCompetitor;
+    }
+
     private MatchCompetitorRequest completeRequest() {
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorId(1L);

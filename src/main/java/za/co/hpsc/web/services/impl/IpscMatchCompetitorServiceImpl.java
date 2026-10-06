@@ -351,7 +351,9 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
             return response;
         }
         response.setCompetitorId(request.getCompetitorId());
-        response.setCompetitorName(request.getCompetitorName());
+        if (request.getCompetitorName() != null) {
+            response.setCompetitorNames(List.of(request.getCompetitorName()));
+        }
         response.setCompetitorNumber(CompetitorHelpers.getCompetitorNumberAsInteger(request.getCompetitorNumber()));
         response.setMatchId(request.getMatchId());
         return response;
@@ -635,31 +637,6 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * @return the mapped {@link MatchCompetitorResponse}.
      */
     protected MatchCompetitorResponse toResponse(MatchCompetitor matchCompetitor) {
-        return new MatchCompetitorResponse(
-                matchCompetitor.getId(),
-                matchCompetitor.getCompetitor().getId(),
-                matchCompetitor.getMatch().getId(),
-                matchCompetitor.getCompetitor().getNickName() + ' ' + matchCompetitor.getCompetitor().getLastName(),
-                matchCompetitor.getCompetitor().getCompetitorNumber(),
-                matchCompetitor.getMatchClub(),
-                matchCompetitor.getCompetitorCategory(),
-                matchCompetitor.getFirearmType(),
-                matchCompetitor.getDivision(),
-                matchCompetitor.getPowerFactor(),
-                matchCompetitor.getPoints(),
-                matchCompetitor.getPercentage(),
-                matchCompetitor.getTime(),
-                matchCompetitor.getPercentageOfPossiblePoints(),
-                matchCompetitor.getAlpha(),
-                matchCompetitor.getCharlie(),
-                matchCompetitor.getDelta(),
-                matchCompetitor.getMisses(),
-                matchCompetitor.getNoPenaltyMisses(),
-                matchCompetitor.getNoShoots(),
-                matchCompetitor.getProceduralErrors(),
-                matchCompetitor.getAdditionalPenalties(),
-                matchCompetitor.getOverallRanking(),
-                matchCompetitor.getClubRanking(),
-                matchCompetitor.getIsVisitor());
+        return new MatchCompetitorResponse(matchCompetitor);
     }
 }
