@@ -58,6 +58,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   enum methods and `SystemConstants.DEFAULT_SCALE` are used only by tests, with a matching task block, Roadmap row and
   Success Criteria entry
 
+##### Mappers
+
+- **`CompetitorMapper`:** New component holding `applyFields`, the new `applyPatchFields` and the gender, home club,
+  club number and competitor number lookups that `IpscCompetitorServiceImpl` carried, so a request model no longer
+  needs a repository to be copied onto an entity
+
+##### Tests
+
+- **`CompetitorMapperTest`:** The unit tests for the moved helpers, plus new `applyPatchFields` tests covering
+  unchanged fields, partial patches, club number re-resolution and the lookup failures
+
 #### 🔄 Changed
 
 ##### Build & Configuration
@@ -88,6 +99,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   in either — backfill those rows first
 - **`V11_3_0__add_match_competitor_date_calculated.sql`:** Adds the nullable `match_competitor.date_calculated`
   column after `is_visitor`, so it sits before `date_created`; existing rows stay `NULL`
+
+##### Documentation
+
+- **`ARCHITECTURE.md`:** Project Structure trees and a new Mappers section describe the `mappers` package
 
 ##### Domain
 
@@ -131,6 +146,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   are now annotated `@Nullable`, so the null contract is explicit
 - **`IpscMatchCompetitorServiceImpl`:** `resolveCompetitorHomeClub`, `resolveMatchClub` and `resolvePowerFactor` are now
   annotated `@Nullable`, so the null contract is explicit
+- **`IpscCompetitorServiceImpl`:** Delegates field copying and lookups to `CompetitorMapper`; its constructor takes the
+  mapper in place of `ClubRepository` and `ClubService`, and `patchCompetitor` calls `applyPatchFields`
 
 ##### Utils
 
