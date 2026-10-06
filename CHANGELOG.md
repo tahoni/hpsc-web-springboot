@@ -123,6 +123,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `fromName` Javadoc says "category" rather than "division"; the converter tests use the new name
 - **`CompetitorCategory`:** **Breaking:** Replaced the `code` field and `fromCode(Integer)` with a `String`
   `abbreviation` field (`J`, `SJ`, `L`, `LS`, `S`, `SS`, `GS`)
+- **`Division`:** **Breaking:** Removed the `abbreviation` and `code` fields and `fromAbbreviation(String)`,
+  `fromAbbreviationOrName(String)` and `fromCode(Integer)`; `fromName(String)` is unchanged
 - **`PowerFactor`:** **Breaking:** Removed the `abbreviation` field and `fromAbbreviation(String)`
 
 ##### Helpers
