@@ -118,6 +118,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Enums
 
+- **`ClubIdentifier`:** The `code` values are now `"C SASC"` (SOSC), `"B HPSC"`, `"A PMPSC"` and `"U VISITOR"`
 - **`PowerFactor`:** **Breaking:** Removed the `abbreviation` field and `fromAbbreviation(String)`
 
 ##### Helpers

@@ -23,10 +23,10 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
  */
 @Getter
 public enum ClubIdentifier {
-    SOSC("Safari Outdoor Shooting Club", "SOSC", "AAA"),
-    HPSC("Hartbeespoortdam Practical Shooting Club", "HPSC", "BBB"),
-    PMPSC("Pretoria Military Practical Shooting Club", "PMPSC", "CCC"),
-    VISITOR("Visitor", "V", "UUU"),
+    SOSC("Safari Outdoor Shooting Club", "SOSC", "C SASC"),
+    HPSC("Hartbeespoortdam Practical Shooting Club", "HPSC", "B HPSC"),
+    PMPSC("Pretoria Military Practical Shooting Club", "PMPSC", "A PMPSC"),
+    VISITOR("Visitor", "V", "U VISITOR"),
     ALL("Eufees Clubs", "All", "ALL"),
     UNKNOWN;
 
