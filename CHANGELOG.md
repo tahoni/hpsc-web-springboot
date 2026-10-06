@@ -50,6 +50,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Build & Configuration
+
+- **`qodana.yaml`:** Switched from the `qodana.starter` to the `qodana.recommended` profile — adds the `LicenseAudit`
+  inspection with `licenseRules` that allow permissive licences (Apache-2.0, MIT, BSD, EPL-2.0, ISC) and prohibit GPL
+  and AGPL dependencies, plus further Java best-practice inspections alongside `JavadocReference`
+
 ---
 
 ### 🧾 [12.0.0] - 2026-10-05
