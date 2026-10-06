@@ -92,7 +92,7 @@ public class MatchRequest {
     }
 
     /**
-     * Checks that the request carries what is needed to create a match, before any of it is used. Nothing is looked
+     * Checks that the request carries what is needed to create a match before any of it is used. Nothing is looked
      * up, so this only checks that values are present.
      *
      * <p>

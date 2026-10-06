@@ -247,7 +247,7 @@ public class CompetitorMapper {
      * fallback.
      * </p>
      *
-     * @param competitorNumber the explicit competitor number, as text; may be null or blank.
+     * @param competitorNumber the explicit competitor number, as text, may be null or blank.
      * @param sapsaNumber      the SAPSA number to fall back on; may be null.
      * @return {@code competitorNumber} as a whole number if it was supplied, otherwise {@code sapsaNumber},
      * or {@code null} if neither was supplied.
