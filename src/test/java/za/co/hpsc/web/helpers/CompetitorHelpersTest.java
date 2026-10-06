@@ -62,9 +62,9 @@ public class CompetitorHelpersTest {
 
     // toSentenceCaseLastName(String)
     @Test
-    void testToSentenceCaseLastName_whenNull_thenReturnsNull() {
+    void testToSentenceCaseLastName_whenNull_thenReturnsEmptyString() {
         // Act & Assert
-        assertNull(CompetitorHelpers.toSentenceCaseLastName(null));
+        assertEquals("", CompetitorHelpers.toSentenceCaseLastName(null));
     }
 
     @Test

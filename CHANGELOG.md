@@ -67,6 +67,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ClubIdentifierConverter`, `FirearmTypeConverter`:** Conversion methods that can return `null` are now annotated
   `@Nullable` (JSpecify), so the null contract is explicit
 
+##### Helpers
+
+- **`CompetitorHelpers.toSentenceCaseLastName`:** A null last name now returns an empty string instead of `null`;
+  Javadoc and unit test updated
+
 ##### Services
 
 - **`IpscCompetitorServiceImpl`:** `resolveClubNumber`, `resolveGender`, `resolveHomeClub` and `parseCompetitorNumber`
