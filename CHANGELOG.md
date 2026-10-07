@@ -64,6 +64,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorHelpers.MC_PREFIX`:** Tests only the start of the word with `lookingAt()`, so the pattern is a fixed
   four-step match with no trailing `.*`; no change in behaviour
 
+#### 🐛 Fixed
+
+##### Services
+
+- **`AwardServiceImpl.mapAwards`:** The error logged and the `ValidationException` thrown for a null list said "Image
+  request list" (copied from the image service); they now say "Award request list", and the test asserts the message
+
 ---
 
 ### 🧾 [13.1.0] - 2026-10-07

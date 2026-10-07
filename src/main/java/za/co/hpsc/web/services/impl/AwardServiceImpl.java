@@ -103,10 +103,10 @@ public class AwardServiceImpl implements AwardService {
      * @return a list of {@link AwardCeremonyResponse} objects, each representing a group
      * of awards associated with the same ceremony. It will never be null, but it may be empty.
      */
-    protected List<AwardCeremonyResponse> mapAwards(@NonNull List<AwardRequest> awardRequestList) {
+    protected List<AwardCeremonyResponse> mapAwards(List<AwardRequest> awardRequestList) {
         if (awardRequestList == null) {
-            log.error("Image request list is null.");
-            throw new ValidationException("Image request list cannot be null.");
+            log.error("Award request list is null.");
+            throw new ValidationException("Award request list cannot be null.");
         }
 
         List<AwardCeremonyResponse> responses = new ArrayList<>();

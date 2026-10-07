@@ -95,7 +95,9 @@ public class AwardServiceImplTest {
     @Test
     public void testMapAwards_whenNullAwardRequestList_thenThrowsValidationException() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> awardService.mapAwards(null));
+        ValidationException exception =
+                assertThrows(ValidationException.class, () -> awardService.mapAwards(null));
+        assertEquals("Award request list cannot be null.", exception.getMessage());
     }
 
     // readAwards()
