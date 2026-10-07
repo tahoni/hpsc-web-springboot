@@ -88,6 +88,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `CompetitorHelpers.cleanCompetitorName`, so a leading position and full stops are now also ignored when matching
   by name
 
+##### Mappers
+
+- **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now clean the request's competitor name with
+  `CompetitorHelpers.cleanCompetitorName` before looking the competitor up
+
 ##### Models
 
 - **`MatchCompetitorRequest`:** `validate()` now returns `void` and throws on failure, as the other request models do;
