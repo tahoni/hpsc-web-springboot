@@ -1770,6 +1770,56 @@ of changes are backward-incompatible, so it is MAJOR under the Semantic Versioni
   enum behaviour, with the integration tests adjusted for the stricter requests; the suite stands at 1,265 passing
   tests
 
+### Phase 48: Request-Body Validation, jspecify Nullness & Competitor Name Cleaning (v13.1.0)
+
+**Duration:** October 7, 2026
+
+A minor release: the IPSC controllers validate their request bodies and answer `400` for a violation, jspecify's
+`@NonNull` replaces Jakarta's `@NotNull` for nullness, and a competitor's name is cleaned before it is matched. All of
+it is backward-compatible, so it is MINOR under the Semantic Versioning rules.
+
+**Key Accomplishments:**
+
+**Validation**
+
+- `IpscCompetitorController`, `IpscMatchController` and `IpscMatchCompetitorController` annotate their `@RequestBody`
+  parameters with `@Valid`, and `CompetitorRequest`, `MatchRequest` and `MatchCompetitorRequest` gain `@NotBlank` and
+  `@NotNull` constraints with the messages their `validate()` methods already used
+- New `ControllerAdvice.handleMethodArgumentNotValidException` maps a violation to a `400 Bad Request` listing every
+  violated constraint, instead of the generic `500`
+- `MatchCompetitorRequest.validate()` returns `void` and throws on failure, as the other request models do
+
+**Nullness**
+
+- `org.jspecify.annotations.NonNull` replaces `jakarta.validation.constraints.NotNull` on the services', mappers' and
+  response models' parameters and fields, with the explicit null checks unchanged, and `org.jspecify:jspecify` is
+  declared as a direct dependency in `pom.xml`
+
+**Competitor Names**
+
+- New `CompetitorHelpers.cleanCompetitorName` removes a leading position of up to two digits followed by `-`, an `RO` or
+  `(RO)` marker and all full stops, collapses whitespace and returns an empty string for a null name
+- `MatchCompetitorMapper.applyFields` and `applyPatchFields` clean the request's competitor name before the lookup, and
+  `EntityIpscCompetitorServiceImpl.findCompetitor` normalises the full name before matching by name
+
+**Documentation**
+
+- `flyway-migration-versioning.md`'s Current State table is re-aligned and a missing comma is added to `AGENTS.md`
+- Improvement plan unchanged: 35 gaps closed, #6, #26 and #38 partially completed and #39 open
+
+**Build & Metadata**
+
+- Project version bumped to 13.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Rejecting an invalid request at the controller, and normalising the competitor name that the lookup matches on
+
+**Test Coverage:**
+
+- `CompetitorHelpersTest` covers `cleanCompetitorName` and `ControllerAdviceTest` covers the `400` handling of an
+  invalid request body
+
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**
