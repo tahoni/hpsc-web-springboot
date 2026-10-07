@@ -43,7 +43,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - [🧾 Version 8.1.1](#-811---2026-09-01)
 - [🧾 Version 8.1.0](#-810---2026-09-01)
 - [🧾 Version 8.0.0](#-800---2026-08-31)
-- [🗄️ Archived Versions 1.0.0 – 7.4.1](/documentation/history/CHANGELOG_v1-v7.md)
+- [🗄️ Archived Versions 1.0.0 – 7.4.1](/documentation/archive/v1-v7/CHANGELOG_v1-v7.md)
 - [📋 Version Policy](#-version-policy)
 - [🚀 Upgrade Guide](#-upgrade-guide)
 - [🤝 Contributing](#-contributing)
@@ -77,6 +77,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   words is no longer turned into a space
 - **`CompetitorHelpers.MC_PREFIX`:** Tests only the start of the word with `lookingAt()`, so the pattern is a fixed
   four-step match with no trailing `.*`; no change in behaviour
+
+##### Documentation
+
+- **Archived versions 1.0.0 – 7.4.1:** Moved `CHANGELOG_v1-v7.md`, `HISTORY_v1-v7.md`, `EVOLUTION_OVERVIEW_v1-v7.md` and
+  the v1 – v7 release notes and pull request descriptions from `documentation/history/` to
+  `documentation/archive/v1-v7/`, and `documentation/archive/ARCHIVE.md` to `documentation/legacy/ARCHIVE.md`; the links
+  in `README.md`, `AGENTS.md`, `CHANGELOG.md`, `HISTORY.md`, `EVOLUTION_OVERVIEW.md` and the `prep-version-release`
+  skill follow the new locations
 
 #### 🐛 Fixed
 
@@ -677,9 +685,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Documentation
 
 - **`CHANGELOG.md`, `HISTORY.md`, `EVOLUTION_OVERVIEW.md`:** Versions 1.0.0 – 7.4.1 archived, unchanged,
-  to `documentation/history/CHANGELOG_v1-v7.md`, `documentation/history/HISTORY_v1-v7.md` (the per-version Historical
+  to `documentation/archive/v1-v7/CHANGELOG_v1-v7.md`, `documentation/archive/v1-v7/HISTORY_v1-v7.md` (the per-version Historical
   Timeline, Milestone, Architectural Evolution and completed-work entries) and
-  `documentation/history/EVOLUTION_OVERVIEW_v1-v7.md` (Phases 1 – 18) to keep the files a manageable size; the
+  `documentation/archive/v1-v7/EVOLUTION_OVERVIEW_v1-v7.md` (Phases 1 – 18) to keep the files a manageable size; the
   cross-version sections stay in `HISTORY.md`. `AGENTS.md`, `README.md` and the `prep-version-release` skill list the
   new files, and the v7.2.0 and v7.3.0 PR descriptions link to the archive
 - **`ARCHITECTURE.md`:** The deleted `models/ipsc/scores/request/` package and its "groundwork only" DTOs are dropped
@@ -3033,7 +3041,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### 🗄️ Archived Versions (1.0.0 – 7.4.1)
 
 The change log entries for versions 1.0.0 to 7.4.1 are archived, unchanged, in
-[`documentation/history/CHANGELOG_v1-v7.md`](/documentation/history/CHANGELOG_v1-v7.md).
+[`documentation/archive/v1-v7/CHANGELOG_v1-v7.md`](/documentation/archive/v1-v7/CHANGELOG_v1-v7.md).
 
 ---
 
@@ -3054,7 +3062,7 @@ each release is classified from the `[Unreleased]` section.
 #### Legacy Versioning (v1.x – v4.x)
 
 Earlier releases used a non-semantic versioning scheme. For historical documentation,
-see [ARCHIVE.md](/documentation/archive/ARCHIVE.md).
+see [ARCHIVE.md](/documentation/legacy/ARCHIVE.md).
 
 ---
 
