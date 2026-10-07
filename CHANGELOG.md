@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 13.0.0](#-1300---2026-10-07) ← Current
+- [🧾 Version 13.1.0](#-1310---2026-10-07) ← Current
+- [🧾 Version 13.0.0](#-1300---2026-10-07)
 - [🧾 Version 12.0.0](#-1200---2026-10-05)
 - [🧾 Version 11.0.0](#-1100---2026-10-04)
 - [🧾 Version 10.0.0](#-1000---2026-10-03)
@@ -51,6 +52,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+---
+
+### 🧾 [13.1.0] - 2026-10-07
+
 #### ➕ Added
 
 ##### Configuration
@@ -87,6 +92,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`EntityIpscCompetitorServiceImpl.findCompetitor`:** Normalises the full name with
   `CompetitorHelpers.cleanCompetitorName`, so a leading position and full stops are now also ignored when matching
   by name
+- **Services and mappers:** Replaced `jakarta.validation.constraints.NotNull` with
+  `org.jspecify.annotations.NonNull` on method parameters; the explicit null checks are unchanged
 
 ##### Mappers
 
@@ -100,10 +107,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **Response models:** Replaced `jakarta.validation.constraints.NotNull` with `org.jspecify.annotations.NonNull`; no
   behaviour change, as Bean Validation was not applied to responses
 
-##### Services
+##### Documentation
 
-- **Services and mappers:** Replaced `jakarta.validation.constraints.NotNull` with
-  `org.jspecify.annotations.NonNull` on method parameters; the explicit null checks are unchanged
+- **`flyway-migration-versioning.md`:** Re-aligned the Current State table's columns
+- **`AGENTS.md`:** Added a missing comma in the Release Checklist's Flyway cross-check step
 
 ---
 
