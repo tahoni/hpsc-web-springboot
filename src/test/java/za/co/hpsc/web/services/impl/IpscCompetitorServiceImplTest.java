@@ -108,7 +108,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "7001", "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com", "jane2.doe@example.com"), true, false,
+                12345, "7001", "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com", "jane2.doe@example.com"), true, true, false,
                 true);
 
         // Act
@@ -129,6 +129,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("9001015800083", request.getIdNumber());
         assertEquals("0821234567", request.getCellphoneNumber());
         assertEquals(Boolean.TRUE, request.getPaidUpSapsa());
+        assertEquals(Boolean.TRUE, request.getPaidUpNgpsa());
         assertEquals(Boolean.FALSE, request.getPaidUpClub());
         assertEquals(Boolean.TRUE, request.getIsVerified());
         assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), request.getEmailAddresses());
@@ -139,7 +140,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "jANE", "o'NEIL-smith", "ann marie", "JANIE", null, "FEMALE", "test CLUB",
-                null, "7002", "hpsc-001", null, null, List.of("Jane.Doe@Example.com"), null, null, null);
+                null, "7002", "hpsc-001", null, null, List.of("Jane.Doe@Example.com"), null, null, null, null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
@@ -161,7 +162,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "JANE", "O'NEIL-SMITH", "ANN MARIE", "JANIE", LocalDate.of(1990, 1, 1), "FEMALE", "TEST CLUB",
-                12345, "7002", "HPSC-001", "9001015800083", "0821234567", List.of("JANE.DOE@EXAMPLE.COM", "JANE2.DOE@EXAMPLE.COM"), true, false,
+                12345, "7002", "HPSC-001", "9001015800083", "0821234567", List.of("JANE.DOE@EXAMPLE.COM", "JANE2.DOE@EXAMPLE.COM"), true, null, false,
                 null);
 
         // Act
@@ -186,7 +187,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "jane", "o'neil-smith", "ann marie", "janie", null, "female", "test club",
-                null, "7002", "hpsc-001", null, null, List.of("jane.doe@example.com"), null, null, null);
+                null, "7002", "hpsc-001", null, null, List.of("jane.doe@example.com"), null, null, null, null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
@@ -208,7 +209,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "jane", "doe", null, null, null, null, null, null, null, null, "ab123456x", "+27 82 abc-1234", null,
-                null, null, null);
+                null, null, null, null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
@@ -223,7 +224,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "JANE", "DOE", null, null, null, null, null, null, null, null, "AB123456X", "+27 82 ABC-1234", null,
-                null, null, null);
+                null, null, null, null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
@@ -237,7 +238,7 @@ class IpscCompetitorServiceImplTest {
     void testNormaliseCsvRequest_whenUpperCaseLastNameHasMultipleParticles_thenLowerCasesAllOfThem() {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
-                "JANE", "DE LA REY", null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                "JANE", "DE LA REY", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
@@ -250,7 +251,7 @@ class IpscCompetitorServiceImplTest {
     void testNormaliseCsvRequest_whenUpperCaseLastNameStartsWithParticleLetters_thenProperCasesItOnly() {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
-                "JANE", "DUBE", null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                "JANE", "DUBE", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
@@ -264,7 +265,7 @@ class IpscCompetitorServiceImplTest {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
                 "Jane", "SMITH-VAN DER MERWE", null, null, null, null, null, null, null, null, null, null, null, null, null,
-                null);
+                null, null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
@@ -277,9 +278,9 @@ class IpscCompetitorServiceImplTest {
     void testNormaliseCsvRequest_whenLastNameHasMcOrApostrophePrefix_thenCapitalisesCorrectly() {
         // Arrange
         CompetitorRequest mcRequest = new CompetitorRequest(null, 
-                "JANE", "MCDONALD", null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                "JANE", "MCDONALD", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
         CompetitorRequest apostropheRequest = new CompetitorRequest(null, 
-                "JANE", "o’NEIL", null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                "JANE", "o’NEIL", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         // Act & Assert
         assertEquals("McDonald", ipscCompetitorServiceImpl.normaliseCsvRequest(mcRequest).getLastName());
@@ -290,7 +291,7 @@ class IpscCompetitorServiceImplTest {
     void testNormaliseCsvRequest_whenLastNameHasParticles_thenLowerCasesThem() {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
-                "Jane", "VAN DER MERWE", null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                "Jane", "VAN DER MERWE", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
@@ -303,7 +304,7 @@ class IpscCompetitorServiceImplTest {
     void testNormaliseCsvRequest_whenOptionalFieldsAreNull_thenMapsNullsThrough() {
         // Arrange
         CompetitorRequest csvRow = new CompetitorRequest(null, 
-                "Jane", "Doe", null, null, null, null, null, null, null, "HPSC-001", null, null, null, null, null, null);
+                "Jane", "Doe", null, null, null, null, null, null, null, "HPSC-001", null, null, null, null, null, null, null);
 
         // Act
         CompetitorRequest request = ipscCompetitorServiceImpl.normaliseCsvRequest(csvRow);
@@ -320,6 +321,7 @@ class IpscCompetitorServiceImplTest {
         assertNull(request.getIdNumber());
         assertNull(request.getCellphoneNumber());
         assertNull(request.getPaidUpSapsa());
+        assertNull(request.getPaidUpNgpsa());
         assertNull(request.getPaidUpClub());
         assertEquals(List.of(), request.getEmailAddresses());
     }
@@ -475,6 +477,7 @@ class IpscCompetitorServiceImplTest {
         competitor.setIdNumber("9001015800083");
         competitor.setCellphoneNumber("0821234567");
         competitor.setPaidUpSapsa(true);
+        competitor.setPaidUpNgpsa(true);
         competitor.setPaidUpClub(false);
         competitor.setIsVerified(true);
         competitor.setEmailAddresses(List.of("jane.doe@example.com"));
@@ -496,6 +499,7 @@ class IpscCompetitorServiceImplTest {
         assertEquals("9001015800083", response.getIdNumber());
         assertEquals("0821234567", response.getCellphoneNumber());
         assertEquals(Boolean.TRUE, response.getPaidUpSapsa());
+        assertEquals(Boolean.TRUE, response.getPaidUpNgpsa());
         assertEquals(Boolean.FALSE, response.getPaidUpClub());
         assertEquals(Boolean.TRUE, response.getIsVerified());
         assertEquals(List.of("jane.doe@example.com"), response.getEmailAddresses());

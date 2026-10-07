@@ -41,8 +41,8 @@ public class CompetitorMapper {
 
     /**
      * Copies the fields of a {@link CompetitorRequest} onto a {@link Competitor}, resolving the
-     * gender and named home club in the process. An omitted {@code paidUpSapsa} or
-     * {@code paidUpClub} or {@code isVerified} is stored as {@code null}, and a {@code nickName}
+     * gender and named home club in the process. An omitted {@code paidUpSapsa},
+     * {@code paidUpNgpsa}, {@code paidUpClub} or {@code isVerified} is stored as {@code null}, and a {@code nickName}
      * that is omitted, empty or blank defaults to the first name, replacing any nickname the
      * competitor already has, as every field is overwritten.
      *
@@ -70,6 +70,7 @@ public class CompetitorMapper {
         competitor.setEmailAddresses(
                 (request.getEmailAddresses() != null) ? new ArrayList<>(request.getEmailAddresses()) : new ArrayList<>());
         competitor.setPaidUpSapsa(request.getPaidUpSapsa());
+        competitor.setPaidUpNgpsa(request.getPaidUpNgpsa());
         competitor.setPaidUpClub(request.getPaidUpClub());
         competitor.setIsVerified(request.getIsVerified());
     }
@@ -132,6 +133,9 @@ public class CompetitorMapper {
         if (request.getPaidUpSapsa() != null) {
             competitor.setPaidUpSapsa(request.getPaidUpSapsa());
         }
+        if (request.getPaidUpNgpsa() != null) {
+            competitor.setPaidUpNgpsa(request.getPaidUpNgpsa());
+        }
         if (request.getPaidUpClub() != null) {
             competitor.setPaidUpClub(request.getPaidUpClub());
         }
@@ -147,12 +151,13 @@ public class CompetitorMapper {
      * A club number is only meaningful for HPSC's own members: it's required when
      * {@code homeClub} is {@link IpscConstants#HOME_CLUB_IDENTIFIER}, and forced to {@code null}
      * for every other home club, including none, regardless of what was supplied on the request.
+     * A supplied club number is normalised by removing all spaces and trimming surrounding whitespace.
      * </p>
      *
      * @param homeClub   the competitor's resolved home club; may be null.
      * @param clubNumber the club number supplied on the request; may be null or blank.
-     * @return {@code clubNumber} when {@code homeClub} is {@link IpscConstants#HOME_CLUB_ABBREVIATION},
-     * otherwise {@code null}.
+     * @return {@code clubNumber} with all spaces removed and surrounding whitespace trimmed when
+     * {@code homeClub} is {@link IpscConstants#HOME_CLUB_ABBREVIATION}, otherwise {@code null}.
      * @throws ValidationException if {@code homeClub} is {@link IpscConstants#HOME_CLUB_ABBREVIATION}
      *                             but {@code clubNumber} is null or blank.
      */
@@ -166,7 +171,7 @@ public class CompetitorMapper {
                     IpscConstants.HOME_CLUB_ABBREVIATION));
         }
 
-        return clubNumber;
+        return clubNumber.replace(" ", "").trim();
     }
 
     /**

@@ -59,6 +59,8 @@ public class CompetitorPatchRequest {
     private List<String> emailAddresses;
     /** Whether the competitor's SAPSA membership is paid up; may be null. */
     private Boolean paidUpSapsa;
+    /** Whether the competitor's NGPSA membership is paid up; may be null. */
+    private Boolean paidUpNgpsa;
     /** Whether the competitor's club membership is paid up; may be null. */
     private Boolean paidUpClub;
     /** Whether the competitor has been verified; may be null. */

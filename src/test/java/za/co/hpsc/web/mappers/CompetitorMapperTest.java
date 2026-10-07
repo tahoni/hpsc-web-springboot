@@ -168,6 +168,42 @@ class CompetitorMapperTest {
     }
 
     @Test
+    void testApplyFields_whenPaidUpNgpsaIsSupplied_thenSetsItIndependentlyOfTheOtherPaidUpFlags() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        request.setPaidUpSapsa(false);
+        request.setPaidUpNgpsa(true);
+        request.setPaidUpClub(false);
+        Competitor competitor = new Competitor();
+
+        // Act
+        competitorMapper.applyFields(competitor, request);
+
+        // Assert
+        assertEquals(Boolean.FALSE, competitor.getPaidUpSapsa());
+        assertEquals(Boolean.TRUE, competitor.getPaidUpNgpsa());
+        assertEquals(Boolean.FALSE, competitor.getPaidUpClub());
+    }
+
+    @Test
+    void testApplyFields_whenPaidUpNgpsaIsNull_thenClearsExistingValue() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        Competitor competitor = new Competitor();
+        competitor.setPaidUpNgpsa(true);
+
+        // Act
+        competitorMapper.applyFields(competitor, request);
+
+        // Assert
+        assertNull(competitor.getPaidUpNgpsa());
+    }
+
+    @Test
     void testApplyFields_whenPaidUpFlagsAreNull_thenCompetitorPaidUpFlagsAreNull() {
         // Arrange
         CompetitorRequest request = new CompetitorRequest();
@@ -317,6 +353,39 @@ class CompetitorMapperTest {
         assertEquals(Boolean.TRUE, competitor.getPaidUpSapsa());
         assertNotNull(competitor.getHomeClub());
         verifyNoInteractions(clubRepository);
+    }
+
+    @Test
+    void testApplyPatchFields_whenPaidUpNgpsaIsSupplied_thenChangesOnlyThatFlag() {
+        // Arrange
+        Competitor competitor = existingHpscCompetitor();
+        competitor.setPaidUpNgpsa(false);
+        CompetitorPatchRequest request = new CompetitorPatchRequest();
+        request.setPaidUpNgpsa(true);
+
+        // Act
+        competitorMapper.applyPatchFields(competitor, request);
+
+        // Assert
+        assertEquals(Boolean.TRUE, competitor.getPaidUpNgpsa());
+        assertEquals(Boolean.TRUE, competitor.getPaidUpSapsa());
+        assertEquals(Boolean.TRUE, competitor.getPaidUpClub());
+    }
+
+    @Test
+    void testApplyPatchFields_whenPaidUpNgpsaIsOmitted_thenLeavesItUnchanged() {
+        // Arrange
+        Competitor competitor = existingHpscCompetitor();
+        competitor.setPaidUpNgpsa(true);
+        CompetitorPatchRequest request = new CompetitorPatchRequest();
+        request.setLastName("Smith");
+
+        // Act
+        competitorMapper.applyPatchFields(competitor, request);
+
+        // Assert
+        assertEquals(Boolean.TRUE, competitor.getPaidUpNgpsa());
+        assertEquals("Smith", competitor.getLastName());
     }
 
     @Test

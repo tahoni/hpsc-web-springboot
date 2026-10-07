@@ -27,6 +27,7 @@ class CompetitorPatchRequestTest {
         assertNull(request.getHomeClub());
         assertNull(request.getClubNumber());
         assertNull(request.getPaidUpSapsa());
+        assertNull(request.getPaidUpNgpsa());
         assertNull(request.getPaidUpClub());
         assertNull(request.getIsVerified());
     }
@@ -47,6 +48,25 @@ class CompetitorPatchRequestTest {
         // Assert
         assertEquals("Janie", request.getNickName());
         assertNull(request.getEmailAddresses());
+    }
+
+    @Test
+    void testJsonDeserialization_whenPaidUpNgpsaProvided_thenMapsItIndependentlyOfTheOtherFlags() throws Exception {
+        // Arrange
+        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        String json = """
+                {
+                  "paidUpNgpsa": true
+                }
+                """;
+
+        // Act
+        CompetitorPatchRequest request = mapper.readValue(json, CompetitorPatchRequest.class);
+
+        // Assert
+        assertEquals(Boolean.TRUE, request.getPaidUpNgpsa());
+        assertNull(request.getPaidUpSapsa());
+        assertNull(request.getPaidUpClub());
     }
 
     @Test

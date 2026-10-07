@@ -65,6 +65,8 @@ public class CompetitorRequest {
     private List<String> emailAddresses = new ArrayList<>();
     /** Whether the competitor's SAPSA membership is paid up; stored as {@code null} when omitted. */
     private Boolean paidUpSapsa;
+    /** Whether the competitor's NGPSA membership is paid up; stored as {@code null} when omitted. */
+    private Boolean paidUpNgpsa;
     /** Whether the competitor's club membership is paid up; stored as {@code null} when omitted. */
     private Boolean paidUpClub;
     /** Whether the competitor has been verified; stored as {@code null} when omitted. */
@@ -90,7 +92,9 @@ public class CompetitorRequest {
      * @param emailAddresses   the competitor's email addresses, if any.
      * @param paidUpSapsa      whether the competitor's SAPSA membership is paid up; stored as {@code null} when
      *                         omitted.
-     * @param paidUpClub       whether the competitor's club membership is paid up; stored as {@code null} when
+     * @param paidUpNgpsa      whether the competitor's NGPSA membership is paid up; stored as {@code null} when
+     *                         omitted.
+     * @param paidUpClub      whether the competitor's club membership is paid up; stored as {@code null} when
      *                         omitted.
      * @param isVerified       whether the competitor has been verified; stored as {@code null} when omitted.
      */
@@ -110,6 +114,7 @@ public class CompetitorRequest {
                              @JsonProperty("cellphoneNumber") String cellphoneNumber,
                              @JsonProperty("emailAddresses") List<String> emailAddresses,
                              @JsonProperty("paidUpSapsa") Boolean paidUpSapsa,
+                             @JsonProperty("paidUpNgpsa") Boolean paidUpNgpsa,
                              @JsonProperty("paidUpClub") Boolean paidUpClub,
                              @JsonProperty("isVerified") Boolean isVerified) {
         this.competitorId = competitorId;
@@ -129,6 +134,7 @@ public class CompetitorRequest {
             this.emailAddresses = emailAddresses;
         }
         this.paidUpSapsa = paidUpSapsa;
+        this.paidUpNgpsa = paidUpNgpsa;
         this.paidUpClub = paidUpClub;
         this.isVerified = isVerified;
     }

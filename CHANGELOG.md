@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 13.2.0](#-1320---2026-10-07) ← Current
+- [🧾 Version 13.3.0](#-1330---2026-10-07) ← Current
+- [🧾 Version 13.2.0](#-1320---2026-10-07)
 - [🧾 Version 13.1.0](#-1310---2026-10-07)
 - [🧾 Version 13.0.0](#-1300---2026-10-07)
 - [🧾 Version 12.0.0](#-1200---2026-10-05)
@@ -29,6 +30,51 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [13.3.0] - 2026-10-07
+
+#### ➕ Added
+
+##### Database
+
+- **`V11_6_0__add_competitor_paid_up_ngpsa.sql`:** New migration adding a nullable `competitor.paid_up_ngpsa` boolean
+  column, placed after `paid_up_sapsa` — records whether a competitor's NGPSA membership is paid up
+
+##### Models
+
+- **`Competitor.paidUpNgpsa`:** New `Boolean` field mapped to `paid_up_ngpsa`
+- **`CompetitorRequest`, `CompetitorPatchRequest` and `CompetitorResponse`:** New optional `paidUpNgpsa` field (and
+  `PaidUpNgpsa` CSV column on `CompetitorRequestCsvMixIn`) — stored as `null` when omitted; the `CompetitorRequest`
+  all-arguments constructor gains a `paidUpNgpsa` parameter between `paidUpSapsa` and `paidUpClub`
+
+##### Mappers
+
+- **`CompetitorMapper`:** `applyFields` and `applyPatchFields` now copy `paidUpNgpsa`; the patch leaves it unchanged
+  when omitted
+
+##### Services
+
+- **`IpscCompetitorServiceImpl`:** CSV rows now carry `paidUpNgpsa` through to the `CompetitorRequest`
+
+##### Controllers
+
+- **`IpscCompetitorController`:** The competitor CSV import example now includes the `PaidUpNgpsa` column
+
+##### Tests
+
+- **`CompetitorMapperTest`, `CompetitorPatchRequestTest`, `CompetitorRequestCsvMixInTest`, `CompetitorRequestTest` and
+  `IpscCompetitorServiceImplTest`:** New and extended tests covering `paidUpNgpsa` across the mapper, JSON, CSV and
+  entity-to-response paths
+
+#### 🔄 Changed
+
+##### Mappers
+
+- **`CompetitorMapper.resolveClubNumber`:** now normalises a supplied club number by removing all spaces and trimming
+  surrounding whitespace before returning it, so `applyFields` and `applyPatchFields` store a consistent value; the
+  Javadoc describes the normalisation
 
 ---
 
