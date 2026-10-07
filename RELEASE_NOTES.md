@@ -88,8 +88,8 @@ such as `123-John`, now has the digits removed as a position.
 
 ## 📊 Statistics
 
-- **Files Changed:** 108 against `main`, including this release's notes and PR description; 6,962
-  insertions and 6,327 deletions
+- **Files Changed:** 108 against `main`, including this release's notes and PR description; 6,966
+  insertions and 6,331 deletions
 - **New Source Files:** 0
 - **Renamed Source Files:** 0 (82 documentation files moved to `documentation/archive/` and `documentation/legacy/`)
 - **Deleted Source Files:** 0
