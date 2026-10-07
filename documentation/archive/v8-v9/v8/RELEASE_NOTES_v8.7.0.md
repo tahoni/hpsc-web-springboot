@@ -61,7 +61,7 @@ Gap #12: competitors and matches are documented as "full CRUD", yet neither can 
 #### Documentation
 
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #12, with a matching "⚪ Open" task block — the
-  "full CRUD" claims in `../../../../README.md`/`ARCHITECTURE.md` have no delete operation behind them, and
+  "full CRUD" claims in `README.md`/`ARCHITECTURE.md` have no delete operation behind them, and
   `standard-rest-conventions.md`'s current-state examples omit `getAllMatches`/`IpscCompetitorController`
 
 ### Changed
@@ -80,11 +80,11 @@ Gap #12: competitors and matches are documented as "full CRUD", yet neither can 
 #### Configuration
 
 - **`application.properties`:** `server.port=8081` override removed, so the app now starts on port `8080`;
-  `../../../../README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` updated to match
+  `README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` updated to match
 
 #### Build & Metadata
 
-- Project version bumped to **8.7.0** in `../../../../pom.xml`; `@OpenAPIDefinition` version updated to match
+- Project version bumped to **8.7.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 - **`springdoc-openapi-starter-webmvc-ui`:** Bumped from `2.8.5` to `3.1.0`, the springdoc line built for Spring
   Boot 4, with its version now coming from an imported `springdoc-openapi-bom` in a new `<dependencyManagement>`
   section
@@ -105,15 +105,15 @@ Gap #12: competitors and matches are documented as "full CRUD", yet neither can 
 
 #### Documentation
 
-- **`../../../../ARCHITECTURE.md`'s Project Structure tree:** Stale directory comments corrected against disk
-  (`../../../history`, `documentation/roadmap/`, the test `services/`/`services/impl/` tiers) and the missing
+- **`ARCHITECTURE.md`'s Project Structure tree:** Stale directory comments corrected against disk
+  (`documentation/history/`, `documentation/roadmap/`, the test `services/`/`services/impl/` tiers) and the missing
   `banner.txt` added
 
 ### Removed
 
 #### Build & Metadata
 
-- **`spring-restdocs-mockmvc`:** Unused test dependency dropped from `../../../../pom.xml`, along with the Spring REST Docs
+- **`spring-restdocs-mockmvc`:** Unused test dependency dropped from `pom.xml`, along with the Spring REST Docs
   mentions in `README.md`'s and `ARCHITECTURE.md`'s tech-stack lists and `HELP.md`'s reference links
 
 ---
@@ -148,7 +148,7 @@ To keep `8081`, set `server.port=8081` in an environment-specific properties fil
 
 - **Total Commits:** 16 (7 feature commits — stage delimiter, springdoc/REST Docs, port, eager fetching,
   springdoc BOM, competitor-listing endpoint and `getAllMatches` schema fix — plus this release's Gap #12,
-  `../../../../HELP.md`, `ARCHITECTURE.md` tree, version bump, release documentation, PR description, two
+  `HELP.md`, `ARCHITECTURE.md` tree, version bump, release documentation, PR description, two
   spelling/punctuation fix and statistics refresh commits)
 - **Files Changed:** 36
 - **Insertions:** 900 lines
@@ -194,7 +194,7 @@ To keep `8081`, set `server.port=8081` in an environment-specific properties fil
 
 ## 🐛 Known Issues
 
-- Competitors and matches can't be deleted through the API, although `../../../../README.md`/`ARCHITECTURE.md` describe both as
+- Competitors and matches can't be deleted through the API, although `README.md`/`ARCHITECTURE.md` describe both as
   "full CRUD" (new Gap #12).
 - Competitor scores submission (`MatchOverallScoresRequest`/`MatchStageScoresRequest`) remains groundwork only —
   not yet wired to any controller (carried over from v8.0.0).

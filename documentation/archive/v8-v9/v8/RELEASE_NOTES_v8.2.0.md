@@ -51,7 +51,7 @@ it, Qodana static analysis is removed from the project entirely in this release.
 
 ### 🗑️ Qodana Static Analysis Removed
 
-- **`.github/workflows/qodana.yml`, `../../../../qodana.yaml`** — `../../../roadmap/improvement-plan.md` previously
+- **`.github/workflows/qodana.yml`, `qodana.yaml`** — `documentation/roadmap/improvement-plan.md` previously
   recorded this workflow as merely "not yet verified as succeeding." This release's own audit
   (`gh run list --workflow=qodana.yml`) found it has actually failed on every run since v8.1.1 added it: a missing
   `QODANA_TOKEN` repository secret (release-line Qodana linters require one since 2023.2), plus an unconditional
@@ -98,9 +98,9 @@ it, Qodana static analysis is removed from the project entirely in this release.
 
 #### Documentation
 
-- `../../../../ARCHITECTURE.md`, `CONTRIBUTING.md` — CI/CD & Quality Gates tables' `Static Analysis` row removed
-- `../../../../AGENTS.md` — `CodeQL/Qodana/JaCoCo` trigger reference updated to `CodeQL/JaCoCo`
-- `../../../roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — Gap #7 (Qodana CI wiring) closed as not
+- `ARCHITECTURE.md`, `CONTRIBUTING.md` — CI/CD & Quality Gates tables' `Static Analysis` row removed
+- `AGENTS.md` — `CodeQL/Qodana/JaCoCo` trigger reference updated to `CodeQL/JaCoCo`
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — Gap #7 (Qodana CI wiring) closed as not
   applicable
 
 ### Fixed
@@ -115,7 +115,7 @@ it, Qodana static analysis is removed from the project entirely in this release.
 
 #### CI/CD & Configuration
 
-- `.github/workflows/qodana.yml`, `../../../../qodana.yaml` — Qodana static analysis removed after failing on every CI run
+- `.github/workflows/qodana.yml`, `qodana.yaml` — Qodana static analysis removed after failing on every CI run
   since v8.1.1 added it (see Key Highlights)
 
 ---
@@ -137,7 +137,7 @@ it, Qodana static analysis is removed from the project entirely in this release.
   `competitor_email` table before dropping the old column, so no manual data migration is required beyond running
   the migration itself.
 - Qodana static analysis is gone from CI and from the project entirely — `.github/workflows/qodana.yml` and
-  `../../../../qodana.yaml` no longer exist. No local setup is required to accommodate this; there's simply nothing to run.
+  `qodana.yaml` no longer exist. No local setup is required to accommodate this; there's simply nothing to run.
 
 ---
 
@@ -149,7 +149,7 @@ it, Qodana static analysis is removed from the project entirely in this release.
 - **Deletions:** 191 lines
 - **Net Change:** +172 lines
 - **New Source Files:** 1 (`V7_2_0__add_competitor_emails.sql`)
-- **Deleted Files:** 2 (`.github/workflows/qodana.yml`, `../../../../qodana.yaml`)
+- **Deleted Files:** 2 (`.github/workflows/qodana.yml`, `qodana.yaml`)
 - **New Test Files:** 0
 - **Deleted Test Files:** 0
 

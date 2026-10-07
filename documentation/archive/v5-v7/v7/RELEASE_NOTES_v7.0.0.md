@@ -18,7 +18,7 @@ Version 7.0.0 extends the IPSC domain model to support club-scoped results, matc
 ### 🏛️ Domain Package Promotion
 
 - `domain/old/` (6 files: `Club`, `Competitor`, `IpscMatch`, `IpscMatchStage`, `MatchCompetitor`, `MatchStageCompetitor`) removed entirely.
-- Their content is promoted into `za.co.hpsc.web.domain` (package `.old` dropped) and extended per the changes below — this restores the entities to the location the (now-empty) `repositories/` package and `../../../../CLAUDE.md`'s architecture table already expected.
+- Their content is promoted into `za.co.hpsc.web.domain` (package `.old` dropped) and extended per the changes below — this restores the entities to the location the (now-empty) `repositories/` package and `CLAUDE.md`'s architecture table already expected.
 
 ### 🏢 Club — Formal Club Identity
 
@@ -91,16 +91,16 @@ The `repositories/` package was empty (repositories for these six entities were 
 
 ### 🧹 CI & Tooling Clean-up
 
-- Qodana CI workflow (`../../../../.github/workflows/code_quality.yml`), `qodana.yaml`, and remaining references in `CLAUDE.md` / `ARCHITECTURE.md` removed. CodeQL remains the sole CI security-analysis gate; JaCoCo remains for coverage.
+- Qodana CI workflow (`.github/workflows/code_quality.yml`), `qodana.yaml`, and remaining references in `CLAUDE.md` / `ARCHITECTURE.md` removed. CodeQL remains the sole CI security-analysis gate; JaCoCo remains for coverage.
 - Obsolete `.github/prompts/create-unit-tests.prompt.md` removed.
 
 ### 📚 Documentation Overhaul
 
-- New **`../../../../AGENTS.md`** — tool-agnostic conventions for AI coding agents (tech stack, documentation conventions including British English spelling rules, documentation file map, test conventions, directory-tree maintenance, git workflow).
+- New **`AGENTS.md`** — tool-agnostic conventions for AI coding agents (tech stack, documentation conventions including British English spelling rules, documentation file map, test conventions, directory-tree maintenance, git workflow).
 - README.md gains a documentation map cataloguing every doc file's purpose.
-- Pinned dependency/tool version numbers (Spring Boot, Java, Maven, Hibernate, SpringDoc, JaCoCo, JUnit) removed from README.md / ARCHITECTURE.md so `../../../../pom.xml` is the single source of truth; ARCHITECTURE.md's domain entity table corrected (was stale at "six" entities, now reflects `ShooterLog` / `ShooterLogEntry` and the `MatchStageCompetitor` → `MatchCompetitor` relationship change).
+- Pinned dependency/tool version numbers (Spring Boot, Java, Maven, Hibernate, SpringDoc, JaCoCo, JUnit) removed from README.md / ARCHITECTURE.md so `pom.xml` is the single source of truth; ARCHITECTURE.md's domain entity table corrected (was stale at "six" entities, now reflects `ShooterLog` / `ShooterLogEntry` and the `MatchStageCompetitor` → `MatchCompetitor` relationship change).
 - CHANGELOG.md / HISTORY.md heading-icon usage standardised.
-- Duplicate release-notes history files retired: `documentation/history/RELEASE_NOTES_HISTORY.md` and `documentation/history/RELEASE_NOTES_README.md` — both superseded by the root `../../../../HISTORY.md`.
+- Duplicate release-notes history files retired: `documentation/history/RELEASE_NOTES_HISTORY.md` and `documentation/history/RELEASE_NOTES_README.md` — both superseded by the root `HISTORY.md`.
 
 ---
 
@@ -131,7 +131,7 @@ The `repositories/` package was empty (repositories for these six entities were 
 
 #### Documentation
 
-- `../../../../AGENTS.md`
+- `AGENTS.md`
 
 ### Changed
 
@@ -146,7 +146,7 @@ The `repositories/` package was empty (repositories for these six entities were 
 
 - `spring-boot-starter-parent` 4.0.6 → 4.0.7
 - `spring-framework.version` 7.0.7 → 7.0.8; `tomcat.version` → 11.0.22; `jackson-bom.version` 3.1.1 → 3.1.5
-- `../../../../pom.xml` project version 6.0.0 → 7.0.0; `@OpenAPIDefinition` version updated to match
+- `pom.xml` project version 6.0.0 → 7.0.0; `@OpenAPIDefinition` version updated to match
 
 #### Configuration
 
@@ -171,7 +171,7 @@ The `repositories/` package was empty (repositories for these six entities were 
 
 #### CI & Tooling
 
-- Qodana CI workflow (`code_quality.yml`) and `../../../../qodana.yaml`
+- Qodana CI workflow (`code_quality.yml`) and `qodana.yaml`
 - `.github/prompts/create-unit-tests.prompt.md`
 
 #### Documentation
@@ -253,7 +253,7 @@ Development Team
 
 ## 📝 Notes
 
-This release combines domain-layer groundwork with release-hygiene work, produced across a single branch: promoting `domain/old/` back into `domain/`, extending it to cover results-per-club, visitor tracking, multi-firearm-type match entries, and shooter logs, and rebuilding the `repositories/` package from scratch. It intentionally stops at the persistence boundary — no service, controller, or import-pipeline changes are included — so that the schema design could be validated (via a full Spring context boot against H2, and via Flyway against MySQL) before building the business logic on top of it. Alongside the domain work, the release also consolidates CI and dependency hygiene (the Spring Boot patch bump closing Dependabot alerts, Qodana removal) and a documentation-conventions pass (`../../../../AGENTS.md`), so the branch leaves the project on a clean footing before further v7.x feature work begins.
+This release combines domain-layer groundwork with release-hygiene work, produced across a single branch: promoting `domain/old/` back into `domain/`, extending it to cover results-per-club, visitor tracking, multi-firearm-type match entries, and shooter logs, and rebuilding the `repositories/` package from scratch. It intentionally stops at the persistence boundary — no service, controller, or import-pipeline changes are included — so that the schema design could be validated (via a full Spring context boot against H2, and via Flyway against MySQL) before building the business logic on top of it. Alongside the domain work, the release also consolidates CI and dependency hygiene (the Spring Boot patch bump closing Dependabot alerts, Qodana removal) and a documentation-conventions pass (`AGENTS.md`), so the branch leaves the project on a clean footing before further v7.x feature work begins.
 
 ---
 

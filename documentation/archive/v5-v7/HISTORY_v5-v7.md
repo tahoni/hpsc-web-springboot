@@ -1,11 +1,13 @@
 # HPSC Website Backend History Archive (v5.0.0 – v7.4.1)
 
 The per-version narrative history of versions 5.0.0 to 7.4.1 of the HPSC Website Backend project, archived from
-[`../../../HISTORY.md`](/HISTORY.md) to keep that file a manageable size. The entries are moved unchanged, grouped under
-the `../../../HISTORY.md` section each came from. See [`HISTORY.md`](/HISTORY.md) for the sections that span every
-version (Feature Timeline, Key Learnings, Project Philosophy Evolution and Conclusion) and for versions 10.0.0 onwards,
-[`CHANGELOG_v5-v7.md`](/documentation/archive/v5-v7/CHANGELOG_v5-v7.md) for the archived change log, [`EVOLUTION_OVERVIEW_v5-v7.md`](/documentation/archive/v5-v7/EVOLUTION_OVERVIEW_v5-v7.md) for the archived Phase-by-phase narrative and
-[`HISTORY_v1-v4.md`](/documentation/archive/v1-v4/HISTORY_v1-v4.md) for versions 1.0.0 to 4.1.0.
+[`HISTORY.md`](/HISTORY.md) to keep that file a manageable size. The entries are moved unchanged, grouped under the
+`HISTORY.md` section each came from. See [`HISTORY.md`](/HISTORY.md) for the sections that span every version (Feature
+Timeline, Key Learnings, Project Philosophy Evolution and Conclusion) and for versions 10.0.0 onwards,
+[`CHANGELOG_v5-v7.md`](/documentation/archive/v5-v7/CHANGELOG_v5-v7.md) for the archived change log,
+[`EVOLUTION_OVERVIEW_v5-v7.md`](/documentation/archive/v5-v7/EVOLUTION_OVERVIEW_v5-v7.md) for the archived
+Phase-by-phase narrative and [`HISTORY_v1-v4.md`](/documentation/archive/v1-v4/HISTORY_v1-v4.md) for versions 1.0.0 to
+4.1.0.
 
 ---
 
@@ -26,15 +28,16 @@ version (Feature Timeline, Key Learnings, Project Philosophy Evolution and Concl
 
 **Key Focus:**
 
-- Every root-level documentation file (`../../../AGENTS.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`,
-  `HISTORY.md`, `README.md`, `RELEASE_NOTES.md`) rewrapped to a consistent ~120-character line width, matching
-  CLAUDE.md's existing wrap width — prose, list items and table columns realigned, with a handful of incidental
+- Every root-level documentation file (`AGENTS.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md`,
+  `CHANGELOG.md`, `HISTORY.md`, `README.md`, `RELEASE_NOTES.md`) rewrapped to a consistent ~120-character line width,
+  matching CLAUDE.md's existing wrap width — prose, list items and table columns realigned, with a handful of incidental
   copyedits (AGENTS.md's own serial-comma rule example corrected to follow the rule it states) surfacing along the way
 - New "Major Version Goals" subsection under this file's Project Philosophy Evolution, summarising the driving goal
   behind each major version line (4.x, 5.x, 6.x, 7.x)
 - New "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" entry, capturing the test-convention,
   documentation-accuracy and AI-agent-tooling work spanning those three releases
-- Project version bumped to 7.4.1 in `../../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- Project version bumped to 7.4.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in
+  `HpscWebApplication.java`
 
 ### Version 7.4.0 (August 29, 2026)
 
@@ -54,14 +57,15 @@ version (Feature Timeline, Key Learnings, Project Philosophy Evolution and Concl
 - New AGENTS.md Serial commas rule (no comma before the final `and`/`or` in a list of three or more items) and a
   tightened British English rule that now covers code identifiers as well as prose — both applied retroactively across
   the existing documentation set, which surfaced and corrected two American-spelled test method names
-- `../../roadmap`'s `IMPROVEMENT_PLAN.md`/`TASKS.md` renamed to `improvement-plan.md`/
+- `documentation/roadmap/`'s `IMPROVEMENT_PLAN.md`/`TASKS.md` renamed to `improvement-plan.md`/
   `improvement-plan-tasks.md` for kebab-case consistency with the rest of the tooling docs
 - New Claude Code command `/sync-unreleased-changes`, diffing the branch against its base plus any uncommitted changes
-  to fill in missing `../../../CHANGELOG.md` entries automatically; `RELEASE_NOTES.md`'s Contributors section now sourced from
-  `git log`'s unique authors rather than a generic placeholder
-- Release hygiene: `log4j-api` overridden to `2.25.5` for CVE-2026-49844; `../../../.gitignore`/`.aiignore` refreshed from
-  upstream templates; `README.md`'s H1 heading restored
-- Project version bumped to 7.4.0 in `../../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+  to fill in missing `CHANGELOG.md` entries automatically; `RELEASE_NOTES.md`'s Contributors section now
+  sourced from `git log`'s unique authors rather than a generic placeholder
+- Release hygiene: `log4j-api` overridden to `2.25.5` for CVE-2026-49844; `.gitignore`/`.aiignore` refreshed
+  from upstream templates; `README.md`'s H1 heading restored
+- Project version bumped to 7.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in
+  `HpscWebApplication.java`
 
 ### Version 7.3.0 (August 25, 2026)
 
@@ -73,20 +77,21 @@ version (Feature Timeline, Key Learnings, Project Philosophy Evolution and Concl
   `RELEASE_NOTES_vX.Y.Z.md` into a short, plain, Bitbucket-style PR summary — a distillation rather than a restatement
   of this repo's own emoji-heavy documentation style; its Output instructions were subsequently clarified to require
   the raw, unrendered Markdown source in the fenced block
-- `../../../README.md`'s Introduction and Features sections corrected to stop describing match management, competitor/club CRUD,
-  WinMSS import and XML/multi-format processing as existing capabilities; only `AwardController`/`ImageController` CSV
-  processing is implemented today, with the match/competitor domain's service and controller layer still being rebuilt
-  (as already noted in `CLAUDE.md`)
-- `../../../README.md`'s coverage-report instructions corrected from the non-functional `./mvnw test jacoco:report` to
+- `README.md`'s Introduction and Features sections corrected to stop describing match management,
+  competitor/club CRUD, WinMSS import and XML/multi-format processing as existing capabilities; only
+  `AwardController`/`ImageController` CSV processing is implemented today, with the match/competitor domain's service
+  and controller layer still being rebuilt (as already noted in `CLAUDE.md`)
+- `README.md`'s coverage-report instructions corrected from the non-functional `./mvnw test jacoco:report` to
   `./mvnw verify -Pcoverage`; the stray `1.x – 4.x` version range in its documentation-map description removed, per
   AGENTS.md's evergreen-documentation rule
-- `../../../ARCHITECTURE.md`'s test package tree corrected (removed the nonexistent `domain/` test package, added the missing
-  `converters/`/`exceptions/` packages) and its CI/CD & Quality Gates table no longer overstates the `Build & Tests`
-  gate as an "All PRs" GitHub Actions trigger — only `codeql.yml` runs automatically; `./mvnw test` is run locally/by
-  reviewers
+- `ARCHITECTURE.md`'s test package tree corrected (removed the nonexistent `domain/` test package, added the
+  missing `converters/`/`exceptions/` packages) and its CI/CD & Quality Gates table no longer overstates the `Build &
+  Tests` gate as an "All PRs" GitHub Actions trigger — only `codeql.yml` runs automatically; `./mvnw test` is run
+  locally/by reviewers
 - No domain entities, repositories, services or API surface changed in this release — purely a documentation-accuracy
   and tooling pass
-- Project version bumped to 7.3.0 in `../../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- Project version bumped to 7.3.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in
+  `HpscWebApplication.java`
 
 ### Version 7.2.0 (August 25, 2026)
 
@@ -105,19 +110,20 @@ version (Feature Timeline, Key Learnings, Project Philosophy Evolution and Concl
   convention; 26 existing test files retrofitted with a new AGENTS.md test convention (a one-line `// methodName()`
   header per method group, ordered constructors → public → protected → alphabetical → `toString()` last) — no test
   behaviour changed, purely comments and reordering
-- **Dependency maintenance:** Spring Boot parent upgraded `4.0.7` → `4.1.0`, with now-redundant `../../../pom.xml` version
-  overrides cleaned up (`spring-framework.version`/`tomcat.version` now match Boot's own defaults; a long-standing
-  `commons.lang3.version` typo — Boot's real property is hyphenated — removed; `maven-dependency-plugin` pin removed,
-  now Boot-managed) and the flyway-maven-plugin's separately-pinned `flyway-mysql` bumped `11.14.1` → `12.4.0` to match
-  Boot's newly-managed `flyway.version`
+- **Dependency maintenance:** Spring Boot parent upgraded `4.0.7` → `4.1.0`, with now-redundant `pom.xml`
+  version overrides cleaned up (`spring-framework.version`/`tomcat.version` now match Boot's own defaults; a
+  long-standing `commons.lang3.version` typo — Boot's real property is hyphenated — removed; `maven-dependency-plugin`
+  pin removed, now Boot-managed) and the flyway-maven-plugin's separately-pinned `flyway-mysql` bumped `11.14.1` →
+  `12.4.0` to match Boot's newly-managed `flyway.version`
 - Verified via the full test suite (492 tests, up from 483 at the start of this release), `./mvnw verify -Pcoverage` and
   manual Flyway commands (`flyway:info`/`flyway:migrate`) against a real local MySQL 9.5 dev database — no domain
   entities, repositories or API surface changed in this release
 - New CLAUDE.md Git Workflow section states the branching model's PR targets directly (`feature/*` → `develop`;
   `release/vX.Y.Z`/`hotfix/*` → `main`); CLAUDE.md now cross-links to AGENTS.md and corrects its package-overview table;
-  a false claim that AssertJ is used for assertions (it is explicitly excluded from `../../../pom.xml`) was removed from five
-  project docs
-- Project version bumped to 7.2.0 in `../../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+  a false claim that AssertJ is used for assertions (it is explicitly excluded from `pom.xml`) was removed from
+  five project docs
+- Project version bumped to 7.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in
+  `HpscWebApplication.java`
 
 ### Version 7.1.0 (August 24, 2026)
 
@@ -138,9 +144,10 @@ version (Feature Timeline, Key Learnings, Project Philosophy Evolution and Concl
   migration `V7_1_0__update_shooter_log_schema.sql` renames the table, its unique-index and FK constraints, and adds the
   new columns — both tables remain empty in every environment (no calculation service populates them yet), so no
   backfill was required
-- Project version bumped to 7.1.0 in `../../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- Project version bumped to 7.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in
+  `HpscWebApplication.java`
 - Alongside the schema work, this release migrates the repository's AI-agent prompt files from
-  `.github/prompts/*.prompt.md` to `.claude/commands/*.md`, adopts GitFlow branching in `../../../AGENTS.md` and adds
+  `.github/prompts/*.prompt.md` to `.claude/commands/*.md`, adopts GitFlow branching in `AGENTS.md` and adds
   `CONTRIBUTING.md`
 
 ### Version 7.0.0 (August 11, 2026)
@@ -166,7 +173,8 @@ version (Feature Timeline, Key Learnings, Project Philosophy Evolution and Concl
 - `repositories/` package (previously emptied in preparation for this rework) rebuilt from scratch with 8 new
   `JpaRepository` interfaces
 - No new enums or converters — `ClubIdentifier` and `FirearmType` (with existing `AttributeConverter`s) are reused
-- Project version bumped to 7.0.0 in `../../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- Project version bumped to 7.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in
+  `HpscWebApplication.java`
 - Verified via `./mvnw clean compile` and `HpscWebApplicationTests` (H2 schema build for all 8 entities); no dedicated
   new unit/integration tests added for the new/changed domain model in this release
 - Statistics: 1 commit, 15 files changed, +207 insertions, -30 deletions
@@ -189,7 +197,7 @@ version (Feature Timeline, Key Learnings, Project Philosophy Evolution and Concl
 - `IpscMemberController` stub registered at `/ipsc/member`
 - `TransformationService.mapMatchOnly(MatchOnlyRequest)` added; `mapMatchResults` no longer throws `ValidationException`
 - `ControllerAdvice` enhanced with structured logging across all exception handlers
-- Spring Boot upgraded from 4.0.5 to 4.0.6; MIT licence and SCM metadata added to `../../../pom.xml`
+- Spring Boot upgraded from 4.0.5 to 4.0.6; MIT licence and SCM metadata added to `pom.xml`
 - 8 new test classes (~1,300 lines): `IpscMatchControllerTest`, `IpscMatchServiceTest`, `IpscMatchIntegrationTest`,
   `MatchOnlyDtoTest`, `MatchOnlyRequestTest`, `MatchOnlyResponseTest`, `MatchResponseTest`, `IpscUtilTest`;
   `IpscControllerTest` removed
@@ -333,7 +341,7 @@ with static analysis and code coverage quality gates.
 - `DomainServiceImpl` fully decoupled from repositories — entity services used exclusively
 - All IPSC models moved to `models/ipsc/common/`; `models/ipsc/match/` sub-package introduced
 - `IpscUtil` added for centralised club/match display-string formatting
-- Spring Boot upgraded 4.0.5 → 4.0.6; MIT licence and SCM metadata populated in `../../../pom.xml`
+- Spring Boot upgraded 4.0.5 → 4.0.6; MIT licence and SCM metadata populated in `pom.xml`
 
 **Achievement:** Established a versioned, resource-oriented match management API and completed the entity service
 encapsulation layer, ensuring `DomainServiceImpl` respects the layered architecture described in CLAUDE.md. The IPSC
@@ -364,7 +372,8 @@ domain-layer groundwork ahead of the service/controller/import-pipeline wiring s
 - `ShooterLogCompetitor` gains `points` and a direct `match` reference alongside `matchCompetitor`
 - `ShooterLogCompetitorRepository` supersedes `ShooterLogEntryRepository`; `ShooterLogRepository` finder renamed to
   include `PowerFactor`
-- Repository AI-agent tooling migrated to `.claude/commands/*.md`; `../../../AGENTS.md` adopts GitFlow; `CONTRIBUTING.md` added
+- Repository AI-agent tooling migrated to `.claude/commands/*.md`; `AGENTS.md` adopts GitFlow;
+  `CONTRIBUTING.md` added
 
 **Achievement:** Corrected the naming and scope of the v7.0.0 shooter-log data model before any calculation service is
 built against it, keeping the schema accurate ahead of the service/controller wiring still to come.
@@ -377,8 +386,8 @@ built against it, keeping the schema accurate ahead of the service/controller wi
   coverage gaps closed; suite coverage rose from 95.7%/91.7% to 97.3%/98.1% (line/branch)
 - New `/scaffold-unit-tests` (corrected from a stale, wrong-project prompt) and `/scaffold-integration-tests` Claude
   Code commands
-- Spring Boot parent upgraded `4.0.7` → `4.1.0`; redundant `../../../pom.xml` version overrides cleaned up; `flyway-mysql` bumped
-  to match Boot's newly managed Flyway version
+- Spring Boot parent upgraded `4.0.7` → `4.1.0`; redundant `pom.xml` version overrides cleaned up;
+  `flyway-mysql` bumped to match Boot's newly managed Flyway version
 - Verified via the full test suite (492 tests), `./mvnw verify -Pcoverage` and manual Flyway commands against a real
   MySQL dev database
 
@@ -395,8 +404,9 @@ model, keeping the codebase consistent ahead of future feature work.
   `IpscMatchStageScore`, groundwork for the IPSC module rebuild
 - `AwardController`/`ImageController` routes simplified from `/v1/awards`/`/v1/images` to `/awards`/`/images`
 - New AGENTS.md Serial commas rule and a British English rule tightened to cover code identifiers, both applied across
-  the existing documentation set; `../../roadmap` renamed to kebab-case
-- New `/sync-unreleased-changes` Claude Code command; `../../../RELEASE_NOTES.md` Contributors now sourced from `git log`
+  the existing documentation set; `documentation/roadmap/` renamed to kebab-case
+- New `/sync-unreleased-changes` Claude Code command; `RELEASE_NOTES.md` Contributors now sourced from `git
+  log`
 
 **Achievement:** Laid IPSC request-DTO groundwork for the module rebuild while cleaning up a stale API route and
 tightening the project's own documentation conventions — no domain/service/architecture changes.
@@ -407,7 +417,7 @@ tightening the project's own documentation conventions — no domain/service/arc
 
 - Entire root-level documentation set rewrapped to a consistent ~120-character line width
 - New "Major Version Goals" and "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" narrative sections added
-  to `../../../HISTORY.md`
+  to `HISTORY.md`
 
 **Achievement:** Brought every root documentation file to a consistent line width and filled in two gaps in the
 project's own historical narrative — no domain/service/architecture or test changes.
@@ -664,8 +674,8 @@ Claude Code Commands
 
 - No domain/repository/architectural change — this release formalises and retrofits a test-file convention (26 files),
   closes 4 JaCoCo coverage gaps and corrects/extends AI-agent tooling
-- Spring Boot parent `4.0.7` → `4.1.0`, with redundant `../../../pom.xml` overrides removed and `flyway-mysql` kept in sync with
-  Boot's managed `flyway.version`
+- Spring Boot parent `4.0.7` → `4.1.0`, with redundant `pom.xml` overrides removed and `flyway-mysql` kept in
+  sync with Boot's managed `flyway.version`
 
 ---
 
@@ -698,7 +708,7 @@ Claude Code Commands
 - All IPSC models moved to `models/ipsc/common/`; `models/ipsc/match/` sub-package introduced
 - Match search request models: `MatchSearchRequest`, `MatchSearchDateRequest`, `MatchSearchIdRequest`
 - `IpscMemberController` stub registered at `/ipsc/member`
-- Spring Boot upgraded 4.0.5 → 4.0.6; MIT licence and SCM metadata added to `../../../pom.xml`
+- Spring Boot upgraded 4.0.5 → 4.0.6; MIT licence and SCM metadata added to `pom.xml`
 - 8 new test classes (~1,300 lines); `IpscControllerTest` removed
 
 ### Previously Completed (v7.0.0)
@@ -713,7 +723,7 @@ Claude Code Commands
 - `IpscMatchStage` gains new unique constraint `(match_id, stage_number)`
 - New `ShooterLog`/`ShooterLogEntry` entities persist best-4-match shooter-log snapshots
 - `repositories/` package rebuilt from scratch with 8 new `JpaRepository` interfaces
-- Project version bumped to 7.0.0 in `../../../pom.xml` and the `@OpenAPIDefinition` annotation
+- Project version bumped to 7.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Previously Completed (v7.1.0)
 
@@ -723,7 +733,7 @@ Claude Code Commands
 - `ShooterLogRepository.findAllByCompetitorIdAndFirearmType` renamed to
   `findAllByCompetitorIdAndFirearmTypeAndPowerFactor`
 - New `ShooterLogCompetitorRepository` supersedes `ShooterLogEntryRepository`
-- Project version bumped to 7.1.0 in `../../../pom.xml` and the `@OpenAPIDefinition` annotation
+- Project version bumped to 7.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Previously Completed (v7.2.0)
 
@@ -735,6 +745,6 @@ Claude Code Commands
   `// methodName()` header-comment/ordering convention
 - New `/scaffold-unit-tests` (corrected from a stale, wrong-project prompt) and `/scaffold-integration-tests` Claude
   Code commands
-- Spring Boot parent upgraded `4.0.7` → `4.1.0`; redundant `../../../pom.xml` version overrides removed; `flyway-mysql` bumped
-  `11.14.1` → `12.4.0` to match Boot's newly-managed `flyway.version`
-- Project version bumped to 7.2.0 in `../../../pom.xml` and the `@OpenAPIDefinition` annotation
+- Spring Boot parent upgraded `4.0.7` → `4.1.0`; redundant `pom.xml` version overrides removed; `flyway-mysql`
+  bumped `11.14.1` → `12.4.0` to match Boot's newly-managed `flyway.version`
+- Project version bumped to 7.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation

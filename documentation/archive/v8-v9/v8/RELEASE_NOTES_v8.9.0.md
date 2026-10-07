@@ -137,35 +137,35 @@ release's own audit, leaving only Gap #6 — the scoring/shooter-log layer — o
 
 #### Tooling
 
-- **`prep-version-release`, `../../../../AGENTS.md`:** The Release Checklist now makes updating `../../../../HISTORY.md`'s Future Roadmap
+- **`prep-version-release`, `AGENTS.md`:** The Release Checklist now makes updating `HISTORY.md`'s Future Roadmap
   Implications log and "Major Version Goals" mandatory for every release
 
 #### Documentation Updates
 
-- **`../../../../ARCHITECTURE.md`, `AGENTS.md`, `CONTRIBUTING.md`, service Javadoc:** Describe `TransactionService` as where writes
+- **`ARCHITECTURE.md`, `AGENTS.md`, `CONTRIBUTING.md`, service Javadoc:** Describe `TransactionService` as where writes
   are committed, and the bulk imports' validate-then-save-in-one-transaction behaviour
 
 #### Build & Metadata
 
-- Project version bumped to **8.9.0** in `../../../../pom.xml`; `@OpenAPIDefinition` version updated to match
+- Project version bumped to **8.9.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 ### Fixed
 
 #### Documentation Fixes
 
-- **`../../../../ARCHITECTURE.md`:** CI/CD & Quality Gates table lists the Claude Code review and assistant workflows (Gap #13);
+- **`ARCHITECTURE.md`:** CI/CD & Quality Gates table lists the Claude Code review and assistant workflows (Gap #13);
   the Quality Attributes and Persistence Layer sections agree on cascade/`mappedBy` (Gap #15); the non-existent
   "Strategy Pattern" converters replaced with a "Transaction Boundary" row (Gap #19); data flows and repository
   descriptions route writes through `TransactionService` (Gap #21)
 - **`flyway-migration-versioning.md`:** Current State table covers every migration through `V7_8_0`, with a step
   keeping it current (Gap #14), and a wrong cross-reference removed
-- **`../../../../CONTRIBUTING.md`:** The Running Tests example names a test that exists (Gap #16)
-- **`../../../../HISTORY.md`:** Future Roadmap Implications log and "Major Version Goals" backfilled through v8.8.0 (Gap #17);
+- **`CONTRIBUTING.md`:** The Running Tests example names a test that exists (Gap #16)
+- **`HISTORY.md`:** Future Roadmap Implications log and "Major Version Goals" backfilled through v8.8.0 (Gap #17);
   the `Competitor.homeClub` backfill dropped from the roadmap as not applicable (Gap #23)
-- **`../../../../AGENTS.md`:** 3-tier test rule names all five services (Gap #20); HPSC expanded as "Hartbeespoortdam Practical
+- **`AGENTS.md`:** 3-tier test rule names all five services (Gap #20); HPSC expanded as "Hartbeespoortdam Practical
   Shooting Club" (Gap #22)
-- **`../../../../README.md`, `ARCHITECTURE.md`, `AGENTS.md`:** Tech stack no longer claims XML or Apache Commons (Gap #18);
-  `../../../../README.md`'s Testing section describes the suite as it is (Gap #24)
+- **`README.md`, `ARCHITECTURE.md`, `AGENTS.md`:** Tech stack no longer claims XML or Apache Commons (Gap #18);
+  `README.md`'s Testing section describes the suite as it is (Gap #24)
 
 ### Removed
 

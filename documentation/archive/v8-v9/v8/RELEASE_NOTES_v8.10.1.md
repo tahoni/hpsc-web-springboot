@@ -21,7 +21,7 @@ as Gap #29 and closed it, leaving Gap #6 the only open gap.
 
 ### 📦 Explicit Dependency Submission
 
-- New `../../../../.github/workflows/dependency-submission.yml` submits the Maven dependency graph on push to `main`/`develop`
+- New `.github/workflows/dependency-submission.yml` submits the Maven dependency graph on push to `main`/`develop`
   or manual dispatch
 - Resolves dependencies with the project's JDK 25 and Maven wrapper, where GitHub's built-in submission used JDK 21
   and ignored the wrapper
@@ -30,7 +30,7 @@ as Gap #29 and closed it, leaving Gap #6 the only open gap.
 
 ### 🤖 Dependabot
 
-- New `../../../../.github/dependabot.yml`: weekly Maven and GitHub Actions version updates, opened against `develop`
+- New `.github/dependabot.yml`: weekly Maven and GitHub Actions version updates, opened against `develop`
 - Maven minor/patch bumps grouped into one PR, all GitHub Actions bumps into another; major Maven bumps get a PR each
 - Security-update PRs, which always target `main`, are handled as hotfixes — merged into `main`, then carried into
   `develop`
@@ -49,11 +49,11 @@ as Gap #29 and closed it, leaving Gap #6 the only open gap.
 
 #### CI/CD & Configuration
 
-- **`../../../../.github/workflows/dependency-submission.yml`:** New explicit Maven dependency-submission workflow, replacing
-  GitHub's built-in "Automatic Dependency Submission (Maven)"; documented in `../../../../ARCHITECTURE.md`'s CI/CD & Quality
+- **`.github/workflows/dependency-submission.yml`:** New explicit Maven dependency-submission workflow, replacing
+  GitHub's built-in "Automatic Dependency Submission (Maven)"; documented in `ARCHITECTURE.md`'s CI/CD & Quality
   Gates table and `CONTRIBUTING.md`
-- **`../../../../.github/dependabot.yml`:** New Dependabot version-update configuration — weekly, grouped Maven and GitHub
-  Actions updates targeting `develop`; added to `../../../../ARCHITECTURE.md`'s Project Structure tree
+- **`.github/dependabot.yml`:** New Dependabot version-update configuration — weekly, grouped Maven and GitHub
+  Actions updates targeting `develop`; added to `ARCHITECTURE.md`'s Project Structure tree
 
 #### Documentation
 
@@ -64,14 +64,14 @@ as Gap #29 and closed it, leaving Gap #6 the only open gap.
 
 #### Documentation
 
-- **`../../../../AGENTS.md`, `CONTRIBUTING.md`, `.github/dependabot.yml`:** Dependabot security-update PRs are handled as
+- **`AGENTS.md`, `CONTRIBUTING.md`, `.github/dependabot.yml`:** Dependabot security-update PRs are handled as
   hotfixes — merged into `main`, then carried into `develop` by merging `main` back into it, since Dependabot deletes
   its branch after merging; a new `dependabot/*` entry separates them from version-update PRs, which target `develop`
   like any `feature/*` PR (Gap #29)
 
 #### Build & Metadata
 
-- Project version bumped to **8.10.1** in `../../../../pom.xml`; `@OpenAPIDefinition` version updated to match
+- Project version bumped to **8.10.1** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 ---
 
@@ -83,12 +83,12 @@ schema changed.
 **Repository settings:** once this release reaches `main`, turn off Settings → Code security → Dependency graph →
 "Automatic dependency submission", so GitHub's built-in submission and the new workflow don't both submit snapshots.
 
-**Dependabot:** it reads `../../../../.github/dependabot.yml` from the default branch, so weekly version-update PRs start once
+**Dependabot:** it reads `.github/dependabot.yml` from the default branch, so weekly version-update PRs start once
 this release is on `main`. Expect a PR proposing `tomcat.version` `11.0.26` — merging it is fine, but removing the
 override altogether (Gap #26) still waits on a Spring Boot release that manages Tomcat `11.0.25` or later.
 
 **Contributors:** a Dependabot security-update PR is merged into `main` like a `hotfix/*`, then `main` is merged back
-into `develop` — see `../../../../CONTRIBUTING.md`'s Merging section.
+into `develop` — see `CONTRIBUTING.md`'s Merging section.
 
 ---
 
@@ -101,7 +101,7 @@ into `develop` — see `../../../../CONTRIBUTING.md`'s Merging section.
 - **Deletions:** 135 lines
 - **Net Change:** +447 lines
 - **New Source Files:** 0
-- **New Configuration Files:** 2 (`../../../../.github/workflows/dependency-submission.yml`, `.github/dependabot.yml`)
+- **New Configuration Files:** 2 (`.github/workflows/dependency-submission.yml`, `.github/dependabot.yml`)
 - **Deleted Files:** 0
 - **New Test Files:** 0
 
@@ -126,7 +126,7 @@ into `develop` — see `../../../../CONTRIBUTING.md`'s Merging section.
 
 - `./mvnw test` — full suite passing (970 tests, 0 failures/errors), unchanged from v8.10.0.
 - `./mvnw verify -Pcoverage` — 98.77% line / 99.09% branch coverage, JaCoCo gate passing.
-- `../../../../.github/workflows/dependency-submission.yml` and `.github/dependabot.yml` validated as YAML; the workflow runs for
+- `.github/workflows/dependency-submission.yml` and `.github/dependabot.yml` validated as YAML; the workflow runs for
   the first time on the push that lands this release on `develop`.
 
 ---
@@ -140,7 +140,7 @@ into `develop` — see `../../../../CONTRIBUTING.md`'s Merging section.
 - A competitor or match referenced by results or shooter logs can't be deleted through the API, since no endpoint
   removes those rows yet (carried over from v8.8.0, pending Gap #6).
 - The `BRANCH` coverage counter is still not separately enforced by the JaCoCo `check` execution — only `LINE` is.
-- `../../../../pom.xml` still overrides `tomcat.version` to `11.0.25` for three critical CVEs, since Spring Boot 4.1.1 manages
+- `pom.xml` still overrides `tomcat.version` to `11.0.25` for three critical CVEs, since Spring Boot 4.1.1 manages
   `11.0.24` (Gap #26).
 - GitHub's built-in automatic dependency submission is a repository setting and must be turned off by hand — see the
   Migration Guide.

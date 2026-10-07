@@ -7,7 +7,7 @@
   Jackson mix-in, so the `*ForCSV` models are gone, and a CSV header may omit optional columns.
 - **Adds `MatchPatchRequest` and `CompetitorPatchRequest`**, so `PATCH` on a match or competitor needs no body fields.
 - A **MAJOR** release: several changes break existing callers or deployments — see the Migration Guide in
-  `../../../../RELEASE_NOTES.md`.
+  `RELEASE_NOTES.md`.
 
 ## 📦 Key Changes
 
@@ -23,7 +23,7 @@
 - A competitor's home club also resolves by club abbreviation
 - `mysql-connector-j` pinned to `9.4.0`; the `dev` datasource URL uses `127.0.0.1`; the local profile drops
   `MYSQL_LOCAL_PASSWORD`
-- Version bumped to 9.0.0 in `../../../../pom.xml` and `@OpenAPIDefinition`; `tomcat.version` override kept (Gap #26)
+- Version bumped to 9.0.0 in `pom.xml` and `@OpenAPIDefinition`; `tomcat.version` override kept (Gap #26)
 
 **Security**
 
@@ -41,8 +41,8 @@
 - [x] `./mvnw verify -Pcoverage` — 947 tests across 69 classes, 0 failures/errors/skipped; 98.32% line / 98.69% branch
   coverage, JaCoCo gate (97%) passing
 - [x] Qodana, CodeQL and Docker workflows pass on this PR
-- [x] `../../../../RELEASE_NOTES.md` archived byte-for-byte to ``
-- [x] No version-specific references leaked into `../../../../README.md`/`ARCHITECTURE.md`
+- [x] `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v9/RELEASE_NOTES_v9.0.0.md`
+- [x] No version-specific references leaked into `README.md`/`ARCHITECTURE.md`
 
 ## 🔗 Related Documentation
 

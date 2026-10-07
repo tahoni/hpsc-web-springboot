@@ -62,8 +62,8 @@ patterns.
 ## 🛡️ Security & Updates
 
 - **Spring Boot upgrade:** Bumped to version 4.0.2 to address security vulnerabilities
-- **IDE clean-up:** Removed unnecessary IDE files (`../../../../.idea/data_source_mapping.xml`)
-- **Git configuration:** Updated `../../../../.gitignore` to prevent similar IDE metadata
+- **IDE clean-up:** Removed unnecessary IDE files (`.idea/data_source_mapping.xml`)
+- **Git configuration:** Updated `.gitignore` to prevent similar IDE metadata
 
 ---
 

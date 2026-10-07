@@ -1,10 +1,11 @@
 # HPSC Website Backend Change Log Archive (v8.0.0 – v9.1.0)
 
 The change log entries for versions 8.0.0 to 9.1.0 of the HPSC Website Backend project, archived from
-[`../../../CHANGELOG.md`](/CHANGELOG.md) to keep that file a manageable size. The entries are moved unchanged. See
-[`../../../CHANGELOG.md`](/CHANGELOG.md) for the current version, the unreleased changes and versions 10.0.0 onwards,
+[`CHANGELOG.md`](/CHANGELOG.md) to keep that file a manageable size. The entries are moved unchanged. See
+[`CHANGELOG.md`](/CHANGELOG.md) for the current version, the unreleased changes and versions 10.0.0 onwards,
 [`HISTORY_v8-v9.md`](/documentation/archive/v8-v9/HISTORY_v8-v9.md) for the archived narrative history of the same
-versions, and [`CHANGELOG_v1-v7.md`](/documentation/archive/v1-v7/CHANGELOG_v1-v7.md) for versions 1.0.0 to 7.4.1.
+versions, [`CHANGELOG_v5-v7.md`](/documentation/archive/v5-v7/CHANGELOG_v5-v7.md) for versions 5.0.0 to 7.4.1 and
+[`CHANGELOG_v1-v4.md`](/documentation/archive/v1-v4/CHANGELOG_v1-v4.md) for versions 1.0.0 to 4.1.0.
 
 ---
 
@@ -2317,7 +2318,7 @@ versions, and [`CHANGELOG_v1-v7.md`](/documentation/archive/v1-v7/CHANGELOG_v1-v
 ##### Documentation
 
 - **`documentation/history/RELEASE_NOTES_v7.1.0.md`:** Corrected its `.claude/commands/generate-commit-message.md`
-  reference to `../../.claude/commands/generate-commit-message.md` — the archived file lives two directories below the
+  reference to `.claude/commands/generate-commit-message.md` — the archived file lives two directories below the
   repository root, so the unprefixed relative link was broken
 - **`documentation/history/RELEASE_NOTES_v7.2.0.md`, `PR_DESCRIPTION_v7.2.0.md`:** Corrected stale `processCsv`
   references to `createAwards`, matching `AwardService.processCsv`'s/`ImageService.processCsv`'s rename above

@@ -12,7 +12,7 @@
 
 **Changed**
 
-- `../../../../.github/workflows/claude-code-review.yml`: `allowed_bots: 'dependabot'` (not `'*'`, which would admit every bot)
+- `.github/workflows/claude-code-review.yml`: `allowed_bots: 'dependabot'` (not `'*'`, which would admit every bot)
 - GitHub Actions `checkout@v7`, `setup-java@v6`, `upload-artifact@v7`; `dependency-submission.yml`'s `chmod` step
   dropped now that `mvnw` is executable
 - springdoc `3.1.1`, JaCoCo `0.8.15`, Maven `3.9.16`
@@ -29,8 +29,8 @@
 - [x] Effective POM resolves the Flyway plugin's `flyway-mysql` to `12.4.0`, matching the plugin
 - [x] `claude-code-review.yml` and `dependency-submission.yml` validated as YAML; `dependabot` confirmed to match
       `dependabot[bot]` in `claude-code-action`'s actor check
-- [x] Verified `../../../../RELEASE_NOTES.md` archived byte-for-byte to ``
-- [x] Confirmed no version-specific references leaked into `../../../../README.md`/`ARCHITECTURE.md` from this release's changes
+- [x] Verified `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v8/RELEASE_NOTES_v8.10.2.md`
+- [x] Confirmed no version-specific references leaked into `README.md`/`ARCHITECTURE.md` from this release's changes
 - [ ] Add `CLAUDE_CODE_OAUTH_TOKEN` as a Dependabot secret (Settings → Secrets and variables → Dependabot)
 
 ## 🔗 Related Documentation

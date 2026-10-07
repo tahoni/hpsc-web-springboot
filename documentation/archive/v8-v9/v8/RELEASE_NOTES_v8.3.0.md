@@ -12,7 +12,7 @@ Version 8.3.0 brings the match domain to parity with the competitor domain: `Ips
 (`POST /ipsc/matches/bulk`, consumes `text/csv`) persists matches, together with their stages, from CSV data,
 mirroring `IpscCompetitorController.createCompetitors`'s v8.1.0 bulk-import shape. Each row is created via the
 existing single-`createMatch` validation/club/firearm-type/category-resolution logic — no new cross-entity
-orchestration. This closes `../../../roadmap/improvement-plan.md`'s Gap #8, which `ARCHITECTURE.md` had
+orchestration. This closes `documentation/roadmap/improvement-plan.md`'s Gap #8, which `ARCHITECTURE.md` had
 documented since v8.1.0 as the one asymmetry left between the two IPSC domains' bulk-import support.
 
 ---
@@ -73,16 +73,16 @@ documented since v8.1.0 as the one asymmetry left between the two IPSC domains' 
 
 #### Documentation
 
-- `../../../roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — new Gap #8 (match bulk CSV import),
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — new Gap #8 (match bulk CSV import),
   closed in the same release it was added
-- `../../../../ARCHITECTURE.md` — Feature Support/Service Layer/Data Flow sections updated to reflect match bulk CSV import,
+- `ARCHITECTURE.md` — Feature Support/Service Layer/Data Flow sections updated to reflect match bulk CSV import,
   removing the stale "removed pending a rebuild" language
 
 ### Changed
 
 #### Documentation
 
-- `../../../../HISTORY.md` — new Historical Timeline entry, Phase 23 and Milestone 23 for v8.3.0
+- `HISTORY.md` — new Historical Timeline entry, Phase 23 and Milestone 23 for v8.3.0
 
 ---
 
@@ -177,7 +177,7 @@ Leoni Lubbinge
 ## 📝 Notes
 
 Version 8.3.0 is a scoped, single-domain feature release: it brings the match domain's bulk CSV import to parity
-with the competitor domain's, established in v8.1.0, and closes the roadmap gap `../../../../ARCHITECTURE.md` had left
+with the competitor domain's, established in v8.1.0, and closes the roadmap gap `ARCHITECTURE.md` had left
 documenting that asymmetry. No schema, configuration or existing-endpoint changes are involved.
 
 ---

@@ -1,11 +1,13 @@
 # HPSC Website Backend History Archive (v1.0.0 – v4.1.0)
 
 The per-version narrative history of versions 1.0.0 to 4.1.0 of the HPSC Website Backend project, archived from
-[`../../../HISTORY.md`](/HISTORY.md) to keep that file a manageable size. The entries are moved unchanged, grouped under
-the `../../../HISTORY.md` section each came from. See [`HISTORY.md`](/HISTORY.md) for the sections that span every
-version (Feature Timeline, Key Learnings, Project Philosophy Evolution and Conclusion) and for versions 10.0.0 onwards,
-[`CHANGELOG_v1-v4.md`](/documentation/archive/v1-v4/CHANGELOG_v1-v4.md) for the archived change log, [`EVOLUTION_OVERVIEW_v1-v4.md`](/documentation/archive/v1-v4/EVOLUTION_OVERVIEW_v1-v4.md) for the archived Phase-by-phase narrative and
-[`HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md) for versions 5.0.0 to 7.4.1.
+[`HISTORY.md`](/HISTORY.md) to keep that file a manageable size. The entries are moved unchanged, grouped under the
+`HISTORY.md` section each came from. See [`HISTORY.md`](/HISTORY.md) for the sections that span every version (Feature
+Timeline, Key Learnings, Project Philosophy Evolution and Conclusion) and for versions 10.0.0 onwards,
+[`CHANGELOG_v1-v4.md`](/documentation/archive/v1-v4/CHANGELOG_v1-v4.md) for the archived change log,
+[`EVOLUTION_OVERVIEW_v1-v4.md`](/documentation/archive/v1-v4/EVOLUTION_OVERVIEW_v1-v4.md) for the archived
+Phase-by-phase narrative and [`HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md) for versions 5.0.0 to
+7.4.1.
 
 ---
 

@@ -6,10 +6,10 @@
 
 ## 🎯 Theme
 
-**`../../../history` Reorganization & Evolution Overview Split**
+**`documentation/history/` Reorganization & Evolution Overview Split**
 
 Version 8.6.1 is a documentation-only patch release with no source-code, schema or dependency changes. It splits
-`../../../../HISTORY.md`'s largest, fastest-growing section — the Phase-by-phase "Evolution Overview" narrative, roughly half
+`HISTORY.md`'s largest, fastest-growing section — the Phase-by-phase "Evolution Overview" narrative, roughly half
 of the file's 4,095 lines — out into its own companion file, and regroups the 52-file archive of past
 `RELEASE_NOTES_vX.Y.Z.md`/`PR_DESCRIPTION_vX.Y.Z.md` files from a flat directory into major-version subdirectories.
 Every tool and doc that reads or writes those paths — three Claude Code skills, `AGENTS.md`'s Documentation File Map
@@ -22,17 +22,17 @@ a doc/tooling-only diff against `main` scopes this as a **PATCH** version, not a
 
 ### 📖 Evolution Overview Split
 
-- `../../../../HISTORY.md`'s "📖 Evolution Overview" section (the Phase-by-phase narrative) split out into new
-  `../../../EVOLUTION_OVERVIEW.md` — it had grown to roughly half of `HISTORY.md`'s 4,095 lines,
+- `HISTORY.md`'s "📖 Evolution Overview" section (the Phase-by-phase narrative) split out into new
+  `EVOLUTION_OVERVIEW.md` — it had grown to roughly half of `HISTORY.md`'s 4,095 lines,
   making the file unwieldy. `HISTORY.md` keeps a short pointer section under the same heading/anchor, so its
   Table of Contents entry still resolves; every other section stays in `HISTORY.md` unchanged
 
 ### 🗂️ documentation/history/ Reorganization
 
 - All 52 archived `RELEASE_NOTES_vX.Y.Z.md`/`PR_DESCRIPTION_vX.Y.Z.md` files regrouped from a flat directory into
-  `v1/` – `v8/` subdirectories by major version, moved with `git mv` to preserve history. `../../../../EVOLUTION_OVERVIEW.md`
+  `v1/` – `v8/` subdirectories by major version, moved with `git mv` to preserve history. `EVOLUTION_OVERVIEW.md`
   is unaffected — it's a standing living file, not a per-version archive
-- `../../../../AGENTS.md`'s Documentation File Map and Release Checklist (two independent copies of the archive-path
+- `AGENTS.md`'s Documentation File Map and Release Checklist (two independent copies of the archive-path
   references), `README.md`'s Documentation table, and the `prep-version-release`/`generate-pr-summary`/
   `update-improvement-plan-gaps` skills all updated to read/write `documentation/history/v<major>/...` paths
 
@@ -44,16 +44,16 @@ a doc/tooling-only diff against `main` scopes this as a **PATCH** version, not a
 
 #### Documentation
 
-- **`../../../../HISTORY.md`:** "📖 Evolution Overview" section split out into new `../../../../EVOLUTION_OVERVIEW.md`
+- **`HISTORY.md`:** "📖 Evolution Overview" section split out into new `EVOLUTION_OVERVIEW.md`
   — a short pointer under the same heading/anchor keeps the Table of Contents entry resolving; every other section
   unchanged
-- **`../../../../AGENTS.md`, `README.md`:** Documentation File Map/Documentation tables updated to list `../../../../EVOLUTION_OVERVIEW.md`
+- **`AGENTS.md`, `README.md`:** Documentation File Map/Documentation tables updated to list `EVOLUTION_OVERVIEW.md`
   as a standing exception in `documentation/history/` living directly there, and to describe the new `v1/` – `v8/`
   subdirectory grouping for the versioned archive files
-- **`../../../../AGENTS.md`'s Release Checklist, `prep-version-release` skill:** The "Extend `../../../../HISTORY.md`" step now specifies
-  that the Phase entry lands in `../../../EVOLUTION_OVERVIEW.md` while the Historical Timeline entry
+- **`AGENTS.md`'s Release Checklist, `prep-version-release` skill:** The "Extend `HISTORY.md`" step now specifies
+  that the Phase entry lands in `EVOLUTION_OVERVIEW.md` while the Historical Timeline entry
   and Milestone stay in `HISTORY.md`; the archive/PR-description steps target the new `v<major>/` subdirectory
-- **`../../../history`:** All 52 archived files regrouped from a flat directory into `v1/` – `v8/`
+- **`documentation/history/`:** All 52 archived files regrouped from a flat directory into `v1/` – `v8/`
   subdirectories by major version, moved with `git mv` to preserve history
 - **`generate-pr-summary`, `update-improvement-plan-gaps` skills:** Updated to read/glob archived release docs at
   `documentation/history/v<major>/...` instead of the old flat path
@@ -86,7 +86,7 @@ bottom of every archived release-notes file is unaffected.
 
 ## 🧭 Design Notes
 
-- **Split the section that's actually growing, not the whole file arbitrarily.** `../../../../HISTORY.md`'s "Evolution
+- **Split the section that's actually growing, not the whole file arbitrarily.** `HISTORY.md`'s "Evolution
   Overview" alone accounted for roughly half its size and is the section every release adds the most to (a full
   `Phase N` block per version) — isolating it addresses the actual growth driver in one move, rather than an
   even but less-targeted split across all sections.
@@ -97,7 +97,7 @@ bottom of every archived release-notes file is unaffected.
 - **Update every tool that writes to a path before the path changes underneath it.** The `prep-version-release`,
   `generate-pr-summary` and `update-improvement-plan-gaps` skills were all updated in the same release as the
   move, not left to fail on the next invocation.
-- **Leave frozen historical records alone.** Old `../../../../CHANGELOG.md` entries and a closed `improvement-plan.md` Gap's
+- **Leave frozen historical records alone.** Old `CHANGELOG.md` entries and a closed `improvement-plan.md` Gap's
   Evidence text that name pre-move filenames are deliberately left unedited, consistent with this project's own
   convention of never rewriting historical prose — they're plain text, not links, so nothing breaks for a reader.
 
@@ -110,7 +110,7 @@ bottom of every archived release-notes file is unaffected.
 - `./mvnw verify -Pcoverage` — coverage figures unchanged from v8.6.0.
 - No new tests added; this release makes no code changes. Verified instead: every moved file shows as a `git`
   rename (not delete+add), `git log --follow` traces full history on sampled v1/v8 files, and a repo-wide grep for
-  `documentation/history/RELEASE_NOTES_v`/`PR_DESCRIPTION_v` outside `../../../history` and the accepted
+  `documentation/history/RELEASE_NOTES_v`/`PR_DESCRIPTION_v` outside `documentation/history/` and the accepted
   historical exceptions returns zero matches.
 
 ---
@@ -145,7 +145,7 @@ Leoni Lubbinge
 
 ## 📝 Notes
 
-Version 8.6.1 is a documentation-only patch focused entirely on keeping `../../../../HISTORY.md` and `documentation/history/`
+Version 8.6.1 is a documentation-only patch focused entirely on keeping `HISTORY.md` and `documentation/history/`
 navigable as the project's release history keeps accumulating. No product-facing behaviour changed.
 
 ---

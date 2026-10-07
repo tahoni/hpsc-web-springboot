@@ -9,7 +9,7 @@
 **HISTORY.md Phase/Milestone Backfill & Release Re-Scoping to a Patch Version**
 
 Version 8.5.1 is a documentation-only patch release with no source-code, schema or dependency changes. It backfills
-three releases' worth of missing `../../../../HISTORY.md` "📖 Evolution Overview"/"🎯 Major Milestones" entries (v8.4.1, v8.4.2
+three releases' worth of missing `HISTORY.md` "📖 Evolution Overview"/"🎯 Major Milestones" entries (v8.4.1, v8.4.2
 and v8.5.0), closing `improvement-plan.md`'s Gap #10 — the mandatory per-release Phase/Milestone step `AGENTS.md`'s
 Release Checklist requires unconditionally. It also brings `HISTORY.md`'s own version-keyed sections into
 consistent ascending order and prunes a stale legacy footer from its Conclusion section. Partway through drafting
@@ -32,13 +32,13 @@ v8.4.1/v8.4.2.
 
 ### 🔄 Internal Chronological Consistency
 
-- `../../../../HISTORY.md`'s "📖 Evolution Overview", "🎯 Major Milestones", "🏛️ Architectural Evolution" and "🗺️ Future
+- `HISTORY.md`'s "📖 Evolution Overview", "🎯 Major Milestones", "🏛️ Architectural Evolution" and "🗺️ Future
   Roadmap Implications" reordered to ascending (oldest-first), matching the convention already used by
   "✨ Feature Timeline" and "💡 Project Philosophy Evolution" — only "📅 Historical Timeline" keeps its
   most-recent-first order. Architectural Evolution's `v5.3.0`/`v5.4.0` entries, previously stranded after `v8.0.0`
   in a broken mixed order, are now correctly interleaved between `v5.2.0` and `v6.0.0`
 - Stale "Document Created"/"Last Updated"/"Coverage" metadata and the "Recent Updates"/"Previous Update"
-  bold-labelled update log removed from the end of `../../../../HISTORY.md`'s Conclusion section — badly out of date (stopped
+  bold-labelled update log removed from the end of `HISTORY.md`'s Conclusion section — badly out of date (stopped
   at v8.0.0/v5.1.0) and superseded by the Historical Timeline, Evolution Overview and Major Milestones sections
   elsewhere in the file
 
@@ -55,10 +55,10 @@ v8.4.1/v8.4.2.
 
 ### 🔀 Release Re-Scoping to a Patch Version
 
-- This release's entire diff against `main` proved documentation/tooling-only (no `../../../../src/main/java`/`src/test`
+- This release's entire diff against `main` proved documentation/tooling-only (no `src/main/java`/`src/test`
   change), so per `CHANGELOG.md`'s Version Policy it was re-scoped from the originally-planned `v8.6.0` **MINOR**
   version down to `v8.5.1` **PATCH** — matching the precedent set by v8.4.1/v8.4.2
-- The branch and every in-flight `../../../../CHANGELOG.md`/`HISTORY.md`/improvement-plan reference to `v8.6.0` renamed to
+- The branch and every in-flight `CHANGELOG.md`/`HISTORY.md`/improvement-plan reference to `v8.6.0` renamed to
   `v8.5.1` ahead of this release-prep pass
 
 ### 🧩 Tooling & Minor Fixes
@@ -66,7 +66,7 @@ v8.4.1/v8.4.2.
 - `prep-version-release`/`generate-pr-summary` skills now end their drafted PR description/summary with the
   standard Claude Code attribution footer, marking them as Claude-drafted like any other PR description Claude
   Code opens
-- `../../../../CONTRIBUTING.md` spells out "and" instead of "&" in its CI/CD & Quality Gates cross-reference; a Flyway baseline
+- `CONTRIBUTING.md` spells out "and" instead of "&" in its CI/CD & Quality Gates cross-reference; a Flyway baseline
   comment in `application-local.properties` tightened for clarity
 
 ---
@@ -77,11 +77,11 @@ v8.4.1/v8.4.2.
 
 #### Documentation
 
-- **`../../../../HISTORY.md`:** New "Phase 26"/"Milestone 26" (v8.4.1), "Phase 27"/"Milestone 27" (v8.4.2), "Phase 28"/
+- **`HISTORY.md`:** New "Phase 26"/"Milestone 26" (v8.4.1), "Phase 27"/"Milestone 27" (v8.4.2), "Phase 28"/
   "Milestone 28" (v8.5.0) and this release's own "Phase 29"/"Milestone 29" (v8.5.1) entries in "📖 Evolution
   Overview"/"🎯 Major Milestones"
 - **`improvement-plan.md`:** New "📋 At a Glance" section indexing every gap by completion status; Gap #10 (the
-  `../../../../HISTORY.md` backfill gap itself), now closed
+  `HISTORY.md` backfill gap itself), now closed
 
 ### Changed
 
@@ -92,12 +92,12 @@ v8.4.1/v8.4.2.
 - **`improvement-plan-tasks.md`:** Intro line's gap count updated from "nine" to "ten"; Gap #10's checkbox block
   moved to "✅ Completed" with every item checked, including the final re-check of this release's own Phase/
   Milestone need
-- **`../../../../HISTORY.md`:** "Major Version Goals" Version 8.x entry extended from `v8.0.0 – v8.1.1` to `v8.0.0 – v8.5.1`
-- **`../../../../HISTORY.md`:** "📖 Evolution Overview", "🎯 Major Milestones", "🏛️ Architectural Evolution" and "🗺️ Future
+- **`HISTORY.md`:** "Major Version Goals" Version 8.x entry extended from `v8.0.0 – v8.1.1` to `v8.0.0 – v8.5.1`
+- **`HISTORY.md`:** "📖 Evolution Overview", "🎯 Major Milestones", "🏛️ Architectural Evolution" and "🗺️ Future
   Roadmap Implications" reordered to ascending (oldest-first), matching the convention already used by
   "✨ Feature Timeline" and "💡 Project Philosophy Evolution" — only "📅 Historical Timeline" keeps its
   most-recent-first order, per standard changelog convention
-- **`../../../../CONTRIBUTING.md`:** Spells out "and" instead of "&" in its CI/CD & Quality Gates cross-reference sentence
+- **`CONTRIBUTING.md`:** Spells out "and" instead of "&" in its CI/CD & Quality Gates cross-reference sentence
 
 #### Configuration
 
@@ -113,7 +113,7 @@ v8.4.1/v8.4.2.
 
 #### Documentation
 
-- **`../../../../HISTORY.md`:** Stale "Document Created"/"Last Updated"/"Coverage" metadata line and the "Recent Updates"/
+- **`HISTORY.md`:** Stale "Document Created"/"Last Updated"/"Coverage" metadata line and the "Recent Updates"/
   "Previous Update" bold-labelled update log at the end of the Conclusion section, both badly out of date (stopped
   at v8.0.0/v5.1.0) and superseded by the Historical Timeline, Evolution Overview and Major Milestones sections
   elsewhere in the file
@@ -195,7 +195,7 @@ Leoni Lubbinge
 
 ## 📝 Notes
 
-Version 8.5.1 is a documentation-only patch focused entirely on closing a three-release `../../../../HISTORY.md` Phase/Milestone
+Version 8.5.1 is a documentation-only patch focused entirely on closing a three-release `HISTORY.md` Phase/Milestone
 backlog, bringing `HISTORY.md`'s own sections into consistent chronological order and correcting this release's own
 Semantic Versioning classification. No product-facing behaviour changed.
 

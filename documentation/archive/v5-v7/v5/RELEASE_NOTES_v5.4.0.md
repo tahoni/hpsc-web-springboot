@@ -152,17 +152,17 @@ new test code across 20+ new test classes.
 
 ### 🔄 Code Quality & CI/CD
 
-- **Qodana JVM Linter:** `../../../../qodana.yaml` updated with `jetbrains/qodana-jvm` linter
+- **Qodana JVM Linter:** `qodana.yaml` updated with `jetbrains/qodana-jvm` linter
     - Configured for JVM-targeted static analysis
     - Licence auditing enabled via `CheckDependencyLicenses`
-- **JaCoCo Code Coverage:** `../../../../pom.xml` updated with JaCoCo 0.8.14 configuration and coverage profile
+- **JaCoCo Code Coverage:** `pom.xml` updated with JaCoCo 0.8.14 configuration and coverage profile
     - Coverage reports output to `/coverage` directory
     - Integrated with Qodana code quality workflow
-- **Code Quality Workflow:** `../../../../.github/workflows/code_quality.yml` enhanced (34 lines)
+- **Code Quality Workflow:** `.github/workflows/code_quality.yml` enhanced (34 lines)
     - Added dependency installation step
     - Extended branch pattern support (feature, bugfix, hotfix branches)
-- **`../../../../.aiignore` file added:** Excludes AI-irrelevant files from AI assistant context
-- **`qodana.yml` removed:** Duplicate Qodana configuration removed; consolidated in `../../../../qodana.yaml`
+- **`.aiignore` file added:** Excludes AI-irrelevant files from AI assistant context
+- **`qodana.yml` removed:** Duplicate Qodana configuration removed; consolidated in `qodana.yaml`
 - **Spring Framework stabilised:** Reverted `spring-framework.version` from 7.0.8 to 7.0.7
 
 ### 🐛 Bug Fixes
@@ -198,9 +198,9 @@ new test code across 20+ new test classes.
 
 #### CI/CD & Configuration
 
-- `../../../../.aiignore` file for AI assistant context management
-- JaCoCo 0.8.14 coverage profile in `../../../../pom.xml`
-- Qodana JVM linter configuration in `../../../../qodana.yaml`
+- `.aiignore` file for AI assistant context management
+- JaCoCo 0.8.14 coverage profile in `pom.xml`
+- Qodana JVM linter configuration in `qodana.yaml`
 - Branch patterns for feature, bugfix, and hotfix in `code_quality.yml`
 
 ### Changed
@@ -301,7 +301,7 @@ new test code across 20+ new test classes.
 
 #### Configuration
 
-- `qodana.yml` – duplicate removed; configuration consolidated in `../../../../qodana.yaml`
+- `qodana.yml` – duplicate removed; configuration consolidated in `qodana.yaml`
 
 #### Test Classes
 

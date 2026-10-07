@@ -8,7 +8,7 @@
 - A match's stages are represented in CSV as a single semicolon-separated `<stageNumber>-<stageName>` cell, not a
   nested list — an earlier `numberOfStages` count-only design was tried and dropped in favour of this before either
   reached `develop`.
-- Closes `../../../roadmap/improvement-plan.md`'s Gap #8, which `ARCHITECTURE.md` had documented since v8.1.0
+- Closes `documentation/roadmap/improvement-plan.md`'s Gap #8, which `ARCHITECTURE.md` had documented since v8.1.0
   as the one asymmetry left between the two IPSC domains' bulk-import support.
 
 ## 📦 Key Changes
@@ -18,12 +18,12 @@
 - `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`, consumes `text/csv`)
 - `IpscMatchService`/`IpscMatchServiceImpl.createMatches`, with new `readMatches`/`toRequest`/`parseStages` helpers
 - `MatchRequestForCSV`, `MatchResponseHolder` models (`models/ipsc/match/`)
-- `../../../roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — Gap #8 added and closed in the same
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — Gap #8 added and closed in the same
   release
 
 **Changed**
 
-- `../../../../ARCHITECTURE.md`, `README.md` — reverse-synced to describe match bulk CSV import; stale "removed pending a
+- `ARCHITECTURE.md`, `README.md` — reverse-synced to describe match bulk CSV import; stale "removed pending a
   rebuild" language for the match domain removed
 
 ## 🧪 Test Plan
@@ -31,8 +31,8 @@
 - [x] `./mvnw test` — full suite passing (836 tests, 0 failures/errors)
 - [x] New unit tests across `IpscMatchController`/`Service`/`ServiceImpl`'s bulk import and `MatchRequestForCSV`'s
       JSON/CSV (de)serialisation and required-field enforcement
-- [x] Verified `../../../../RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/RELEASE_NOTES_v8.3.0.md`
-- [x] Confirmed no version-specific references leaked into `../../../../README.md`/`ARCHITECTURE.md`
+- [x] Verified `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/RELEASE_NOTES_v8.3.0.md`
+- [x] Confirmed no version-specific references leaked into `README.md`/`ARCHITECTURE.md`
 
 ## 🔗 Related Documentation
 

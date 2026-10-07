@@ -8,7 +8,7 @@
 
 **Docker Image Build in CI & Branch Coverage Gate**
 
-Version 8.11.1 is a patch release. v8.11.0 added a `../../../../Dockerfile`, but no CI workflow built it, and the release notes
+Version 8.11.1 is a patch release. v8.11.0 added a `Dockerfile`, but no CI workflow built it, and the release notes
 recorded that as a Known Issue: a change that broke the image would only surface the next time someone built it by
 hand or deployed it. A new GitHub Actions workflow now builds the image on every push and pull request to `main` and
 `develop`, so a broken `Dockerfile` fails CI like any other regression. The coverage gate now enforces a 97% branch
@@ -21,7 +21,7 @@ the Docker gap in the improvement plan as Gap #31, closed here.
 
 ### 🔬 Docker Image Built in CI
 
-- New `../../../../.github/workflows/docker.yml` builds the `Dockerfile` on every push and PR to `main`/`develop`
+- New `.github/workflows/docker.yml` builds the `Dockerfile` on every push and PR to `main`/`develop`
 - Build only, never pushed — the image is checked, not published, so the workflow needs only read access
 - Layers are reused across runs through the GitHub Actions cache; tests stay in `build.yml`
 
@@ -42,7 +42,7 @@ the Docker gap in the improvement plan as Gap #31, closed here.
 
 #### CI/CD & Configuration
 
-- **`../../../../.github/workflows/docker.yml`:** Builds the `../../../../Dockerfile` with `docker/build-push-action` on every push and PR to
+- **`.github/workflows/docker.yml`:** Builds the `Dockerfile` with `docker/build-push-action` on every push and PR to
   `main`/`develop`, so a change that breaks the image fails CI instead of surfacing at deployment — the Known Issue
   v8.11.0 recorded. The image is never pushed, and layers are reused through the GitHub Actions cache. Listed in
   `ARCHITECTURE.md`'s CI/CD & Quality Gates table and `CONTRIBUTING.md`'s summary of it
@@ -56,13 +56,13 @@ the Docker gap in the improvement plan as Gap #31, closed here.
 
 #### CI/CD & Configuration
 
-- **`../../../../pom.xml` (`jacoco-maven-plugin`'s `check` execution):** Enforces a 97% `BRANCH` minimum alongside the existing
+- **`pom.xml` (`jacoco-maven-plugin`'s `check` execution):** Enforces a 97% `BRANCH` minimum alongside the existing
   97% `LINE` one, so a branch-coverage regression fails `build.yml` too — ending the line-only deviation recorded
-  under Gap #4. Reflected in `../../../../ARCHITECTURE.md`'s CI/CD & Quality Gates table and `improvement-plan.md`
+  under Gap #4. Reflected in `ARCHITECTURE.md`'s CI/CD & Quality Gates table and `improvement-plan.md`
 
 #### Build & Metadata
 
-- Project version bumped to **8.11.1** in `../../../../pom.xml`; `@OpenAPIDefinition` version updated to match
+- Project version bumped to **8.11.1** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 ---
 
@@ -83,7 +83,7 @@ runs only in GitHub Actions and changes nothing about how the application is bui
 - **Insertions:** 485 lines
 - **Deletions:** 141 lines
 - **Net Change:** +344 lines
-- **New Source Files:** 1 (`../../../../.github/workflows/docker.yml`)
+- **New Source Files:** 1 (`.github/workflows/docker.yml`)
 - **Deleted Files:** 0
 - **New Test Files:** 0
 
@@ -93,15 +93,15 @@ runs only in GitHub Actions and changes nothing about how the application is bui
 
 - **Build, don't publish.** Publishing an image isn't a stated goal, so the workflow sets `push: false` and runs with
   read-only `contents` permission — no registry credentials, and nothing a pull request can push.
-- **No second test run.** The `../../../../Dockerfile` skips tests, and the workflow doesn't add them back: `build.yml` already
+- **No second test run.** The `Dockerfile` skips tests, and the workflow doesn't add them back: `build.yml` already
   runs the full suite with coverage on the same triggers, so the image build only has to prove the image builds.
 - **Cached layers.** `cache-from`/`cache-to` with `type=gha,mode=max` keep unchanged dependency layers between runs,
-  which the `../../../../Dockerfile`'s layer order (dependencies resolved before `src/` is copied) is built to exploit.
+  which the `Dockerfile`'s layer order (dependencies resolved before `src/` is copied) is built to exploit.
 - **Same floor for branches as for lines.** The branch limit reuses the line limit's 97% rather than tracking the
   higher 99.09% baseline, keeping the same deliberate margin Gap #4 settled on so ordinary fluctuation doesn't trip
   the gate.
 - **A PATCH, not a MINOR.** The new workflow and the stricter coverage gate are CI and build tooling with no
-  externally visible behaviour change, which `../../../../AGENTS.md`'s Semantic Versioning rules classify as a PATCH.
+  externally visible behaviour change, which `AGENTS.md`'s Semantic Versioning rules classify as a PATCH.
 
 ---
 
@@ -123,7 +123,7 @@ runs only in GitHub Actions and changes nothing about how the application is bui
   over from v7.0.0 – v7.1.0).
 - A competitor or match referenced by results or shooter logs can't be deleted through the API, since no endpoint
   removes those rows yet (carried over from v8.8.0, pending Gap #6).
-- `../../../../pom.xml` still overrides `tomcat.version` to `11.0.25` for three critical CVEs, since Spring Boot 4.1.1 manages
+- `pom.xml` still overrides `tomcat.version` to `11.0.25` for three critical CVEs, since Spring Boot 4.1.1 manages
   `11.0.24` (Gap #26).
 - The Claude code review on Dependabot PRs fails until `CLAUDE_CODE_OAUTH_TOKEN` is also stored as a Dependabot
   secret, if not already done for v8.10.2.

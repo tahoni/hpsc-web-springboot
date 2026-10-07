@@ -12,7 +12,7 @@ Version 8.6.0 adds a `url` field to IPSC matches — a link to more information 
 or event listing — and corrects `IpscMatch.startTime`/`endTime` from `LocalDateTime` to `LocalTime`, dropping the
 redundant date component those fields never needed. It also formally documents the 3-tier service test architecture
 already followed by all four services, closing a gap between the project's actual testing practice and what
-`../../../../AGENTS.md` said about it.
+`AGENTS.md` said about it.
 
 ---
 
@@ -34,7 +34,7 @@ already followed by all four services, closing a gap between the project's actua
 
 ### 🧪 Test Architecture Formalisation
 
-- `../../../../AGENTS.md`'s Test Conventions section now formally documents the 3-tier service test architecture
+- `AGENTS.md`'s Test Conventions section now formally documents the 3-tier service test architecture
   (`<Service>Test`/`<Service>ImplTest`/`<Service>IntegrationTest`) already followed by all four services, replacing
   a one-line pointer that previously only described the pattern piecemeal across the `scaffold-unit-tests`/
   `scaffold-integration-tests` skills
@@ -104,7 +104,7 @@ already followed by all four services, closing a gap between the project's actua
 
 #### Documentation
 
-- **`../../../../AGENTS.md`:** Test Conventions section now formally documents the 3-tier service test architecture
+- **`AGENTS.md`:** Test Conventions section now formally documents the 3-tier service test architecture
   (`<Service>Test`/`<Service>ImplTest`/`<Service>IntegrationTest`) already followed by all four services —
   previously only described piecemeal across the `scaffold-unit-tests`/`scaffold-integration-tests` skills
 

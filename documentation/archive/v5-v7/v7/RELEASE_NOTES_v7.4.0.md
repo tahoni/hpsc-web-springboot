@@ -30,12 +30,12 @@ Version 7.4.0 is a mixed release. It lays down a new `models/ipsc/request`/`mode
 
 - New AGENTS.md **Serial commas** rule: lists of three or more items no longer take a comma before the final `and`/`or`.
 - AGENTS.md's British English rule is tightened to also cover code identifiers (class/method/variable names), not just prose — dropping the previous exception.
-- Both rules are applied retroactively across `../../../../CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md` and the Claude Code command files. The identifier-spelling sweep found and corrected two American spellings in existing test method names.
-- `../../../roadmap`'s `IMPROVEMENT_PLAN.md`/`TASKS.md` are renamed to `improvement-plan.md`/`improvement-plan-tasks.md` for kebab-case consistency with the rest of the tooling docs.
+- Both rules are applied retroactively across `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md` and the Claude Code command files. The identifier-spelling sweep found and corrected two American spellings in existing test method names.
+- `documentation/roadmap/`'s `IMPROVEMENT_PLAN.md`/`TASKS.md` are renamed to `improvement-plan.md`/`improvement-plan-tasks.md` for kebab-case consistency with the rest of the tooling docs.
 
 ### 🤖 New `/sync-unreleased-changes` Command
 
-- Diffs the current branch against its base (`develop`/`main`) plus any uncommitted changes, cross-checks the result against `../../../../CHANGELOG.md`'s `[Unreleased]` section and fills in any missing entries directly in the file.
+- Diffs the current branch against its base (`develop`/`main`) plus any uncommitted changes, cross-checks the result against `CHANGELOG.md`'s `[Unreleased]` section and fills in any missing entries directly in the file.
 
 ---
 
@@ -50,7 +50,7 @@ Version 7.4.0 is a mixed release. It lays down a new `models/ipsc/request`/`mode
 
 #### Documentation
 
-- `../../../roadmap/improvement-plan.md` / `improvement-plan-tasks.md` — synthesised repo goals/gaps and their checkbox-level task breakdown
+- `documentation/roadmap/improvement-plan.md` / `improvement-plan-tasks.md` — synthesised repo goals/gaps and their checkbox-level task breakdown
 
 #### Tooling
 
@@ -60,9 +60,9 @@ Version 7.4.0 is a mixed release. It lays down a new `models/ipsc/request`/`mode
 
 #### Documentation
 
-- `../../../../AGENTS.md` — new Serial commas rule; British English rule tightened to cover code identifiers; both applied across the existing documentation set
-- `../../../roadmap` — `IMPROVEMENT_PLAN.md`/`TASKS.md` renamed to `improvement-plan.md`/`improvement-plan-tasks.md`
-- `../../../../RELEASE_NOTES.md` Contributors — now sourced from `git log`'s unique commit authors instead of a generic placeholder
+- `AGENTS.md` — new Serial commas rule; British English rule tightened to cover code identifiers; both applied across the existing documentation set
+- `documentation/roadmap/` — `IMPROVEMENT_PLAN.md`/`TASKS.md` renamed to `improvement-plan.md`/`improvement-plan-tasks.md`
+- `RELEASE_NOTES.md` Contributors — now sourced from `git log`'s unique commit authors instead of a generic placeholder
 
 #### Testing
 
@@ -70,7 +70,7 @@ Version 7.4.0 is a mixed release. It lays down a new `models/ipsc/request`/`mode
 
 #### Configuration
 
-- `../../../../.gitignore` / `.aiignore` — refreshed from the latest upstream templates
+- `.gitignore` / `.aiignore` — refreshed from the latest upstream templates
 
 ### Fixed
 
@@ -81,13 +81,13 @@ Version 7.4.0 is a mixed release. It lays down a new `models/ipsc/request`/`mode
 
 #### Documentation
 
-- `../../../../README.md` — restored the missing H1 heading
+- `README.md` — restored the missing H1 heading
 
 ### Removed
 
 #### Configuration
 
-- `../../../../.aiignore` — dropped the dedicated `.claude/`/`.github/` AI-only exclusion block
+- `.aiignore` — dropped the dedicated `.claude/`/`.github/` AI-only exclusion block
 
 ### Security
 
@@ -99,14 +99,14 @@ Version 7.4.0 is a mixed release. It lays down a new `models/ipsc/request`/`mode
 
 ### For Deployers
 
-- **No schema or configuration changes in this release.** The `../../../../.gitignore`/`.aiignore` refresh and `log4j-api` override are the only build-adjacent changes, neither of which affects deployment.
+- **No schema or configuration changes in this release.** The `.gitignore`/`.aiignore` refresh and `log4j-api` override are the only build-adjacent changes, neither of which affects deployment.
 
 ### For Developers
 
 - **Breaking: `AwardController`/`ImageController` route paths changed.** `/v1/awards` → `/awards` and `/v1/images` → `/images`. Update any client, integration test or API-gateway configuration that hard-codes the old `/v1` paths.
 - **No domain/service-layer changes** — the new IPSC request DTOs aren't referenced by any controller or service yet, so there's nothing to update in calling code.
 - **New identifier-spelling rule:** code identifiers (class/method/variable names) must now use British English spelling, same as prose — see AGENTS.md's Documentation Conventions.
-- **New command:** `/sync-unreleased-changes` cross-checks a branch's full diff against `../../../../CHANGELOG.md`'s `[Unreleased]` section and fills in anything missing.
+- **New command:** `/sync-unreleased-changes` cross-checks a branch's full diff against `CHANGELOG.md`'s `[Unreleased]` section and fills in anything missing.
 
 ---
 
@@ -145,7 +145,7 @@ Version 7.4.0 is a mixed release. It lays down a new `models/ipsc/request`/`mode
 
 - Wire the new IPSC request DTOs into `IpscController` endpoints, backed by the existing entity/repository layer.
 - Add dedicated unit test coverage for the new IPSC request/shared DTOs.
-- Rebuild the match/competitor service and controller layer that `../../../../README.md` describes as groundwork-only.
+- Rebuild the match/competitor service and controller layer that `README.md` describes as groundwork-only.
 
 ---
 

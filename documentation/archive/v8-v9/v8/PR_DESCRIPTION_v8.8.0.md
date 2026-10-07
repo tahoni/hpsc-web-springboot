@@ -18,7 +18,7 @@
 
 **Changed**
 
-- `../../../../ARCHITECTURE.md` documents the reject-not-cascade delete rule; `standard-rest-conventions.md`'s examples now
+- `ARCHITECTURE.md` documents the reject-not-cascade delete rule; `standard-rest-conventions.md`'s examples now
   cover both controllers' full verb sets
 - Gap #12 closed; project version bumped to 8.8.0
 
@@ -28,9 +28,9 @@
 - [x] `./mvnw verify -Pcoverage` — 98.70% line / 99.03% branch coverage, JaCoCo gate passing
 - [x] H2-backed integration tests confirm a real delete removes the record with its emails or stages, and that a
       referenced record is refused and kept
-- [x] Verified `../../../../RELEASE_NOTES.md` archived byte-for-byte to ``
-- [x] Confirmed no version-specific references leaked into `../../../../README.md`/`ARCHITECTURE.md` from this release's changes
-- [x] `../../../roadmap/improvement-plan.md`/`improvement-plan-tasks.md` checked — a full sweep recorded new
+- [x] Verified `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v8/RELEASE_NOTES_v8.8.0.md`
+- [x] Confirmed no version-specific references leaked into `README.md`/`ARCHITECTURE.md` from this release's changes
+- [x] `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` checked — a full sweep recorded new
   Gap #13; the branch-diff sync confirmed Gap #12's closure and found nothing else closed or progressed
 
 ## 🔗 Related Documentation

@@ -68,7 +68,7 @@ proving they persist correctly through the real database, not just mocked reposi
 
 #### Documentation
 
-- **`../../../../README.md`:** "License" heading/prose corrected to British English "Licence" (the `../../../../LICENSE.md` filename
+- **`README.md`:** "License" heading/prose corrected to British English "Licence" (the `LICENSE.md` filename
   itself is unchanged, per `AGENTS.md`'s British English exceptions for filenames)
 
 ### Changed
@@ -86,7 +86,7 @@ proving they persist correctly through the real database, not just mocked reposi
 
 #### Documentation
 
-- **`../../../../AGENTS.md`:** British English exception for `../../../../LICENSE.md` narrowed — only the filename and the file's own
+- **`AGENTS.md`:** British English exception for `LICENSE.md` narrowed — only the filename and the file's own
   content stay American English "License"; every other reference to it (headings, tables, ToC entries, prose)
   now spells it "Licence", matching the rest of the project's British English convention rather than carving out
   an exception for it
@@ -95,7 +95,7 @@ proving they persist correctly through the real database, not just mocked reposi
 
 #### Documentation
 
-- **`../../../../CONTRIBUTING.md`:** Its own Serial Commas rule example ("prose, comments, and Javadoc") violated the rule it
+- **`CONTRIBUTING.md`:** Its own Serial Commas rule example ("prose, comments, and Javadoc") violated the rule it
   was illustrating — corrected to "prose, comments and Javadoc"
 
 ---

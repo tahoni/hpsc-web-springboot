@@ -39,7 +39,7 @@
 - `CompetitorRequest`/`CompetitorRequestForCSV`/`MatchRequest` — explicit `@JsonFormat` date pattern on `LocalDate`
   fields
 - `CompetitorResponse` — `@NotNull` documentation added to always-set fields
-- `../../../../README.md`/`ARCHITECTURE.md` reverse-synced to describe the new bulk CSV import endpoint and data flow
+- `README.md`/`ARCHITECTURE.md` reverse-synced to describe the new bulk CSV import endpoint and data flow
 
 **Removed**
 
@@ -53,10 +53,10 @@
 - [x] A throwaway `csvMapper.addMixIn(...)` scratch test (written, run, then discarded) confirmed the scores CSV
   variants are genuinely mixin-compatible with their plain counterparts
 - [ ] Competitor scores submission (`MatchOverallScoresRequest`/`MatchStageScoresRequest`) remains groundwork only —
-  no controller wiring yet (see Known Issues in `../../../../RELEASE_NOTES.md`)
+  no controller wiring yet (see Known Issues in `RELEASE_NOTES.md`)
 
 ## 🔗 Related Documentation
 
-- [`../../../../RELEASE_NOTES.md`](/RELEASE_NOTES.md)
-- [`../../../../CHANGELOG.md`](/CHANGELOG.md)
-- [`../../../../HISTORY.md`](/HISTORY.md)
+- [`RELEASE_NOTES.md`](/RELEASE_NOTES.md)
+- [`CHANGELOG.md`](/CHANGELOG.md)
+- [`HISTORY.md`](/HISTORY.md)

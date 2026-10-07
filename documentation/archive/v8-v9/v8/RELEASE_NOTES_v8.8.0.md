@@ -9,7 +9,7 @@
 **Competitor & Match Delete Endpoints**
 
 Version 8.8.0 is a minor feature release. It adds `DELETE /ipsc/competitors/{competitorId}` and
-`DELETE /ipsc/matches/{matchId}`, the last verb missing from both domains, so the "full CRUD" that `../../../../README.md` and
+`DELETE /ipsc/matches/{matchId}`, the last verb missing from both domains, so the "full CRUD" that `README.md` and
 `ARCHITECTURE.md` have long described is now real. Deletion follows one rule: a record that scoring or shooter-log
 history still points at is refused with `400 Bad Request` instead of being cascaded away, while the things a record
 owns outright — a competitor's email addresses and a match's stages — are deleted with it. The release closes
@@ -36,8 +36,8 @@ workflows run on this repository but aren't listed in the CI/CD documentation.
 
 ### 🛤️ Roadmap
 
-- Gap #12 closed — the "CRUD" claims in `../../../../README.md`/`ARCHITECTURE.md` are now accurate
-- New Gap #13 — document `claude.yml` and `claude-code-review.yml` in `../../../../ARCHITECTURE.md`'s CI/CD & Quality Gates
+- Gap #12 closed — the "CRUD" claims in `README.md`/`ARCHITECTURE.md` are now accurate
+- New Gap #13 — document `claude.yml` and `claude-code-review.yml` in `ARCHITECTURE.md`'s CI/CD & Quality Gates
   table
 
 ---
@@ -73,14 +73,14 @@ workflows run on this repository but aren't listed in the CI/CD documentation.
 
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #13, with a matching "⚪ Open" task block —
   `claude.yml` (`@claude` assistant) and `claude-code-review.yml` (automated review on every PR) are live but
-  missing from `../../../../ARCHITECTURE.md`'s CI/CD & Quality Gates table, its Project Structure tree comment and
+  missing from `ARCHITECTURE.md`'s CI/CD & Quality Gates table, its Project Structure tree comment and
   `CONTRIBUTING.md`'s summary of that table
 
 ### Changed
 
 #### Documentation Updates
 
-- **`../../../../ARCHITECTURE.md`:** New Service Layer note on the delete rule — owned emails and stages are removed with their
+- **`ARCHITECTURE.md`:** New Service Layer note on the delete rule — owned emails and stages are removed with their
   record, but a record still referenced by scoring or shooter-log rows is refused rather than cascaded
 - **`standard-rest-conventions.md`:** "🔍 Current State in This Codebase" now names `IpscCompetitorController`
   alongside `IpscMatchController` as full-pattern examples, covering every verb including `getAll` and `delete`
@@ -89,7 +89,7 @@ workflows run on this repository but aren't listed in the CI/CD documentation.
 
 #### Build & Metadata
 
-- Project version bumped to **8.8.0** in `../../../../pom.xml`; `@OpenAPIDefinition` version updated to match
+- Project version bumped to **8.8.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 ---
 
@@ -167,7 +167,7 @@ a referenced record can't currently be deleted through the API at all.
   over from v7.0.0 – v7.1.0).
 - A competitor or match referenced by results or shooter logs can't be deleted through the API, since no endpoint
   removes those rows yet — a consequence of the reject-not-cascade rule above, pending Gap #6.
-- `claude.yml` and `claude-code-review.yml` aren't listed in `../../../../ARCHITECTURE.md`'s CI/CD & Quality Gates table
+- `claude.yml` and `claude-code-review.yml` aren't listed in `ARCHITECTURE.md`'s CI/CD & Quality Gates table
   (new Gap #13).
 - The `BRANCH` coverage counter is still not separately enforced by the JaCoCo `check` execution — only `LINE` is,
   as established when the gate was first added in v8.3.1.
@@ -176,7 +176,7 @@ a referenced record can't currently be deleted through the API at all.
 
 ## 🔮 Future Enhancements
 
-- Resolve Gap #13: add the Claude Code review and assistant workflows to `../../../../ARCHITECTURE.md`'s CI/CD & Quality Gates
+- Resolve Gap #13: add the Claude Code review and assistant workflows to `ARCHITECTURE.md`'s CI/CD & Quality Gates
   table and Project Structure tree, and to `CONTRIBUTING.md`'s summary.
 - Build a `MatchScoreService`/`ShooterLogService` (interface + `impl/` split) over the existing repositories,
   following the same phased pattern that closed Gap #1 and Gap #8.

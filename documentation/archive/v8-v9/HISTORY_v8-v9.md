@@ -1,13 +1,13 @@
 # HPSC Website Backend History Archive (v8.0.0 – v9.1.0)
 
 The per-version narrative history of versions 8.0.0 to 9.1.0 of the HPSC Website Backend project, archived from
-[`../../../HISTORY.md`](/HISTORY.md) to keep that file a manageable size. The entries are moved unchanged, grouped under
-the `../../../HISTORY.md` section each came from. See [`HISTORY.md`](/HISTORY.md) for the sections that span every
+[`HISTORY.md`](/HISTORY.md) to keep that file a manageable size. The entries are moved unchanged, grouped under
+the `HISTORY.md` section each came from. See [`HISTORY.md`](/HISTORY.md) for the sections that span every
 version (Feature Timeline, Key Learnings, Project Philosophy Evolution and Conclusion) and for versions 10.0.0 onwards,
 [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for the archived change log,
 [`EVOLUTION_OVERVIEW_v8-v9.md`](/documentation/archive/v8-v9/EVOLUTION_OVERVIEW_v8-v9.md) for the archived
-Phase-by-phase narrative, and [`HISTORY_v1-v7.md`](/documentation/archive/v1-v7/HISTORY_v1-v7.md) for versions 1.0.0 to
-7.4.1.
+Phase-by-phase narrative, [`HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md) for versions 5.0.0 to
+7.4.1 and [`HISTORY_v1-v4.md`](/documentation/archive/v1-v4/HISTORY_v1-v4.md) for versions 1.0.0 to 4.1.0.
 
 ---
 
@@ -1284,7 +1284,7 @@ IpscMatchCompetitorController → IpscMatchCompetitorService → MatchCompetitor
 ### Previously Completed (v8.6.1)
 
 - `HISTORY.md`'s Evolution Overview split out into `documentation/EVOLUTION_OVERVIEW.md`
-- All 52 archived release notes/PR descriptions regrouped into `../v1-v4/v1`–`v8/` by major version,
+- All 52 archived release notes/PR descriptions regrouped into `documentation/history/v1/`–`v8/` by major version,
   with `AGENTS.md`, `README.md` and the affected skills updated to the new paths
 - Scoped as a **PATCH**, since the whole diff proved documentation/tooling-only
 - Project version bumped to 8.6.1 in `pom.xml` and the `@OpenAPIDefinition` annotation

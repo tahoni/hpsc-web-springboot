@@ -24,7 +24,7 @@
 **Fixed**
 
 - `getAllMatches`' Swagger response now documented as an array rather than a single `MatchResponse`
-- `../../../../ARCHITECTURE.md`'s Project Structure tree comments corrected against disk
+- `ARCHITECTURE.md`'s Project Structure tree comments corrected against disk
 
 **Removed**
 
@@ -37,9 +37,9 @@
 - [x] `IpscCompetitorServiceIntegrationTest` confirms `getAllCompetitors` against the real H2 database, empty and
       populated
 - [x] `./mvnw dependency:tree` confirms springdoc resolves to `3.1.0` through the imported BOM
-- [x] Verified `../../../../RELEASE_NOTES.md` archived byte-for-byte to ``
-- [x] Confirmed no version-specific references leaked into `../../../../README.md`/`ARCHITECTURE.md` from this release's changes
-- [x] `../../../roadmap/improvement-plan.md`/`improvement-plan-tasks.md` checked — a full sweep recorded new
+- [x] Verified `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v8/RELEASE_NOTES_v8.7.0.md`
+- [x] Confirmed no version-specific references leaked into `README.md`/`ARCHITECTURE.md` from this release's changes
+- [x] `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` checked — a full sweep recorded new
   Gap #12; the branch-diff sync found no closed or progressed gaps
 - [x] App started on port `8080` (H2 `test` profile): Swagger UI renders under springdoc 3.1.0, `/v3/api-docs`
       reports `8.7.0` with array schemas for both "get all" endpoints, and `GET /ipsc/competitors` returns `[]`

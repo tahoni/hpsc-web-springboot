@@ -14,7 +14,7 @@ match's `club` is no longer a hard-required field — a missing or blank value n
 failing validation. The same release relaxes competitor `clubNumber` to be required only when the competitor's home
 club is HPSC. Alongside these two domain-rule changes, the JaCoCo coverage-regression floor introduced in v8.3.1 is
 tightened from 86% to 97% — now genuinely close to the real, freshly re-measured baseline — closing
-`../../../roadmap/improvement-plan.md`'s Gap #4 and Gap #9. The remainder of the release is documentation and
+`documentation/roadmap/improvement-plan.md`'s Gap #4 and Gap #9. The remainder of the release is documentation and
 convention hardening: a new Member ordering convention, REST naming rules promoted from recommendation to
 convention, a release-checklist backstop that keeps `ARCHITECTURE.md`'s Project Structure tree honest, the
 `improvement-plan.md`/`improvement-plan-tasks.md` restructure into ✅ Completed/🟡 Partially Completed/⚪ Open
@@ -51,16 +51,16 @@ sections and a Tomcat security patch closing three critical CVEs.
 
 ### 🔐 Tomcat Security Patch
 
-- `tomcat-embed-core`/`-el`/`-websocket` overridden `11.0.24` → `11.0.25` via a new `../../../../pom.xml` `tomcat.version`
+- `tomcat-embed-core`/`-el`/`-websocket` overridden `11.0.24` → `11.0.25` via a new `pom.xml` `tomcat.version`
   property, closing three critical CVEs still transitively pinned by `spring-boot-starter-parent:4.1.1`
 
 ### 📚 Documentation & Convention Hardening
 
-- New `../../../../AGENTS.md` Member ordering convention (constructors → public → protected → private);
+- New `AGENTS.md` Member ordering convention (constructors → public → protected → private);
   `IpscCompetitorServiceImpl`/`IpscMatchServiceImpl` reordered to match
-- REST URL-path/handler-naming rules promoted from a recommendations doc into an actual `../../../../AGENTS.md` convention
-- New Release Checklist step verifies `../../../../ARCHITECTURE.md`'s Project Structure tree against disk at every release
-- `../../../roadmap/improvement-plan.md`/`improvement-plan-tasks.md` restructured into ✅ Completed/
+- REST URL-path/handler-naming rules promoted from a recommendations doc into an actual `AGENTS.md` convention
+- New Release Checklist step verifies `ARCHITECTURE.md`'s Project Structure tree against disk at every release
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` restructured into ✅ Completed/
   🟡 Partially Completed/⚪ Open sections, replacing the previous flat Now/Next/Later/Ongoing phasing
 
 ---
@@ -91,7 +91,7 @@ sections and a Tomcat security patch closing three critical CVEs.
 
 #### Configuration
 
-- **`../../../../pom.xml`:** JaCoCo `LINE`/`COVEREDRATIO` minimum raised `0.86` → `0.97`. Closes Gap #4
+- **`pom.xml`:** JaCoCo `LINE`/`COVEREDRATIO` minimum raised `0.86` → `0.97`. Closes Gap #4
 
 #### Constants
 
@@ -106,11 +106,11 @@ sections and a Tomcat security patch closing three critical CVEs.
 
 #### Documentation
 
-- **`../../../../AGENTS.md`:** New Tech Stack note on Flyway migration versioning being independent of the app version; new
+- **`AGENTS.md`:** New Tech Stack note on Flyway migration versioning being independent of the app version; new
   REST conventions and Member ordering subsections; new Release Checklist step 9 (renumbering 9/10 → 10/11)
-- **`../../../recommendations/flyway-migration-versioning.md`:** New recommendations doc
-- **`../../../../CONTRIBUTING.md`:** Matching condensed bullets for the new REST naming and member-ordering conventions
-- **`../../../roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** Restructured into ✅ Completed/
+- **`documentation/recommendations/flyway-migration-versioning.md`:** New recommendations doc
+- **`CONTRIBUTING.md`:** Matching condensed bullets for the new REST naming and member-ordering conventions
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** Restructured into ✅ Completed/
   🟡 Partially Completed/⚪ Open sections
 
 #### Models
@@ -136,13 +136,13 @@ sections and a Tomcat security patch closing three critical CVEs.
 
 #### Documentation
 
-- **`../../../../ARCHITECTURE.md`:** Brought fully back in sync with disk — missing `../../../../.claude/skills`, `documentation/
+- **`ARCHITECTURE.md`:** Brought fully back in sync with disk — missing `.claude/skills/`, `documentation/
   recommendations/` and `db/migration/` directories added; `Gender`/`GenderConverter`, `HpscConstants` removal,
   bidirectional-entity-relationship inaccuracies, the stale 51% coverage figure and several Project Structure tree
   drifts all corrected
-- **`../../../../README.md`:** Installation/Execution steps corrected to match the actual `MYSQL_USER`/`MYSQL_PASSWORD`
+- **`README.md`:** Installation/Execution steps corrected to match the actual `MYSQL_USER`/`MYSQL_PASSWORD`
   env-var-driven `dev` profile flow
-- **`../../../../HISTORY.md`:** Restored "Standards Adoption" wording after an earlier typo-fix pass had singularised it
+- **`HISTORY.md`:** Restored "Standards Adoption" wording after an earlier typo-fix pass had singularised it
 
 ### Removed
 
@@ -211,7 +211,7 @@ sections and a Tomcat security patch closing three critical CVEs.
   raised again, rather than jumping straight to the real baseline in one step.
 - **Promote a recommendation to a convention only once it's actually been followed in practice.** The REST
   naming and member-ordering rules existed as prose recommendations before this release; both are now stated as
-  enforced `../../../../AGENTS.md` conventions, reflecting patterns already consistently applied across the codebase.
+  enforced `AGENTS.md` conventions, reflecting patterns already consistently applied across the codebase.
 
 ---
 
@@ -257,7 +257,7 @@ Leoni Lubbinge
 Version 8.4.0 extends the competitor module's "domain default" pattern to matches, closes out the coverage-floor
 work started in v8.3.1 by reaching a genuinely near-baseline 97% minimum and removes a stale `HpscConstants` class
 in favour of the shared date-format constants introduced alongside it. Closes
-`../../../roadmap/improvement-plan.md`'s Gap #4 and Gap #9.
+`documentation/roadmap/improvement-plan.md`'s Gap #4 and Gap #9.
 
 ---
 

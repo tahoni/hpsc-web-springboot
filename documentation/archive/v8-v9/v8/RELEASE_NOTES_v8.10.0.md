@@ -9,7 +9,7 @@
 **Strict Semantic Versioning, Production Profile & Roadmap Gap Closure**
 
 Version 8.10.0 is a minor release. Semantic Versioning stops being a matter of precedent and becomes a rule the
-release process checks: `../../../../AGENTS.md` now defines what counts as a MAJOR, MINOR or PATCH change for this project,
+release process checks: `AGENTS.md` now defines what counts as a MAJOR, MINOR or PATCH change for this project,
 breaking changes are flagged in `CHANGELOG.md` as they land, and the release skill refuses a version the change set
 doesn't justify. Production gains its own `prod` profile, and the database-profile and logging documentation are
 brought in line with the configuration that actually exists. Three improvement-plan sweeps recorded Gaps #25–#28;
@@ -22,10 +22,10 @@ open. It is the first release classified under the new rules: MINOR, for the new
 
 ### 🔢 Strict Semantic Versioning
 
-- New Semantic Versioning subsection in `../../../../AGENTS.md`'s Git Workflow defining MAJOR (breaking REST contract, import
+- New Semantic Versioning subsection in `AGENTS.md`'s Git Workflow defining MAJOR (breaking REST contract, import
   format or configuration change), MINOR (backward-compatible additions and deprecations) and PATCH (fixes and
   changes with no externally visible effect)
-- A release is classified from `../../../../CHANGELOG.md`'s `[Unreleased]` section — the highest-ranking change wins — and
+- A release is classified from `CHANGELOG.md`'s `[Unreleased]` section — the highest-ranking change wins — and
   backward-incompatible entries start with `**Breaking:**`
 - `prep-version-release` validates the requested version before bumping, and again after syncing `[Unreleased]`
 
@@ -51,7 +51,7 @@ open. It is the first release classified under the new rules: MINOR, for the new
 #### Configuration
 
 - **`application-prod.properties`:** New `prod` profile pointing production at `localhost:3306/hpsc_prod`, still
-  reading `MYSQL_USER`/`MYSQL_PASSWORD`; documented in `../../../../AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md`
+  reading `MYSQL_USER`/`MYSQL_PASSWORD`; documented in `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md`
 
 #### Tests
 
@@ -68,32 +68,32 @@ open. It is the first release classified under the new rules: MINOR, for the new
 
 #### Tooling
 
-- **`../../../../AGENTS.md`, `prep-version-release`:** Semantic Versioning is now a strict, documented rule, and the release
+- **`AGENTS.md`, `prep-version-release`:** Semantic Versioning is now a strict, documented rule, and the release
   skill validates each requested version against it
 - **`generate-commit-message`, `sync-unreleased-changes`:** Both skills apply the `**Breaking:**` prefix;
   `sync-unreleased-changes` flags a missing or wrong prefix as drifted and reports the release level `[Unreleased]`
   implies
-- **`../../../../AGENTS.md`, `prep-version-release`:** The Release Checklist's `../../../../pom.xml` step re-checks every manual
+- **`AGENTS.md`, `prep-version-release`:** The Release Checklist's `pom.xml` step re-checks every manual
   dependency-version override against the Spring Boot parent's own `spring-boot-dependencies` POM (Gap #26)
 
 #### Documentation
 
-- **`../../../../HISTORY.md`, `ARCHITECTURE.md`, `README.md`:** The Short-term roadmap no longer plans entity-level unit tests
+- **`HISTORY.md`, `ARCHITECTURE.md`, `README.md`:** The Short-term roadmap no longer plans entity-level unit tests
   for the whole domain model; the test tree gains a `domain/` entry and the unit-test categories include entities
-- **`../../../../CHANGELOG.md`, `RELEASE_NOTES.md`, archived v8.7.0/v8.9.0 release notes and PR descriptions:** Removed now
-  listed after Fixed, matching `../../../../AGENTS.md`'s category order
-- **`../../../../README.md`, `CHANGELOG.md`:** The Semantic Versioning note and Version Policy section point at `../../../../AGENTS.md`'s
+- **`CHANGELOG.md`, `RELEASE_NOTES.md`, archived v8.7.0/v8.9.0 release notes and PR descriptions:** Removed now
+  listed after Fixed, matching `AGENTS.md`'s category order
+- **`README.md`, `CHANGELOG.md`:** The Semantic Versioning note and Version Policy section point at `AGENTS.md`'s
   Semantic Versioning section as the definition of each release level
 
 #### Build & Metadata
 
-- Project version bumped to **8.10.0** in `../../../../pom.xml`; `@OpenAPIDefinition` version updated to match
+- Project version bumped to **8.10.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 ### Fixed
 
 #### Documentation
 
-- **`../../../../AGENTS.md`, `CONTRIBUTING.md`, `README.md`:** The database-profile docs said a run with no profile needs only
+- **`AGENTS.md`, `CONTRIBUTING.md`, `README.md`:** The database-profile docs said a run with no profile needs only
   `MYSQL_USER`/`MYSQL_PASSWORD`, but `application.properties` sets no `spring.datasource.url` — the URL must be
   supplied externally (e.g. `SPRING_DATASOURCE_URL`). The credentials wording now excludes `local`, which connects as
   `hpsc_dev` with `MYSQL_LOCAL_PASSWORD`, and the Database Profiles table gains `local` and `prod` rows (Gap #27)
@@ -121,7 +121,7 @@ logs to `logs/application-prod.log`.
 for it, so a deployment that still activated `staging` would get no log output — switch it to `prod`.
 
 **Contributors:** CHANGELOG entries for backward-incompatible changes must now start with `**Breaking:**`, and a
-release's version must be the one-step increment its change set implies — see `../../../../AGENTS.md`'s Semantic Versioning
+release's version must be the one-step increment its change set implies — see `AGENTS.md`'s Semantic Versioning
 section.
 
 ---
@@ -153,7 +153,7 @@ section.
 - **Document the URL, don't require it.** Adding a required `${MYSQL_URL}` placeholder to `application.properties`
   would have changed what every existing no-profile deployment must supply — itself a breaking change under the new
   rules. The URL stays external and documented; production gets an opt-in profile instead.
-- **Test what Lombok can't be trusted with.** `../../../../AGENTS.md` rules out tests of Lombok-generated behaviour, and seven of
+- **Test what Lombok can't be trusted with.** `AGENTS.md` rules out tests of Lombok-generated behaviour, and seven of
   the eight entities are nothing else. `IpscMatch` is the exception: its bidirectional `stages` exclusion is a
   deliberate choice whose loss would crash `toString`/`hashCode`, so it gets a regression test.
 
@@ -177,7 +177,7 @@ section.
 - A competitor or match referenced by results or shooter logs can't be deleted through the API, since no endpoint
   removes those rows yet (carried over from v8.8.0, pending Gap #6).
 - The `BRANCH` coverage counter is still not separately enforced by the JaCoCo `check` execution — only `LINE` is.
-- `../../../../pom.xml` still overrides `tomcat.version` to `11.0.25` for three critical CVEs, since Spring Boot 4.1.1 manages
+- `pom.xml` still overrides `tomcat.version` to `11.0.25` for three critical CVEs, since Spring Boot 4.1.1 manages
   `11.0.24` (Gap #26).
 
 ---

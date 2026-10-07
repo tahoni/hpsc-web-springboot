@@ -9,7 +9,7 @@
 **Documentation Cross-Reference Consolidation & Icon Registry Sync**
 
 Version 8.4.1 is a documentation-only patch release with no source-code, schema or dependency changes. It
-consolidates `../../../../AGENTS.md`/`CONTRIBUTING.md`'s remaining full and near-verbatim content duplicates into the
+consolidates `AGENTS.md`/`CONTRIBUTING.md`'s remaining full and near-verbatim content duplicates into the
 highlights-and-link pattern already established elsewhere in those files — condensing Git Workflow's Branching
 Model, Conventions and Directory Tree Maintenance bullets, an unlinked Exception handling restatement, and a
 CI/CD & Quality Gates table that had drifted from its actual source of truth in `ARCHITECTURE.md`. It also
@@ -23,42 +23,42 @@ Commas convention.
 
 ### 🔀 Git Workflow Consolidation
 
-- `../../../../CONTRIBUTING.md`'s Branching Model (GitFlow) bullets, Git Workflow "Conventions" and Directory Tree Maintenance
+- `CONTRIBUTING.md`'s Branching Model (GitFlow) bullets, Git Workflow "Conventions" and Directory Tree Maintenance
   bullets condensed into highlights-and-link references pointing at `AGENTS.md`, replacing full/near-verbatim
   restatements
-- Git Workflow's "Merging" subsection removed from `../../../../AGENTS.md` and consolidated as `CONTRIBUTING.md`'s sole
+- Git Workflow's "Merging" subsection removed from `AGENTS.md` and consolidated as `CONTRIBUTING.md`'s sole
   canonical copy — it describes a human contributor's GitHub mechanics, not something any Claude Code skill reads
   directly, unlike the Branching Model and Conventions subsections `sync-unreleased-changes`/
   `sync-improvement-plan-gaps` depend on remaining in `AGENTS.md`
 
 ### 🔗 Unlinked Cross-Reference Cleanup
 
-- `../../../../CONTRIBUTING.md`'s Exception handling bullet, CHANGELOG-same-change and Evergreen/reverse-sync bullets now link
+- `CONTRIBUTING.md`'s Exception handling bullet, CHANGELOG-same-change and Evergreen/reverse-sync bullets now link
   to the specific `AGENTS.md` subsection each one restates, matching the pattern its sibling bullets already
   followed
-- CI/CD & Quality Gates table condensed into a link to `../../../../ARCHITECTURE.md`'s own table — the actual source of truth
+- CI/CD & Quality Gates table condensed into a link to `ARCHITECTURE.md`'s own table — the actual source of truth
   per `AGENTS.md`'s own cross-reference — since the two copies had drifted to slightly different column wording
 
 ### 🧩 New AGENTS.md Sections
 
-- New "🧩 Claude Code Skills" and "🗺️ Roadmap Planning" sections in `../../../../AGENTS.md`, both mirrored with a short
+- New "🧩 Claude Code Skills" and "🗺️ Roadmap Planning" sections in `AGENTS.md`, both mirrored with a short
   pointer in `CONTRIBUTING.md`
 
 ### 🗺️ Icon Registry Sync with hpsc-web-vite
 
-- `../../../../AGENTS.md`'s icon registry backfilled with 25 previously-unregistered icons already in real use across this
+- `AGENTS.md`'s icon registry backfilled with 25 previously-unregistered icons already in real use across this
   repository's documentation
 - New "Reserved" sub-table tracking the sibling `hpsc-web-vite` repository's frontend-specific icons, synced twice
   this release as that repository's own registry grew — `hpsc-web-vite` reciprocally reserves `🧬` (Data model /
   DTOs) in return
-- Several icon collisions resolved across `../../../../README.md`, `ARCHITECTURE.md`, `HISTORY.md`, `RELEASE_NOTES.md` and 17
+- Several icon collisions resolved across `README.md`, `ARCHITECTURE.md`, `HISTORY.md`, `RELEASE_NOTES.md` and 17
   archived per-version release notes
 
 ### 🐛 Documentation Fixes
 
-- `../../../../CHANGELOG.md`'s duplicate, truncated `[5.0.0]` section removed
+- `CHANGELOG.md`'s duplicate, truncated `[5.0.0]` section removed
 - Serial Commas convention's own example fixed — the "e.g." and "not" contrast phrases were identical in both
-  `../../../../AGENTS.md` and `CONTRIBUTING.md`, so the example never actually illustrated the rule
+  `AGENTS.md` and `CONTRIBUTING.md`, so the example never actually illustrated the rule
 
 ---
 
@@ -68,24 +68,24 @@ Commas convention.
 
 #### Documentation
 
-- **`../../../../AGENTS.md`/`CONTRIBUTING.md`:** New "🧩 Claude Code Skills" section documenting the project-specific skills
-  under `../../../../.claude/skills`; new `🧩` icon registered for tooling/automation sections
-- **`../../../../AGENTS.md`:** New "Reserved" sub-table under "Icons in headings" tracking the sibling `hpsc-web-vite`
+- **`AGENTS.md`/`CONTRIBUTING.md`:** New "🧩 Claude Code Skills" section documenting the project-specific skills
+  under `.claude/skills/`; new `🧩` icon registered for tooling/automation sections
+- **`AGENTS.md`:** New "Reserved" sub-table under "Icons in headings" tracking the sibling `hpsc-web-vite`
   repository's frontend-specific icon registry, synced twice this release (38 icons reserved in total)
-- **`../../../../AGENTS.md`:** New "🗺️ Roadmap Planning" section, promoted out of "Documentation File Map" into its own home
-- **`../../../../AGENTS.md`:** 25 previously-unregistered icons backfilled into the icon registry table, plus `🟡`/`⚪` for the
+- **`AGENTS.md`:** New "🗺️ Roadmap Planning" section, promoted out of "Documentation File Map" into its own home
+- **`AGENTS.md`:** 25 previously-unregistered icons backfilled into the icon registry table, plus `🟡`/`⚪` for the
   roadmap status scheme and `🗂️`/`🌲` for the "Documentation File Map"/"Evergreen Documentation" headings
 
 ### Changed
 
 #### Documentation
 
-- **`../../../../AGENTS.md`/`ARCHITECTURE.md`/`documentation/recommendations/*.md`:** Several icon meanings corrected or
+- **`AGENTS.md`/`ARCHITECTURE.md`/`documentation/recommendations/*.md`:** Several icon meanings corrected or
   widened where a heading's actual concept didn't match its registered description, or reused an icon already
   claimed for something unrelated
-- **`../../../../AGENTS.md`:** Icon registry table reordered to group icons by the document (s) that established them
-- **`../../../../CONTRIBUTING.md`:** "Roadmap" section condensed to a pointer at `../../../../AGENTS.md`'s new "Roadmap Planning" section
-- **`../../../../AGENTS.md`/`CONTRIBUTING.md`:** Git Workflow's "Merging" subsection consolidated as `../../../../CONTRIBUTING.md`'s sole
+- **`AGENTS.md`:** Icon registry table reordered to group icons by the document (s) that established them
+- **`CONTRIBUTING.md`:** "Roadmap" section condensed to a pointer at `AGENTS.md`'s new "Roadmap Planning" section
+- **`AGENTS.md`/`CONTRIBUTING.md`:** Git Workflow's "Merging" subsection consolidated as `CONTRIBUTING.md`'s sole
   canonical copy; `CONTRIBUTING.md`'s remaining full/near-verbatim duplicates of `AGENTS.md` content (Branching
   Model, Conventions, Directory Tree Maintenance, Exception handling, CHANGELOG-same-change, Evergreen/reverse-sync,
   CI/CD & Quality Gates) condensed into highlights-and-link references
@@ -94,17 +94,17 @@ Commas convention.
 
 #### Documentation
 
-- **`../../../../CHANGELOG.md`:** Removed a duplicate, truncated `[5.0.0]` section whose heading collision had broken its
+- **`CHANGELOG.md`:** Removed a duplicate, truncated `[5.0.0]` section whose heading collision had broken its
   Table of Contents anchor
 - **`documentation/history/RELEASE_NOTES_v6.0.0.md`/`v7.0.0.md`/`v7.2.0.md`/`v8.0.0.md`:** Five archived
   sub-headings reusing an already-registered icon for an unrelated concept, corrected
-- **`../../../../AGENTS.md`/`README.md`/`HISTORY.md`/`documentation/roadmap/improvement-plan.md`:** Several heading icons
+- **`AGENTS.md`/`README.md`/`HISTORY.md`/`documentation/roadmap/improvement-plan.md`:** Several heading icons
   corrected for internal consistency (Documentation Conventions, Documentation File Map/Roadmap Planning, API
   Documentation vs Documentation, Future Roadmap Implications)
-- **`../../../../RELEASE_NOTES.md`/17 archived per-version release notes:** "Migration Guide" heading switched to `🚀`, matching
-  `../../../../CHANGELOG.md`'s equivalent "Upgrade Guide" heading, at the user's explicit request to extend the fix to the
+- **`RELEASE_NOTES.md`/17 archived per-version release notes:** "Migration Guide" heading switched to `🚀`, matching
+  `CHANGELOG.md`'s equivalent "Upgrade Guide" heading, at the user's explicit request to extend the fix to the
   archives
-- **`../../../../AGENTS.md`/`CONTRIBUTING.md`:** Serial Commas rule's own example corrected — the "not" contrast phrase now
+- **`AGENTS.md`/`CONTRIBUTING.md`:** Serial Commas rule's own example corrected — the "not" contrast phrase now
   actually shows the Oxford-comma version it's meant to contrast against
 
 ---
@@ -132,7 +132,7 @@ migrate.
 ## 🧭 Design Notes
 
 - **Consolidate duplicated content into the file that skills actually read, not the file that reads more naturally
-  standalone.** Git Workflow's Branching Model and Conventions subsections stay in `../../../../AGENTS.md`, not
+  standalone.** Git Workflow's Branching Model and Conventions subsections stay in `AGENTS.md`, not
   `CONTRIBUTING.md`, specifically because `sync-unreleased-changes`/`sync-improvement-plan-gaps` read `AGENTS.md`
   directly for hotfix-branch detection and commit conventions — the Merging subsection, which no skill reads, moved
   to `CONTRIBUTING.md` instead.
@@ -181,7 +181,7 @@ Leoni Lubbinge
 ## 📝 Notes
 
 Version 8.4.1 is a documentation-only patch focused entirely on internal consistency: consolidating duplicated
-`../../../../AGENTS.md`/`CONTRIBUTING.md` content into the highlights-and-link pattern the rest of those files already use, and
+`AGENTS.md`/`CONTRIBUTING.md` content into the highlights-and-link pattern the rest of those files already use, and
 reconciling the icon registry with the sibling `hpsc-web-vite` repository. No product-facing behaviour changed.
 
 ---

@@ -6,7 +6,7 @@
   `MatchResponse` DTOs, and `IpscMatchServiceImpl`'s `applyFields`/`patchMatch`/`toRequest`/`toResponse`.
 - New test coverage proves the two columns round-trip through the real H2/Hibernate/JPA layer
   (`IpscMatchServiceIntegrationTest`), not just mocked repositories, and that CSV bulk import maps them correctly.
-- Includes a small, unrelated British English documentation fix (`../../../../README.md`'s "License" → "Licence",
+- Includes a small, unrelated British English documentation fix (`README.md`'s "License" → "Licence",
   `CONTRIBUTING.md`'s self-violating Serial Commas example, and `AGENTS.md`'s `LICENSE.md` exception narrowed to
   just the filename/content).
 
@@ -26,12 +26,12 @@
 - CSV bulk import (`POST /matches/csv`) now requires `StartTime`/`EndTime` header columns, like every other
   `MatchRequestForCSV` property — existing CSV templates need updating (values may be left blank)
 - `IpscMatchServiceImpl`'s field-mapping methods now carry `startTime`/`endTime` through
-- `../../../../AGENTS.md`'s British English exception for `LICENSE.md` narrowed to just the filename/content — every other
+- `AGENTS.md`'s British English exception for `LICENSE.md` narrowed to just the filename/content — every other
   reference to it now spells it "Licence"
 
 **Fixed**
 
-- `../../../../CONTRIBUTING.md`'s Serial Commas rule example corrected to no longer violate the rule it illustrates
+- `CONTRIBUTING.md`'s Serial Commas rule example corrected to no longer violate the rule it illustrates
 
 ## 🧪 Test Plan
 
@@ -39,12 +39,12 @@
 - [x] `./mvnw verify -Pcoverage` — 98.65% line / 98.99% branch coverage, up from 98.44%/98.98% at v8.4.0
 - [x] `IpscMatchServiceIntegrationTest` confirms `startTime`/`endTime` persist and read back through the real H2
       database, not just mocked repositories
-- [x] Verified `../../../../RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/RELEASE_NOTES_v8.5.0.md`
-- [x] Confirmed no version-specific references leaked into `../../../../README.md`/`ARCHITECTURE.md` from this release's own
+- [x] Verified `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/RELEASE_NOTES_v8.5.0.md`
+- [x] Confirmed no version-specific references leaked into `README.md`/`ARCHITECTURE.md` from this release's own
   changes
-- [x] Verified `../../../../ARCHITECTURE.md`'s Project Structure tree against disk — no drift (migration directory is
+- [x] Verified `ARCHITECTURE.md`'s Project Structure tree against disk — no drift (migration directory is
   referenced generically, not per-file)
-- [x] `../../../roadmap/improvement-plan.md`/`improvement-plan-tasks.md` checked — no new, closed or
+- [x] `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` checked — no new, closed or
   progressed gaps from this branch's diff
 
 ## 🔗 Related Documentation

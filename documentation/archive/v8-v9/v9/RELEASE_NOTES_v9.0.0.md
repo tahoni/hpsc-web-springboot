@@ -93,9 +93,9 @@ a partial update no longer has to repeat the required fields. The datasource use
 
 #### Documentation
 
-- **`../../../../README.md`, `ARCHITECTURE.md`:** Stages dropped from the match description, the entity and repository tables and
+- **`README.md`, `ARCHITECTURE.md`:** Stages dropped from the match description, the entity and repository tables and
   the Project Structure tree; the CSV models replaced by the mix-ins and patch request models
-- **`../../../../CHANGELOG.md`, `HISTORY.md`, `../../../EVOLUTION_OVERVIEW.md`:** Past-release entries keep the class
+- **`CHANGELOG.md`, `HISTORY.md`, `EVOLUTION_OVERVIEW.md`:** Past-release entries keep the class
   names they were written with
 
 #### Tests
@@ -106,8 +106,8 @@ a partial update no longer has to repeat the required fields. The datasource use
 
 #### Build & Metadata
 
-- Project version bumped to **9.0.0** in `../../../../pom.xml`; `@OpenAPIDefinition` version updated to match
-- **`mysql-connector-j`:** Pinned to `9.4.0` in `../../../../pom.xml` instead of the Spring Boot-managed version
+- Project version bumped to **9.0.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
+- **`mysql-connector-j`:** Pinned to `9.4.0` in `pom.xml` instead of the Spring Boot-managed version
 
 ### Configuration
 
@@ -134,9 +134,9 @@ a partial update no longer has to repeat the required fields. The datasource use
 
 #### Dependencies
 
-- **`tomcat.version`:** Raised from `11.0.25` to `11.0.26` in `../../../../pom.xml`
-- **`logback.version`:** New `../../../../pom.xml` override pinning Logback to `1.6.5`
-- **`jackson-2-bom.version`, `jackson-bom.version`:** New `../../../../pom.xml` overrides raising the Jackson 2 BOM to `2.22.3`
+- **`tomcat.version`:** Raised from `11.0.25` to `11.0.26` in `pom.xml`
+- **`logback.version`:** New `pom.xml` override pinning Logback to `1.6.5`
+- **`jackson-2-bom.version`, `jackson-bom.version`:** New `pom.xml` overrides raising the Jackson 2 BOM to `2.22.3`
   and the Jackson 3 BOM to `3.2.3`, so `jackson-core` and `jackson-dataformat-csv` follow
 - **`flyway-mysql`:** Pinned to `13.7.0` instead of the Spring Boot-managed version
 
@@ -187,7 +187,7 @@ a partial update no longer has to repeat the required fields. The datasource use
 - **Stages removed rather than hidden.** The entities, repositories, DTOs and tables go together, so no dead schema is
   left behind — which is also why the migration is destructive.
 - **A MAJOR.** Removing `stages` from the match contract, making two request properties required, removing the stage
-  entities and dropping `MYSQL_USER` each break existing callers or deployments, which `../../../../AGENTS.md`'s Semantic
+  entities and dropping `MYSQL_USER` each break existing callers or deployments, which `AGENTS.md`'s Semantic
   Versioning rules classify as MAJOR.
 
 ---
@@ -215,7 +215,7 @@ a partial update no longer has to repeat the required fields. The datasource use
   over from v7.0.0 – v7.1.0).
 - A competitor or match referenced by results or shooter logs can't be deleted through the API, since no endpoint
   removes those rows yet (carried over from v8.8.0, pending Gap #6).
-- `../../../../pom.xml` still overrides `tomcat.version` (to `11.0.26`) for three critical CVEs, since Spring Boot 4.1.1 manages
+- `pom.xml` still overrides `tomcat.version` (to `11.0.26`) for three critical CVEs, since Spring Boot 4.1.1 manages
   `11.0.24` (Gap #26). `logback.version`, the Jackson BOM properties and `flyway-mysql` are likewise set above
   Spring Boot's managed versions.
 - `mysql-connector-j` is pinned to `9.4.0`, below the `9.7.0` that Spring Boot 4.1.1 manages.

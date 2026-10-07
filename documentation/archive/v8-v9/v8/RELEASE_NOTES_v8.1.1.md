@@ -21,7 +21,7 @@ manual roadmap-gap maintenance performed by hand across v8.0.0/v8.1.0.
 
 ### 🔬 CI Static Analysis Completed
 
-- **`.github/workflows/qodana.yml`** — runs `JetBrains/qodana-action` against the existing `../../../../qodana.yaml`
+- **`.github/workflows/qodana.yml`** — runs `JetBrains/qodana-action` against the existing `qodana.yaml`
   configuration, triggered on push/PR to `develop`/`main`, mirroring `codeql.yml`'s trigger branches. Results
   upload as SARIF to GitHub code scanning alongside CodeQL, so no Qodana Cloud token or other secret is required
 
@@ -33,9 +33,9 @@ manual roadmap-gap maintenance performed by hand across v8.0.0/v8.1.0.
 - **`generate-pr-description` renamed to `prep-version-release`** — better reflects what the skill actually does
   (the whole release-prep checklist, not just the PR description step); its new step 2 runs both gap-maintenance
   skills before any version-specific work begins
-- **`../../../../AGENTS.md`'s Release Checklist** — re-synced against `prep-version-release`'s actual process, which had
+- **`AGENTS.md`'s Release Checklist** — re-synced against `prep-version-release`'s actual process, which had
   drifted ahead of it: three new steps (improvement-plan gap check, `[Unreleased]` completeness verification,
-  conditional `../../../../CONTRIBUTING.md` update), described tool-agnostically
+  conditional `CONTRIBUTING.md` update), described tool-agnostically
 
 ### 🐛 Coverage Regression Fixed
 
@@ -70,8 +70,8 @@ manual roadmap-gap maintenance performed by hand across v8.0.0/v8.1.0.
 
 #### Documentation
 
-- `../../../../CLAUDE.md` — new "Working on Complex Tasks" section
-- `../../../../CONTRIBUTING.md` — new "🗺️ Roadmap" section documenting `documentation/roadmap/improvement-plan.md`/
+- `CLAUDE.md` — new "Working on Complex Tasks" section
+- `CONTRIBUTING.md` — new "🗺️ Roadmap" section documenting `documentation/roadmap/improvement-plan.md`/
   `improvement-plan-tasks.md`'s structure and maintenance convention
 
 #### Tests
@@ -84,16 +84,16 @@ manual roadmap-gap maintenance performed by hand across v8.0.0/v8.1.0.
 
 #### Build & Metadata
 
-- `../../../../pom.xml` — Spring Boot parent `4.1.0` → `4.1.1`; `jackson-databind`, `log4j-api` and `jackson-bom.version`
+- `pom.xml` — Spring Boot parent `4.1.0` → `4.1.1`; `jackson-databind`, `log4j-api` and `jackson-bom.version`
   `dependencyManagement`/property overrides removed as redundant; developer contact email corrected
-- Project version bumped to 8.1.1 in `../../../../pom.xml` and the `@OpenAPIDefinition` annotation
+- Project version bumped to 8.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 #### Documentation
 
-- `../../../roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — Gap #5 (`jackson-databind` override)
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — Gap #5 (`jackson-databind` override)
   closed; two new gaps added (match-scoring service/controller layer; Qodana CI wiring, partially progressed by
   this release's own workflow addition)
-- `../../../../AGENTS.md`'s Release Checklist re-synced with `prep-version-release`'s actual process (see Key Highlights)
+- `AGENTS.md`'s Release Checklist re-synced with `prep-version-release`'s actual process (see Key Highlights)
 
 #### Tooling
 
@@ -112,7 +112,7 @@ release-process tooling and documentation).
 
 - The `generate-pr-description` Claude Code skill is now `prep-version-release` — update any local muscle memory or
   scripts referencing the old name.
-- `../../../../pom.xml`'s `jackson-bom.version` property no longer exists; the resolved version (`3.1.5`) is unchanged, now
+- `pom.xml`'s `jackson-bom.version` property no longer exists; the resolved version (`3.1.5`) is unchanged, now
   inherited from the Spring Boot parent directly.
 
 ---
@@ -141,7 +141,7 @@ release-process tooling and documentation).
   their disappearance until a fresh coverage sweep this release. Recreating them closed a genuine gap in the
   exception hierarchy's safety net, not merely a cosmetic percentage.
 - **Confirm against the source, not an echoed property.** `./mvnw help:evaluate` only echoes back whatever value a
-  `../../../../pom.xml` property already has, even a redundant one — confirming `jackson-bom.version`'s redundancy required
+  `pom.xml` property already has, even a redundant one — confirming `jackson-bom.version`'s redundancy required
   reading Spring Boot 4.1.1's own managed default directly from the parent POM in the local repository cache.
 
 ---
@@ -169,7 +169,7 @@ release-process tooling and documentation).
 
 ## 🔮 Future Enhancements
 
-- Verify `.github/workflows/qodana.yml` succeeds in CI, then drop `../../../../ARCHITECTURE.md`'s "no CI workflow wired up yet"
+- Verify `.github/workflows/qodana.yml` succeeds in CI, then drop `ARCHITECTURE.md`'s "no CI workflow wired up yet"
   caveat on the `Static Analysis` row.
 - Add a `build.yml` (or extend `codeql.yml`'s trigger set) running `./mvnw verify -Pcoverage` on push/PR, and a
   JaCoCo coverage-check rule wired into it, so a coverage regression fails the build automatically.

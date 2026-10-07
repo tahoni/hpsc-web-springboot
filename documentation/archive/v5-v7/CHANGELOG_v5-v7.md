@@ -1,10 +1,11 @@
 # HPSC Website Backend Change Log Archive (v5.0.0 – v7.4.1)
 
 The change log entries for versions 5.0.0 to 7.4.1 of the HPSC Website Backend project, archived from
-[`../../../CHANGELOG.md`](/CHANGELOG.md) to keep that file a manageable size. The entries are moved unchanged. See
-[`../../../CHANGELOG.md`](/CHANGELOG.md) for the current version, the unreleased changes and versions 10.0.0 onwards,
-[`HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md) for the archived narrative history of the same versions, [`CHANGELOG_v1-v4.md`](/documentation/archive/v1-v4/CHANGELOG_v1-v4.md) for versions 1.0.0 to 4.1.0
-and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for versions 8.0.0 to 9.1.0.
+[`CHANGELOG.md`](/CHANGELOG.md) to keep that file a manageable size. The entries are moved unchanged. See
+[`CHANGELOG.md`](/CHANGELOG.md) for the current version, the unreleased changes and versions 10.0.0 onwards,
+[`HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md) for the archived narrative history of the same
+versions, [`CHANGELOG_v1-v4.md`](/documentation/archive/v1-v4/CHANGELOG_v1-v4.md) for versions 1.0.0 to 4.1.0 and
+[`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for versions 8.0.0 to 9.1.0.
 
 ---
 
@@ -31,20 +32,20 @@ and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for 
 
 ##### Documentation
 
-- **`../../../HISTORY.md`:** New "Major Version Goals" subsection under Project Philosophy Evolution — summarises the driving
-  goal behind each major version line (4.x, 5.x, 6.x, 7.x)
-- **`../../../HISTORY.md`:** New "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" phase entry — captures the
+- **`HISTORY.md`:** New "Major Version Goals" subsection under Project Philosophy Evolution — summarises the
+  driving goal behind each major version line (4.x, 5.x, 6.x, 7.x)
+- **`HISTORY.md`:** New "Process & Documentation Discipline Phase (v7.2.0 – v7.4.0)" phase entry — captures the
   test-convention, documentation-accuracy and AI-agent-tooling work spanning those three releases
 
 #### 🔄 Changed
 
 ##### Documentation
 
-- **`../../../AGENTS.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md`, `README.md`,
+- **`AGENTS.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md`, `README.md`,
   `RELEASE_NOTES.md`:** Rewrapped to a consistent ~120-character line width — prose, list items and table columns
   realigned; no content changes beyond a handful of incidental copyedits surfaced along the way, including matching
   Oxford-comma removals in `PowerFactor`'s, `IpscCompetitorService`'s and `IpscMatchService`'s (and their impls')
-  Javadoc, per `../../../AGENTS.md`'s Serial commas rule
+  Javadoc, per `AGENTS.md`'s Serial commas rule
 
 ---
 
@@ -54,11 +55,11 @@ and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for 
 
 ##### Documentation
 
-- **`../../roadmap/improvement-plan.md`:** New document synthesising the goals and constraints stated across
+- **`documentation/roadmap/improvement-plan.md`:** New document synthesising the goals and constraints stated across
   this repository's documentation and configuration into a prioritised set of gaps and a roadmap
-- **`../../roadmap/improvement-plan-tasks.md`:** New concrete, checkbox-level task list broken out from
-  `../../roadmap/improvement-plan.md`'s five gaps, organised by its Now/Next/Later/Ongoing phasing
-- **`../../../README.md` / `AGENTS.md`:** Both now list `../../roadmap`'s files in their own dedicated Roadmap section,
+- **`documentation/roadmap/improvement-plan-tasks.md`:** New concrete, checkbox-level task list broken out from
+  `documentation/roadmap/improvement-plan.md`'s five gaps, organised by its Now/Next/Later/Ongoing phasing
+- **`README.md` / `AGENTS.md`:** Both now list `documentation/roadmap/`'s files in their own dedicated Roadmap section,
   separate from the standard documentation file map/table
 
 ##### Models
@@ -81,30 +82,30 @@ and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for 
 
 ##### Configuration
 
-- **`../../../.gitignore`:** Refreshed the JetBrains, Visual Studio Code, Eclipse and Node sections from the latest upstream
-  templates — adds entries for SonarLint, Apifox Helper, GitHub Copilot, stylelint, pnpm, yarn v3, Vite, Sveltekit,
-  vitepress and Docusaurus, fixes the `.apt_generated_test/` → `.apt_generated_tests/` typo and the stale "Editor-based
-  Rest Client" comment, and adds new OS, Version Control and Secrets & Credentials sections; the custom TAHONI block now
-  also ignores `tsdocs/` and `../../../logs`, and generalises `.claude/*.local.json` to `.claude/*.local.*` (supersedes the
-  `.claude/*.local.json` entry above)
-- **`../../../.gitignore`:** Uncommented the `.project` ignore rule, so IntelliJ/Eclipse project description files are now
-  excluded from version control going forward
-- **`../../../.aiignore`:** Re-synced with `../../../.gitignore`'s refreshed template sections; its entries stay plain excludes rather
-  than mirroring `.gitignore`'s `!` allowlist patterns (e.g. `.vscode/settings.json`, `.env.example`, `.yarn/patches`),
-  so AI tooling stays conservative even for files git tracks
+- **`.gitignore`:** Refreshed the JetBrains, Visual Studio Code, Eclipse and Node sections from the latest
+  upstream templates — adds entries for SonarLint, Apifox Helper, GitHub Copilot, stylelint, pnpm, yarn v3, Vite,
+  Sveltekit, vitepress and Docusaurus, fixes the `.apt_generated_test/` → `.apt_generated_tests/` typo and the stale
+  "Editor-based Rest Client" comment, and adds new OS, Version Control and Secrets & Credentials sections; the custom
+  TAHONI block now also ignores `tsdocs/` and `logs/`, and generalises `.claude/*.local.json` to
+  `.claude/*.local.*` (supersedes the `.claude/*.local.json` entry above)
+- **`.gitignore`:** Uncommented the `.project` ignore rule, so IntelliJ/Eclipse project description files are
+  now excluded from version control going forward
+- **`.aiignore`:** Re-synced with `.gitignore`'s refreshed template sections; its entries stay plain
+  excludes rather than mirroring `.gitignore`'s `!` allowlist patterns (e.g. `.vscode/settings.json`, `.env.example`,
+  `.yarn/patches`), so AI tooling stays conservative even for files git tracks
 
 ##### Documentation
 
-- **`../../../AGENTS.md`:** New Serial commas rule — lists of three or more items no longer take a comma before the final `and`/
-  `or`; retroactively applied across `../../../CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`,
-  `HISTORY.md` and the Claude Code command files
-- **`../../../AGENTS.md`:** Dropped the exception letting code identifiers ignore the British English spelling convention —
-  class/method/variable names are now held to the same rule as prose
-- **`../../../RELEASE_NOTES.md` Contributors:** Now sourced from `git log`'s unique commit authors on the release branch (bots
-  included) instead of the generic "Development Team" placeholder, per a new rule in AGENTS.md's Release Checklist; the
-  archived `documentation/history/RELEASE_NOTES_v7.3.0.md` snapshot updated to match, keeping it byte-for-byte identical
-  per AGENTS.md's archiving rule
-- **`../../../ARCHITECTURE.md`:** Directory structure tree now lists the new `../../roadmap` folder alongside `archive/`
+- **`AGENTS.md`:** New Serial commas rule — lists of three or more items no longer take a comma before the
+  final `and`/ `or`; retroactively applied across `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`,
+  `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md` and the Claude Code command files
+- **`AGENTS.md`:** Dropped the exception letting code identifiers ignore the British English spelling
+  convention — class/method/variable names are now held to the same rule as prose
+- **`RELEASE_NOTES.md` Contributors:** Now sourced from `git log`'s unique commit authors on the release branch
+  (bots included) instead of the generic "Development Team" placeholder, per a new rule in AGENTS.md's Release
+  Checklist; the archived `documentation/history/RELEASE_NOTES_v7.3.0.md` snapshot updated to match, keeping it
+  byte-for-byte identical per AGENTS.md's archiving rule
+- **`ARCHITECTURE.md`:** Directory structure tree now lists the new `documentation/roadmap/` folder alongside `archive/`
   and `history/`
 
 ##### Testing
@@ -115,11 +116,11 @@ and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for 
 
 ##### Tooling
 
-- **`/generate-pr-description`:** Step 6's `../../../RELEASE_NOTES.md` instructions updated to match AGENTS.md's new
+- **`/generate-pr-description`:** Step 6's `RELEASE_NOTES.md` instructions updated to match AGENTS.md's new
   Contributors-sourcing rule above
 - **`/sync-unreleased-changes`:** New Claude Code command — diffs the current branch against its base (`develop`/`main`)
-  plus any uncommitted changes, cross-checks the result against `../../../CHANGELOG.md`'s `[Unreleased]` section and fills in any
-  missing entries directly in the file
+  plus any uncommitted changes, cross-checks the result against `CHANGELOG.md`'s `[Unreleased]` section and
+  fills in any missing entries directly in the file
 
 #### 🐛 Fixed
 
@@ -132,19 +133,19 @@ and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for 
 
 ##### Documentation
 
-- **`../../../README.md`:** Restored the missing `#` on the H1 heading, lost in an earlier commit that inverted the intended
-  fix — it was rendering as plain text instead of the page title
+- **`README.md`:** Restored the missing `#` on the H1 heading, lost in an earlier commit that inverted the
+  intended fix — it was rendering as plain text instead of the page title
 
 #### 🗑️ Removed
 
 ##### Configuration
 
-- **`../../../.aiignore`:** Removed the dedicated `../../../.claude`/`.github/` AI-only exclusion block — those directories, including
-  `.claude/commands`, are no longer hidden from AI context
+- **`.aiignore`:** Removed the dedicated `.claude/`/`.github/` AI-only exclusion block — those
+  directories, including `.claude/commands`, are no longer hidden from AI context
 
 #### 🔐 Security
 
-- **`log4j-api`:** Overridden `2.25.4` → `2.25.5` via a new `../../../pom.xml` `dependencyManagement` pin,
+- **`log4j-api`:** Overridden `2.25.4` → `2.25.5` via a new `pom.xml` `dependencyManagement` pin,
   closing [CVE-2026-49844](https://nvd.nist.gov/vuln/detail/CVE-2026-49844) (GHSA-qv9r-c865-cp47) — a transitive
   dependency pulled in via `spring-boot-starter-logging` → `log4j-to-slf4j`; this project uses Logback, not Log4j2's
   `JsonTemplateLayout`, so the vulnerable code path was never actually reachable, but the pin removes the flagged
@@ -174,17 +175,17 @@ and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for 
 
 ##### Documentation
 
-- **`../../../README.md`:** Introduction and Features sections no longer describe match management, competitor/club CRUD, WinMSS
-  import or XML/multi-format processing as existing capabilities — only `AwardController`/`ImageController` CSV
-  processing is implemented today; the match/competitor domain's service and controller layer is still being rebuilt
-- **`../../../README.md`:** Coverage-report command corrected from `./mvnw test jacoco:report` (non-functional — JaCoCo is only
-  bound via the `coverage` Maven profile) to `./mvnw verify -Pcoverage`
-- **`../../../README.md`:** Removed the `1.x – 4.x` version range from the `ARCHIVE.md` description, per AGENTS.md's rule that
-  `../../../README.md`/`ARCHITECTURE.md` must never reference specific version numbers or ranges
-- **`../../../ARCHITECTURE.md`:** Test package tree corrected — removed the nonexistent `domain/` test package and added the
-  missing `converters/`/`exceptions/` packages
-- **`../../../ARCHITECTURE.md`:** CI/CD & Quality Gates table's `Build & Tests` row no longer claims an "All PRs" GitHub Actions
-  trigger — only `codeql.yml` exists; reworded to reflect it is run locally/by reviewers
+- **`README.md`:** Introduction and Features sections no longer describe match management, competitor/club
+  CRUD, WinMSS import or XML/multi-format processing as existing capabilities — only `AwardController`/`ImageController`
+  CSV processing is implemented today; the match/competitor domain's service and controller layer is still being rebuilt
+- **`README.md`:** Coverage-report command corrected from `./mvnw test jacoco:report` (non-functional — JaCoCo
+  is only bound via the `coverage` Maven profile) to `./mvnw verify -Pcoverage`
+- **`README.md`:** Removed the `1.x – 4.x` version range from the `ARCHIVE.md` description, per AGENTS.md's
+  rule that `README.md`/`ARCHITECTURE.md` must never reference specific version numbers or ranges
+- **`ARCHITECTURE.md`:** Test package tree corrected — removed the nonexistent `domain/` test package and added
+  the missing `converters/`/`exceptions/` packages
+- **`ARCHITECTURE.md`:** CI/CD & Quality Gates table's `Build & Tests` row no longer claims an "All PRs" GitHub
+  Actions trigger — only `codeql.yml` exists; reworded to reflect it is run locally/by reviewers
 
 #### ⚠️ Deprecated
 
@@ -200,9 +201,9 @@ and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for 
 
 ##### Documentation
 
-- **`../../../CLAUDE.md`:** New Git Workflow section stating the branching model's PR targets directly (`feature/*` → `develop`;
-  `release/vX.Y.Z`/`hotfix/*` → `main`) and the develop-first-for-testing rule, rather than deferring entirely to
-  `../../../AGENTS.md`
+- **`CLAUDE.md`:** New Git Workflow section stating the branching model's PR targets directly (`feature/*` →
+  `develop`; `release/vX.Y.Z`/`hotfix/*` → `main`) and the develop-first-for-testing rule, rather than deferring
+  entirely to `AGENTS.md`
 
 ##### Testing
 
@@ -262,8 +263,8 @@ and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for 
 
 ##### Build & Metadata
 
-- Project version bumped to **7.2.0** in `../../../pom.xml`; `@OpenAPIDefinition` version updated to match
-- **`../../../pom.xml`:** Spring Boot parent bumped `4.0.7` → `4.1.0`. As part of this:
+- Project version bumped to **7.2.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
+- **`pom.xml`:** Spring Boot parent bumped `4.0.7` → `4.1.0`. As part of this:
     - Removed the `spring-framework.version`/`tomcat.version` property overrides — both now match Boot 4.1.0's own
       defaults (`7.0.8`/`11.0.22`) exactly, so they were dead weight
     - Removed the `commons.lang3.version` property — a pre-existing typo (Boot's real property is
@@ -281,12 +282,12 @@ and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for 
 
 ##### Documentation
 
-- **`../../../AGENTS.md`:** Evergreen Documentation rule broadened to prohibit version *ranges* (e.g. `1.x – 4.x`), not just
-  exact version numbers, in `../../../README.md`/`ARCHITECTURE.md`
-- **`../../../AGENTS.md`:** Icon registry extended with `🔍` (Current state / inspection) and `📤` (Output)
-- **`../../../AGENTS.md`, `CONTRIBUTING.md`:** Branching Model's develop-first rule clarified to note it's "for testing before
-  they ship"
-- **`../../../AGENTS.md`:** Test Conventions gains a grouping/ordering rule — each method's tests get a one-line
+- **`AGENTS.md`:** Evergreen Documentation rule broadened to prohibit version *ranges* (e.g. `1.x – 4.x`), not
+  just exact version numbers, in `README.md`/`ARCHITECTURE.md`
+- **`AGENTS.md`:** Icon registry extended with `🔍` (Current state / inspection) and `📤` (Output)
+- **`AGENTS.md`, `CONTRIBUTING.md`:** Branching Model's develop-first rule clarified to note it's "for testing
+  before they ship"
+- **`AGENTS.md`:** Test Conventions gains a grouping/ordering rule — each method's tests get a one-line
   `// methodName()` comment; groups are ordered constructors first, then public before protected, then alphabetically by
   method name within each visibility (overloads by parameter count then type), `toString()` last regardless of
   visibility
@@ -307,13 +308,13 @@ and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for 
 
 ##### Documentation
 
-- **`../../../CLAUDE.md`:** Now cross-links to `../../../AGENTS.md` for tool-agnostic conventions (git workflow, release checklist,
-  documentation conventions, todo-list tracking) — previously the only project doc missing this reference
-- **`../../../CLAUDE.md`:** Package overview table corrected — `ControllerAdvice` lives in `configs/`, not `exceptions/`; adds
-  the missing `configs/` row
-- **`../../../AGENTS.md`, `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`:** Removed the false claim that AssertJ
-  is used for assertions — `assertj-core` is explicitly excluded from `spring-boot-starter-webmvc-test` in `../../../pom.xml`,
-  and every test in the suite uses JUnit Jupiter's `Assertions` instead
+- **`CLAUDE.md`:** Now cross-links to `AGENTS.md` for tool-agnostic conventions (git workflow, release
+  checklist, documentation conventions, todo-list tracking) — previously the only project doc missing this reference
+- **`CLAUDE.md`:** Package overview table corrected — `ControllerAdvice` lives in `configs/`, not
+  `exceptions/`; adds the missing `configs/` row
+- **`AGENTS.md`, `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`:** Removed the false claim that
+  AssertJ is used for assertions — `assertj-core` is explicitly excluded from `spring-boot-starter-webmvc-test` in
+  `pom.xml`, and every test in the suite uses JUnit Jupiter's `Assertions` instead
 
 #### ⚠️ Deprecated
 
@@ -357,7 +358,7 @@ and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for 
 
 ##### Build & Metadata
 
-- Project version bumped to **7.1.0** in `../../../pom.xml`; `@OpenAPIDefinition` version updated to match
+- Project version bumped to **7.1.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 #### 🔄 Changed
 
@@ -410,7 +411,7 @@ and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for 
 
 ##### Build & Metadata
 
-- Project version bumped to **7.0.0** in `../../../pom.xml`; `@OpenAPIDefinition` version updated to match
+- Project version bumped to **7.0.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 #### 🔄 Changed
 
@@ -488,9 +489,9 @@ and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for 
 
 ##### Build & Metadata
 
-- **MIT Licence** declared in `../../../pom.xml` (`<license>`)
-- **Developer profile** populated in `../../../pom.xml` (`tahoni / Leoni Lubbinge`)
-- **SCM connection and URL** filled in `../../../pom.xml` for GitHub
+- **MIT Licence** declared in `pom.xml` (`<license>`)
+- **Developer profile** populated in `pom.xml` (`tahoni / Leoni Lubbinge`)
+- **SCM connection and URL** filled in `pom.xml` for GitHub
 
 #### 🔄 Changed
 
@@ -510,7 +511,7 @@ and [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md) for 
 
 - **`ControllerAdvice`:** Structured logging added to all exception handlers; `ValidationException` removed from handler
   method signatures (119 lines changed)
-- **`../../../pom.xml`:** Spring Boot BOM upgraded `4.0.5` → `4.0.6`; Lombok exclusion plugin block reorganised
+- **`pom.xml`:** Spring Boot BOM upgraded `4.0.5` → `4.0.6`; Lombok exclusion plugin block reorganised
 - **`logback-spring.xml`:** Additional appender/logger configuration added
 
 ##### Package Paths — All IPSC Models
@@ -605,9 +606,9 @@ All `models/ipsc/` classes moved to `models/ipsc/common/`:
 
 ##### CI/CD & Configuration
 
-- **`../../../.aiignore`:** New file for AI assistant context management
-- **Qodana JVM linter:** `../../../qodana.yaml` configured with `jetbrains/qodana-jvm` for static analysis
-- **JaCoCo 0.8.14:** Coverage profile added to `../../../pom.xml`; reports output to `/coverage` directory
+- **`.aiignore`:** New file for AI assistant context management
+- **Qodana JVM linter:** `qodana.yaml` configured with `jetbrains/qodana-jvm` for static analysis
+- **JaCoCo 0.8.14:** Coverage profile added to `pom.xml`; reports output to `/coverage` directory
 - **Branch patterns:** Extended in `code_quality.yml` (feature, bugfix, hotfix)
 
 #### 🔄 Changed
@@ -730,7 +731,7 @@ None.
 
 ##### Configuration
 
-- **`qodana.yml`:** Duplicate removed; configuration consolidated in `../../../qodana.yaml`
+- **`qodana.yml`:** Duplicate removed; configuration consolidated in `qodana.yaml`
 
 ##### Test Classes
 

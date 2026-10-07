@@ -1,10 +1,10 @@
 # HPSC Website Backend Change Log Archive (v1.0.0 – v4.1.0)
 
 The change log entries for versions 1.0.0 to 4.1.0 of the HPSC Website Backend project, archived from
-[`../../../CHANGELOG.md`](/CHANGELOG.md) to keep that file a manageable size. The entries are moved unchanged. See
-[`../../../CHANGELOG.md`](/CHANGELOG.md) for the current version, the unreleased changes and versions 10.0.0 onwards,
-[`HISTORY_v1-v4.md`](/documentation/archive/v1-v4/HISTORY_v1-v4.md) for the archived narrative history of the same versions, and [`CHANGELOG_v5-v7.md`](/documentation/archive/v5-v7/CHANGELOG_v5-v7.md) for versions 5.0.0 to
-7.4.1.
+[`CHANGELOG.md`](/CHANGELOG.md) to keep that file a manageable size. The entries are moved unchanged. See
+[`CHANGELOG.md`](/CHANGELOG.md) for the current version, the unreleased changes and versions 10.0.0 onwards,
+[`HISTORY_v1-v4.md`](/documentation/archive/v1-v4/HISTORY_v1-v4.md) for the archived narrative history of the same
+versions, and [`CHANGELOG_v5-v7.md`](/documentation/archive/v5-v7/CHANGELOG_v5-v7.md) for versions 5.0.0 to 7.4.1.
 
 ---
 

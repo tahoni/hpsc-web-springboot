@@ -23,8 +23,8 @@
   `toResponse` updated
 - `SystemConstants.ARRAY_SEPARATOR` (`";"`) — adopted by `AwardServiceImpl`/`ImageServiceImpl`, replacing `"|"`
 - `AwardController`, `ImageController`, `IpscCompetitorController` — Swagger examples updated to match
-- `../../../../ARCHITECTURE.md`, `CONTRIBUTING.md`, `AGENTS.md` — every Qodana reference in the CI/CD documentation removed
-- `../../../roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — Gap #7 closed as not applicable
+- `ARCHITECTURE.md`, `CONTRIBUTING.md`, `AGENTS.md` — every Qodana reference in the CI/CD documentation removed
+- `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` — Gap #7 closed as not applicable
 
 **Fixed**
 
@@ -33,7 +33,7 @@
 
 **Removed**
 
-- `.github/workflows/qodana.yml`, `../../../../qodana.yaml` — Qodana static analysis; had failed on every CI run since v8.1.1
+- `.github/workflows/qodana.yml`, `qodana.yaml` — Qodana static analysis; had failed on every CI run since v8.1.1
   added it (missing `QODANA_TOKEN` secret, unconditional SARIF-upload step)
 
 ## 🧪 Test Plan
@@ -41,8 +41,8 @@
 - [x] `./mvnw test` — full suite passing (790 tests, up from 775; 0 failures/errors)
 - [x] Added genuinely-multiple-address tests across every layer `emailAddresses` touches (`CompetitorRequestTest`,
       `IpscCompetitorServiceImplTest`, `IpscCompetitorServiceTest`, `IpscCompetitorServiceIntegrationTest`)
-- [x] Verified `../../../../RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/RELEASE_NOTES_v8.2.0.md`
-- [x] Confirmed no version-specific references leaked into `../../../../README.md`/`ARCHITECTURE.md`
+- [x] Verified `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/RELEASE_NOTES_v8.2.0.md`
+- [x] Confirmed no version-specific references leaked into `README.md`/`ARCHITECTURE.md`
 
 ## 🔗 Related Documentation
 

@@ -11,7 +11,7 @@
 Version 8.10.2 is a patch release. The automated Claude code review skipped every bot-authored pull request, so the
 Dependabot PRs introduced in v8.10.1 — including the security updates that go straight into `main` — got no review.
 It now reviews Dependabot's PRs too. Because v8.10.1 had already reached `main`, this ships as its own release rather
-than being folded into it, per `../../../../AGENTS.md`'s rule that a released version is never changed. The release also carries
+than being folded into it, per `AGENTS.md`'s rule that a released version is never changed. The release also carries
 Dependabot's first three updates, and fixes the one that broke: a `flyway-mysql` bump that mixed two Flyway major
 versions in the Flyway Maven plugin now follows Spring Boot's own Flyway version instead.
 
@@ -21,7 +21,7 @@ versions in the Flyway Maven plugin now follows Spring Boot's own Flyway version
 
 ### 🤖 Dependabot PRs Reviewed
 
-- `../../../../.github/workflows/claude-code-review.yml` gains `allowed_bots: 'dependabot'`
+- `.github/workflows/claude-code-review.yml` gains `allowed_bots: 'dependabot'`
 - Covers Dependabot's version-update PRs into `develop` and security-update PRs into `main`
 - Limited to Dependabot rather than `'*'`, so no other bot can trigger the review
 
@@ -44,19 +44,19 @@ versions in the Flyway Maven plugin now follows Spring Boot's own Flyway version
 
 #### CI/CD & Configuration
 
-- **`../../../../.github/workflows/claude-code-review.yml`:** The Claude code review now also runs on Dependabot's PRs
+- **`.github/workflows/claude-code-review.yml`:** The Claude code review now also runs on Dependabot's PRs
   (`allowed_bots: 'dependabot'`), which it previously skipped as bot-authored; `CLAUDE_CODE_OAUTH_TOKEN` must also be
-  stored as a Dependabot secret. Documented in `../../../../ARCHITECTURE.md`'s CI/CD & Quality Gates section
+  stored as a Dependabot secret. Documented in `ARCHITECTURE.md`'s CI/CD & Quality Gates section
 - **`actions/checkout`, `actions/setup-java`, `actions/upload-artifact`:** Bumped to `v7`, `v6` and `v7` across every
   workflow (Dependabot, #140)
-- **`../../../../.github/workflows/dependency-submission.yml`:** The `chmod +x mvnw` step is gone — `mvnw` is now committed as
+- **`.github/workflows/dependency-submission.yml`:** The `chmod +x mvnw` step is gone — `mvnw` is now committed as
   executable
 
 #### Build & Metadata
 
 - **`springdoc-openapi-bom`, `jacoco-maven-plugin`, Maven wrapper:** Bumped to `3.1.1`, `0.8.15` and Maven `3.9.16`,
   with a regenerated `mvnw`/`mvnw.cmd` (Dependabot, #138)
-- Project version bumped to **8.10.2** in `../../../../pom.xml`; `@OpenAPIDefinition` version updated to match
+- Project version bumped to **8.10.2** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 ### Fixed
 
@@ -107,7 +107,7 @@ documents them and restores the matching Flyway version there.
   notes to include it would make them describe something that was never released, so it ships as v8.10.2 instead.
 - **Name the bot, don't wildcard it.** `'*'` would let any bot or GitHub App trigger a review — the action warns
   against it for exactly that reason. Only Dependabot's PRs needed covering, so only Dependabot is allowed.
-- **Derive, don't pin.** `../../../../pom.xml` already warned that `flyway-mysql` had to be kept in sync with Spring Boot by
+- **Derive, don't pin.** `pom.xml` already warned that `flyway-mysql` had to be kept in sync with Spring Boot by
   hand — and the first automated update broke that sync. Deriving the version from the parent's `${flyway.version}`
   removes the thing that needed keeping in sync, rather than asking Dependabot to leave it alone.
 - **Review what bypasses `develop` too.** Dependabot security PRs merge straight into `main` as hotfixes, skipping the
@@ -135,7 +135,7 @@ documents them and restores the matching Flyway version there.
 - A competitor or match referenced by results or shooter logs can't be deleted through the API, since no endpoint
   removes those rows yet (carried over from v8.8.0, pending Gap #6).
 - The `BRANCH` coverage counter is still not separately enforced by the JaCoCo `check` execution — only `LINE` is.
-- `../../../../pom.xml` still overrides `tomcat.version` to `11.0.25` for three critical CVEs, since Spring Boot 4.1.1 manages
+- `pom.xml` still overrides `tomcat.version` to `11.0.25` for three critical CVEs, since Spring Boot 4.1.1 manages
   `11.0.24` (Gap #26).
 - GitHub's built-in automatic dependency submission is a repository setting and must be turned off by hand, if not
   already done for v8.10.1.

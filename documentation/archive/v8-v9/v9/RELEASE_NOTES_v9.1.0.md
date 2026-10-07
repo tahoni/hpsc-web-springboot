@@ -96,7 +96,7 @@ existing callers keep working.
 
 - **`V8_0_0` to `V8_9_0`:** Eleven Flyway migrations covering the shooter log competitor columns, the
   `shooter_log_overall` and `shooter_log_match` tables, the competitor and overall links, `competitor.is_verified` and
-  the two competitor category child tables — see `../../../../CHANGELOG.md` for each
+  the two competitor category child tables — see `CHANGELOG.md` for each
 
 #### Tests
 
@@ -136,18 +136,18 @@ existing callers keep working.
 
 #### Build & Metadata
 
-- Project version bumped to **9.1.0** in `../../../../pom.xml`; `@OpenAPIDefinition` version updated to match
+- Project version bumped to **9.1.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 #### Documentation
 
-- **`../../../../AGENTS.md` Release Checklist, `prep-version-release` skill:** New step to align the Markdown tables in the files a
-  release touches, run before `../../../../RELEASE_NOTES.md` is archived; the later steps are renumbered
+- **`AGENTS.md` Release Checklist, `prep-version-release` skill:** New step to align the Markdown tables in the files a
+  release touches, run before `RELEASE_NOTES.md` is archived; the later steps are renumbered
 
 ### Dependencies
 
 #### Database
 
-- **`mysql-connector-j`:** The `9.4.0` pin in `../../../../pom.xml` is dropped, since Spring Boot `4.1.1` now manages `9.7.0`
+- **`mysql-connector-j`:** The `9.4.0` pin in `pom.xml` is dropped, since Spring Boot `4.1.1` now manages `9.7.0`
 
 ---
 
@@ -195,7 +195,7 @@ existing callers keep working.
 - **Categories in a child table.** A list of categories per entry is a child table rather than a delimited column, so
   it stays queryable and unique per pair.
 - **A MINOR.** New endpoints and new optional fields are backward-compatible additions; nothing is removed or made
-  stricter, which `../../../../AGENTS.md`'s Semantic Versioning rules classify as MINOR.
+  stricter, which `AGENTS.md`'s Semantic Versioning rules classify as MINOR.
 
 ---
 
@@ -221,7 +221,7 @@ existing callers keep working.
   calculation job fills them in (Gap #6, partially completed).
 - Competitor scores submission (`MatchOverallScoresRequest`/`MatchStageScoresRequest`) remains groundwork only —
   not yet wired to any controller (carried over from v8.0.0).
-- `../../../../pom.xml` still overrides `tomcat.version` (to `11.0.26`) for three critical CVEs, since Spring Boot 4.1.1 manages
+- `pom.xml` still overrides `tomcat.version` (to `11.0.26`) for three critical CVEs, since Spring Boot 4.1.1 manages
   `11.0.24` (Gap #26). `logback.version`, the Jackson BOM properties and `flyway-mysql` are likewise set above
   Spring Boot's managed versions.
 

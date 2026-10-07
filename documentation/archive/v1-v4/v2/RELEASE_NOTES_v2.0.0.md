@@ -124,7 +124,7 @@ with dedicated DTOs, removing legacy code and enhancing documentation.
 
 ### ⬆️ Updated
 
-- **Dependencies:** Updated `../../../../pom.xml` with required dependencies for enhanced XML/JSON processing
+- **Dependencies:** Updated `pom.xml` with required dependencies for enhanced XML/JSON processing
 
 ### ✅ Unchanged
 

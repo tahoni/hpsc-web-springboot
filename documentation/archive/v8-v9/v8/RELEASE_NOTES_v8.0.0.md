@@ -13,7 +13,7 @@ long-standing empty stub is replaced by two full CRUD controllers — `IpscCompe
 `IpscMatchController` — backed by new `IpscCompetitorService`/`IpscMatchService` implementations, new request/response
 DTOs and a `Gender` enum extended to match the shape of the project's other enums. Alongside the domain work, this
 release renames `processCsv` to `createAwards`/`createImages` and every enum's `getByX` factory methods to `fromX`,
-invests in a comprehensive Javadoc/`@since` documentation pass, merges `../../../../CLAUDE.md`'s guidance into a single
+invests in a comprehensive Javadoc/`@since` documentation pass, merges `CLAUDE.md`'s guidance into a single
 `AGENTS.md` reference, migrates the project's AI-agent tooling from slash commands to Skills and re-adds Qodana JVM
 static analysis.
 
@@ -88,15 +88,15 @@ static analysis.
 
 ### 🛠️ Documentation Consolidation & AI-Agent Tooling
 
-- **`../../../../AGENTS.md`/`CLAUDE.md`** — `../../../../CLAUDE.md`'s Project Overview, Build & Run Commands, Architecture and Testing
+- **`AGENTS.md`/`CLAUDE.md`** — `CLAUDE.md`'s Project Overview, Build & Run Commands, Architecture and Testing
   Patterns sections merged into `AGENTS.md` so any AI coding agent gets the same guidance; `CLAUDE.md` reduced to a
   short pointer
 - **AI-agent tooling** migrated from `.claude/commands/*.md` slash commands to `.claude/skills/*/SKILL.md` Skills;
   `generate-pr-description` now runs `sync-unreleased-changes` as a prerequisite step before drafting a release
-- New `../../../../AGENTS.md` conventions: line wrapping (100–120 characters), an extended Arrange-Act-Assert rule requiring an
+- New `AGENTS.md` conventions: line wrapping (100–120 characters), an extended Arrange-Act-Assert rule requiring an
   explicit `// Arrange`/`// Act`/`// Assert` comment per phase and a test-helper-placement rule (private
   fixture/setup helpers go after every `@Test` method)
-- **`../../../../qodana.yaml`** re-added — `jetbrains/qodana-jvm:2026.2` linter on the `qodana.starter` profile, targeting JDK 25
+- **`qodana.yaml`** re-added — `jetbrains/qodana-jvm:2026.2` linter on the `qodana.starter` profile, targeting JDK 25
 
 ### 🧪 Test Coverage Expansion
 
@@ -130,9 +130,9 @@ controllers/services, plus new coverage for the `Gender` enum and its converter.
 
 #### Tooling
 
-- `../../../../.claude/skills/generate-commit-message`, `generate-pr-description`, `sync-unreleased-changes`,
+- `.claude/skills/generate-commit-message`, `generate-pr-description`, `sync-unreleased-changes`,
   `generate-pr-summary`, `scaffold-unit-tests`, `scaffold-integration-tests`
-- `../../../../qodana.yaml`
+- `qodana.yaml`
 
 #### Tests
 
@@ -207,7 +207,7 @@ controllers/services, plus new coverage for the `Gender` enum and its converter.
   `MatchStageScoresRequest`, under `za.co.hpsc.web.models.ipsc.scores.request` instead of
   `za.co.hpsc.web.models.ipsc.request`.
 - **AI-agent tooling moved.** Anything invoking a `/generate-commit-message`-style slash command should instead use
-  the equivalent Skill under `../../../../.claude/skills`.
+  the equivalent Skill under `.claude/skills/`.
 
 ---
 
@@ -232,10 +232,10 @@ controllers/services, plus new coverage for the `Gender` enum and its converter.
 - **Fix naming inconsistencies while the module is already being touched.** `processCsv`→`createAwards`/`createImages`
   and `getByX`→`fromX` were both pre-existing inconsistencies unrelated to the IPSC rebuild itself, but this release
   was a natural point to clear them rather than let them compound further.
-- **Consolidate documentation and tooling alongside the domain work.** Merging `../../../../CLAUDE.md` into `AGENTS.md` and
+- **Consolidate documentation and tooling alongside the domain work.** Merging `CLAUDE.md` into `AGENTS.md` and
   migrating slash commands to Skills isn't IPSC-specific, but both were overdue and benefit from landing in the same
   release as a broader round of Javadoc/`@since` accuracy work.
-- **Run `sync-unreleased-changes` before every release from now on.** Auditing this release's own `../../../../CHANGELOG.md`
+- **Run `sync-unreleased-changes` before every release from now on.** Auditing this release's own `CHANGELOG.md`
   surfaced several gaps (new test files, a reverse-sync to `ARCHITECTURE.md`, an under-described `ControllerAdvice`
   entry) that a manual pass had missed — `generate-pr-description` now enforces this automatically.
 
@@ -287,7 +287,7 @@ Leoni Lubbinge
 Version 8.0.0 completes the IPSC module rebuild begun as groundwork in v6.0.0: `IpscController`'s empty stub is
 replaced by `IpscCompetitorController`/`IpscMatchController`, backed by new services, DTOs and the largest test
 expansion since v5.4.0. Alongside the domain work, this release also renames long-standing inconsistent method names,
-invests in a comprehensive Javadoc/`@since` documentation pass, consolidates `../../../../CLAUDE.md` into `AGENTS.md`, migrates
+invests in a comprehensive Javadoc/`@since` documentation pass, consolidates `CLAUDE.md` into `AGENTS.md`, migrates
 the project's AI-agent tooling from slash commands to Skills and re-adds Qodana JVM static analysis — marking the
 transition from a project with substantial architectural groundwork to one with a genuinely complete, if still
 growing, IPSC feature set.

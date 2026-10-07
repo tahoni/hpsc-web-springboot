@@ -9,7 +9,7 @@
 **Root Document Title Standardisation & Source-of-Truth Clarification**
 
 Version 8.4.2 is a documentation-only patch release with no source-code, schema or dependency changes. It states
-explicitly, for the first time, that `../../../../AGENTS.md` is this project's ultimate source of truth for conventions, and
+explicitly, for the first time, that `AGENTS.md` is this project's ultimate source of truth for conventions, and
 standardises the H1 titles of `CHANGELOG.md`, `CONTRIBUTING.md` and `HISTORY.md` to match `README.md`'s existing
 "HPSC Website Backend" project name — `CHANGELOG.md` gains a nested "Change Log" heading in the process, cascading a
 one-level heading demotion through the rest of the file.
@@ -20,19 +20,19 @@ one-level heading demotion through the rest of the file.
 
 ### 📚 AGENTS.md as the Ultimate Source of Truth
 
-- `../../../../AGENTS.md` now states, right before its Documentation File Map, that it is this project's ultimate source of
+- `AGENTS.md` now states, right before its Documentation File Map, that it is this project's ultimate source of
   truth for conventions — every other file's workflow/convention guidance points back to it rather than restating
   it
-- `../../../../CONTRIBUTING.md`'s intro carries the matching pointer, stating `AGENTS.md` wins if anything else in the
+- `CONTRIBUTING.md`'s intro carries the matching pointer, stating `AGENTS.md` wins if anything else in the
   repository's documentation ever contradicts it
 
 ### 🏷️ Root Document Title Standardisation
 
-- `../../../../CHANGELOG.md`'s title changed from "Changelog" to "HPSC Website Backend", with a new "🧾 Change Log"
+- `CHANGELOG.md`'s title changed from "Changelog" to "HPSC Website Backend", with a new "🧾 Change Log"
   second-level heading beneath it, matching `README.md`'s existing project name
-- `../../../../CONTRIBUTING.md`/`HISTORY.md`'s H1 titles gain the same "HPSC Website Backend" prefix, for consistency across
+- `CONTRIBUTING.md`/`HISTORY.md`'s H1 titles gain the same "HPSC Website Backend" prefix, for consistency across
   every root document
-- Every heading below `../../../../CHANGELOG.md`'s new "Change Log" heading — Table of Contents, each version and their
+- Every heading below `CHANGELOG.md`'s new "Change Log" heading — Table of Contents, each version and their
   Added/Changed/Fixed/Removed/Security subsections and area sub-headers — demoted one level to nest correctly
   beneath it
 
@@ -44,10 +44,10 @@ one-level heading demotion through the rest of the file.
 
 #### Documentation
 
-- **`../../../../AGENTS.md`:** Now states, right before its Documentation File Map, that it is this project's ultimate source of
-  truth for conventions — every other file's workflow/convention guidance (`../../../../CONTRIBUTING.md` included) points back to
+- **`AGENTS.md`:** Now states, right before its Documentation File Map, that it is this project's ultimate source of
+  truth for conventions — every other file's workflow/convention guidance (`CONTRIBUTING.md` included) points back to
   it rather than restating it
-- **`../../../../CONTRIBUTING.md`:** Intro now points to `../../../../AGENTS.md` for the full set of conventions AI coding agents and
+- **`CONTRIBUTING.md`:** Intro now points to `AGENTS.md` for the full set of conventions AI coding agents and
   contributors follow, and states that `AGENTS.md` wins if anything else in the repository's documentation ever
   contradicts it
 
@@ -55,19 +55,19 @@ one-level heading demotion through the rest of the file.
 
 #### Documentation
 
-- **`../../../../CHANGELOG.md`:** Title changed from "Changelog" to "HPSC Website Backend", with a new "🧾 Change Log"
-  second-level heading beneath it, matching `../../../../README.md`'s existing project name; every heading below it — Table of
+- **`CHANGELOG.md`:** Title changed from "Changelog" to "HPSC Website Backend", with a new "🧾 Change Log"
+  second-level heading beneath it, matching `README.md`'s existing project name; every heading below it — Table of
   Contents, each version and their Added/Changed/Fixed/Removed/Security subsections and area sub-headers — drops one
   level to nest correctly under the new heading
-- **`../../../../CONTRIBUTING.md`/`HISTORY.md`:** H1 titles gain the same "HPSC Website Backend" prefix, for consistency with
-  `../../../../README.md` and the retitled `CHANGELOG.md`
+- **`CONTRIBUTING.md`/`HISTORY.md`:** H1 titles gain the same "HPSC Website Backend" prefix, for consistency with
+  `README.md` and the retitled `CHANGELOG.md`
 
 ---
 
 ## 🚀 Migration Guide
 
 No code, schema, configuration or dependency changes in this release — nothing for API consumers or developers to
-migrate. Anyone linking directly to a `../../../../CHANGELOG.md` version-section anchor is unaffected, since anchor text is
+migrate. Anyone linking directly to a `CHANGELOG.md` version-section anchor is unaffected, since anchor text is
 unchanged; only the heading *level* markup around it changed.
 
 ---
@@ -88,10 +88,10 @@ unchanged; only the heading *level* markup around it changed.
 ## 🧭 Design Notes
 
 - **State the source-of-truth relationship explicitly, rather than leaving it implied.** Every other document already
-  pointed to `../../../../AGENTS.md` for the conventions it restates a summary of, but nothing said outright that `AGENTS.md`
+  pointed to `AGENTS.md` for the conventions it restates a summary of, but nothing said outright that `AGENTS.md`
   wins on conflict — `CONTRIBUTING.md`'s intro now says so directly, so drift between the two has one obvious
   resolution.
-- **A title change that adds a heading level must cascade, not just insert.** Turning `../../../../CHANGELOG.md`'s old H1 into a
+- **A title change that adds a heading level must cascade, not just insert.** Turning `CHANGELOG.md`'s old H1 into a
   nested H2 under a new project-name H1 would have left every version section still notionally "under" the old
   title text if the levels below it hadn't also shifted down — the one-level demotion keeps the document's actual
   heading hierarchy consistent with its new structure, not just its rendered title.
@@ -136,7 +136,7 @@ Leoni Lubbinge
 
 ## 📝 Notes
 
-Version 8.4.2 is a documentation-only patch focused entirely on making `../../../../AGENTS.md`'s role as this project's ultimate
+Version 8.4.2 is a documentation-only patch focused entirely on making `AGENTS.md`'s role as this project's ultimate
 source of truth explicit, and standardising root document titles around `README.md`'s existing project name. No
 product-facing behaviour changed.
 

@@ -6,10 +6,10 @@
 
 ## 🎯 Theme
 
-**`../../../../CHANGELOG.md` Heading-Depth Correction, Future Roadmap Refresh & Icon Registry Sync**
+**`CHANGELOG.md` Heading-Depth Correction, Future Roadmap Refresh & Icon Registry Sync**
 
 Version 8.6.2 is a documentation-only patch release with no source-code, schema or dependency changes. It corrects how
-the project's own written conventions describe `../../../../CHANGELOG.md`'s heading structure: `AGENTS.md`, `CONTRIBUTING.md` and
+the project's own written conventions describe `CHANGELOG.md`'s heading structure: `AGENTS.md`, `CONTRIBUTING.md` and
 five Claude Code skills all described the file as `## 🧪 [Unreleased]` → `### <category>` → `#### <Area>`, one level
 shallower than the `###`/`####`/`#####` depth the file has actually used. The fix was reverse-synced from the shared
 project template, which had already corrected the same drift in its own copy of these conventions. It also refreshes
@@ -24,18 +24,18 @@ v8.4.1/v8.4.2/v8.5.1/v8.6.1, a doc/tooling-only diff against `main` scopes this 
 
 ### 🧾 CHANGELOG.md Convention Correction
 
-- Every `../../../../CHANGELOG.md` heading reference in `AGENTS.md`, `CONTRIBUTING.md` and the `generate-commit-message`,
+- Every `CHANGELOG.md` heading reference in `AGENTS.md`, `CONTRIBUTING.md` and the `generate-commit-message`,
   `prep-version-release`, `scaffold-unit-tests`, `scaffold-integration-tests` and `sync-unreleased-changes` skills
   now matches the file's actual `### 🧪 [Unreleased]` → `#### <category>` → `##### <Area>` nesting
-- `../../../../AGENTS.md`'s Git Workflow Conventions now spell out the full category/Area nesting, reuse of existing Area names
+- `AGENTS.md`'s Git Workflow Conventions now spell out the full category/Area nesting, reuse of existing Area names
   and the bold-lead-in bullet style, instead of leaving them implicit
 
 ### 🛤️ Future Roadmap Refresh (Gap #11)
 
-- `../../../../HISTORY.md`'s Short-term/Medium-term Future Roadmap lists now name only genuinely outstanding work: club seeding
+- `HISTORY.md`'s Short-term/Medium-term Future Roadmap lists now name only genuinely outstanding work: club seeding
   (shipped in v8.4.0) and bulk match import (shipped in v8.3.0) dropped, `ShooterLogEntry` renamed to
   `ShooterLogCompetitor`, and "Medium-term (v7.x+)" relabelled for the current major version
-- Gap #11 recorded and closed in `../../../roadmap/improvement-plan.md`/`improvement-plan-tasks.md`, leaving
+- Gap #11 recorded and closed in `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md`, leaving
   Gap #6 as the only open gap
 
 ### 🔁 Template Reverse Sync
@@ -53,14 +53,14 @@ v8.4.1/v8.4.2/v8.5.1/v8.6.1, a doc/tooling-only diff against `main` scopes this 
 
 #### Documentation
 
-- **`../../../../AGENTS.md`'s icon registry:** Restructured to match the shared project template's — its core table verbatim,
+- **`AGENTS.md`'s icon registry:** Restructured to match the shared project template's — its core table verbatim,
   its backend / API service set as this project's own icons and its frontend set kept reserved. `🛤️` now marks
   Roadmap, `☑️` Checklist, `🗺️` the Documentation file map, `🔃` Data flow and `🧭` design notes / design patterns
-- **`../../../../AGENTS.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `improvement-plan.md`, `documentation/recommendations/`:**
+- **`AGENTS.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, `improvement-plan.md`, `documentation/recommendations/`:**
   Documentation Conventions (`✍️`), Documentation File Map (`🗺️`), Key Design Patterns (`🧭`), Data Flow (`🔃`),
   Development Guidelines (`🛠️`), Getting Started (`🚀`), At a Glance (`🌳`) and Related Documentation (`🔗`)
   headings realigned with the new registry
-- **`../../../../AGENTS.md`, `CONTRIBUTING.md`, `README.md`, `HISTORY.md`, `improvement-plan.md`:** Roadmap, Future Roadmap
+- **`AGENTS.md`, `CONTRIBUTING.md`, `README.md`, `HISTORY.md`, `improvement-plan.md`:** Roadmap, Future Roadmap
   Implications and Success Criteria headings switched to `🛤️`/`☑️` to match
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** Synced with the template's roadmap structure — project
   title, a note on the four kinds of gap an audit looks for, a fuller Related Documentation list and a note on
@@ -75,25 +75,25 @@ v8.4.1/v8.4.2/v8.5.1/v8.6.1, a doc/tooling-only diff against `main` scopes this 
 
 #### Documentation
 
-- **`../../../../AGENTS.md`, `CONTRIBUTING.md`:** `../../../../CHANGELOG.md` heading references corrected from `## 🧪 [Unreleased]`/
+- **`AGENTS.md`, `CONTRIBUTING.md`:** `CHANGELOG.md` heading references corrected from `## 🧪 [Unreleased]`/
   `## 🧾 [X.Y.Z]` to the `### 🧪 [Unreleased]`/`### 🧾 [X.Y.Z]` depth the file actually uses. `AGENTS.md`'s Git
   Workflow Conventions now spell out the full `#### <category>` → `##### <Area>` nesting, Area reuse and the
   bold-lead-in bullet style — reverse-synced from the shared project template
-- **`../../../../HISTORY.md`:** "🛤️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has
+- **`HISTORY.md`:** "🛤️ Future Roadmap Implications" Short-term/Medium-term lists refreshed against what has
   actually shipped — the club-seeding bullet reduced to its still-outstanding `Competitor.homeClub` backfill half,
   `ShooterLogEntry` renamed to `ShooterLogCompetitor`, "Medium-term (v7.x+)" relabelled "Medium-term (Later v8.x
   Releases)" and "Bulk match processing capabilities" dropped as delivered by v8.3.0's bulk CSV import
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #11 recorded for those stale lists, then closed in
   this same release, with "🌳 At a Glance", the "🛤️ Roadmap" table and "☑️ Success Criteria" updated to match
 
-- **`../../../../CONTRIBUTING.md`:** Serial-comma example corrected — its "not" half repeated the correct form instead of
+- **`CONTRIBUTING.md`:** Serial-comma example corrected — its "not" half repeated the correct form instead of
   showing the forbidden "prose, comments, and Javadoc"
 
 #### Tooling
 
 - **`generate-commit-message`, `prep-version-release`, `scaffold-unit-tests`, `scaffold-integration-tests`,
   `sync-unreleased-changes` skills:** Category and Area heading depths corrected from `###`/`####` to the
-  `####`/`#####` levels `../../../../CHANGELOG.md` actually uses; `generate-commit-message` also notes that security-relevant
+  `####`/`#####` levels `CHANGELOG.md` actually uses; `generate-commit-message` also notes that security-relevant
   fixes belong under `#### 🔐 Security`
 
 ---
@@ -101,7 +101,7 @@ v8.4.1/v8.4.2/v8.5.1/v8.6.1, a doc/tooling-only diff against `main` scopes this 
 ## 🚀 Migration Guide
 
 No code, schema, configuration or dependency changes in this release — nothing for API consumers to migrate. Anyone
-drafting `../../../../CHANGELOG.md` entries by hand or with the project's Claude Code skills should nest them as
+drafting `CHANGELOG.md` entries by hand or with the project's Claude Code skills should nest them as
 `### 🧪 [Unreleased]` → `#### <category>` → `##### <Area>`, which is what the file already used.
 
 ---
@@ -110,7 +110,7 @@ drafting `../../../../CHANGELOG.md` entries by hand or with the project's Claude
 
 - **Total Commits:** 13 (2 feature commits from `feature/docs`, plus this release's version bump, roadmap update,
   documentation, PR description, serial-comma fix, commit-count update, Gap #11 fix, roadmap icon sync, icon
-  registry sync, release-doc re-verification and `../../../../CONTRIBUTING.md`/registry wording fix commits)
+  registry sync, release-doc re-verification and `CONTRIBUTING.md`/registry wording fix commits)
 - **Files Changed:** 23
 - **Insertions:** 811 lines
 - **Deletions:** 271 lines
@@ -123,19 +123,19 @@ drafting `../../../../CHANGELOG.md` entries by hand or with the project's Claude
 
 ## 🧭 Design Notes
 
-- **Fix the description, not the file.** `../../../../CHANGELOG.md` has consistently used `###`/`####`/`#####` across every
+- **Fix the description, not the file.** `CHANGELOG.md` has consistently used `###`/`####`/`#####` across every
   release; the drift was in the conventions describing it, so the conventions were corrected rather than
   restructuring all 36 released versions of changelog history to match a wrong description.
 - **Reverse-sync selectively.** The shared project template also moved its root documentation files into
   `documentation/current/`, switched to plain-imperative commit messages and trimmed its skills down to pointers at
-  `../../../../AGENTS.md`. None of those were brought back: the first is template-specific, the second contradicts this
+  `AGENTS.md`. None of those were brought back: the first is template-specific, the second contradicts this
   project's established Conventional Commits history and the third would drop Spring/Maven-specific detail these
   skills deliberately carry.
 - **Spell out conventions agents rely on.** Heading depth and bullet style were previously only implied by the
-  file's existing entries; stating them in `../../../../AGENTS.md` means an agent following the conventions can't reproduce the
+  file's existing entries; stating them in `AGENTS.md` means an agent following the conventions can't reproduce the
   old off-by-one drift.
 - **Realign live headings, not history.** Every current heading now follows the synced icon registry, but earlier
-  `../../../../CHANGELOG.md` entries, `HISTORY.md`/`EVOLUTION_OVERVIEW.md` narrative and gap Evidence/Outcome text keep the
+  `CHANGELOG.md` entries, `HISTORY.md`/`EVOLUTION_OVERVIEW.md` narrative and gap Evidence/Outcome text keep the
   icons they were written with — consistent with this project's convention of never rewriting historical records.
 
 ---
@@ -145,7 +145,7 @@ drafting `../../../../CHANGELOG.md` entries by hand or with the project's Claude
 - `./mvnw test` — full suite passing (872 tests, 0 failures/errors), unchanged from v8.6.1 (no source changes in
   this release).
 - No new tests added; this release makes no code changes. Verified instead: no `## 🧪 [Unreleased]`/`## 🧾 [`
-  heading references remain in `../../../../AGENTS.md`, `CONTRIBUTING.md` or `.claude/skills/`, and every released version in
+  heading references remain in `AGENTS.md`, `CONTRIBUTING.md` or `.claude/skills/`, and every released version in
   `CHANGELOG.md` uses the `### 🧾 [X.Y.Z]` depth the corrected conventions now describe.
 
 ---
@@ -180,7 +180,7 @@ Leoni Lubbinge
 
 ## 📝 Notes
 
-Version 8.6.2 is a documentation-only patch that brings the project's written `../../../../CHANGELOG.md` conventions back in
+Version 8.6.2 is a documentation-only patch that brings the project's written `CHANGELOG.md` conventions back in
 line with the file itself, clears delivered work out of `HISTORY.md`'s roadmap and aligns heading icons with the
 shared project template. No product-facing behaviour changed.
 

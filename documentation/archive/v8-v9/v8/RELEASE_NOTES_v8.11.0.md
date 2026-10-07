@@ -21,14 +21,14 @@ production schema instead of failing on it.
 
 ### 🐳 Docker Image
 
-- Multi-stage `../../../../Dockerfile`: built with the Maven wrapper on a JDK 25 image, run on a Java 25 JRE as a non-root user
+- Multi-stage `Dockerfile`: built with the Maven wrapper on a JDK 25 image, run on a Java 25 JRE as a non-root user
 - Spring Boot's extracted JAR layers keep dependency layers cached between builds
 - Defaults to the `prod` profile; supply `SPRING_DATASOURCE_URL`, `MYSQL_USER` and `MYSQL_PASSWORD` at run time
 
 ### 🧩 Docker Compose with MySQL
 
-- `../../../../docker-compose.yml` runs the application against a `mysql:8.4` container, started once MySQL reports healthy
-- Credentials come from a gitignored `.env`, copied from `../../../../.env.example`; Compose refuses to start without them
+- `docker-compose.yml` runs the application against a `mysql:8.4` container, started once MySQL reports healthy
+- Credentials come from a gitignored `.env`, copied from `.env.example`; Compose refuses to start without them
 - The database and log files persist in named volumes; `APP_PORT`/`MYSQL_PORT` move the host ports
 
 ### 💓 Health Endpoint
@@ -49,16 +49,16 @@ production schema instead of failing on it.
 
 #### CI/CD & Configuration
 
-- **`../../../../Dockerfile`, `.dockerignore`:** Multi-stage Docker image — built with the Maven wrapper on a JDK 25 image, then
+- **`Dockerfile`, `.dockerignore`:** Multi-stage Docker image — built with the Maven wrapper on a JDK 25 image, then
   run as a non-root user on a Java 25 JRE from Spring Boot's extracted JAR layers. It defaults to the `prod` profile,
   reads `SPRING_DATASOURCE_URL`, `MYSQL_USER` and `MYSQL_PASSWORD` at run time and takes JVM options from `JAVA_OPTS`;
-  its `HEALTHCHECK` polls the health endpoint. Documented in `../../../../README.md`'s new Running with Docker section
+  its `HEALTHCHECK` polls the health endpoint. Documented in `README.md`'s new Running with Docker section
 - **`spring-boot-starter-actuator`:** Exposes `/hpsc-web/actuator/health` with Actuator's defaults — the health
-  endpoint only, including a database check. Added to the tech stacks in `../../../../README.md`, `ARCHITECTURE.md` and
+  endpoint only, including a database check. Added to the tech stacks in `README.md`, `ARCHITECTURE.md` and
   `AGENTS.md`
-- **`../../../../docker-compose.yml`, `.env.example`:** Runs the application against a MySQL 8.4 container — the application waits
+- **`docker-compose.yml`, `.env.example`:** Runs the application against a MySQL 8.4 container — the application waits
   for MySQL's health check, Flyway creates the schema on first start, and the database and logs persist in named
-  volumes. `../../../../.env.example` recommends `MYSQL_PORT=3307` when a local MySQL already listens on 3306
+  volumes. `.env.example` recommends `MYSQL_PORT=3307` when a local MySQL already listens on 3306
 
 #### Documentation
 
@@ -69,17 +69,17 @@ production schema instead of failing on it.
 
 #### Tests
 
-- **`IpscMatchTest`:** The two stage tests now separate Act from Assert, per `../../../../AGENTS.md`'s Arrange-Act-Assert
+- **`IpscMatchTest`:** The two stage tests now separate Act from Assert, per `AGENTS.md`'s Arrange-Act-Assert
   convention
 
 #### Documentation
 
-- **`../../../../ARCHITECTURE.md`:** The Technology Stack table gains a Containerisation row, and its Schema migrations row now
+- **`ARCHITECTURE.md`:** The Technology Stack table gains a Containerisation row, and its Schema migrations row now
   says Flyway applies them at startup
 
 #### Build & Metadata
 
-- Project version bumped to **8.11.0** in `../../../../pom.xml`; `@OpenAPIDefinition` version updated to match
+- Project version bumped to **8.11.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 ### Fixed
 
@@ -91,7 +91,7 @@ production schema instead of failing on it.
   `flyway-core` dependency
 - **`application-prod.properties`:** Baselines a non-empty production schema without Flyway's history at `7.0.0`, so
   the first start applies `V7_1_0` onwards instead of failing on the existing tables; an empty database is still
-  built in full. Reflected in `../../../../CONTRIBUTING.md`'s Database Profiles table and `AGENTS.md`'s Flyway note
+  built in full. Reflected in `CONTRIBUTING.md`'s Database Profiles table and `AGENTS.md`'s Flyway note
 
 ---
 
@@ -112,7 +112,7 @@ pending migration when the application starts:
   startup; drop and recreate it (Flyway builds it in full) or migrate it once with the Maven plugin.
 - **No profile:** behaves like `dev` — no baseline is configured, so a non-empty schema needs Flyway's history table.
 
-**Running with Docker:** see `../../../../README.md`'s Running with Docker section. For Compose, copy `.env.example` to `.env` and
+**Running with Docker:** see `README.md`'s Running with Docker section. For Compose, copy `.env.example` to `.env` and
 set `MYSQL_USER`, `MYSQL_PASSWORD` and `MYSQL_ROOT_PASSWORD` before `docker compose up --build`.
 
 ---
@@ -126,7 +126,7 @@ set `MYSQL_USER`, `MYSQL_PASSWORD` and `MYSQL_ROOT_PASSWORD` before `docker comp
 - **Insertions:** 777 lines
 - **Deletions:** 113 lines
 - **Net Change:** +664 lines
-- **New Source Files:** 4 (`../../../../Dockerfile`, `.dockerignore`, `docker-compose.yml`, `.env.example`)
+- **New Source Files:** 4 (`Dockerfile`, `.dockerignore`, `docker-compose.yml`, `.env.example`)
 - **Deleted Files:** 0
 - **New Test Files:** 0
 
@@ -134,7 +134,7 @@ set `MYSQL_USER`, `MYSQL_PASSWORD` and `MYSQL_ROOT_PASSWORD` before `docker comp
 
 ## 🧭 Design Notes
 
-- **Layered image, non-root runtime.** The build stage resolves dependencies before copying `../../../../src`, and the runtime
+- **Layered image, non-root runtime.** The build stage resolves dependencies before copying `src/`, and the runtime
   stage copies Spring Boot's extracted layers from least to most frequently changing, so a code change rebuilds only
   the final layer. The application runs as an unprivileged `hpsc` user, and tests are left to CI rather than rerun
   inside the image build.
@@ -149,7 +149,7 @@ set `MYSQL_USER`, `MYSQL_PASSWORD` and `MYSQL_ROOT_PASSWORD` before `docker comp
   one — is still built from `V7_0_0`. `dev` gets no baseline, because its databases were already migrated through the
   Maven plugin.
 - **A new MINOR, not a PATCH.** The Flyway fix alone would be a PATCH, but the health endpoint is a new, externally
-  visible endpoint, so `../../../../AGENTS.md`'s Semantic Versioning rules make the release MINOR.
+  visible endpoint, so `AGENTS.md`'s Semantic Versioning rules make the release MINOR.
 
 ---
 
@@ -174,9 +174,9 @@ set `MYSQL_USER`, `MYSQL_PASSWORD` and `MYSQL_ROOT_PASSWORD` before `docker comp
 - A competitor or match referenced by results or shooter logs can't be deleted through the API, since no endpoint
   removes those rows yet (carried over from v8.8.0, pending Gap #6).
 - The `BRANCH` coverage counter is still not separately enforced by the JaCoCo `check` execution — only `LINE` is.
-- `../../../../pom.xml` still overrides `tomcat.version` to `11.0.25` for three critical CVEs, since Spring Boot 4.1.1 manages
+- `pom.xml` still overrides `tomcat.version` to `11.0.25` for three critical CVEs, since Spring Boot 4.1.1 manages
   `11.0.24` (Gap #26).
-- CI doesn't build the Docker image, so a change that breaks the `../../../../Dockerfile` isn't caught until someone builds it.
+- CI doesn't build the Docker image, so a change that breaks the `Dockerfile` isn't caught until someone builds it.
 - The Claude code review on Dependabot PRs fails until `CLAUDE_CODE_OAUTH_TOKEN` is also stored as a Dependabot
   secret, if not already done for v8.10.2.
 
@@ -189,7 +189,7 @@ set `MYSQL_USER`, `MYSQL_PASSWORD` and `MYSQL_ROOT_PASSWORD` before `docker comp
 - Wire `MatchOverallScoresRequest`/`MatchStageScoresRequest` (competitor scores submission) into an endpoint.
 - Drop the `tomcat.version` override once a Spring Boot release manages Tomcat `11.0.25` or later (Gap #26).
 - Consider enforcing a `BRANCH`-level JaCoCo minimum alongside the existing `LINE` one.
-- Consider building the Docker image in CI, so the `../../../../Dockerfile` is checked on every PR.
+- Consider building the Docker image in CI, so the `Dockerfile` is checked on every PR.
 
 ---
 

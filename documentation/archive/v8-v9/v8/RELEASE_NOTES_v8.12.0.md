@@ -38,7 +38,7 @@ triggers to every GitFlow branch.
 
 ### 🌿 `bugfix/*` Branch Type
 
-- `../../../../AGENTS.md` and `CONTRIBUTING.md` document `bugfix/<short-description>` as its own standard GitFlow branch type
+- `AGENTS.md` and `CONTRIBUTING.md` document `bugfix/<short-description>` as its own standard GitFlow branch type
 
 ---
 
@@ -48,7 +48,7 @@ triggers to every GitFlow branch.
 
 #### CI/CD & Configuration
 
-- **`../../../../.github/workflows/code_quality.yml`:** New Qodana static-analysis workflow, running `JetBrains/qodana-action` on
+- **`.github/workflows/code_quality.yml`:** New Qodana static-analysis workflow, running `JetBrains/qodana-action` on
   every push to `main`, `release/*`, `feature/*`, `bugfix/*` and `hotfix/*`, plus PRs into `main`/`develop`
 
 #### Services
@@ -58,7 +58,7 @@ triggers to every GitFlow branch.
 - **`CompetitorHelpers.toSentenceCaseLastName`:** New helper in the new `za.co.hpsc.web.helpers` package that
   lower-cases surname particles (also after a hyphen) when they precede the surname proper and capitalises the letter
   after a `Mc` prefix. Only whole words are matched. Listed in
-  `../../../../ARCHITECTURE.md`'s Project Structure tree and a new Helpers table
+  `ARCHITECTURE.md`'s Project Structure tree and a new Helpers table
 
 #### Tests
 
@@ -88,15 +88,15 @@ triggers to every GitFlow branch.
 
 #### Documentation
 
-- **`../../../../AGENTS.md`, `CONTRIBUTING.md`:** `bugfix/<short-description>` added as a standard GitFlow branch type
-- **`../../../../ARCHITECTURE.md`, `CONTRIBUTING.md`:** CI/CD & Quality Gates table gains a Static Analysis (Qodana) row, and its
+- **`AGENTS.md`, `CONTRIBUTING.md`:** `bugfix/<short-description>` added as a standard GitFlow branch type
+- **`ARCHITECTURE.md`, `CONTRIBUTING.md`:** CI/CD & Quality Gates table gains a Static Analysis (Qodana) row, and its
   CodeQL and Dependency Submission triggers now read "any GitFlow branch"
 - **`improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #32 recorded and closed — the plan still described
   Qodana as removed, after `code_quality.yml` brought it back to CI
 
 #### Build & Metadata
 
-- Project version bumped to **8.12.0** in `../../../../pom.xml`; `@OpenAPIDefinition` version updated to match
+- Project version bumped to **8.12.0** in `pom.xml`; `@OpenAPIDefinition` version updated to match
 
 ---
 
@@ -110,7 +110,7 @@ database are not modified.
 
 ## 📊 Statistics
 
-- **New Source Files:** 2 (`CompetitorHelpers`, `../../../../.github/workflows/code_quality.yml`), plus their tests
+- **New Source Files:** 2 (`CompetitorHelpers`, `.github/workflows/code_quality.yml`), plus their tests
 - **New Dependencies:** 1 (`org.apache.commons:commons-text`)
 - **Deleted Files:** 0 (four `Util` classes renamed to `Utils`)
 
@@ -126,7 +126,7 @@ database are not modified.
   with `van`) are never altered.
 - **Codes and lookups are untouched.** `HomeClub` is matched exactly against club names, and club and competitor
   numbers are codes (club numbers also unique), so none of them is re-cased.
-- **A MINOR, not a PATCH.** The import's stored output changes in a backward-compatible way, which `../../../../AGENTS.md`'s
+- **A MINOR, not a PATCH.** The import's stored output changes in a backward-compatible way, which `AGENTS.md`'s
   Semantic Versioning rules classify as new functionality.
 
 ---
@@ -152,7 +152,7 @@ database are not modified.
   over from v7.0.0 – v7.1.0).
 - A competitor or match referenced by results or shooter logs can't be deleted through the API, since no endpoint
   removes those rows yet (carried over from v8.8.0, pending Gap #6).
-- `../../../../pom.xml` still overrides `tomcat.version` to `11.0.25` for three critical CVEs, since Spring Boot 4.1.1 manages
+- `pom.xml` still overrides `tomcat.version` to `11.0.25` for three critical CVEs, since Spring Boot 4.1.1 manages
   `11.0.24` (Gap #26).
 - The Claude code review on Dependabot PRs fails until `CLAUDE_CODE_OAUTH_TOKEN` is also stored as a Dependabot
   secret, if not already done for v8.10.2.

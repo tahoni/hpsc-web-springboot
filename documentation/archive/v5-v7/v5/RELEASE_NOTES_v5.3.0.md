@@ -157,7 +157,7 @@ a Java record construct, improving immutability and clarity throughout the mappi
 
 - **Spring Boot Upgrade:**
     - Updated from Spring Boot 4.0.3 to 4.1.0-SNAPSHOT
-    - Added Spring Snapshots repository configuration to `../../../../pom.xml`
+    - Added Spring Snapshots repository configuration to `pom.xml`
 - **Constants Updates:**
     - Updated IPSC constants values for competitor number and ICS alias
 - **Build Success:**

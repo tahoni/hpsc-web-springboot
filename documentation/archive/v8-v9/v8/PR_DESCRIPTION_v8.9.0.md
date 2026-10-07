@@ -25,7 +25,7 @@
 
 **Fixed**
 
-- Documentation drift across `../../../../ARCHITECTURE.md`, `AGENTS.md`, `README.md`, `CONTRIBUTING.md`, `HISTORY.md` and
+- Documentation drift across `ARCHITECTURE.md`, `AGENTS.md`, `README.md`, `CONTRIBUTING.md`, `HISTORY.md` and
   `flyway-migration-versioning.md` (Gaps #13–#24)
 
 **Removed**
@@ -40,9 +40,9 @@
       imports against H2
 - [x] Repository integration tests confirm the fetch-join queries load their associations and the stage cascade
       persists, orphan-removes and deletes
-- [x] Verified `../../../../RELEASE_NOTES.md` archived byte-for-byte to ``
-- [x] Confirmed no version-specific references leaked into `../../../../README.md`/`ARCHITECTURE.md` from this release's changes
-- [x] `../../../roadmap/improvement-plan.md`/`improvement-plan-tasks.md` checked — a full sweep recorded Gaps
+- [x] Verified `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v8/RELEASE_NOTES_v8.9.0.md`
+- [x] Confirmed no version-specific references leaked into `README.md`/`ARCHITECTURE.md` from this release's changes
+- [x] `documentation/roadmap/improvement-plan.md`/`improvement-plan-tasks.md` checked — a full sweep recorded Gaps
   #18–#24, all fixed in this release; the branch-diff sync attributed Gaps #13–#17 to v8.9.0
 
 ## 🔗 Related Documentation
