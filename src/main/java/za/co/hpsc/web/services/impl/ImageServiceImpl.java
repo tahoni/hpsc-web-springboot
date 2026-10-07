@@ -6,8 +6,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.exceptions.FatalException;
@@ -60,7 +60,7 @@ public class ImageServiceImpl implements ImageService {
      * @return a list of {@link ImageRequest} objects parsed from the provided CSV data.
      * @throws FatalException if an I/O error occurs while processing the CSV data.
      */
-    protected List<ImageRequest> readImages(@NotNull @NotBlank String csvData)
+    protected List<ImageRequest> readImages(@NonNull @NotBlank String csvData)
             throws FatalException {
 
         // Prepare the CSV mapper and schema

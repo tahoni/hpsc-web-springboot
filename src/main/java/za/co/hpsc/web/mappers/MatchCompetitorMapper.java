@@ -1,16 +1,13 @@
 package za.co.hpsc.web.mappers;
 
-import jakarta.validation.constraints.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
-import za.co.hpsc.web.enums.ClubIdentifier;
-import za.co.hpsc.web.enums.CompetitorCategory;
-import za.co.hpsc.web.enums.Division;
-import za.co.hpsc.web.enums.FirearmType;
-import za.co.hpsc.web.enums.PowerFactor;
+import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
@@ -54,7 +51,8 @@ public class MatchCompetitorMapper {
      *                             belong to the firearm type. A blank firearm type is taken from the division.
      * @throws NonFatalException   if the competitor or match cannot be found.
      */
-    public void applyFields(@NotNull MatchCompetitor matchCompetitor, @NotNull MatchCompetitorRequest request) {
+    public void applyFields(@NonNull MatchCompetitor matchCompetitor, @NonNull MatchCompetitorRequest request) {
+
         matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
                 request.getCompetitorName()));
         matchCompetitor.setMatch(findMatchOrThrow(request.getMatchId()));
@@ -95,8 +93,8 @@ public class MatchCompetitorMapper {
      *                             competitor.
      * @throws NonFatalException   if the competitor or match cannot be found.
      */
-    public void applyPatchFields(@NotNull MatchCompetitor matchCompetitor,
-                                 @NotNull MatchCompetitorPatchRequest request) {
+    public void applyPatchFields(@NonNull MatchCompetitor matchCompetitor,
+                                 @NonNull MatchCompetitorPatchRequest request) {
         if ((request.getCompetitorId() != null) || hasText(request.getCompetitorNumber()) || hasText(request.getCompetitorName())) {
             matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
                     request.getCompetitorName()));

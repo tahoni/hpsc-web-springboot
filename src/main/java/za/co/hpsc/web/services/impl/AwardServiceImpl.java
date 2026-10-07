@@ -7,8 +7,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.exceptions.FatalException;
@@ -60,7 +60,7 @@ public class AwardServiceImpl implements AwardService {
      * @return a list of {@link AwardRequest} objects parsed from the provided CSV data.
      * @throws FatalException if an I/O error occurs while processing the CSV data.
      */
-    protected List<AwardRequest> readAwards(@NotNull @NotBlank String csvData)
+    protected List<AwardRequest> readAwards(@NonNull @NotBlank String csvData)
             throws FatalException {
         // Prepare the CSV mapper and schema
         CsvMapper csvMapper = new CsvMapper();
@@ -103,7 +103,7 @@ public class AwardServiceImpl implements AwardService {
      * @return a list of {@link AwardCeremonyResponse} objects, each representing a group
      * of awards associated with the same ceremony. It will never be null, but it may be empty.
      */
-    protected List<AwardCeremonyResponse> mapAwards(@NotNull List<AwardRequest> awardRequestList) {
+    protected List<AwardCeremonyResponse> mapAwards(@NonNull List<AwardRequest> awardRequestList) {
         if (awardRequestList == null) {
             log.error("Image request list is null.");
             throw new ValidationException("Image request list cannot be null.");

@@ -281,19 +281,19 @@ public class IpscMatchCompetitorServiceTest {
             """;
 
     @Test
-    void testCreateMatchCompetitors_whenCsvIsNull_thenThrowsValidationException() throws Exception {
+    void testCreateMatchCompetitors_whenCsvIsNull_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitors(null));
     }
 
     @Test
-    void testCreateMatchCompetitors_whenCsvIsBlank_thenThrowsValidationException() throws Exception {
+    void testCreateMatchCompetitors_whenCsvIsBlank_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitors("  \t\n "));
     }
 
     @Test
-    void testCreateMatchCompetitors_whenCsvCannotBeParsed_thenThrowsValidationException() throws Exception {
+    void testCreateMatchCompetitors_whenCsvCannotBeParsed_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class,
                 () -> ipscMatchCompetitorService.createMatchCompetitors("This is not valid CSV data\nJane\n"));
@@ -465,7 +465,7 @@ public class IpscMatchCompetitorServiceTest {
     }
 
     @Test
-    void testCreateMatchCompetitors_whenRowIsMissingRequiredColumn_thenThrowsValidationException() throws Exception {
+    void testCreateMatchCompetitors_whenRowIsMissingRequiredColumn_thenThrowsValidationException() {
         // Arrange - Division is absent from the header
         String csvData = """
                 CompetitorId,MatchId,Class,Cats,FirearmType

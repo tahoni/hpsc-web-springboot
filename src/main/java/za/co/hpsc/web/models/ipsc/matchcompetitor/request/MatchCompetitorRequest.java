@@ -190,12 +190,11 @@ public class MatchCompetitorRequest extends IpscMatchScore {
      * but unknown is not caught here; it only skips the firearm type and division check.
      * </p>
      *
-     * @return always {@code true}; an invalid request throws instead of returning {@code false}.
      * @throws ValidationException if the competitor ID, number and name are all missing, if the match ID,
      *                             competitor category, division or power factor is missing, or if the division does not
      *                             belong to the firearm type.
      */
-    public boolean validate() {
+    public void validate() {
         if ((getCompetitorId() == null) && !hasText(getCompetitorNumber())
                 && !hasText(getCompetitorName())) {
             throw new ValidationException("Competitor ID, number or name is required.");
@@ -213,7 +212,6 @@ public class MatchCompetitorRequest extends IpscMatchScore {
             throw new ValidationException("Power factor is required.");
         }
         validateDivisionMatchesFirearmType();
-        return true;
     }
 
     private void validateDivisionMatchesFirearmType() {

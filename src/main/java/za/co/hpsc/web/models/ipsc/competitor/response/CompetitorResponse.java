@@ -1,10 +1,10 @@
 package za.co.hpsc.web.models.ipsc.competitor.response;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jspecify.annotations.NonNull;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.Gender;
@@ -29,13 +29,13 @@ import java.util.List;
 @NoArgsConstructor
 public class CompetitorResponse {
     /** The competitor's own identifier. */
-    @NotNull
+    @NonNull
     private Long competitorId;
     /** The competitor's first name. */
-    @NotNull
+    @NonNull
     private String firstName;
     /** The competitor's last name. */
-    @NotNull
+    @NonNull
     private String lastName;
     /** The competitor's middle name(s), if any. */
     private String middleNames;
@@ -74,7 +74,7 @@ public class CompetitorResponse {
      *                   The lazily loaded home club and email addresses are read here, so call this while the
      *                   persistence session is still open.
      */
-    public CompetitorResponse(@NotNull Competitor competitor) {
+    public CompetitorResponse(@NonNull Competitor competitor) {
         this.competitorId = competitor.getId();
         this.firstName = competitor.getFirstName();
         this.lastName = competitor.getLastName();

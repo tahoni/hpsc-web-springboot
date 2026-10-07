@@ -1,9 +1,9 @@
 package za.co.hpsc.web.models;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jspecify.annotations.NonNull;
 
 import java.time.LocalDateTime;
 
@@ -25,9 +25,8 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
 @Setter
 @NoArgsConstructor
 public class ControllerResponse {
-    @NotNull
+    @NonNull
     private LocalDateTime timestamp;
-    @NotNull
     private boolean success = false;
     private String message;
     private String error;
@@ -54,7 +53,7 @@ public class ControllerResponse {
      *                  Can be null.
      * @since 1.1.3
      */
-    public ControllerResponse(@NotNull LocalDateTime timestamp, String message, String error) {
+    public ControllerResponse(@NonNull LocalDateTime timestamp, String message, String error) {
         this.timestamp = timestamp;
         this.success = !hasText(error);
         this.message = message;
@@ -74,7 +73,7 @@ public class ControllerResponse {
      *                  Can be null.
      * @since 2.0.0
      */
-    public ControllerResponse(@NotNull LocalDateTime timestamp, boolean success, String message,
+    public ControllerResponse(@NonNull LocalDateTime timestamp, boolean success, String message,
                               String error) {
         this.timestamp = timestamp;
         this.success = success;

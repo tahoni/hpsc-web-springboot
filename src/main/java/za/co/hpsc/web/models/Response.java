@@ -1,8 +1,8 @@
 package za.co.hpsc.web.models;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import org.jspecify.annotations.NonNull;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.UUID;
  */
 public class Response extends Request {
     @Getter
-    @NotNull
+    @NonNull
     private final UUID uuid;
 
     /**
@@ -68,7 +68,7 @@ public class Response extends Request {
      *              Must not be null or blank.
      * @since 1.1.1
      */
-    public Response(UUID uuid, @NotNull @NotBlank String title) {
+    public Response(UUID uuid, @NonNull @NotBlank String title) {
         super(title);
         this.uuid = ValueUtil.nullAsRandomUuid(uuid);
     }
@@ -96,7 +96,7 @@ public class Response extends Request {
      *                    Can be null.
      * @since 1.1.1
      */
-    public Response(UUID uuid, @NotNull @NotBlank String title, String summary, String description,
+    public Response(UUID uuid, @NonNull @NotBlank String title, String summary, String description,
                     String category, List<String> tags) {
         super(title, summary, description, category, tags);
         this.uuid = ValueUtil.nullAsRandomUuid(uuid);
@@ -123,7 +123,7 @@ public class Response extends Request {
      *                    Can be null.
      * @since 1.1.1
      */
-    public Response(@NotNull @NotBlank String title, String summary, String description,
+    public Response(@NonNull @NotBlank String title, String summary, String description,
                     String category, List<String> tags) {
         super(title, summary, description, category, tags);
         this.uuid = ValueUtil.nullAsRandomUuid(null);

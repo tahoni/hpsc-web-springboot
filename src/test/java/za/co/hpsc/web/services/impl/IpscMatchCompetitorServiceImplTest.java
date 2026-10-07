@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
  * ({@code findMatchCompetitorOrThrow}, {@code isForClub}, {@code resolveCompetitorHomeClub},
  * {@code toFailedResponse}, {@code toResponse}, {@code validateForCreate}) - not declared on
  * {@link IpscMatchCompetitorService}. The field-copying and lookup helpers are covered by
- * {@link za.co.hpsc.web.mappers.MatchCompetitorMapperTest}.
+ * {@code za.co.hpsc.web.mappers.MatchCompetitorMapperTest}.
  * The interface's create/update/patch/get/delete contract is covered by
  * {@link IpscMatchCompetitorServiceTest}.
  */
@@ -61,7 +61,7 @@ class IpscMatchCompetitorServiceImplTest {
     private EntityIpscCompetitorService entityIpscCompetitorService;
 
     @Spy
-    private ClubService clubService = new ClubServiceImpl();
+    private final ClubService clubService = new ClubServiceImpl();
 
     private IpscMatchCompetitorServiceImpl matchCompetitorServiceImpl;
 

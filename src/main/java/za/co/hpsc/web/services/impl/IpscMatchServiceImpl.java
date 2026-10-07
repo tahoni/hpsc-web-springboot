@@ -7,8 +7,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
@@ -174,7 +174,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @throws ValidationException if the CSV data cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      */
-    protected List<MatchRequest> readMatches(@NotNull @NotBlank String csvData) throws FatalException {
+    protected List<MatchRequest> readMatches(@NonNull @NotBlank String csvData) throws FatalException {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
         // The columns come from the header row, so the UpperCamelCase names bound by the mix-in are matched directly

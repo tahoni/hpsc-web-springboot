@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.exceptions.ValidationException;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -241,42 +240,42 @@ class MatchCompetitorRequestTest {
 
     // validate()
     @Test
-    void testValidate_whenAllRequiredFieldsPresent_thenReturnsTrue() {
+    void testValidate_whenAllRequiredFieldsPresent_thenDoesNotThrow() {
         // Act & Assert
-        assertTrue(validRequest().validate());
+        assertDoesNotThrow(() -> validRequest().validate());
     }
 
     @Test
-    void testValidate_whenOnlyCompetitorIdGiven_thenReturnsTrue() {
+    void testValidate_whenOnlyCompetitorIdGiven_thenDoesNotThrow() {
         // Arrange
         MatchCompetitorRequest request = validRequest();
         request.setCompetitorNumber(null);
         request.setCompetitorName(null);
 
         // Act & Assert
-        assertTrue(request.validate());
+        assertDoesNotThrow(request::validate);
     }
 
     @Test
-    void testValidate_whenOnlyCompetitorNumberGiven_thenReturnsTrue() {
+    void testValidate_whenOnlyCompetitorNumberGiven_thenDoesNotThrow() {
         // Arrange
         MatchCompetitorRequest request = validRequest();
         request.setCompetitorId(null);
         request.setCompetitorName(null);
 
         // Act & Assert
-        assertTrue(request.validate());
+        assertDoesNotThrow(request::validate);
     }
 
     @Test
-    void testValidate_whenOnlyCompetitorNameGiven_thenReturnsTrue() {
+    void testValidate_whenOnlyCompetitorNameGiven_thenDoesNotThrow() {
         // Arrange
         MatchCompetitorRequest request = validRequest();
         request.setCompetitorId(null);
         request.setCompetitorNumber(null);
 
         // Act & Assert
-        assertTrue(request.validate());
+        assertDoesNotThrow(request::validate);
     }
 
     @Test
@@ -325,14 +324,14 @@ class MatchCompetitorRequestTest {
     }
 
     @Test
-    void testValidate_whenFirearmTypeIsNullEmptyOrBlank_thenReturnsTrue() {
+    void testValidate_whenFirearmTypeIsNullEmptyOrBlank_thenDoesNotThrow() {
         for (String value : new String[]{null, "", "   "}) {
             // Arrange
             MatchCompetitorRequest request = validRequest();
             request.setFirearmType(value);
 
             // Act & Assert
-            assertTrue(request.validate());
+            assertDoesNotThrow(request::validate);
         }
     }
 
@@ -380,14 +379,14 @@ class MatchCompetitorRequestTest {
     }
 
     @Test
-    void testValidate_whenDivisionMatchesNonHandgunFirearmType_thenReturnsTrue() {
+    void testValidate_whenDivisionMatchesNonHandgunFirearmType_thenDoesNotThrow() {
         // Arrange
         MatchCompetitorRequest request = validRequest();
         request.setFirearmType("Shotgun");
         request.setDivision("Shotgun Open Division");
 
         // Act & Assert
-        assertTrue(request.validate());
+        assertDoesNotThrow(request::validate);
     }
 
     @Test
@@ -400,7 +399,7 @@ class MatchCompetitorRequestTest {
         request.setPowerFactor("Not A Power Factor");
 
         // Act & Assert
-        assertTrue(request.validate());
+        assertDoesNotThrow(request::validate);
     }
 
     @Test
@@ -410,7 +409,7 @@ class MatchCompetitorRequestTest {
         request.setDivision("Not A Division");
 
         // Act & Assert
-        assertTrue(request.validate());
+        assertDoesNotThrow(request::validate);
     }
 
     // Helpers

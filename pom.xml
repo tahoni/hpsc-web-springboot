@@ -135,6 +135,11 @@
             <artifactId>spring-boot-starter-validation-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Nullness annotations (@NonNull); version managed by Spring Boot -->
+        <dependency>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
+        </dependency>
         <!-- Data -->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>

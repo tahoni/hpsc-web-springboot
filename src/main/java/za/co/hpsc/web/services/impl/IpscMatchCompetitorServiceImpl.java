@@ -6,8 +6,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.MatchCompetitor;
-import za.co.hpsc.web.enums.*;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
@@ -162,7 +162,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * @throws ValidationException if the CSV data cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      */
-    protected List<MatchCompetitorRequest> readMatchCompetitors(@NotNull @NotBlank String csvData)
+    protected List<MatchCompetitorRequest> readMatchCompetitors(@NonNull @NotBlank String csvData)
             throws FatalException {
         CsvMapper csvMapper = new CsvMapper();
         // The columns come from the header row, so the UpperCamelCase names bound by the mix-in are matched directly
@@ -195,7 +195,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * @throws ValidationException if the competitor already has another entry for the match and firearm type,
      *                             including one added by another transaction since the check.
      */
-    protected MatchCompetitor save(@NotNull MatchCompetitor matchCompetitor) {
+    protected MatchCompetitor save(@NonNull MatchCompetitor matchCompetitor) {
         boolean duplicate = matchCompetitorRepository.findByCompetitorIdAndMatchIdAndFirearmType(
                         matchCompetitor.getCompetitor().getId(), matchCompetitor.getMatch().getId(),
                         matchCompetitor.getFirearmType())

@@ -51,6 +51,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Build & Configuration
+
+- **`pom.xml`:** Declared `org.jspecify:jspecify` as a direct dependency (version managed by Spring Boot), as the
+  code now uses its `@NonNull` annotation rather than receiving it transitively
+
+##### Models
+
+- **`MatchCompetitorRequest`:** `validate()` now returns `void` and throws on failure, as the other request models do;
+  it previously also returned `true`, which no caller used
+- **Response models:** Replaced `jakarta.validation.constraints.NotNull` with `org.jspecify.annotations.NonNull`; no
+  behaviour change, as Bean Validation was not applied to responses
+
+##### Services
+
+- **Services and mappers:** Replaced `jakarta.validation.constraints.NotNull` with
+  `org.jspecify.annotations.NonNull` on method parameters; the explicit null checks are unchanged
+
 ---
 
 ### 🧾 [13.0.0] - 2026-10-07

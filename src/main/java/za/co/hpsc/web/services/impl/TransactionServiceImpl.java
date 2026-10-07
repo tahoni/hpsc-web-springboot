@@ -1,7 +1,7 @@
 package za.co.hpsc.web.services.impl;
 
-import jakarta.validation.constraints.NotNull;
 import org.hibernate.Hibernate;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -110,7 +110,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @param competitor the competitor whose associations to load; must not be null.
      * @return {@code competitor}, for chaining.
      */
-    protected Competitor loadAssociations(@NotNull Competitor competitor) {
+    protected Competitor loadAssociations(@NonNull Competitor competitor) {
         Hibernate.initialize(competitor.getHomeClub());
         Hibernate.initialize(competitor.getEmailAddresses());
         return competitor;
@@ -123,7 +123,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @param match the match whose associations to load; must not be null.
      * @return {@code match}, for chaining.
      */
-    protected IpscMatch loadAssociations(@NotNull IpscMatch match) {
+    protected IpscMatch loadAssociations(@NonNull IpscMatch match) {
         Hibernate.initialize(match.getClub());
         return match;
     }
