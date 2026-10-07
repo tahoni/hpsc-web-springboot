@@ -52,6 +52,32 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Helpers
+
+- **`CompetitorHelpers.cleanCompetitorName`:** The position and whitespace patterns no longer backtrack:
+  `POSITION_PREFIX` is possessive and `WHITESPACE` matches only a run of two or more whitespace characters. A leading
+  position is now any number of digits followed by an optional whitespace character and a hyphen, at the very start of
+  the name, so `123-John` now cleans to `John` and `-12-John Smith` is left alone; a single tab or newline between
+  words is no longer turned into a space
+- **`CompetitorHelpers.MC_PREFIX`:** Tests only the start of the word with `lookingAt()`, so the pattern is a fixed
+  four-step match with no trailing `.*`; no change in behaviour
+
+##### Services
+
+- **`EntityIpscCompetitorServiceImpl.findCompetitor`:** Now first matches the trimmed competitor number as a club number
+  with `CompetitorRepository.findByClubNumber`, before converting it to a number, and returns that competitor at once;
+  a numeric club number therefore takes precedence over a competitor number with the same value. The competitor number,
+  ID number and name lookups follow when no club number matches
+
+#### 🐛 Fixed
+
+##### Services
+
+- **`AwardServiceImpl.mapAwards`:** The error logged and the `ValidationException` thrown for a null list said "Image
+  request list" (copied from the image service); they now say "Award request list", and the test asserts the message
+
 ---
 
 ### 🧾 [13.1.0] - 2026-10-07
