@@ -160,7 +160,7 @@ public class CompetitorHelpersTest {
         // Act & Assert
         assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("1 - John Smith"));
         assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("12-John Smith"));
-        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("-12-John Smith"));
+        assertEquals("John", CompetitorHelpers.cleanCompetitorName("123-John"));
     }
 
     @Test
@@ -196,6 +196,7 @@ public class CompetitorHelpersTest {
         // Act & Assert
         assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John  Smith"));
         assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("  John \t Smith  "));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John     Smith"));
     }
 
     @Test
@@ -203,6 +204,6 @@ public class CompetitorHelpersTest {
         // Act & Assert
         assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith"));
         assertEquals("Smith-Jones", CompetitorHelpers.cleanCompetitorName("Smith-Jones"));
-        assertEquals("123-John", CompetitorHelpers.cleanCompetitorName("123-John"));
+        assertEquals("-12-John Smith", CompetitorHelpers.cleanCompetitorName("-12-John Smith"));
     }
 }

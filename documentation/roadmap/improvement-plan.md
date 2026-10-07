@@ -807,9 +807,9 @@ work to entity-level unit tests.
 #### 25. Entity-level unit tests are a stated goal with no gap tracking it — ✅ Closed in v8.10.0
 
 **Evidence:** `HISTORY.md:2370`'s Short-term list plans to "Add entity-level unit tests for the promoted/extended
-domain model", and `documentation/history/v8/RELEASE_NOTES_v8.9.0.md` carries the same item under both Known Issues
-("The domain model has repository integration tests but no entity-level unit tests") and Future Enhancements. Gap #24
-closed only the repository half of the original claim, and its Outcome records that `HISTORY.md` merely "narrows the
+domain model", and `documentation/archive/v8-v9/v8/RELEASE_NOTES_v8.9.0.md` carries the same item under both Known
+Issues ("The domain model has repository integration tests but no entity-level unit tests") and Future Enhancements. Gap
+#24 closed only the repository half of the original claim, and its Outcome records that `HISTORY.md` merely "narrows the
 remaining work to entity-level unit tests" — nothing here tracks that remainder. There is still no
 `src/test/java/za/co/hpsc/web/domain/` directory. The eight entities under `src/main/java/za/co/hpsc/web/domain/` are
 Lombok field holders with no hand-written methods of their own; their cascade, orphan-removal and element-collection
@@ -954,10 +954,10 @@ Profiles table and `AGENTS.md`'s Flyway note name the new `prod` baseline.
 #### 31. CI never builds the Docker image, so a broken `Dockerfile` surfaces only at deployment — ✅ Closed in v8.11.1
 
 **Evidence:** v8.11.0 added a `Dockerfile` and `docker-compose.yml`, and `README.md`'s "🐳 Running with Docker"
-section and `ARCHITECTURE.md`'s Technology Stack table present both as supported ways to run the application. But
-none of the workflows in `.github/workflows/` (`build.yml`, `codeql.yml`, `dependency-submission.yml`,
-`claude-code-review.yml`, `claude.yml`) builds the image, and `ARCHITECTURE.md`'s CI/CD & Quality Gates table has no
-row for it. `documentation/history/v8/RELEASE_NOTES_v8.11.0.md` records exactly this as a Known Issue — "CI doesn't
+section and `ARCHITECTURE.md`'s Technology Stack table present both as supported ways to run the application. But none
+of the workflows in `.github/workflows/` (`build.yml`, `codeql.yml`, `dependency-submission.yml`,
+`claude-code-review.yml`, `claude.yml`) builds the image, and `ARCHITECTURE.md`'s CI/CD & Quality Gates table has no row
+for it. `documentation/archive/v8-v9/v8/RELEASE_NOTES_v8.11.0.md` records exactly this as a Known Issue — "CI doesn't
 build the Docker image, so a change that breaks the `Dockerfile` isn't caught until someone builds it" — and carries
 "Consider building the Docker image in CI" as a Future Enhancement, yet no gap here tracks it.
 

@@ -21,6 +21,7 @@ public interface EntityIpscCompetitorService {
      * The lookup is attempted in this order, returning as soon as exactly one competitor matches:
      * </p>
      * <ol>
+     *     <li>The club number, matched as supplied (trimmed) before it is converted to a number.</li>
      *     <li>The competitor number (SAPSA or club number), when it is numeric and greater than zero.
      *     Numbers in {@link za.co.hpsc.web.constants.IpscConstants#EXCLUDE_ICS_ALIAS} are ignored.</li>
      *     <li>The same value as an ID number.</li>

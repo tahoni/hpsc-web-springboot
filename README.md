@@ -31,7 +31,8 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
 - **IPSC Competitors**: Competitor record CRUD, including optional home club, gender and SAPSA/club paid-up status,
   plus bulk CSV import
 - **IPSC Matches**: Match CRUD, including firearm type and match category resolution, plus bulk CSV import
-- **IPSC Match Competitors**: CRUD for a competitor's entry in a match, including competitor, match, division and category resolution, plus bulk CSV import
+- **IPSC Match Competitors**: CRUD for a competitor's entry in a match, including competitor, match, division and
+  category resolution, plus bulk CSV import
 
 JPA entities and repositories also exist for shooter logs. Request DTOs exist for competitor scores submission,
 laying the groundwork for match result processing and ranking calculations — the service and controller layer
@@ -209,21 +210,27 @@ This project's documentation is spread across a few files, each with a distinct 
 | [`LICENSE.md`](LICENSE.md)                       | MIT License                                                                                     |
 | [`HELP.md`](HELP.md)                             | Spring Initializr reference links (Maven, Spring Boot docs, guides)                             |
 
-[`documentation/history/`](documentation/history) holds one of each of the following files per released version, so past
-releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to the next version,
-grouped into one subdirectory per major version (e.g. `documentation/history/vN/`), plus three standing exceptions
-living directly in `documentation/history/` — `CHANGELOG_v1-v7.md`, `HISTORY_v1-v7.md` and
-`EVOLUTION_OVERVIEW_v1-v7.md`, single files rather than per-version archives:
+[`documentation/history/`](documentation/history) holds one of each of the following files per released version from
+v10.0.0 onward, so past releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to
+the next version, grouped into one subdirectory per major version (e.g. `documentation/history/vN/`):
 
-| File                                                                               | Purpose                                                                                                |
-|------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
-| `RELEASE_NOTES_vX.Y.Z.md`                                                          | Archived snapshot of `RELEASE_NOTES.md` at release time                                                |
-| `PR_DESCRIPTION_vX.Y.Z.md`                                                         | The release pull request's body, archived for that version (not archived for every early release)      |
-| [`CHANGELOG_v1-v7.md`](documentation/history/CHANGELOG_v1-v7.md)                   | `CHANGELOG.md`'s archive of the earliest versions, moved unchanged and not edited by releases          |
-| [`HISTORY_v1-v7.md`](documentation/history/HISTORY_v1-v7.md)                       | `HISTORY.md`'s archive of the earliest per-version entries, moved unchanged and not edited by releases |
-| [`EVOLUTION_OVERVIEW_v1-v7.md`](documentation/history/EVOLUTION_OVERVIEW_v1-v7.md) | `EVOLUTION_OVERVIEW.md`'s archive of the earliest phases, moved unchanged and not edited by releases   |
+| File                       | Purpose                                                    |
+|----------------------------|------------------------------------------------------------|
+| `RELEASE_NOTES_vX.Y.Z.md`  | Archived snapshot of `RELEASE_NOTES.md` at release time    |
+| `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version |
 
-[`documentation/archive/ARCHIVE.md`](documentation/archive/ARCHIVE.md) is the legacy release archive covering releases
+[`documentation/archive/`](documentation/archive) holds the frozen archives of the earlier releases, one subdirectory
+per range — [`v1-v4/`](documentation/archive/v1-v4), [`v5-v7/`](documentation/archive/v5-v7) and
+[`v8-v9/`](documentation/archive/v8-v9) — each with that range's per-version release notes and pull request
+descriptions plus three single files named for the range (e.g. `CHANGELOG_v5-v7.md`):
+
+| File                          | Purpose                                                                                                |
+|-------------------------------|--------------------------------------------------------------------------------------------------------|
+| `CHANGELOG_vA-vB.md`          | `CHANGELOG.md`'s archive of that range's versions, moved unchanged and not edited by releases          |
+| `HISTORY_vA-vB.md`            | `HISTORY.md`'s archive of that range's per-version entries, moved unchanged and not edited by releases |
+| `EVOLUTION_OVERVIEW_vA-vB.md` | `EVOLUTION_OVERVIEW.md`'s archive of that range's phases, moved unchanged and not edited by releases   |
+
+[`documentation/legacy/ARCHIVE.md`](documentation/legacy/ARCHIVE.md) is the legacy release archive covering releases
 from before the project adopted its current documentation structure (`CHANGELOG.md`, `RELEASE_NOTES.md`, per-version
 history). It's a historical record only and isn't maintained going forward.
 

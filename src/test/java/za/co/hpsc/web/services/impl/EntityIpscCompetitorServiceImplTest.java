@@ -10,7 +10,9 @@ import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -31,6 +33,48 @@ public class EntityIpscCompetitorServiceImplTest {
     private EntityIpscCompetitorServiceImpl entityIpscCompetitorService;
 
     // findCompetitor()
+    @Test
+    void testFindCompetitor_whenTheNumberMatchesAClubNumber_thenReturnsItWithoutAnyOtherQuery() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        when(competitorRepository.findByClubNumber("042")).thenReturn(Optional.of(competitor));
+
+        // Act
+        Optional<Competitor> result = entityIpscCompetitorService.findCompetitor(" 042 ", "Jane Doe");
+
+        // Assert
+        assertEquals(Optional.of(competitor), result);
+        verify(competitorRepository).findByClubNumber("042");
+        verifyNoMoreInteractions(competitorRepository);
+    }
+
+    @Test
+    void testFindCompetitor_whenTheNumberIsBlank_thenSkipsTheClubNumberQuery() {
+        // Arrange
+        when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe"))
+                .thenReturn(List.of(new Competitor()));
+
+        // Act
+        entityIpscCompetitorService.findCompetitor("  ", "Jane Doe");
+
+        // Assert
+        verify(competitorRepository, never()).findByClubNumber(anyString());
+    }
+
+    @Test
+    void testFindCompetitor_whenNoClubNumberMatches_thenFallsBackToTheCompetitorNumber() {
+        // Arrange
+        when(competitorRepository.findByClubNumber("42")).thenReturn(Optional.empty());
+        when(competitorRepository.findAllByCompetitorNumber(42)).thenReturn(List.of(new Competitor()));
+
+        // Act
+        entityIpscCompetitorService.findCompetitor("42", "Jane Doe");
+
+        // Assert
+        verify(competitorRepository).findByClubNumber("42");
+        verify(competitorRepository).findAllByCompetitorNumber(42);
+    }
+
     @Test
     void testFindCompetitor_whenTheNumberIsNumeric_thenQueriesTheNumberAsAnInteger() {
         // Arrange
