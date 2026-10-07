@@ -147,4 +147,62 @@ public class CompetitorHelpersTest {
         // Act & Assert
         assertEquals("", CompetitorHelpers.toSentenceCaseLastName(""));
     }
+
+    // cleanCompetitorName(String)
+    @Test
+    void testCleanCompetitorName_whenNull_thenReturnsEmptyString() {
+        // Act & Assert
+        assertEquals("", CompetitorHelpers.cleanCompetitorName(null));
+    }
+
+    @Test
+    void testCleanCompetitorName_whenPositionPrefix_thenRemovesPosition() {
+        // Act & Assert
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("1 - John Smith"));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("12-John Smith"));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("-12-John Smith"));
+    }
+
+    @Test
+    void testCleanCompetitorName_whenPositionPrefix_thenKeepsHyphensInTheRestOfTheName() {
+        // Act & Assert
+        assertEquals("Smith-Jones - Sr", CompetitorHelpers.cleanCompetitorName("1 - Smith-Jones - Sr"));
+    }
+
+    @Test
+    void testCleanCompetitorName_whenRangeOfficerMarker_thenRemovesMarkerWhereverItAppears() {
+        // Act & Assert
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith (RO)"));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("1 - John Smith RO"));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("RO John Smith"));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John (RO) Smith"));
+    }
+
+    @Test
+    void testCleanCompetitorName_whenRoInsideAWord_thenLeavesItAlone() {
+        // Act & Assert
+        assertEquals("Romeo Rowe", CompetitorHelpers.cleanCompetitorName("Romeo Rowe"));
+        assertEquals("Pedro Smith", CompetitorHelpers.cleanCompetitorName("Pedro Smith"));
+    }
+
+    @Test
+    void testCleanCompetitorName_whenFullStops_thenRemovesThem() {
+        // Act & Assert
+        assertEquals("J Smith", CompetitorHelpers.cleanCompetitorName("J. Smith"));
+    }
+
+    @Test
+    void testCleanCompetitorName_whenExtraWhitespace_thenCollapsesAndTrims() {
+        // Act & Assert
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John  Smith"));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("  John \t Smith  "));
+    }
+
+    @Test
+    void testCleanCompetitorName_whenNothingToClean_thenReturnsUnchanged() {
+        // Act & Assert
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith"));
+        assertEquals("Smith-Jones", CompetitorHelpers.cleanCompetitorName("Smith-Jones"));
+        assertEquals("123-John", CompetitorHelpers.cleanCompetitorName("123-John"));
+    }
 }

@@ -76,6 +76,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `@RequestBody` request parameters with `@Valid`, so a request missing a required field is now rejected with a `400`
   by Bean Validation before it reaches the service
 
+##### Helpers
+
+- **`CompetitorHelpers`:** New `cleanCompetitorName` removes a leading position of up to two digits followed by a
+  `-` (e.g. `1 - John Smith`), any `RO` or `(RO)` marker and all full stops, replaces runs of whitespace with a single
+  space, trims the result and returns an empty string for a null name
+
 ##### Models
 
 - **`MatchCompetitorRequest`:** `validate()` now returns `void` and throws on failure, as the other request models do;
