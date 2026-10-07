@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
+import za.co.hpsc.web.exceptions.ValidationException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -198,5 +199,78 @@ class MatchRequestTest {
 
         // Act & Assert
         assertThrows(MismatchedInputException.class, () -> mapper.readValue("{}", MatchRequest.class));
+    }
+
+    // validate()
+    @Test
+    void testValidate_whenRequiredFieldsPresent_thenDoesNotThrow() {
+        // Act & Assert
+        assertDoesNotThrow(validRequest()::validate);
+    }
+
+    @Test
+    void testValidate_whenMatchNameIsNullEmptyOrBlank_thenThrowsValidationException() {
+        for (String matchName : new String[]{null, "", "   "}) {
+            // Arrange
+            MatchRequest request = validRequest();
+            request.setMatchName(matchName);
+
+            // Act
+            ValidationException exception = assertThrows(ValidationException.class, request::validate);
+
+            // Assert
+            assertEquals("Match name is required.", exception.getMessage());
+        }
+    }
+
+    @Test
+    void testValidate_whenMatchDateIsNull_thenThrowsValidationException() {
+        // Arrange
+        MatchRequest request = validRequest();
+        request.setMatchDate(null);
+
+        // Act
+        ValidationException exception = assertThrows(ValidationException.class, request::validate);
+
+        // Assert
+        assertEquals("Match date is required.", exception.getMessage());
+    }
+
+    @Test
+    void testValidate_whenMatchFirearmTypeIsNullEmptyOrBlank_thenThrowsValidationException() {
+        for (String firearmType : new String[]{null, "", "   "}) {
+            // Arrange
+            MatchRequest request = validRequest();
+            request.setMatchFirearmType(firearmType);
+
+            // Act
+            ValidationException exception = assertThrows(ValidationException.class, request::validate);
+
+            // Assert
+            assertEquals("Match firearm type is required.", exception.getMessage());
+        }
+    }
+
+    @Test
+    void testValidate_whenOptionalFieldsAreNull_thenDoesNotThrow() {
+        // Arrange
+        MatchRequest request = validRequest();
+        request.setClub(null);
+        request.setMatchCategory(null);
+        request.setStartTime(null);
+        request.setEndTime(null);
+        request.setUrl(null);
+
+        // Act & Assert
+        assertDoesNotThrow(request::validate);
+    }
+
+    // Helpers
+    private MatchRequest validRequest() {
+        MatchRequest request = new MatchRequest();
+        request.setMatchName("Club Championship");
+        request.setMatchDate(LocalDate.of(2026, 4, 10));
+        request.setMatchFirearmType("Pistol");
+        return request;
     }
 }

@@ -75,6 +75,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   ├───enums/              # Domain enumerations
 │   │   ├───exceptions/         # Custom exception hierarchy + ControllerAdvice mapping
 │   │   ├───helpers/            # Domain-specific normalisation helpers
+│   │   ├───mappers/            # Request-to-entity mappers that resolve lookups (clubs, competitors, enums)
 │   │   ├───models/             # DTOs, request/response models
 │   │   │   ├───award/          # Award request/response/shared models
 │   │   │   ├───image/          # Image gallery request/response models
@@ -85,7 +86,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │   │   ├───match/response/      # IPSC match response DTOs
 │   │   │   │   ├───matchcompetitor/request/  # IPSC match competitor request DTOs
 │   │   │   │   ├───matchcompetitor/response/ # IPSC match competitor response DTOs
-│   │   │   │   └───shared/              # Comstock-scoring shared fields (groundwork)
+│   │   │   │   └───shared/              # Comstock-scoring shared fields (extended by the match competitor requests)
 │   │   │   └───(root)          # Top-level request/response wrapper models
 │   │   ├───repositories/       # Spring Data JPA interfaces, one per entity
 │   │   ├───services/           # Service interfaces
@@ -103,6 +104,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     ├───enums/                  # Enum unit tests
     ├───exceptions/             # Exception hierarchy unit tests
     ├───helpers/                # Helper unit tests
+    ├───mappers/                # Mapper unit tests
     ├───models/                 # DTO / model unit tests
     ├───repositories/           # Repository query and JPA mapping integration tests (H2)
     ├───services/               # Service contract unit tests (Mockito) and integration tests (H2)
@@ -300,6 +302,14 @@ shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchS
 | Class               | Responsibility                                                 |
 |---------------------|----------------------------------------------------------------|
 | `CompetitorHelpers` | Competitor detail normalisation (e.g. last name particle case) |
+
+#### Mappers (`za.co.hpsc.web.mappers`)
+
+| Class                   | Responsibility                                                                                             |
+|-------------------------|------------------------------------------------------------------------------------------------------------|
+| `CompetitorMapper`      | Copies competitor request fields onto a `Competitor`, resolving gender, home club and club number          |
+| `MatchMapper`           | Copies match request fields onto an `IpscMatch`, resolving the club, firearm type and match category       |
+| `MatchCompetitorMapper` | Copies match competitor request fields onto a `MatchCompetitor`, resolving the competitor, match and enums |
 
 #### Constants (`za.co.hpsc.web.constants`)
 

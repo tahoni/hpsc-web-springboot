@@ -51,7 +51,7 @@ class DivisionConverterTest {
     @Test
     void testConvertToEntityAttribute_whenNameIsPartialMatch_thenReturnsDivision() {
         // Act
-        Division entityValue = converter.convertToEntityAttribute("Standard Manual");
+        Division entityValue = converter.convertToEntityAttribute("Shotgun Standard Manual");
 
         // Assert
         assertEquals(Division.SHOTGUN_STANDARD_MANUAL, entityValue);

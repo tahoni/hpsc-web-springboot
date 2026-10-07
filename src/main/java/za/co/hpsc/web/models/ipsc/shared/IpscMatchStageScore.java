@@ -3,7 +3,6 @@ package za.co.hpsc.web.models.ipsc.shared;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import za.co.hpsc.web.enums.PowerFactor;
 
 import java.math.BigDecimal;
 
@@ -18,7 +17,7 @@ import java.math.BigDecimal;
  * which is the figure Comstock stages are actually ranked on. The stage winner's hit factor
  * is the 100% benchmark that every other competitor's
  * {@link IpscCommonScore#getPercentage() percentage} and
- * {@link IpscCommonScore#getWeightedPoints() weighted points} for the stage are calculated
+ * {@link IpscCommonScore#getPoints() points} for the stage are calculated
  * against.
  * </p>
  *
@@ -30,17 +29,17 @@ import java.math.BigDecimal;
 public class IpscMatchStageScore extends IpscCommonScore {
     /** Raw points scored on this stage (weighted alpha/charlie/delta hits minus penalties)
      * before dividing by time. */
-    private Integer rawPoints;
+    protected Integer rawPoints;
     /** {@code rawPoints / time} — the figure the stage is ranked on; the stage winner's hit factor
      * is the 100% benchmark. */
-    private BigDecimal hitFactor;
+    protected BigDecimal hitFactor;
 
-    public IpscMatchStageScore(BigDecimal percentage, BigDecimal weightedPoints, BigDecimal time,
-                               PowerFactor powerFactor, Integer alpha, Integer charlie, Integer delta,
+    public IpscMatchStageScore(BigDecimal percentage, BigDecimal points, BigDecimal time,
+                               Integer alpha, Integer charlie, Integer delta,
                                Integer noShoots, Integer misses, Integer noPenaltyMisses,
                                Integer proceduralErrors, Integer additionalPenalties, Integer rawPoints,
                                BigDecimal hitFactor) {
-        super(percentage, weightedPoints, time, powerFactor, alpha, charlie, delta, noShoots,
+        super(percentage, points, time, alpha, charlie, delta, noShoots,
                 misses, noPenaltyMisses, proceduralErrors, additionalPenalties);
         this.rawPoints = rawPoints;
         this.hitFactor = hitFactor;

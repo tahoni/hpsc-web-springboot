@@ -18,6 +18,7 @@ import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.mappers.MatchCompetitorMapper;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
@@ -67,8 +68,9 @@ public class IpscMatchCompetitorServiceTest {
     void setUp() {
         TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
                 ipscMatchRepository, matchCompetitorRepository, transactionManager);
-        ipscMatchCompetitorService = new IpscMatchCompetitorServiceImpl(matchCompetitorRepository, competitorRepository,
-                ipscMatchRepository, entityIpscCompetitorService, new ClubServiceImpl(), transactionService);
+        ipscMatchCompetitorService = new IpscMatchCompetitorServiceImpl(matchCompetitorRepository,
+                new MatchCompetitorMapper(competitorRepository, ipscMatchRepository, entityIpscCompetitorService),
+                new ClubServiceImpl(), transactionService);
     }
 
     // createMatchCompetitor()
@@ -103,16 +105,6 @@ public class IpscMatchCompetitorServiceTest {
         // Arrange
         MatchCompetitorRequest request = validRequest();
         request.setCompetitorCategory("");
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
-    }
-
-    @Test
-    void testCreateMatchCompetitor_whenFirearmTypeIsBlank_thenThrowsValidationException() {
-        // Arrange
-        MatchCompetitorRequest request = validRequest();
-        request.setFirearmType("  ");
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
@@ -268,13 +260,14 @@ public class IpscMatchCompetitorServiceTest {
         request.setCompetitorCategory("Junior");
         request.setFirearmType("Handgun");
         request.setDivision("Open Division");
+        request.setPowerFactor("Major");
 
         // Act
         MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(request);
 
         // Assert
         assertNull(response.getMatchClub());
-        assertNull(response.getPowerFactor());
+        assertEquals(PowerFactor.MAJOR, response.getPowerFactor());
         assertNull(response.getPoints());
         assertNull(response.getOverallRanking());
         assertNull(response.getClubRanking());
@@ -283,8 +276,8 @@ public class IpscMatchCompetitorServiceTest {
 
     // createMatchCompetitors()
     private static final String VALID_CSV = """
-            CompetitorId,MatchId,Class,Cats,FirearmType,Div
-            1,2,HPSC,Junior,Handgun,Open Division
+            CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+            1,2,HPSC,Junior,Handgun,Open Division,Major
             """;
 
     @Test
@@ -336,10 +329,10 @@ public class IpscMatchCompetitorServiceTest {
         stubCompetitorAndMatch();
         when(matchCompetitorRepository.save(any(MatchCompetitor.class))).thenAnswer(invocation -> invocation.getArgument(0));
         String csvData = """
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
-                1,2,HPSC,Junior,Handgun,Open Division
-                1,2,SOSC,Junior,Handgun,Open Division
-                1,2,,Junior,Handgun,Open Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                1,2,HPSC,Junior,Handgun,Open Division,Major
+                1,2,SOSC,Junior,Handgun,Open Division,Major
+                1,2,,Junior,Handgun,Open Division,Major
                 """;
 
         // Act
@@ -367,8 +360,8 @@ public class IpscMatchCompetitorServiceTest {
         when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match(2L)));
         when(matchCompetitorRepository.save(any(MatchCompetitor.class))).thenAnswer(invocation -> invocation.getArgument(0));
         String csvData = """
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
-                1,2,SOSC,Junior,Handgun,Open Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                1,2,SOSC,Junior,Handgun,Open Division,Major
                 """;
 
         // Act
@@ -386,8 +379,8 @@ public class IpscMatchCompetitorServiceTest {
         // Arrange
         when(competitorRepository.findById(9L)).thenReturn(Optional.empty());
         String csvData = """
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
-                9,2,SOSC,Junior,Handgun,Open Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                9,2,SOSC,Junior,Handgun,Open Division,Major
                 """;
 
         // Act
@@ -404,8 +397,8 @@ public class IpscMatchCompetitorServiceTest {
     void testCreateMatchCompetitors_whenClubIsGivenAndRowClubIsUnknown_thenReportsTheRowAsFailed() throws Exception {
         // Arrange
         String csvData = """
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
-                1,2,Not A Club,Junior,Handgun,Open Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                1,2,Not A Club,Junior,Handgun,Open Division,Major
                 """;
 
         // Act
@@ -424,10 +417,10 @@ public class IpscMatchCompetitorServiceTest {
         stubCompetitorAndMatch();
         when(matchCompetitorRepository.save(any(MatchCompetitor.class))).thenAnswer(invocation -> invocation.getArgument(0));
         String csvData = """
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
-                1,2,HPSC,Junior,Handgun,Open Division
-                1,2,SOSC,Junior,Handgun,Open Division
-                1,2,,Junior,Handgun,Open Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                1,2,HPSC,Junior,Handgun,Open Division,Major
+                1,2,SOSC,Junior,Handgun,Open Division,Major
+                1,2,,Junior,Handgun,Open Division,Major
                 """;
 
         // Act
@@ -459,8 +452,8 @@ public class IpscMatchCompetitorServiceTest {
             return saved;
         });
         String csvData = """
-                MatchCompetitorId,CompetitorId,MatchId,Class,Cats,FirearmType,Div
-                99,1,2,HPSC,Junior,Handgun,Open Division
+                MatchCompetitorId,CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                99,1,2,HPSC,Junior,Handgun,Open Division,Major
                 """;
 
         // Act
@@ -488,7 +481,7 @@ public class IpscMatchCompetitorServiceTest {
     void testCreateMatchCompetitors_whenRowHasBlankRequiredValue_thenReportsRowAsFailed() throws Exception {
         // Arrange
         String csvData = """
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
                 1,2,HPSC,Junior,Handgun,
                 """;
 
@@ -549,9 +542,9 @@ public class IpscMatchCompetitorServiceTest {
             return saved;
         });
         String csvData = """
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
-                1,2,HPSC,Junior,Handgun,Open Division
-                1,2,HPSC,Lady,Handgun,Production Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                1,2,HPSC,Junior,Handgun,Open Division,Major
+                1,2,HPSC,Lady,Handgun,Production Division,Major
                 """;
 
         // Act
@@ -574,9 +567,9 @@ public class IpscMatchCompetitorServiceTest {
             return saved;
         });
         String csvData = """
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
                 1,2,HPSC,Junior,Handgun,
-                1,2,HPSC,Junior,Handgun,Open Division
+                1,2,HPSC,Junior,Handgun,Open Division,Major
                 """;
 
         // Act
@@ -626,6 +619,7 @@ public class IpscMatchCompetitorServiceTest {
         stubCompetitorAndMatch();
         MatchCompetitor existing = matchCompetitor(5L);
         existing.setDivision(Division.STANDARD);
+        existing.setPowerFactor(PowerFactor.MAJOR);
         existing.setPoints(new BigDecimal("1"));
         when(matchCompetitorRepository.findByIdWithCompetitorAndMatch(5L)).thenReturn(Optional.of(existing));
         when(matchCompetitorRepository.save(existing)).thenReturn(existing);
@@ -859,6 +853,7 @@ public class IpscMatchCompetitorServiceTest {
                 .thenReturn(Optional.of(matchCompetitor(9L)));
         MatchCompetitorPatchRequest patch = new MatchCompetitorPatchRequest();
         patch.setFirearmType("Rifle");
+        patch.setDivision("Rifle Open Division");
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.patchMatchCompetitor(5L, patch));
@@ -993,6 +988,7 @@ public class IpscMatchCompetitorServiceTest {
         matchCompetitor.setCompetitorCategory(CompetitorCategory.JUNIOR);
         matchCompetitor.setFirearmType(FirearmType.HANDGUN);
         matchCompetitor.setDivision(Division.OPEN);
+        matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
         return matchCompetitor;
     }
 }

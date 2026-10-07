@@ -14,7 +14,7 @@ import za.co.hpsc.web.utils.NumberUtil;
  *
  * @since 1.1.3
  */
-public class SystemConstants {
+public final class SystemConstants {
     private SystemConstants() {
         // Prevent instantiation of this utility class
     }

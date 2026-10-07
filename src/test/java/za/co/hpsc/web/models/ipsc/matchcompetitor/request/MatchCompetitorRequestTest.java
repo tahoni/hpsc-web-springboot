@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.junit.jupiter.api.Test;
+import za.co.hpsc.web.exceptions.ValidationException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -236,5 +237,193 @@ class MatchCompetitorRequestTest {
         // Act & Assert
         assertThrows(MismatchedInputException.class,
                 () -> new ObjectMapper().readValue("{}", MatchCompetitorRequest.class));
+    }
+
+    // validate()
+    @Test
+    void testValidate_whenAllRequiredFieldsPresent_thenReturnsTrue() {
+        // Act & Assert
+        assertTrue(validRequest().validate());
+    }
+
+    @Test
+    void testValidate_whenOnlyCompetitorIdGiven_thenReturnsTrue() {
+        // Arrange
+        MatchCompetitorRequest request = validRequest();
+        request.setCompetitorNumber(null);
+        request.setCompetitorName(null);
+
+        // Act & Assert
+        assertTrue(request.validate());
+    }
+
+    @Test
+    void testValidate_whenOnlyCompetitorNumberGiven_thenReturnsTrue() {
+        // Arrange
+        MatchCompetitorRequest request = validRequest();
+        request.setCompetitorId(null);
+        request.setCompetitorName(null);
+
+        // Act & Assert
+        assertTrue(request.validate());
+    }
+
+    @Test
+    void testValidate_whenOnlyCompetitorNameGiven_thenReturnsTrue() {
+        // Arrange
+        MatchCompetitorRequest request = validRequest();
+        request.setCompetitorId(null);
+        request.setCompetitorNumber(null);
+
+        // Act & Assert
+        assertTrue(request.validate());
+    }
+
+    @Test
+    void testValidate_whenNoCompetitorIdNumberOrName_thenThrowsValidationException() {
+        for (String blank : new String[]{null, "", "   "}) {
+            // Arrange
+            MatchCompetitorRequest request = validRequest();
+            request.setCompetitorId(null);
+            request.setCompetitorNumber(blank);
+            request.setCompetitorName(blank);
+
+            // Act
+            ValidationException exception = assertThrows(ValidationException.class, request::validate);
+
+            // Assert
+            assertEquals("Competitor ID, number or name is required.", exception.getMessage());
+        }
+    }
+
+    @Test
+    void testValidate_whenMatchIdIsNull_thenThrowsValidationException() {
+        // Arrange
+        MatchCompetitorRequest request = validRequest();
+        request.setMatchId(null);
+
+        // Act
+        ValidationException exception = assertThrows(ValidationException.class, request::validate);
+
+        // Assert
+        assertEquals("Match ID is required.", exception.getMessage());
+    }
+
+    @Test
+    void testValidate_whenCompetitorCategoryIsNullEmptyOrBlank_thenThrowsValidationException() {
+        for (String value : new String[]{null, "", "   "}) {
+            // Arrange
+            MatchCompetitorRequest request = validRequest();
+            request.setCompetitorCategory(value);
+
+            // Act
+            ValidationException exception = assertThrows(ValidationException.class, request::validate);
+
+            // Assert
+            assertEquals("Competitor category is required.", exception.getMessage());
+        }
+    }
+
+    @Test
+    void testValidate_whenFirearmTypeIsNullEmptyOrBlank_thenReturnsTrue() {
+        for (String value : new String[]{null, "", "   "}) {
+            // Arrange
+            MatchCompetitorRequest request = validRequest();
+            request.setFirearmType(value);
+
+            // Act & Assert
+            assertTrue(request.validate());
+        }
+    }
+
+    @Test
+    void testValidate_whenDivisionIsNullEmptyOrBlank_thenThrowsValidationException() {
+        for (String value : new String[]{null, "", "   "}) {
+            // Arrange
+            MatchCompetitorRequest request = validRequest();
+            request.setDivision(value);
+
+            // Act
+            ValidationException exception = assertThrows(ValidationException.class, request::validate);
+
+            // Assert
+            assertEquals("Division is required.", exception.getMessage());
+        }
+    }
+
+    @Test
+    void testValidate_whenPowerFactorIsNullEmptyOrBlank_thenThrowsValidationException() {
+        for (String value : new String[]{null, "", "   "}) {
+            // Arrange
+            MatchCompetitorRequest request = validRequest();
+            request.setPowerFactor(value);
+
+            // Act
+            ValidationException exception = assertThrows(ValidationException.class, request::validate);
+
+            // Assert
+            assertEquals("Power factor is required.", exception.getMessage());
+        }
+    }
+
+    @Test
+    void testValidate_whenDivisionDoesNotMatchFirearmType_thenThrowsValidationException() {
+        // Arrange
+        MatchCompetitorRequest request = validRequest();
+        request.setFirearmType("Shotgun");
+
+        // Act
+        ValidationException exception = assertThrows(ValidationException.class, request::validate);
+
+        // Assert
+        assertEquals("Division Open Division is not a Shotgun division.", exception.getMessage());
+    }
+
+    @Test
+    void testValidate_whenDivisionMatchesNonHandgunFirearmType_thenReturnsTrue() {
+        // Arrange
+        MatchCompetitorRequest request = validRequest();
+        request.setFirearmType("Shotgun");
+        request.setDivision("Shotgun Open Division");
+
+        // Act & Assert
+        assertTrue(request.validate());
+    }
+
+    @Test
+    void testValidate_whenUnknownEnumValuesGiven_thenStillReturnsTrue() {
+        // Arrange
+        MatchCompetitorRequest request = validRequest();
+        request.setCompetitorCategory("Not A Category");
+        request.setFirearmType("Not A Firearm");
+        request.setDivision("Not A Division");
+        request.setPowerFactor("Not A Power Factor");
+
+        // Act & Assert
+        assertTrue(request.validate());
+    }
+
+    @Test
+    void testValidate_whenOnlyOneOfFirearmTypeAndDivisionIsUnknown_thenStillReturnsTrue() {
+        // Arrange
+        MatchCompetitorRequest request = validRequest();
+        request.setDivision("Not A Division");
+
+        // Act & Assert
+        assertTrue(request.validate());
+    }
+
+    // Helpers
+    private MatchCompetitorRequest validRequest() {
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorId(1L);
+        request.setCompetitorNumber("123");
+        request.setCompetitorName("Jane Doe");
+        request.setMatchId(2L);
+        request.setCompetitorCategory("Junior");
+        request.setFirearmType("Handgun");
+        request.setDivision("Open Division");
+        request.setPowerFactor("Major");
+        return request;
     }
 }

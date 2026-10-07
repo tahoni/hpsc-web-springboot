@@ -1,5 +1,6 @@
 package za.co.hpsc.web.converters;
 
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import za.co.hpsc.web.enums.FirearmType;
@@ -20,12 +21,12 @@ import za.co.hpsc.web.enums.FirearmType;
 public class FirearmTypeConverter implements AttributeConverter<FirearmType, String> {
 
     @Override
-    public String convertToDatabaseColumn(FirearmType attribute) {
+    public @Nullable String convertToDatabaseColumn(FirearmType attribute) {
         return ((attribute != null) ? attribute.getNames().stream().findFirst().orElse(null) : null);
     }
 
     @Override
-    public FirearmType convertToEntityAttribute(String dbData) {
+    public @Nullable FirearmType convertToEntityAttribute(String dbData) {
         return FirearmType.fromName(dbData).orElse(null);
     }
 }

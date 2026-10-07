@@ -5,9 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
+import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
+import za.co.hpsc.web.models.ipsc.shared.IpscMatchScore;
 
 import java.math.BigDecimal;
+
+import static za.co.hpsc.web.utils.StringUtil.hasText;
 
 /**
  * Request to create or fully replace an IPSC match competitor: one competitor's entry in one match, in one firearm
@@ -24,7 +30,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
-public class MatchCompetitorRequest {
+public class MatchCompetitorRequest extends IpscMatchScore {
     /** Identifier of the match competitor to update, or {@code null} when creating a new match competitor. */
     private Long matchCompetitorId;
     /**
@@ -52,37 +58,17 @@ public class MatchCompetitorRequest {
     /** The competitor's category at the match; resolved against {@link za.co.hpsc.web.enums.CompetitorCategory} by name. */
     @JsonProperty(required = true)
     private String competitorCategory;
-    /** The firearm type the competitor shot; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. */
+    /**
+     * The firearm type the competitor shot; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. May be
+     * null or blank, in which case it is taken from the division.
+     */
     private String firearmType;
     /** The division the competitor shot; resolved against {@link za.co.hpsc.web.enums.Division} by name. */
     @JsonProperty(required = true)
     private String division;
     /** The competitor's power factor; resolved against {@link za.co.hpsc.web.enums.PowerFactor} by name. */
+    @JsonProperty(required = true)
     private String powerFactor;
-    /** The competitor's match points. */
-    private BigDecimal points;
-    /** The competitor's overall match score as a percentage of the match winner's score. */
-    private BigDecimal percentage;
-    /** The competitor's total time, in seconds, taken across the match's stages. */
-    private BigDecimal time;
-    /** The competitor's total hits as a percentage of the maximum points available in the match. */
-    private BigDecimal percentageOfPossiblePoints;
-    /** The competitor's total A-zone (alpha) hits across the match. */
-    private Integer alpha;
-    /** The competitor's total C-zone (charlie) hits across the match. */
-    private Integer charlie;
-    /** The competitor's total D-zone (delta) hits across the match. */
-    private Integer delta;
-    /** The competitor's total required hits not scored (misses) across the match. */
-    private Integer misses;
-    /** The competitor's total misses that did not attract the usual miss penalty. */
-    private Integer noPenaltyMisses;
-    /** The competitor's total no-shoot penalty hits across the match. */
-    private Integer noShoots;
-    /** The competitor's total procedural penalties applied across the match. */
-    private Integer proceduralErrors;
-    /** The competitor's total additional penalties applied across the match. */
-    private Integer additionalPenalties;
     /** The competitor's overall ranking in the match. */
     private BigDecimal overallRanking;
     /** The competitor's ranking among their club's competitors in the match. */
@@ -107,7 +93,8 @@ public class MatchCompetitorRequest {
      * @param competitorCategory the competitor's category at the match; resolved against
      *                           {@link za.co.hpsc.web.enums.CompetitorCategory} by name. Must not be null or blank.
      * @param firearmType        the firearm type the competitor shot; resolved against
-     *                           {@link za.co.hpsc.web.enums.FirearmType} by name.
+     *                           {@link za.co.hpsc.web.enums.FirearmType} by name. May be null or blank, in which case
+     *                           it is taken from the division.
      * @param division           the division the competitor shot; resolved against
      *                           {@link za.co.hpsc.web.enums.Division} by name. Must not be null or blank.
      * @param powerFactor        the competitor's power factor; resolved against
@@ -180,5 +167,60 @@ public class MatchCompetitorRequest {
         this.overallRanking = overallRanking;
         this.clubRanking = clubRanking;
         this.isVisitor = isVisitor;
+    }
+
+    /**
+     * Checks that the request carries what is needed to identify the competitor and the match, before any of it is
+     * resolved. Nothing is looked up, so this only checks that values are present.
+     *
+     * <p>
+     * The request is valid when:
+     * </p>
+     * <ul>
+     *     <li>{@code competitorId} is set, or {@code competitorNumber} or {@code competitorName} has text;</li>
+     *     <li>{@code matchId} is set; and</li>
+     *     <li>{@code competitorCategory}, {@code division} and {@code powerFactor} each have text; and</li>
+     *     <li>the {@code division}, when it and the {@code firearmType} both name a known value, is one shot with that
+     *     firearm type.</li>
+     * </ul>
+     *
+     * <p>
+     * The {@code firearmType} is optional: when it is blank the mapper takes it from the division. The category,
+     * firearm type, division, club and power factor are resolved against their enums later, so a value that is present
+     * but unknown is not caught here; it only skips the firearm type and division check.
+     * </p>
+     *
+     * @return always {@code true}; an invalid request throws instead of returning {@code false}.
+     * @throws ValidationException if the competitor ID, number and name are all missing, if the match ID,
+     *                             competitor category, division or power factor is missing, or if the division does not
+     *                             belong to the firearm type.
+     */
+    public boolean validate() {
+        if ((getCompetitorId() == null) && !hasText(getCompetitorNumber())
+                && !hasText(getCompetitorName())) {
+            throw new ValidationException("Competitor ID, number or name is required.");
+        }
+        if (getMatchId() == null) {
+            throw new ValidationException("Match ID is required.");
+        }
+        if (!hasText(getCompetitorCategory())) {
+            throw new ValidationException("Competitor category is required.");
+        }
+        if (!hasText(getDivision())) {
+            throw new ValidationException("Division is required.");
+        }
+        if (!hasText(getPowerFactor())) {
+            throw new ValidationException("Power factor is required.");
+        }
+        validateDivisionMatchesFirearmType();
+        return true;
+    }
+
+    private void validateDivisionMatchesFirearmType() {
+        Division division = Division.fromName(getDivision()).orElse(null);
+        FirearmType firearmType = FirearmType.fromName(getFirearmType()).orElse(null);
+        if ((division != null) && (firearmType != null) && (division.getFirearmType() != firearmType)) {
+            throw new ValidationException("Division " + division + " is not a " + firearmType + " division.");
+        }
     }
 }

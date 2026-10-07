@@ -1,7 +1,5 @@
 package za.co.hpsc.web.utils;
 
-import za.co.hpsc.web.constants.SystemConstants;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -25,32 +23,33 @@ public final class NumberUtil {
      * Calculates the percentage of a portion relative to a total.
      *
      * <p>
-     * If the total is null or zero, the method returns a value of zero,
-     * rounded to the default scale defined in {@code SystemConstants.DEFAULT_SCALE}.
+     * If the whole is null or zero, the method returns a value of zero,
+     * rounded to the given scale.
      * </p>
      *
-     * @param part  the portion or subset of the total to calculate percentage for.
+     * @param part  the portion or subset of the whole to calculate percentage for.
      *              Must not be null.
      * @param whole the whole or total value.
      *              Can be null or zero.
-     * @return the percentage of {@code part} relative to {@code total}, scaled to the default scale.
-     * If {@code total} is null or zero, returns zero.
+     * @param scale the number of decimal places of the result, using {@code RoundingMode.HALF_UP}.
+     * @return the percentage of {@code part} relative to {@code whole}, scaled to {@code scale}.
+     * If {@code whole} is null or zero, returns zero.
      * @since 1.1.3
      */
-    public static BigDecimal calculatePercentage(BigDecimal part, BigDecimal whole) {
+    public static BigDecimal calculatePercentage(BigDecimal part, BigDecimal whole, int scale) {
         BigDecimal result = BigDecimal.ZERO;
-        // Calculates percentage to double the default scale, then multiplies by 100
+        // Divides to two digits beyond the scale (the factor of 100), then multiplies by 100
         if ((whole != null) && (whole.compareTo(BigDecimal.ZERO) != 0)) {
-            result = part.divide(whole, SystemConstants.DEFAULT_SCALE * 2, RoundingMode.HALF_UP)
+            result = part.divide(whole, scale + 2, RoundingMode.HALF_UP)
                     .multiply(BigDecimal.valueOf(100));
         }
-        // Scales the result to the default scale
-        return result.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
+        // Scales the result to the given scale
+        return result.setScale(scale, RoundingMode.HALF_UP);
     }
 
     /**
      * Calculates the sum of a list of {@code BigDecimal} values and scales the result
-     * to the default scale defined in {@code SystemConstants.DEFAULT_SCALE}.
+     * to the given scale.
      *
      * <p>
      * If the input list is null, the method returns a value of {@code BigDecimal.ZERO}.
@@ -60,10 +59,11 @@ public final class NumberUtil {
      *
      * @param values the list of {@code BigDecimal} values to sum.
      *               Can be null.
-     * @return the sum of the list's values, scaled to the default scale.
+     * @param scale  the number of decimal places of the result, using {@code RoundingMode.HALF_UP}.
+     * @return the sum of the list's values, scaled to {@code scale}.
      * @since 5.0.0
      */
-    public static BigDecimal calculateSum(List<BigDecimal> values) {
+    public static BigDecimal calculateSum(List<BigDecimal> values, int scale) {
         BigDecimal sum = BigDecimal.ZERO;
         // Calculates the sum of the values in the list
         if (values != null) {
@@ -72,8 +72,8 @@ public final class NumberUtil {
             }
         }
 
-        // Scales the result to the default scale
-        return sum.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
+        // Scales the result to the given scale
+        return sum.setScale(scale, RoundingMode.HALF_UP);
     }
 
     /**
@@ -88,7 +88,7 @@ public final class NumberUtil {
      */
     public static String formatBigDecimal(BigDecimal value, int scale) {
         BigDecimal result = ValueUtil.nullAsDefault(value, BigDecimal.ZERO);
-        // Scales the result to the default scale
+        // Scales the result to the given scale
         return result.setScale(scale, RoundingMode.HALF_UP).toString();
     }
 }

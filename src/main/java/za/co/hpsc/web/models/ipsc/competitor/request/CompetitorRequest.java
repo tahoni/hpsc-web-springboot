@@ -7,10 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
+import za.co.hpsc.web.exceptions.ValidationException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static za.co.hpsc.web.utils.StringUtil.hasText;
 
 /**
  * Request to create or update an IPSC competitor.
@@ -125,5 +128,27 @@ public class CompetitorRequest {
         this.paidUpSapsa = paidUpSapsa;
         this.paidUpClub = paidUpClub;
         this.isVerified = isVerified;
+    }
+
+    /**
+     * Checks that the request carries the names needed to create a competitor, before any of it is used. Nothing is
+     * looked up, so this only checks that values are present.
+     *
+     * <p>
+     * The request is valid when both {@code firstName} and {@code lastName} have text, so a null, empty or
+     * whitespace-only name is rejected. Every other field is optional; the home club, gender and other values that
+     * are resolved against enums or the database are not checked here, so a value that is present but unknown is not
+     * caught.
+     * </p>
+     *
+     * @throws ValidationException if the first name or the last name is missing.
+     */
+    public void validate() {
+        if (!hasText(getFirstName())) {
+            throw new ValidationException("First name is required.");
+        }
+        if (!hasText(getLastName())) {
+            throw new ValidationException("Last name is required.");
+        }
     }
 }

@@ -71,7 +71,8 @@ Bootstrapped using the [Spring Initializr](https://start.spring.io/).
 - **IPSC Competitor, Match & Match Competitor Management**: Full CRUD for competitors, matches and competitors'
   entries in matches, including club, gender, firearm-type and match-category resolution by name.
 - **Match Scoring Domain Model**: JPA entities, repositories, type-safe enum converters and request DTOs for
-  shooter logs and competitor scoring, ready for the upcoming result-processing service/controller layer.
+  shooter logs and competitor scoring; the match competitor endpoints are built on them, while the shooter-log
+  service/controller layer is still to come.
 - **Firearm Type & Division Management**: Type-safe enumerations and mappings for IPSC divisions across multiple firearm
   types.
 - **Modern API Standards**: Fully documented REST endpoints via OpenAPI/Swagger UI.

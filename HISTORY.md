@@ -21,6 +21,40 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 13.0.0 (October 7, 2026)
+
+**Theme:** Mapper Extraction, Division–Firearm Type Consistency & Match Competitor Contract Tightening
+
+**Key Focus:**
+
+- The field copying and lookups that the three IPSC services carried move into new `CompetitorMapper`, `MatchMapper`
+  and `MatchCompetitorMapper` components, each with a new `applyPatchFields`, so the services no longer need the
+  repositories those lookups used and a request model can be copied onto an entity without one
+- `Division` records the `FirearmType` it is shot with, and every division has a name of its own: the shotgun, .22 and
+  mini rifle divisions that shared a handgun name are renamed, `V11_4_0` renames the stored values by firearm type, and
+  `V11_5_0` renames the stored category `Lady, Senior` to `Lady Senior`
+- A match competitor's division must belong to its firearm type — checked in `MatchCompetitorRequest.validate` and in
+  `MatchCompetitorMapper` — and the firearm type may now be left out, in which case it is taken from the division
+- **Breaking:** `MatchCompetitorResponse` replaces `competitorName` with a `competitorNames` list, so the JSON of the
+  match competitor endpoints and the bulk import results changes shape
+- **Breaking:** `powerFactor` is required on a match competitor request, as `firearmType` already was, and both columns
+  are `NOT NULL` after `V11_2_0`; `firearmType` is then relaxed again, so a request may omit it
+- **Breaking:** the accepted division names change with the renames above, and a request using the old `Lady, Senior`
+  category name is rejected
+- The match competitor's score fields move into `IpscMatchScore`, which `MatchCompetitorRequest` and
+  `MatchCompetitorPatchRequest` now extend, `weightedPoints` is renamed `points` and the power factor leaves the score
+  models
+- `MatchCompetitor` gains an optional `date_calculated` column, the unused `code` and `abbreviation` fields and the
+  lookups that only tests called are removed from the enums, and `CompetitorCategory` gains an abbreviation
+- `CompetitorRequest`, `MatchRequest` and `MatchCompetitorRequest` each carry their own `validate()`, and null contracts
+  are marked with `@Nullable`
+- Improvement plan Gap #38 is partially completed and Gap #39 is recorded; `.gitattributes` normalises text files to LF
+  and `qodana.yaml` moves to the `qodana.recommended` profile
+- Scoped as `v13.0.0` **MAJOR**: the response shape, the required power factor and the renamed division and category
+  names are backward-incompatible and flagged `**Breaking:**` in `CHANGELOG.md`
+- Project version bumped to 13.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- The suite stands at 1,265 passing tests
+
 ### Version 12.0.0 (October 5, 2026)
 
 **Theme:** Match Competitor Lookup, Partial Bulk Import & Club Filtering
@@ -1209,6 +1243,21 @@ losing it.
 **Achievement:** Put the competitor lookup to work and made the bulk import tolerant — a row is created, skipped or
 failed, and said so — while narrowing it to the club the data is for.
 
+### Milestone 47: Mappers, Division–Firearm Type Consistency & Match Competitor Contract Tightening (v13.0.0)
+
+- The services stop doing their own field copying and lookups: three mapper components own them, and each gained the
+  partial-update logic a patch needs
+- A division knows its firearm type and has a name of its own, so a match competitor can be checked for a division that
+  does not belong to its firearm type, and a division can be read back from its stored name alone
+- A match competitor response lists its competitor's names once each, a request must carry a power factor, and a firearm
+  type left out is taken from the division
+- Project's fifth MAJOR release in a row, with the breaking changes flagged `**Breaking:**` in `CHANGELOG.md` as they
+  landed
+
+**Achievement:** Separated mapping from orchestration and made the match competitor's enumerated values agree with each
+other — a division belongs to a firearm type, and each name identifies one division — with migrations that rewrite the
+stored values to match.
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1608,6 +1657,11 @@ MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
   competitor number is matched, what a bulk import answers, the name of a response field and which rows an import
   creates, the release is the project's fourth consecutive MAJOR, with each breaking change flagged in `CHANGELOG.md`
   as it landed.
+- **Version 13.x (v13.0.0):** Make the match competitor's values consistent and the services thinner — field copying
+  and lookups move into mappers, a division belongs to a firearm type and has a name of its own, and a response lists a
+  competitor's names once each. Because that changes the shape of a response field, requires a power factor and changes
+  the division and category names a request may use, the release is the project's fifth consecutive MAJOR, with each
+  breaking change flagged in `CHANGELOG.md` as it landed.
 
 ### Initial Phase (v1.0.0)
 
@@ -1906,7 +1960,7 @@ MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v12.0.0, the following areas are identified for future enhancement:
+Based on the evolution to v13.0.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/history/HISTORY_v1-v7.md`](/documentation/history/HISTORY_v1-v7.md).
@@ -2146,7 +2200,24 @@ The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived,
 - Gap #31 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v12.0.0)
+### Recently Completed (v13.0.0)
+
+- New `CompetitorMapper`, `MatchMapper` and `MatchCompetitorMapper` components holding the services' field copying and
+  lookups, each with an `applyPatchFields`, documented in `ARCHITECTURE.md`
+- `Division` gains a `FirearmType` and unique names, with `V11_4_0` renaming the stored divisions and `V11_5_0` renaming
+  the stored category `Lady, Senior` to `Lady Senior`
+- A match competitor's division is checked against its firearm type, and a missing firearm type is taken from the
+  division
+- `MatchCompetitorResponse.competitorNames` replaces `competitorName`, `powerFactor` is required and `firearmType` and
+  `powerFactor` are `NOT NULL` columns, and `MatchCompetitor` gains an optional `date_calculated` column
+- Score fields moved into `IpscMatchScore`, `weightedPoints` renamed `points`, and the unused `code`, `abbreviation`
+  and lookup methods removed from the enums
+- Improvement plan Gap #38 partially completed and Gap #39 recorded, `.gitattributes` normalised to LF and `qodana.yaml`
+  moved to the `qodana.recommended` profile
+- The suite stands at 1,265 passing tests
+- Project version bumped to 13.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v12.0.0)
 
 - `EntityIpscCompetitorService.findCompetitor(competitorNumber, fullName)` wired into the match competitor service,
   matching the number, then the ID number, then the full name, with the alias numbers 15000 and 16000 no longer matched
@@ -2389,3 +2460,9 @@ competitor by number, ID number or name, each row of an import is created, skipp
 is limited to the club the data is for, HPSC's unless another is asked for. It is a MAJOR release, because the way a
 competitor number is matched, what a bulk import answers, the name of a response field and which rows an import
 creates all change for existing callers.
+
+Version 13.0.0 makes the match competitor's values agree with one another and slims the services: three mappers take
+over the field copying and lookups, a division belongs to a firearm type and has a name that identifies it, and the
+stored divisions and categories are renamed by migration to match. It is a MAJOR release, because the shape of a
+response field, the required power factor and the division and category names a request may use all change for
+existing callers.

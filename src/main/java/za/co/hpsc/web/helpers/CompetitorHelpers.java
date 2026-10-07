@@ -42,13 +42,13 @@ public final class CompetitorHelpers {
      * </p>
      *
      * @param value the last name to convert, typically already proper-cased, may be null.
-     * @return the last name with its particles in lower case and its "Mc" prefixes corrected, or null if
+     * @return the last name with its particles in lower case and its "Mc" prefixes corrected, or an empty string if
      * {@code value} is null.
      * @since 8.12.0
      */
     public static String toSentenceCaseLastName(String value) {
         if (value == null) {
-            return null;
+            return "";
         }
 
         int lastWordEnd = lastWordEnd(value);
