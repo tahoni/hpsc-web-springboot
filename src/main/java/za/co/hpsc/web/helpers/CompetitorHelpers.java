@@ -23,16 +23,16 @@ public final class CompetitorHelpers {
     private static final Pattern WORD = Pattern.compile("[^ \\-]+");
 
     /** Gaelic "Mc" prefix (e.g. "McDonald"), excluding "Mch" and "Mcu", which start Zulu surnames (e.g. "Mchunu"). */
-    private static final Pattern MC_PREFIX = Pattern.compile("(?i)^mc(?![hu])[a-z].*");
+    private static final Pattern MC_PREFIX = Pattern.compile("(?i)mc(?![hu])[a-z]");
 
-    /** A leading position of one or two digits, optionally preceded by a hyphen, followed by a hyphen. */
-    private static final Pattern POSITION_PREFIX = Pattern.compile("^\\s*-?\\s*\\d{1,2}\\s*-\\s*");
+    /** A leading position of one or more digits, followed by an optional whitespace character and a hyphen. */
+    private static final Pattern POSITION_PREFIX = Pattern.compile("^\\d++\\s?+-");
 
     /** A range officer marker, as matched by {@link IpscConstants#REPLACE_IN_NAMES_REGEX}. */
     private static final Pattern RANGE_OFFICER_MARKER = Pattern.compile(IpscConstants.REPLACE_IN_NAMES_REGEX);
 
-    /** One or more consecutive whitespace characters. */
-    private static final Pattern WHITESPACE = Pattern.compile("\\s+");
+    /** A run of two or more whitespace characters, matched possessively so it is never backtracked into. */
+    private static final Pattern WHITESPACE = Pattern.compile("\\s{2,}+");
 
     private CompetitorHelpers() {
         // Helper class, not to be instantiated
@@ -43,8 +43,8 @@ public final class CompetitorHelpers {
      * position (e.g. {@code "1 - John Smith"}).
      *
      * <p>
-     * A leading number of at most two digits, optionally preceded by a hyphen and followed by a hyphen (ignoring
-     * surrounding whitespace), is treated as a position and removed, so {@code "1 - Smith-Jones"} resolves to
+     * A leading number at the very start of the name, followed by a hyphen with at most one whitespace character
+     * before it, is treated as a position and removed, so {@code "1 - Smith-Jones"} resolves to
      * {@code "Smith-Jones"}, and a value without such a prefix, such as {@code "Smith-Jones"}, keeps its hyphens. Any
      * {@code RO} or {@code (RO)} range officer marker (see {@link IpscConstants#REPLACE_IN_NAMES_REGEX}) is removed
      * wherever it appears and so are all full stops, then runs of whitespace are replaced with a single space and the
@@ -139,7 +139,7 @@ public final class CompetitorHelpers {
         if (!isLastWord && isPrefix(word)) {
             return word.toLowerCase();
         }
-        if (MC_PREFIX.matcher(word).matches()) {
+        if (MC_PREFIX.matcher(word).lookingAt()) {
             return "Mc" + Character.toUpperCase(word.charAt(2)) + word.substring(3);
         }
         return word;

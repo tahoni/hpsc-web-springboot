@@ -196,7 +196,7 @@ public class ImageResponse extends Response {
             }
         }
 
-        if (this.mimeType == null) {
+        if (!hasText(this.mimeType)) {
             this.mimeType = "";
         }
     }
