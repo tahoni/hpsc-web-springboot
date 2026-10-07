@@ -150,6 +150,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Mappers
 
+- **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now take a missing firearm type from the division
+  (a blank request value in `applyFields`, or an entity with none after a patch)
 - **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now reject a division that does not belong to the
   firearm type, through the new `validateDivisionMatchesFirearmType`; a patch that changes either one is checked against
   the other's current value

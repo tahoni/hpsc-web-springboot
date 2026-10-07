@@ -317,6 +317,46 @@ class MatchCompetitorMapperTest {
         assertEquals(Division.SHOTGUN_OPEN, matchCompetitor.getDivision());
     }
 
+    @Test
+    void testApplyPatchFields_whenFirearmTypeIsNullAndDivisionIsPatched_thenInitialisesFirearmTypeFromDivision() {
+        // Arrange
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setDivision("Shotgun Open Division");
+
+        // Act
+        matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(Division.SHOTGUN_OPEN, matchCompetitor.getDivision());
+        assertEquals(FirearmType.SHOTGUN, matchCompetitor.getFirearmType());
+    }
+
+    @Test
+    void testApplyFields_whenFirearmTypeIsBlank_thenInitialisesFirearmTypeFromDivision() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setId(1L);
+        IpscMatch match = new IpscMatch();
+        match.setId(2L);
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorId(1L);
+        request.setMatchId(2L);
+        request.setCompetitorCategory("Lady");
+        request.setFirearmType("  ");
+        request.setDivision("Rifle Open Division");
+        request.setPowerFactor("Minor");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.applyFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(FirearmType.RIFLE, matchCompetitor.getFirearmType());
+    }
+
     // validateDivisionMatchesFirearmType()
     @Test
     void testValidateDivisionMatchesFirearmType_whenTheyMatch_thenDoesNotThrow() {
