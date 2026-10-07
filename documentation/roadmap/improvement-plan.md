@@ -116,14 +116,15 @@ number or a newly met precondition on an existing gap — see the `update-improv
     v12.0.0 (wired into `IpscMatchCompetitorServiceImpl`; the bulk import returns
     `MatchCompetitorBulkResponseHolder` per row)
   - #37 `IpscConstants`' four score-scale constants are declared but never used — closed v12.0.0 (constants removed)
-- **🟡 Partially Completed (2):**
+- **🟡 Partially Completed (3):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v10.0.0 (the
     match competitor service and `/ipsc/match-competitors` controller are built, extended in v10.0.0 with
     competitor lookup by number or name and overall-score fields; the shooter-log layer is not)
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
-- **⚪ Open (1):**
-  - #38 Eight utility and enum methods and `SystemConstants.DEFAULT_SCALE` are used only by tests
+  - #38 Eight utility and enum methods and `SystemConstants.DEFAULT_SCALE` are used only by tests — progressed
+    v13.0.0 (`Division.fromAbbreviationOrName` removed; seven methods and `DEFAULT_SCALE` remain)
+- **⚪ Open (0):** None
 
 ### ✅ Completed
 
@@ -1203,9 +1204,7 @@ Jackson and Flyway, which the same release-time check should also revisit. The g
 release manages `11.0.26` or later and the override is dropped (the threshold was `11.0.25` until v9.0.0 raised the
 pin).
 
-### ⚪ Open
-
-#### 38. Eight utility and enum methods and `SystemConstants.DEFAULT_SCALE` are used only by tests
+#### 38. Eight utility and enum methods and `SystemConstants.DEFAULT_SCALE` are used only by tests — 🟡 Partially completed in v13.0.0
 
 **Evidence:** Grepping `src/main` for each name finds only its own declaration, while each has a test class exercising
 it: `NumberUtil.calculatePercentage`, `NumberUtil.calculateSum` and `NumberUtil.formatBigDecimal`,
@@ -1227,6 +1226,20 @@ percentage and sum helpers) or whether it should be removed together with its te
 caller, correct the `DEFAULT_SCALE` Javadoc (or remove the constant) either way, and correct `ARCHITECTURE.md`'s
 `NumberUtil` description to match whatever remains.
 
+**Progress:** `Division.fromAbbreviationOrName` is gone: the `feature/qodana` branch removed it together with its unit
+tests when it removed `Division`'s `abbreviation` and `code` fields, and with it `Division.fromAbbreviation` and
+`fromCode`, `CompetitorCategory.fromCode`, `FirearmType.fromCode` and `PowerFactor.fromAbbreviation`, which only tests
+called as well. So one of the eight methods listed in the Evidence is resolved. The other seven (`NumberUtil`'s three,
+`DateUtil`'s two, `StringUtil.formatStringWithNamedParameters` and `ValueUtil.nullAsZeroBigDecimal`) are still called
+only by tests, `SystemConstants.DEFAULT_SCALE` is still unread in `src/main`, and `ARCHITECTURE.md`'s `NumberUtil`
+description is unchanged. The gap closes once each remaining method is either given a production caller or removed
+with its tests, the `DEFAULT_SCALE` Javadoc is corrected (or the constant removed) and the `NumberUtil` description
+matches the class.
+
+### ⚪ Open
+
+*No gaps are currently open.*
+
 ---
 
 ## 🛤️ Roadmap
@@ -1234,7 +1247,7 @@ caller, correct the `DEFAULT_SCALE` Javadoc (or remove the constant) either way,
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0, the shooter-log service and controller remain                                                                                  |
-| **Next**    | Decide which test-only utility methods and `SystemConstants.DEFAULT_SCALE` to keep or remove (#38); #36 and #37 closed in v12.0.0                                                                                                                                                                                                                                                                    |
+| **Next**    | Decide which remaining test-only utility methods and `SystemConstants.DEFAULT_SCALE` to keep or remove (#38, `Division.fromAbbreviationOrName` removed in v13.0.0); #36 and #37 closed in v12.0.0                                                                                                                                                                                                    |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -1325,9 +1338,10 @@ caller, correct the `DEFAULT_SCALE` Javadoc (or remove the constant) either way,
   closing Gap #36.
 - ✅ Met in v12.0.0: `IpscConstants`' `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE` and `PERCENTAGE_SCALE`
   are removed rather than left unused, closing Gap #37.
-- ⚪ Open: every method in `src/main` that only tests call is either given a production caller or removed with its
-  tests, `SystemConstants.DEFAULT_SCALE`'s Javadoc matches how the constant is used, and `ARCHITECTURE.md`'s
-  `NumberUtil` description matches the class, closing Gap #38.
+- 🟡 Partly met in v13.0.0 (`Division.fromAbbreviationOrName` is removed with its tests): every method in `src/main`
+  that only tests call is either given a production caller or removed with its tests, `SystemConstants.DEFAULT_SCALE`'s
+  Javadoc matches how the constant is used, and `ARCHITECTURE.md`'s `NumberUtil` description matches the class,
+  closing Gap #38.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.
