@@ -102,7 +102,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Database
 
 - **`V11_4_0__make_non_handgun_division_names_unique.sql`:** Renames the stored division of each `match_competitor`
-  and `shooter_log_competitor` row to match the renamed `Division` names, using the row's firearm type; `shooter_log_overall`
+  and `shooter_log_competitor` row to match the renamed `Division` names, using the row's firearm type where the old
+  name was shared; `shooter_log_overall`
   has no firearm type and keeps its names, which read back as the handgun divisions
 - **`V11_2_0__make_match_competitor_firearm_type_and_power_factor_required.sql`:** `match_competitor.firearm_type` and
   `power_factor` become `NOT NULL`, reversing `V8_1_0`'s `firearm_type` change and restoring one entry per competitor,
@@ -132,6 +133,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`Division`:** **Breaking:** The shotgun, .22 and mini rifle divisions that shared a display name with a handgun
   one are renamed so every name is unique (for example `SHOTGUN_OPEN` is now `"Shotgun Open Division"` and `OPEN_22`
   `".22 Open Division"`), so `Division.fromName(String)` and `DivisionConverter` resolve each division unambiguously
+- **`Division`:** **Breaking:** `RIFLE_SEMI_AUTO_OPEN` and `RIFLE_SEMI_AUTO_STANDARD` are renamed `"Rifle Open Division"`
+  and `"Rifle Standard Division"`, `SHOTGUN_STANDARD` is renamed `"Shotgun Semi Division"`, and
+  `RIFLE_MANUAL_ACTION_CONTEMPORARY` and `RIFLE_MANUAL_ACTION_BOLT` are replaced by `RIFLE_STANDARD_MANUAL`
+  (`"Rifle Standard Manual Division"`)
 - **`Division`:** **Breaking:** Removed the `abbreviation` and `code` fields and `fromAbbreviation(String)`,
   `fromAbbreviationOrName(String)` and `fromCode(Integer)`; `fromName(String)` is unchanged
 - **`FirearmType`:** **Breaking:** Removed the `code` field and `fromCode(Integer)`

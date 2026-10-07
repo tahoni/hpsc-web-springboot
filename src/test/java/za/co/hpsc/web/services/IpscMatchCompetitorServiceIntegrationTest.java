@@ -125,7 +125,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()));
         MatchCompetitorRequest rifle = validRequest(competitor.getId(), match.getId());
         rifle.setFirearmType("Rifle");
-        rifle.setDivision("Semi Auto Open Division");
+        rifle.setDivision("Rifle Open Division");
 
         // Act
         MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(rifle);

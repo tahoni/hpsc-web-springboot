@@ -33,15 +33,14 @@ public enum Division {
     REVOLVER("Revolver Division", FirearmType.HANDGUN),
 
     // Rifle Divisions
-    RIFLE_SEMI_AUTO_OPEN("Semi Auto Open Division", FirearmType.RIFLE),
-    RIFLE_SEMI_AUTO_STANDARD("Semi Auto Standard Division", FirearmType.RIFLE),
-    RIFLE_MANUAL_ACTION_CONTEMPORARY("Manual Action Contemporary Division", FirearmType.RIFLE),
-    RIFLE_MANUAL_ACTION_BOLT("Manual Action Bolt Division", FirearmType.RIFLE),
+    RIFLE_SEMI_AUTO_OPEN("Rifle Open Division", FirearmType.RIFLE),
+    RIFLE_SEMI_AUTO_STANDARD("Rifle Standard Division", FirearmType.RIFLE),
+    RIFLE_STANDARD_MANUAL("Rifle Standard Manual Division", FirearmType.RIFLE),
 
     // Shotgun Divisions
     SHOTGUN_OPEN("Shotgun Open Division", FirearmType.SHOTGUN),
     SHOTGUN_MODIFIED("Shotgun Modified Division", FirearmType.SHOTGUN),
-    SHOTGUN_STANDARD("Shotgun Standard Division", FirearmType.SHOTGUN),
+    SHOTGUN_STANDARD("Shotgun Semi Division", FirearmType.SHOTGUN),
     SHOTGUN_STANDARD_MANUAL("Standard Manual Division", FirearmType.SHOTGUN),
 
     // PCC Divisions

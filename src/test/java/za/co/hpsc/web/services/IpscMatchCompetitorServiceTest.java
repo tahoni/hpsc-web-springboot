@@ -863,7 +863,7 @@ public class IpscMatchCompetitorServiceTest {
                 .thenReturn(Optional.of(matchCompetitor(9L)));
         MatchCompetitorPatchRequest patch = new MatchCompetitorPatchRequest();
         patch.setFirearmType("Rifle");
-        patch.setDivision("Semi Auto Open Division");
+        patch.setDivision("Rifle Open Division");
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.patchMatchCompetitor(5L, patch));
