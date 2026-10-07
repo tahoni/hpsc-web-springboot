@@ -1819,6 +1819,7 @@ it is backward-compatible, so it is MINOR under the Semantic Versioning rules.
 
 - `CompetitorHelpersTest` covers `cleanCompetitorName` and `ControllerAdviceTest` covers the `400` handling of an
   invalid request body
+- The suite stands at 1,277 passing tests
 
 ---
 

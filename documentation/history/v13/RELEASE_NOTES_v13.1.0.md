@@ -8,9 +8,9 @@
 
 **Request Validation & Competitor Name Cleaning**
 
-Version 13.1.0 is a minor release. A request body that is missing a required field is now rejected with a `400 Bad
+Version 13.1.0 is a minor release. A request body missing a required field is now rejected with a `400 Bad
 Request` by Bean Validation, a competitor's name is cleaned of a leading position, a range officer marker and full stops
-before the competitor is looked up, and the code moves from `jakarta` `@NotNull` to `jspecify` `@NonNull` for nullness.
+before the competitor is looked up and the code moves from `jakarta` `@NotNull` to `jspecify` `@NonNull` for nullness.
 Nothing in it breaks an existing caller.
 
 ---
@@ -67,7 +67,7 @@ Nothing in it breaks an existing caller.
 
 ## 🚀 Migration Guide
 
-No migration is needed. A request body that is missing a required field now gets a `400 Bad Request` where it used to
+No migration is needed. A request body missing a required field now gets a `400 Bad Request` where it used to
 get a `500`, so a client that treated that status as a server error should handle the `400` instead. A competitor name
 that contains a full stop is now looked up without it, so `J. Smith` matches a stored `J Smith` and no longer matches a
 stored `J. Smith`.
@@ -76,8 +76,8 @@ stored `J. Smith`.
 
 ## 📊 Statistics
 
-- **Files Changed:** 48 against `main`, counted before this release's notes and PR description were added; 443
-  insertions and 189 deletions
+- **Files Changed:** 55 against `main`, including this release's notes and PR description; 816
+  insertions and 313 deletions
 - **New Source Files:** 0
 - **Renamed Source Files:** 0
 - **Deleted Source Files:** 0
@@ -141,7 +141,7 @@ stored `J. Smith`.
 
 ## 📝 Notes
 
-Version 13.1.0 validates request bodies with Bean Validation and cleans a competitor's name before it is looked up, and
+Version 13.1.0 validates request bodies with Bean Validation and cleans a competitor's name before it is looked up and
 moves the code to `jspecify` nullness annotations. No database migration runs on upgrade and no existing caller breaks.
 
 ---

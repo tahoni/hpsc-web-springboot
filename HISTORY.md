@@ -45,6 +45,7 @@ evolution of architecture, features and design philosophy across all versions.
   and nothing is backward-incompatible
 - No improvement plan gaps are closed or progressed: 35 stay closed, #6, #26 and #38 stay partially completed and #39
   stays open
+- The suite stands at 1,277 passing tests
 - Project version bumped to 13.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 13.0.0 (October 7, 2026)
