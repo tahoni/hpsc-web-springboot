@@ -328,20 +328,26 @@ points back to it rather than restating it, so it's the one to update first when
 | `LICENSE.md`            | MIT License                                                                               |
 | `HELP.md`               | Spring Initializr reference links (Maven, Spring Boot docs, guides)                       |
 
-Four documentation-only folders supplement these:
+Five documentation-only folders supplement these:
 
-- **`documentation/history/`** holds one of each of the following files per released version, grouped into
-  `v1/` – `v9/` subdirectories by major version (e.g. `documentation/history/v8/RELEASE_NOTES_v8.6.0.md`), plus
-  three standing exceptions living directly in `documentation/history/` — `CHANGELOG_v1-v7.md`, `HISTORY_v1-v7.md`
-  and `EVOLUTION_OVERVIEW_v1-v7.md`, single files rather than per-version archives:
+- **`documentation/history/`** holds one of each of the following files per released version from v10.0.0 onward,
+  grouped into `v10/` – `v13/` subdirectories by major version (e.g. `documentation/history/v13/`):
 
-  | File                          | Purpose                                                                                                          |
-  |-------------------------------|------------------------------------------------------------------------------------------------------------------|
-  | `RELEASE_NOTES_vX.Y.Z.md`     | Archived snapshot of `RELEASE_NOTES.md` at release time                                                          |
-  | `PR_DESCRIPTION_vX.Y.Z.md`    | The release pull request's body, archived for that version, from v7.0.0 onward only                              |
-  | `CHANGELOG_v1-v7.md`          | `CHANGELOG.md`'s archive of versions 1.0.0 – 7.4.1, moved unchanged and not edited by releases                   |
-  | `HISTORY_v1-v7.md`            | `HISTORY.md`'s archive of the per-version v1.0.0 – v7.4.1 entries, moved unchanged and not edited by releases    |
-  | `EVOLUTION_OVERVIEW_v1-v7.md` | `EVOLUTION_OVERVIEW.md`'s archive of Phases 1 – 18 (v1.0.0 – v7.4.1), moved unchanged and not edited by releases |
+  | File                       | Purpose                                                    |
+  |----------------------------|------------------------------------------------------------|
+  | `RELEASE_NOTES_vX.Y.Z.md`  | Archived snapshot of `RELEASE_NOTES.md` at release time    |
+  | `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version |
+
+- **`documentation/archive/`** holds the frozen archives of the earlier releases, one subdirectory per range —
+  `v1-v4/` (versions 1.0.0 – 4.1.0), `v5-v7/` (versions 5.0.0 – 7.4.1) and `v8-v9/` (versions 8.0.0 – 9.1.0). Each holds
+  that range's per-version release notes and pull request descriptions in `vN/` subdirectories, plus three single
+  files named for the range (e.g. `CHANGELOG_v5-v7.md`), moved unchanged and never edited by a release:
+
+  | File                          | Purpose                                                                                                |
+  |-------------------------------|--------------------------------------------------------------------------------------------------------|
+  | `CHANGELOG_vA-vB.md`          | `CHANGELOG.md`'s archive of that range's versions, moved unchanged and not edited by releases          |
+  | `HISTORY_vA-vB.md`            | `HISTORY.md`'s archive of that range's per-version entries, moved unchanged and not edited by releases |
+  | `EVOLUTION_OVERVIEW_vA-vB.md` | `EVOLUTION_OVERVIEW.md`'s archive of that range's Phases, moved unchanged and not edited by releases   |
 
 - **`documentation/legacy/ARCHIVE.md`** is the legacy release archive covering the project's pre-v5.0.0,
   non-semantic-versioning era. It is a historical record only and is not maintained going forward.
@@ -442,8 +448,8 @@ updating if `.claude/`'s own layout changes, not for individual skill additions.
   since invoking the method under test and asserting it throws, happen in one statement; precede it with `// Arrange`
   too if the test builds fixtures first. Avoid brittle assertions such as over-specified `verify(mock, times(N))`
   calls or assertions on private/internal state.
-- Don't write tests whose sole purpose is verifying Lombok-generated behaviour. Such as a test that only sets a value via a
-  generated setter and reads it back via a generated getter, or that only exercises a generated no-args/all-args
+- Don't write tests whose sole purpose is verifying Lombok-generated behaviour. Such as a test that only sets a value
+  via a generated setter and reads it back via a generated getter, or that only exercises a generated no-args/all-args
   constructor with no accompanying logic. Using getters/setters/builders incidentally to build fixtures or assert real
   business-logic outcomes is fine — only test constructors, `toString()`, `equals()`/`hashCode()`, etc. when they are
   handwritten or contain custom logic.
@@ -610,8 +616,8 @@ anything downstream references them:
    goal into that entry's narrative, or adding a new `Version N.x` entry for a new major version. Then check whether
    `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching update — it's
    synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change here can leave that table
-   stale. Versions 1.0.0 – 7.4.1 are archived in `documentation/archive/v1-v7/CHANGELOG_v1-v7.md` and
-   `documentation/archive/v1-v7/HISTORY_v1-v7.md`; a release never edits those two files.
+   stale. Versions 1.0.0 – 9.1.0 are archived in `documentation/archive/v1-v4/`, `v5-v7/` and `v8-v9/`
+   (`CHANGELOG_*` and `HISTORY_*`); a release never edits those files.
 7. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key Highlights → What's New
    (Added/Changed/Fixed/Removed) → Migration Guide → Statistics → Design Notes → Testing → Known Issues → Future
    Enhancements → Contributors → Notes. Cover **everything** that changed for this version, not just the most recent

@@ -84,9 +84,9 @@ Steps:
    reverse chronological order, plus a matching Phase entry at the end of
    `EVOLUTION_OVERVIEW.md` in the repository root (that file is `HISTORY.md`'s Evolution Overview section, split out
    once it grew to roughly half of `HISTORY.md`'s size — one paired Phase/Milestone entry still lands per release,
-   just in two files now; the v1.0.0 – v7.4.1 entries live in the frozen archives
-   `documentation/archive/v1-v7/CHANGELOG_v1-v7.md` and `documentation/archive/v1-v7/HISTORY_v1-v7.md`, which a release never
-   edits). If the release is significant enough to have shifted the project's trajectory, also
+   just in two files now; the v1.0.0 – v9.1.0 entries live in the frozen archives
+   under `documentation/archive/v1-v4/`, `v5-v7/` and `v8-v9/`, which a release never edits). If the
+   release is significant enough to have shifted the project's trajectory, also
    thread it through the other version-by-version sections (Architectural Evolution, Feature Timeline, Key Learnings,
    Conclusion/footer), using the immediately preceding version's treatment as the template. Regardless of
    significance, always rename the Future Roadmap Implications section's current `### Recently Completed (vX.Y.Z)`
@@ -152,8 +152,8 @@ yourself — draft the files and stop for review.
 
 Once all files above are written, tell the user the release branch (`release/v$VERSION`) is ready to open as a PR
 against `develop` (per the GitFlow branching model in AGENTS.md), using
-`documentation/history/v<major>/PR_DESCRIPTION_v$VERSION.md` as the PR body. Once that PR merges, remind them a second PR
-promoting `develop` into `main` is still needed to actually ship the release — tag the resulting commit on `main` as
+`documentation/history/v<major>/PR_DESCRIPTION_v$VERSION.md` as the PR body. Once that PR merges, remind them a second
+PR promoting `develop` into `main` is still needed to actually ship the release — tag the resulting commit on `main` as
 `v$VERSION`.
 
 Remind the user to verify all tests still pass (`./mvnw test`) before finishing and confirm no version-specific info
