@@ -41,8 +41,8 @@ public class CompetitorMapper {
 
     /**
      * Copies the fields of a {@link CompetitorRequest} onto a {@link Competitor}, resolving the
-     * gender and named home club in the process. An omitted {@code paidUpSapsa} or
-     * {@code paidUpClub} or {@code isVerified} is stored as {@code null}, and a {@code nickName}
+     * gender and named home club in the process. An omitted {@code paidUpSapsa},
+     * {@code paidUpNgpsa}, {@code paidUpClub} or {@code isVerified} is stored as {@code null}, and a {@code nickName}
      * that is omitted, empty or blank defaults to the first name, replacing any nickname the
      * competitor already has, as every field is overwritten.
      *
@@ -70,6 +70,7 @@ public class CompetitorMapper {
         competitor.setEmailAddresses(
                 (request.getEmailAddresses() != null) ? new ArrayList<>(request.getEmailAddresses()) : new ArrayList<>());
         competitor.setPaidUpSapsa(request.getPaidUpSapsa());
+        competitor.setPaidUpNgpsa(request.getPaidUpNgpsa());
         competitor.setPaidUpClub(request.getPaidUpClub());
         competitor.setIsVerified(request.getIsVerified());
     }
@@ -131,6 +132,9 @@ public class CompetitorMapper {
         }
         if (request.getPaidUpSapsa() != null) {
             competitor.setPaidUpSapsa(request.getPaidUpSapsa());
+        }
+        if (request.getPaidUpNgpsa() != null) {
+            competitor.setPaidUpNgpsa(request.getPaidUpNgpsa());
         }
         if (request.getPaidUpClub() != null) {
             competitor.setPaidUpClub(request.getPaidUpClub());

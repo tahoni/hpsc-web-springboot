@@ -61,6 +61,8 @@ public class CompetitorResponse {
     private List<String> emailAddresses;
     /** Whether the competitor's SAPSA membership is paid up; may be null if not recorded. */
     private Boolean paidUpSapsa;
+    /** Whether the competitor's NGPSA membership is paid up; may be null if not recorded. */
+    private Boolean paidUpNgpsa;
     /** Whether the competitor's club membership is paid up; may be null if not recorded. */
     private Boolean paidUpClub;
     /** Whether the competitor has been verified; may be null if not recorded. */
@@ -93,6 +95,7 @@ public class CompetitorResponse {
         this.emailAddresses = competitor.getEmailAddresses();
 
         this.paidUpSapsa = competitor.getPaidUpSapsa();
+        this.paidUpNgpsa = competitor.getPaidUpNgpsa();
         this.paidUpClub = competitor.getPaidUpClub();
         this.isVerified = competitor.getIsVerified();
     }

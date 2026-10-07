@@ -50,6 +50,44 @@ class CompetitorRequestCsvMixInTest {
     }
 
     @Test
+    void testCsvDeserialization_whenPaidUpNgpsaColumnPresent_thenMapsItIndependentlyOfTheOtherFlags() throws Exception {
+        // Arrange
+        String csvData = """
+                FirstName,LastName,PaidUpSapsa,PaidUpNgpsa,PaidUpClub
+                Jane,Doe,false,true,false
+                John,Doe,true,false,true
+                """;
+
+        // Act
+        List<CompetitorRequest> rows = readRows(csvData);
+
+        // Assert
+        assertEquals(2, rows.size());
+        assertEquals(Boolean.FALSE, rows.get(0).getPaidUpSapsa());
+        assertEquals(Boolean.TRUE, rows.get(0).getPaidUpNgpsa());
+        assertEquals(Boolean.FALSE, rows.get(0).getPaidUpClub());
+        assertEquals(Boolean.TRUE, rows.get(1).getPaidUpSapsa());
+        assertEquals(Boolean.FALSE, rows.get(1).getPaidUpNgpsa());
+        assertEquals(Boolean.TRUE, rows.get(1).getPaidUpClub());
+    }
+
+    @Test
+    void testCsvDeserialization_whenPaidUpNgpsaColumnOmitted_thenLeavesItNull() throws Exception {
+        // Arrange
+        String csvData = """
+                FirstName,LastName,PaidUpSapsa,PaidUpClub
+                Jane,Doe,true,false
+                """;
+
+        // Act
+        List<CompetitorRequest> rows = readRows(csvData);
+
+        // Assert
+        assertEquals(1, rows.size());
+        assertNull(rows.getFirst().getPaidUpNgpsa());
+    }
+
+    @Test
     void testCsvDeserialization_whenHeaderOmitsOptionalColumns_thenLeavesThemNullAndEmailsEmpty() throws Exception {
         // Arrange
         String csvData = """
