@@ -30,6 +30,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Mappers
+
+- **`CompetitorMapper.resolveClubNumber`:** now normalises a supplied club number by removing all spaces and trimming
+  surrounding whitespace before returning it, so `applyFields` and `applyPatchFields` store a consistent value; the
+  Javadoc describes the normalisation
+
 ---
 
 ### 🧾 [13.2.0] - 2026-10-07

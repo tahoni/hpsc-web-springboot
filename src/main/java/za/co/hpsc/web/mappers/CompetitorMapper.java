@@ -147,12 +147,13 @@ public class CompetitorMapper {
      * A club number is only meaningful for HPSC's own members: it's required when
      * {@code homeClub} is {@link IpscConstants#HOME_CLUB_IDENTIFIER}, and forced to {@code null}
      * for every other home club, including none, regardless of what was supplied on the request.
+     * A supplied club number is normalised by removing all spaces and trimming surrounding whitespace.
      * </p>
      *
      * @param homeClub   the competitor's resolved home club; may be null.
      * @param clubNumber the club number supplied on the request; may be null or blank.
-     * @return {@code clubNumber} when {@code homeClub} is {@link IpscConstants#HOME_CLUB_ABBREVIATION},
-     * otherwise {@code null}.
+     * @return {@code clubNumber} with all spaces removed and surrounding whitespace trimmed when
+     * {@code homeClub} is {@link IpscConstants#HOME_CLUB_ABBREVIATION}, otherwise {@code null}.
      * @throws ValidationException if {@code homeClub} is {@link IpscConstants#HOME_CLUB_ABBREVIATION}
      *                             but {@code clubNumber} is null or blank.
      */
@@ -166,7 +167,7 @@ public class CompetitorMapper {
                     IpscConstants.HOME_CLUB_ABBREVIATION));
         }
 
-        return clubNumber;
+        return clubNumber.replace(" ", "").trim();
     }
 
     /**
