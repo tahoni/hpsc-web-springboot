@@ -1,9 +1,9 @@
 package za.co.hpsc.web.models.ipsc.matchcompetitor.response;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -18,6 +18,6 @@ import java.util.List;
 @AllArgsConstructor
 public class MatchCompetitorResponseHolder {
     /** The list of match competitors created by the bulk import. */
-    @NotNull
+    @NonNull
     private List<MatchCompetitorResponse> matchCompetitors;
 }

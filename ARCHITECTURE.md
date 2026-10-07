@@ -299,9 +299,9 @@ shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchS
 
 #### Helpers (`za.co.hpsc.web.helpers`)
 
-| Class               | Responsibility                                                 |
-|---------------------|----------------------------------------------------------------|
-| `CompetitorHelpers` | Competitor detail normalisation (e.g. last name particle case) |
+| Class               | Responsibility                                                                |
+|---------------------|-------------------------------------------------------------------------------|
+| `CompetitorHelpers` | Competitor detail normalisation (e.g. last name particle case, name cleaning) |
 
 #### Mappers (`za.co.hpsc.web.mappers`)
 

@@ -12,7 +12,7 @@
     <!-- Application definition -->
     <groupId>za.co.hpsc</groupId>
     <artifactId>hpsc-web</artifactId>
-    <version>13.0.0</version>
+    <version>13.1.0</version>
     <name>hpsc-web</name>
     <description>HPSC website backend</description>
 
@@ -134,6 +134,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <!-- Nullness annotations (@NonNull); version managed by Spring Boot -->
+        <dependency>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
         </dependency>
         <!-- Data -->
         <dependency>

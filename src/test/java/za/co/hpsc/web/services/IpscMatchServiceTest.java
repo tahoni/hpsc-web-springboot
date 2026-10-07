@@ -770,10 +770,9 @@ public class IpscMatchServiceTest {
         return club;
     }
 
-    private Club stubDefaultClub() {
+    private void stubDefaultClub() {
         Club club = newClub("Eufees Clubs", IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
         when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER)).thenReturn(Optional.of(club));
-        return club;
     }
 
     private void stubMatchSaveReturnsSameEntity() {

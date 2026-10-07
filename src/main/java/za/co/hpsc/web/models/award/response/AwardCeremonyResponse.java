@@ -1,9 +1,9 @@
 package za.co.hpsc.web.models.award.response;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jspecify.annotations.NonNull;
 import za.co.hpsc.web.models.Response;
 import za.co.hpsc.web.models.award.request.AwardRequest;
 import za.co.hpsc.web.utils.ValueUtil;
@@ -32,10 +32,10 @@ import java.util.UUID;
 @NoArgsConstructor
 public class AwardCeremonyResponse extends Response {
     private LocalDate date;
-    @NotNull
+    @NonNull
     private String imageFilePath = "";
 
-    @NotNull
+    @NonNull
     private List<AwardResponse> awards = new ArrayList<>();
 
     /**

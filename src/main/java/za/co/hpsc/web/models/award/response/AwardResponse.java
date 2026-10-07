@@ -1,9 +1,9 @@
 package za.co.hpsc.web.models.award.response;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.jspecify.annotations.NonNull;
 import za.co.hpsc.web.models.Response;
 import za.co.hpsc.web.models.award.request.AwardRequest;
 
@@ -29,7 +29,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class AwardResponse extends Response {
-    @NotNull
+    @NonNull
     private AwardPlacing firstPlace;
     private AwardPlacing secondPlace;
     private AwardPlacing thirdPlace;
@@ -50,7 +50,7 @@ public class AwardResponse extends Response {
      *                    Can be null.
      * @since 1.1.3
      */
-    public AwardResponse(@NotNull AwardPlacing firstPlace, AwardPlacing secondPlace,
+    public AwardResponse(@NonNull AwardPlacing firstPlace, AwardPlacing secondPlace,
                          AwardPlacing thirdPlace) {
         super();
         this.firstPlace = firstPlace;
@@ -76,7 +76,7 @@ public class AwardResponse extends Response {
      *                    Can be null.
      * @since 1.1.3
      */
-    public AwardResponse(UUID uuid, @NotNull AwardPlacing firstPlace, AwardPlacing secondPlace,
+    public AwardResponse(UUID uuid, @NonNull AwardPlacing firstPlace, AwardPlacing secondPlace,
                          AwardPlacing thirdPlace) {
         super(uuid);
         this.firstPlace = firstPlace;
@@ -105,7 +105,7 @@ public class AwardResponse extends Response {
      *                    Can be null.
      * @since 1.1.3
      */
-    public AwardResponse(UUID uuid, @NotNull @NotBlank String title, @NotNull AwardPlacing firstPlace,
+    public AwardResponse(UUID uuid, @NonNull @NotBlank String title, @NonNull AwardPlacing firstPlace,
                          AwardPlacing secondPlace, AwardPlacing thirdPlace) {
         super(uuid, title);
         this.firstPlace = firstPlace;
@@ -143,8 +143,8 @@ public class AwardResponse extends Response {
      *                    Can be null.
      * @since 1.1.1
      */
-    public AwardResponse(UUID uuid, @NotNull @NotBlank String title, String summary, String description,
-                         String category, List<String> tags, AwardPlacing firstPlace,
+    public AwardResponse(UUID uuid, @NonNull @NotBlank String title, String summary, String description,
+                         String category, List<String> tags, @NonNull AwardPlacing firstPlace,
                          AwardPlacing secondPlace, AwardPlacing thirdPlace) {
         super(uuid, title, summary, description, category, tags);
         this.firstPlace = firstPlace;
@@ -178,8 +178,8 @@ public class AwardResponse extends Response {
      *                    Can be null.
      * @since 1.1.1
      */
-    public AwardResponse(@NotNull @NotBlank String title, String summary, String description,
-                         String category, List<String> tags, @NotNull AwardPlacing firstPlace,
+    public AwardResponse(@NonNull @NotBlank String title, String summary, String description,
+                         String category, List<String> tags, @NonNull AwardPlacing firstPlace,
                          AwardPlacing secondPlace, AwardPlacing thirdPlace) {
         super(title, summary, description, category, tags);
         this.firstPlace = firstPlace;
@@ -223,7 +223,7 @@ public class AwardResponse extends Response {
      *                                 Can be null.
      * @since 1.1.1
      */
-    public AwardResponse(@NotNull @NotBlank String title, String summary, String description,
+    public AwardResponse(@NonNull @NotBlank String title, String summary, String description,
                          String category, List<String> tags, String firstPlaceName,
                          String secondPlaceName, String thirdPlaceName, String firstPlaceImageFileName,
                          String secondPlaceImageFileName, String thirdPlaceImageFileName) {
@@ -252,7 +252,7 @@ public class AwardResponse extends Response {
      *                     Must not be null.
      * @since 1.1.1
      */
-    public AwardResponse(@NotNull AwardRequest awardRequest) {
+    public AwardResponse(@NonNull AwardRequest awardRequest) {
         // Initialises response fields from request attributes
         this(awardRequest.getTitle(), awardRequest.getSummary(), awardRequest.getDescription(),
                 awardRequest.getCategory(), awardRequest.getTags(),

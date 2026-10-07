@@ -14,8 +14,6 @@ import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Persists the minimal valid scoring and shooter-log records the repository integration tests

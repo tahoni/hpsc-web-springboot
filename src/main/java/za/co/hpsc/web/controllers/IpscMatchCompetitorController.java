@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -72,7 +73,7 @@ public class IpscMatchCompetitorController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<MatchCompetitorResponse> createMatchCompetitor(@RequestBody MatchCompetitorRequest request)
+    ResponseEntity<MatchCompetitorResponse> createMatchCompetitor(@Valid @RequestBody MatchCompetitorRequest request)
             throws ValidationException, NonFatalException {
         return ResponseEntity.status(HttpStatus.CREATED).body(ipscMatchCompetitorService.createMatchCompetitor(request));
     }
@@ -169,7 +170,7 @@ public class IpscMatchCompetitorController {
     ResponseEntity<MatchCompetitorResponse> updateMatchCompetitor(
             @Parameter(description = "Identifier of the match competitor to replace.")
             @PathVariable Long matchCompetitorId,
-            @RequestBody MatchCompetitorRequest request)
+            @Valid @RequestBody MatchCompetitorRequest request)
             throws ValidationException, NonFatalException {
         return ResponseEntity.ok(ipscMatchCompetitorService.updateMatchCompetitor(matchCompetitorId, request));
     }
@@ -205,7 +206,7 @@ public class IpscMatchCompetitorController {
     ResponseEntity<MatchCompetitorResponse> patchMatchCompetitor(
             @Parameter(description = "Identifier of the match competitor to update.")
             @PathVariable Long matchCompetitorId,
-            @RequestBody MatchCompetitorPatchRequest request)
+            @Valid @RequestBody MatchCompetitorPatchRequest request)
             throws ValidationException, NonFatalException {
         return ResponseEntity.ok(ipscMatchCompetitorService.patchMatchCompetitor(matchCompetitorId, request));
     }

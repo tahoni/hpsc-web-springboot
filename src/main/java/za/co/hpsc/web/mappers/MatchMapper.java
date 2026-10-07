@@ -1,6 +1,6 @@
 package za.co.hpsc.web.mappers;
 
-import jakarta.validation.constraints.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
@@ -47,7 +47,7 @@ public class MatchMapper {
      *                           club exists for {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
      * @throws FatalException    if {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
      */
-    public void applyFields(@NotNull IpscMatch match, @NotNull MatchRequest request) throws FatalException {
+    public void applyFields(@NonNull IpscMatch match, @NonNull MatchRequest request) throws FatalException {
         match.setClub(resolveClub(request.getClub()));
         match.setName(request.getMatchName());
         match.setScheduledDate(request.getMatchDate().atStartOfDay());
@@ -70,7 +70,7 @@ public class MatchMapper {
      * @throws FatalException      if the club name is blank and
      *                             {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
      */
-    public void applyPatchFields(@NotNull IpscMatch match, @NotNull MatchPatchRequest request) throws FatalException {
+    public void applyPatchFields(@NonNull IpscMatch match, @NonNull MatchPatchRequest request) throws FatalException {
         if (request.getClub() != null) {
             match.setClub(resolveClub(request.getClub()));
         }

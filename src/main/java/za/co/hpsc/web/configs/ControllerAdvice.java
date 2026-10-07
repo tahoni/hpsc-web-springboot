@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -14,6 +16,8 @@ import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.utils.ValueUtil;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Global exception handling advice for REST controllers. This class provides
@@ -106,6 +110,36 @@ public class ControllerAdvice {
         logError(ex, request);
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ControllerResponse errorResponse = buildErrorResponse(ex.getMessage(), status);
+        return new ResponseEntity<>(errorResponse, status);
+    }
+
+    /**
+     * Handles a request body that failed Bean Validation (a {@code @Valid} request parameter), mapping it to an
+     * HTTP {@code 400 Bad Request} response.
+     *
+     * <p>
+     * The response message lists every violated constraint's message, sorted and separated by a space, so that the
+     * caller sees all the problems with the request at once.
+     * </p>
+     *
+     * @param ex      the exception carrying the validation errors.
+     * @param request the current web request, used to log the request URL.
+     * @return a {@link ResponseEntity} carrying a {@link ControllerResponse} that describes the error.
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ControllerResponse> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException ex, WebRequest request) {
+        logError(ex, request);
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String message = ex.getBindingResult().getAllErrors().stream()
+                .map(ObjectError::getDefaultMessage)
+                .filter(Objects::nonNull)
+                .sorted()
+                .collect(Collectors.joining(" "));
+        if (message.isBlank()) {
+            message = "Request validation failed";
+        }
+        ControllerResponse errorResponse = buildErrorResponse(message, status);
         return new ResponseEntity<>(errorResponse, status);
     }
 

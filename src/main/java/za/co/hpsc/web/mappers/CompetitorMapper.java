@@ -1,6 +1,6 @@
 package za.co.hpsc.web.mappers;
 
-import jakarta.validation.constraints.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import za.co.hpsc.web.constants.IpscConstants;
@@ -53,7 +53,7 @@ public class CompetitorMapper {
      *                             but no club number was supplied.
      * @throws NonFatalException   if the request's home club name doesn't match an existing club.
      */
-    public void applyFields(@NotNull Competitor competitor, @NotNull CompetitorRequest request) {
+    public void applyFields(@NonNull Competitor competitor, @NonNull CompetitorRequest request) {
         competitor.setFirstName(request.getFirstName());
         competitor.setLastName(request.getLastName());
         competitor.setMiddleNames(request.getMiddleNames());
@@ -87,7 +87,7 @@ public class CompetitorMapper {
      *                             but no club number was supplied.
      * @throws NonFatalException   if the request's home club name doesn't match an existing club.
      */
-    public void applyPatchFields(@NotNull Competitor competitor, @NotNull CompetitorPatchRequest request) {
+    public void applyPatchFields(@NonNull Competitor competitor, @NonNull CompetitorPatchRequest request) {
         if (request.getFirstName() != null) {
             competitor.setFirstName(request.getFirstName());
         }

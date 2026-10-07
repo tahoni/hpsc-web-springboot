@@ -7,6 +7,7 @@ import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.helpers.CompetitorHelpers;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.services.EntityIpscCompetitorService;
 
@@ -45,9 +46,11 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
      *     repository. When they found several, those candidates are narrowed down by the same
      *     name comparison in memory.</li>
      * </ol>
-     * <p>The full name is normalised before comparison: the range officer marker, "RO" or "(RO)", is
-     * removed wherever it appears in the name (see {@link IpscConstants#REPLACE_IN_NAMES_REGEX}),
-     * runs of whitespace are collapsed to a single space, and the result is trimmed. So
+     * <p>The full name is normalised before comparison by
+     * {@link CompetitorHelpers#cleanCompetitorName(String)}: a leading position is removed, the range
+     * officer marker, "RO" or "(RO)", is removed wherever it appears in the name (see
+     * {@link IpscConstants#REPLACE_IN_NAMES_REGEX}), full stops are removed, runs of whitespace are
+     * collapsed to a single space, and the result is trimmed. So
      * {@code "Jane Doe RO"}, {@code "RO Jane Doe"} and {@code "Jane (RO) Doe"} are all looked up
      * as {@code "Jane Doe"}.</p>
      * <p>If the final stage does not yield exactly one competitor, an exception is thrown rather
@@ -64,10 +67,7 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
         }
 
         // Normalise full name
-        String normalisedCompetitorFullName = StringUtils.trimToEmpty(fullName)
-                .replaceAll(IpscConstants.REPLACE_IN_NAMES_REGEX, " ")
-                .replaceAll("\\s+", " ")
-                .trim();
+        String normalisedCompetitorFullName = CompetitorHelpers.cleanCompetitorName(fullName);
         // Normalise competitor number
         String normalisedCompetitorNumber = StringUtils.trimToEmpty(competitorNumber);
         // A numeric value too long for an int (such as an ID number) is not a competitor number

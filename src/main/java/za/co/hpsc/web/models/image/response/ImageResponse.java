@@ -1,10 +1,10 @@
 package za.co.hpsc.web.models.image.response;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.MediaTypeFactory;
 import za.co.hpsc.web.models.Response;
 import za.co.hpsc.web.models.image.request.ImageRequest;
@@ -32,15 +32,15 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
 public class ImageResponse extends Response {
     @Getter
     @Setter
-    @NotNull
+    @NonNull
     private String filePath = "";
     @Getter
     @Setter
-    @NotNull
+    @NonNull
     private String fileName = "";
 
     @Getter
-    @NotNull
+    @NonNull
     private String mimeType = "";
 
     /**
@@ -67,7 +67,7 @@ public class ImageResponse extends Response {
      *                 If null or blank, it will be inferred from the file name.
      * @since 1.1.0
      */
-    public ImageResponse(UUID uuid, @NotNull @NotBlank String title, String filePath, String fileName,
+    public ImageResponse(UUID uuid, @NonNull @NotBlank String title, String filePath, String fileName,
                          String mimeType) {
         super(uuid, title);
         this.filePath = ValueUtil.nullAsEmptyString(filePath);
@@ -106,7 +106,7 @@ public class ImageResponse extends Response {
      *                    If null or blank, it will be inferred from the file name.
      * @since 1.1.0
      */
-    public ImageResponse(UUID uuid, @NotNull @NotBlank String title, String summary,
+    public ImageResponse(UUID uuid, @NonNull @NotBlank String title, String summary,
                          String description, String category, List<String> tags, String filePath,
                          String fileName, String mimeType) {
         super(uuid, title, summary, description, category, tags);
@@ -141,7 +141,7 @@ public class ImageResponse extends Response {
      *                    If null, an empty string is assigned.
      * @since 1.1.0
      */
-    public ImageResponse(@NotNull @NotBlank String title, String summary, String description,
+    public ImageResponse(@NonNull @NotBlank String title, String summary, String description,
                          String category, List<String> tags, String filePath, String fileName) {
         super(null, title, summary, description, category, tags);
         this.filePath = ValueUtil.nullAsEmptyString(filePath);
@@ -165,7 +165,7 @@ public class ImageResponse extends Response {
      *                     Must not be null.
      * @since 1.1.0
      */
-    public ImageResponse(@NotNull ImageRequest imageRequest) {
+    public ImageResponse(@NonNull ImageRequest imageRequest) {
         // Initialises response fields from request attributes
         this(imageRequest.getTitle(), imageRequest.getSummary(), imageRequest.getDescription(),
                 imageRequest.getCategory(), imageRequest.getTags(), imageRequest.getFilePath(),

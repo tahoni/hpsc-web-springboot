@@ -724,11 +724,11 @@ class IpscCompetitorServiceIntegrationTest {
     }
 
     // Helpers
-    private Club createClub(String name, ClubIdentifier identifier) {
+    private void createClub(String name, ClubIdentifier identifier) {
         Club club = new Club();
         club.setName(name);
         club.setIdentifier(identifier);
-        return clubRepository.save(club);
+        clubRepository.save(club);
     }
 
     private CompetitorRequest validRequest(String clubNumber) {

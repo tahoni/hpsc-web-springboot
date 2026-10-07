@@ -3,6 +3,7 @@ package za.co.hpsc.web.models.ipsc.competitor.request;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,9 +29,11 @@ public class CompetitorRequest {
     /** Identifier of the competitor to update, or {@code null} when creating a new competitor. */
     private Long competitorId;
     /** The competitor's first name. */
+    @NotBlank(message = "First name is required.")
     @JsonProperty(required = true)
     private String firstName;
     /** The competitor's last name. */
+    @NotBlank(message = "Last name is required.")
     @JsonProperty(required = true)
     private String lastName;
     /** The competitor's middle name(s), if any. */
@@ -131,7 +134,7 @@ public class CompetitorRequest {
     }
 
     /**
-     * Checks that the request carries the names needed to create a competitor, before any of it is used. Nothing is
+     * Checks that the request carries the names needed to create a competitor before any of them is used. Nothing is
      * looked up, so this only checks that values are present.
      *
      * <p>

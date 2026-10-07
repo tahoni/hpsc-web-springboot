@@ -21,6 +21,33 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 13.1.0 (October 7, 2026)
+
+**Theme:** Request-Body Validation, jspecify Nullness & Competitor Name Cleaning
+
+**Key Focus:**
+
+- The three IPSC controllers annotate their `@RequestBody` parameters with `@Valid`, and the competitor, match and match
+  competitor requests carry `@NotBlank` and `@NotNull` constraints with the messages `validate()` already used, so a
+  request missing a required field is rejected on arrival; `ControllerAdvice.handleMethodArgumentNotValidException`
+  answers `400 Bad Request` listing every violated constraint instead of the generic `500`
+- `org.jspecify.annotations.NonNull` replaces `jakarta.validation.constraints.NotNull` on the services', mappers' and
+  response models' parameters and fields, and `org.jspecify:jspecify` is declared as a direct dependency rather than
+  received transitively
+- `MatchCompetitorRequest.validate()` returns `void` and throws on failure, as the other request models do
+- New `CompetitorHelpers.cleanCompetitorName` strips a leading position, an `RO` or `(RO)` marker and full stops and
+  collapses whitespace; `MatchCompetitorMapper` cleans the request's name with it and
+  `EntityIpscCompetitorServiceImpl.findCompetitor` normalises the full name, so a PractiScore-style
+  `1 - John Smith (RO)` finds its competitor
+- Documentation tweaks: `flyway-migration-versioning.md`'s Current State table is re-aligned and a missing comma is
+  added to `AGENTS.md`
+- Scoped as `v13.1.0` **MINOR**: the new `400` response and the broader name matching are externally visible additions,
+  and nothing is backward-incompatible
+- No improvement plan gaps are closed or progressed: 35 stay closed, #6, #26 and #38 stay partially completed and #39
+  stays open
+- The suite stands at 1,277 passing tests
+- Project version bumped to 13.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 13.0.0 (October 7, 2026)
 
 **Theme:** Mapper Extraction, Division–Firearm Type Consistency & Match Competitor Contract Tightening
@@ -1258,6 +1285,15 @@ failed, and said so — while narrowing it to the club the data is for.
 other — a division belongs to a firearm type, and each name identifies one division — with migrations that rewrite the
 stored values to match.
 
+### Milestone 48: Request-Body Validation, jspecify Nullness & Competitor Name Cleaning (v13.1.0)
+
+- A request body missing a required field is now refused with a `400` by Bean Validation before it reaches the service,
+  instead of surfacing as a `500`
+- Nullness is expressed with jspecify's `@NonNull`, a direct dependency, in place of Jakarta's `@NotNull`, which only
+  looked like a validation constraint on parameters it never validated
+- A competitor name carrying a leading position, an `RO` marker or full stops now finds its competitor
+- The first MINOR release since v9.1.0, and the end of the run of five consecutive MAJOR releases
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1657,11 +1693,14 @@ MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
   competitor number is matched, what a bulk import answers, the name of a response field and which rows an import
   creates, the release is the project's fourth consecutive MAJOR, with each breaking change flagged in `CHANGELOG.md`
   as it landed.
-- **Version 13.x (v13.0.0):** Make the match competitor's values consistent and the services thinner — field copying
-  and lookups move into mappers, a division belongs to a firearm type and has a name of its own, and a response lists a
-  competitor's names once each. Because that changes the shape of a response field, requires a power factor and changes
-  the division and category names a request may use, the release is the project's fifth consecutive MAJOR, with each
-  breaking change flagged in `CHANGELOG.md` as it landed.
+- **Version 13.x (v13.0.0 – v13.1.0):** Make the match competitor's values consistent and the services thinner — field
+  copying and lookups move into mappers, a division belongs to a firearm type and has a name of its own, and a response
+  lists a competitor's names once each. Because that changes the shape of a response field, requires a power factor and
+  changes the division and category names a request may use, v13.0.0 is the project's fifth consecutive MAJOR release,
+  with each breaking change flagged in `CHANGELOG.md` as it landed. v13.1.0 then makes the contract enforceable at the
+  door and forgiving of the data's names — `@Valid` request bodies answer `400`, jspecify's `@NonNull` expresses
+  nullness and `CompetitorHelpers.cleanCompetitorName` normalises a competitor's name — as a backward-compatible
+  MINOR.
 
 ### Initial Phase (v1.0.0)
 
@@ -1960,7 +1999,7 @@ MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v13.0.0, the following areas are identified for future enhancement:
+Based on the evolution to v13.1.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/history/HISTORY_v1-v7.md`](/documentation/history/HISTORY_v1-v7.md).
@@ -2200,7 +2239,18 @@ The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived,
 - Gap #31 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v13.0.0)
+### Recently Completed (v13.1.0)
+
+- `@Valid` on the three IPSC controllers' request bodies, with Bean Validation constraints on the requests and
+  `ControllerAdvice.handleMethodArgumentNotValidException` answering `400 Bad Request` for a violation
+- `org.jspecify.annotations.NonNull` replaces `jakarta.validation.constraints.NotNull` and `org.jspecify:jspecify` is a
+  direct dependency; `MatchCompetitorRequest.validate()` returns `void`
+- New `CompetitorHelpers.cleanCompetitorName`, used by `MatchCompetitorMapper` and by
+  `EntityIpscCompetitorServiceImpl.findCompetitor`
+- Improvement plan unchanged: 35 gaps closed, #6, #26 and #38 partially completed and #39 open
+- Project version bumped to 13.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v13.0.0)
 
 - New `CompetitorMapper`, `MatchMapper` and `MatchCompetitorMapper` components holding the services' field copying and
   lookups, each with an `applyPatchFields`, documented in `ARCHITECTURE.md`
@@ -2466,3 +2516,8 @@ over the field copying and lookups, a division belongs to a firearm type and has
 stored divisions and categories are renamed by migration to match. It is a MAJOR release, because the shape of a
 response field, the required power factor and the division and category names a request may use all change for
 existing callers.
+
+Version 13.1.0 makes that contract enforceable and the competitor lookup more forgiving: the controllers validate
+request bodies and answer `400` for a missing field, jspecify's `@NonNull` expresses nullness and a competitor's name is
+cleaned of a leading position, an `RO` marker and full stops before it is matched. It is a MINOR release, because the
+`400` response and the broader name matching are additions and nothing is backward-incompatible.

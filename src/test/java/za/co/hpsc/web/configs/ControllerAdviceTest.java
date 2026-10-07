@@ -8,6 +8,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
@@ -15,6 +18,8 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ControllerAdviceTest {
@@ -474,5 +479,48 @@ public class ControllerAdviceTest {
 
         // Act & Assert
         assertDoesNotThrow(() -> controllerAdvice.logError(ex, null));
+    }
+
+    // handleMethodArgumentNotValidException()
+    private MethodArgumentNotValidException notValidException(String... messages) {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(new Object(), "request");
+        for (String message : messages) {
+            bindingResult.addError(new ObjectError("request", message));
+        }
+        MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
+        when(ex.getBindingResult()).thenReturn(bindingResult);
+        return ex;
+    }
+
+    @Test
+    void testHandleMethodArgumentNotValidException_whenThrown_thenReturns400() {
+        // Act
+        ResponseEntity<ControllerResponse> response = controllerAdvice
+                .handleMethodArgumentNotValidException(notValidException("First name is required."), webRequest);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void testHandleMethodArgumentNotValidException_whenSeveralErrors_thenMessageListsAllSorted() {
+        // Act
+        ResponseEntity<ControllerResponse> response = controllerAdvice.handleMethodArgumentNotValidException(
+                notValidException("Last name is required.", "First name is required."), webRequest);
+
+        // Assert
+        assertNotNull(response.getBody());
+        assertEquals("First name is required. Last name is required.", response.getBody().getMessage());
+    }
+
+    @Test
+    void testHandleMethodArgumentNotValidException_whenNoMessages_thenUsesDefaultMessage() {
+        // Act
+        ResponseEntity<ControllerResponse> response =
+                controllerAdvice.handleMethodArgumentNotValidException(notValidException(), webRequest);
+
+        // Assert
+        assertNotNull(response.getBody());
+        assertEquals("Request validation failed", response.getBody().getMessage());
     }
 }

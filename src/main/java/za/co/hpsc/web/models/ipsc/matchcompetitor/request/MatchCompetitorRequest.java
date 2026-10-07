@@ -2,6 +2,8 @@ package za.co.hpsc.web.models.ipsc.matchcompetitor.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -51,11 +53,13 @@ public class MatchCompetitorRequest extends IpscMatchScore {
     @JsonProperty("competitorNumber")
     private String competitorNumber;
     /** The identifier of the match the competitor shot. */
+    @NotNull(message = "Match ID is required.")
     @JsonProperty(required = true)
     private Long matchId;
     /** The club the competitor represented at the match; resolved against {@link za.co.hpsc.web.enums.ClubIdentifier} by name or abbreviation. */
     private String matchClub;
     /** The competitor's category at the match; resolved against {@link za.co.hpsc.web.enums.CompetitorCategory} by name. */
+    @NotBlank(message = "Competitor category is required.")
     @JsonProperty(required = true)
     private String competitorCategory;
     /**
@@ -64,9 +68,11 @@ public class MatchCompetitorRequest extends IpscMatchScore {
      */
     private String firearmType;
     /** The division the competitor shot; resolved against {@link za.co.hpsc.web.enums.Division} by name. */
+    @NotBlank(message = "Division is required.")
     @JsonProperty(required = true)
     private String division;
     /** The competitor's power factor; resolved against {@link za.co.hpsc.web.enums.PowerFactor} by name. */
+    @NotBlank(message = "Power factor is required.")
     @JsonProperty(required = true)
     private String powerFactor;
     /** The competitor's overall ranking in the match. */
@@ -190,12 +196,11 @@ public class MatchCompetitorRequest extends IpscMatchScore {
      * but unknown is not caught here; it only skips the firearm type and division check.
      * </p>
      *
-     * @return always {@code true}; an invalid request throws instead of returning {@code false}.
      * @throws ValidationException if the competitor ID, number and name are all missing, if the match ID,
      *                             competitor category, division or power factor is missing, or if the division does not
      *                             belong to the firearm type.
      */
-    public boolean validate() {
+    public void validate() {
         if ((getCompetitorId() == null) && !hasText(getCompetitorNumber())
                 && !hasText(getCompetitorName())) {
             throw new ValidationException("Competitor ID, number or name is required.");
@@ -213,7 +218,6 @@ public class MatchCompetitorRequest extends IpscMatchScore {
             throw new ValidationException("Power factor is required.");
         }
         validateDivisionMatchesFirearmType();
-        return true;
     }
 
     private void validateDivisionMatchesFirearmType() {

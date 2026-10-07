@@ -1,9 +1,9 @@
 package za.co.hpsc.web.models.image.response;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -18,6 +18,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class ImageResponseHolder {
-    @NotNull
+    @NonNull
     private List<ImageResponse> images;
 }

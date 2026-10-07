@@ -625,7 +625,7 @@ anything downstream references them:
 9. **Verify `ARCHITECTURE.md`'s Project Structure tree against disk.** Per-change Directory Tree Maintenance
    (above) still lets drift slip through, so treat every release as a backstop: cross-check the tree against the
    actual repository structure and correct any directory that's missing, renamed or gone stale, including tracked
-   tooling directories (`.claude/`, `.github/`) — not just `src/`. Likewise cross-check
+   tooling directories (`.claude/`, `.github/`) — not just `src/`. Likewise, cross-check
    `documentation/recommendations/flyway-migration-versioning.md`'s Current State table against
    `src/main/resources/db/migration/` and add a row for any migration that's missing.
 10. **Align the Markdown tables in the files this release touched.** Per the [Table alignment](#table-alignment) rule,

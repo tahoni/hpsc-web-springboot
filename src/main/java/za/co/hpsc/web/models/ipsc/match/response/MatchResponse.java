@@ -1,10 +1,10 @@
 package za.co.hpsc.web.models.ipsc.match.response;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jspecify.annotations.NonNull;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
@@ -30,13 +30,13 @@ import java.time.LocalTime;
 @NoArgsConstructor
 public class MatchResponse {
     /** The match's own identifier. */
-    @NotNull
+    @NonNull
     private Long matchId;
     /** The match's name. */
-    @NotNull
+    @NonNull
     private String matchName;
     /** Date the match was/will be shot. */
-    @NotNull
+    @NonNull
     private LocalDate matchDate;
     /** Time the match started; may be null. */
     private LocalTime startTime;
@@ -58,7 +58,7 @@ public class MatchResponse {
      *              Must not be null and must have a scheduled date.
      *              The lazily loaded club is read here, so call this while the persistence session is still open.
      */
-    public MatchResponse(@NotNull IpscMatch match) {
+    public MatchResponse(@NonNull IpscMatch match) {
         this.matchId = match.getId();
         this.matchName = match.getName();
 

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
@@ -216,6 +215,23 @@ class MatchCompetitorMapperTest {
         assertEquals(FirearmType.HANDGUN, matchCompetitor.getFirearmType());
         assertEquals(PowerFactor.MAJOR, matchCompetitor.getPowerFactor());
         assertEquals(new BigDecimal("50"), matchCompetitor.getPoints());
+    }
+
+    @Test
+    void testApplyPatchFields_whenCompetitorNameHasPositionRoMarkerAndFullStops_thenLooksUpTheCleanedName() {
+        // Arrange
+        MatchCompetitor matchCompetitor = existingMatchCompetitor();
+        Competitor competitor = new Competitor();
+        competitor.setId(3L);
+        when(entityIpscCompetitorService.findCompetitor(null, "J Smith")).thenReturn(Optional.of(competitor));
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setCompetitorName("1 - J.  Smith (RO)");
+
+        // Act
+        matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
+
+        // Assert
+        assertSame(competitor, matchCompetitor.getCompetitor());
     }
 
     @Test

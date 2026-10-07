@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 13.0.0](#-1300---2026-10-07) ← Current
+- [🧾 Version 13.1.0](#-1310---2026-10-07) ← Current
+- [🧾 Version 13.0.0](#-1300---2026-10-07)
 - [🧾 Version 12.0.0](#-1200---2026-10-05)
 - [🧾 Version 11.0.0](#-1100---2026-10-04)
 - [🧾 Version 10.0.0](#-1000---2026-10-03)
@@ -50,6 +51,66 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [13.1.0] - 2026-10-07
+
+#### ➕ Added
+
+##### Configuration
+
+- **`ControllerAdvice`:** New `handleMethodArgumentNotValidException` maps a request body that fails Bean Validation to
+  a `400 Bad Request` listing every violated constraint, instead of the generic `500`
+
+##### Models
+
+- **`CompetitorRequest`, `MatchRequest`, `MatchCompetitorRequest`:** Added `@NotBlank` and `@NotNull` constraints for
+  the fields `validate()` already requires, with the same messages, so a `@Valid` request body is checked on arrival
+
+#### 🔄 Changed
+
+##### Build & Configuration
+
+- **`pom.xml`:** Declared `org.jspecify:jspecify` as a direct dependency (version managed by Spring Boot), as the
+  code now uses its `@NonNull` annotation rather than receiving it transitively
+
+##### Controllers
+
+- **`IpscCompetitorController`, `IpscMatchController`, `IpscMatchCompetitorController`:** Annotated the
+  `@RequestBody` request parameters with `@Valid`, so a request missing a required field is now rejected with a `400`
+  by Bean Validation before it reaches the service
+
+##### Helpers
+
+- **`CompetitorHelpers`:** New `cleanCompetitorName` removes a leading position of up to two digits followed by a
+  `-` (e.g. `1 - John Smith`), any `RO` or `(RO)` marker and all full stops, replaces runs of whitespace with a single
+  space, trims the result and returns an empty string for a null name
+
+##### Services
+
+- **`EntityIpscCompetitorServiceImpl.findCompetitor`:** Normalises the full name with
+  `CompetitorHelpers.cleanCompetitorName`, so a leading position and full stops are now also ignored when matching
+  by name
+- **Services and mappers:** Replaced `jakarta.validation.constraints.NotNull` with
+  `org.jspecify.annotations.NonNull` on method parameters; the explicit null checks are unchanged
+
+##### Mappers
+
+- **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now clean the request's competitor name with
+  `CompetitorHelpers.cleanCompetitorName` before looking the competitor up
+
+##### Models
+
+- **`MatchCompetitorRequest`:** `validate()` now returns `void` and throws on failure, as the other request models do;
+  it previously also returned `true`, which no caller used
+- **Response models:** Replaced `jakarta.validation.constraints.NotNull` with `org.jspecify.annotations.NonNull`; no
+  behaviour change, as Bean Validation was not applied to responses
+
+##### Documentation
+
+- **`flyway-migration-versioning.md`:** Re-aligned the Current State table's columns
+- **`AGENTS.md`:** Added a missing comma in the Release Checklist's Flyway cross-check step
 
 ---
 

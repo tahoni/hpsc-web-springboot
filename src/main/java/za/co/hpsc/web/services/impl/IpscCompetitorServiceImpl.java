@@ -7,8 +7,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvReadException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.SystemConstants;
@@ -172,7 +172,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @throws ValidationException if the CSV data cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      */
-    protected List<CompetitorRequest> readCompetitors(@NotNull @NotBlank String csvData)
+    protected List<CompetitorRequest> readCompetitors(@NonNull @NotBlank String csvData)
             throws FatalException {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
@@ -213,7 +213,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * @param csvRow the request read from the CSV row; must not be null.
      * @return the normalised {@link CompetitorRequest}, with a {@code null} {@code competitorId}.
      */
-    protected CompetitorRequest normaliseCsvRequest(@NotNull CompetitorRequest csvRow) {
+    protected CompetitorRequest normaliseCsvRequest(@NonNull CompetitorRequest csvRow) {
         return new CompetitorRequest(
                 csvRow.getCompetitorId(),
                 toProperCase(csvRow.getFirstName()),

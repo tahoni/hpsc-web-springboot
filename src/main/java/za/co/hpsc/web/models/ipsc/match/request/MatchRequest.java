@@ -3,6 +3,8 @@ package za.co.hpsc.web.models.ipsc.match.request;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,6 +28,7 @@ public class MatchRequest {
     /** Identifier of the match to update; {@code null} when this request is creating a new match. */
     private Long matchId;
     /** Date the match was/will be shot. */
+    @NotNull(message = "Match date is required.")
     @JsonProperty(required = true)
     @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT)
     private LocalDate matchDate;
@@ -36,6 +39,7 @@ public class MatchRequest {
     @JsonFormat(pattern = IpscConstants.IPSC_INPUT_TIME_FORMAT)
     private LocalTime endTime;
     /** The match's name. */
+    @NotBlank(message = "Match name is required.")
     @JsonProperty(required = true)
     private String matchName;
     /**
@@ -45,6 +49,7 @@ public class MatchRequest {
      */
     private String club;
     /** The firearm type this match is shot with; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. */
+    @NotBlank(message = "Match firearm type is required.")
     @JsonProperty
     private String matchFirearmType;
     /** The category/tier of this match; resolved against {@link za.co.hpsc.web.enums.MatchCategory} by name. */
