@@ -82,6 +82,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `-` (e.g. `1 - John Smith`), any `RO` or `(RO)` marker and all full stops, replaces runs of whitespace with a single
   space, trims the result and returns an empty string for a null name
 
+##### Services
+
+- **`EntityIpscCompetitorServiceImpl.findCompetitor`:** Normalises the full name with
+  `CompetitorHelpers.cleanCompetitorName`, so a leading position and full stops are now also ignored when matching
+  by name
+
 ##### Models
 
 - **`MatchCompetitorRequest`:** `validate()` now returns `void` and throws on failure, as the other request models do;
