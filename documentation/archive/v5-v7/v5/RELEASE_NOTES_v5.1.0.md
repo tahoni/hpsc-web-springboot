@@ -296,7 +296,7 @@ project's [GitHub Issues](https://github.com/tahoni/hpsc-web-springboot/issues) 
 - **v5.0.0** - 2026-02-24: Initial semantic versioning release
 - **v4.1.0** - 2026-02-13: CRUD enhancement and feature completion
 - **v4.0.0** - 2026-02-11: Major IPSC domain refactoring
-- **[Earlier versions...]** — See [ARCHIVE.md](/documentation/archive/ARCHIVE.md)
+- **[Earlier versions...]** — See [ARCHIVE.md](/documentation/legacy/ARCHIVE.md)
 
 ---
 

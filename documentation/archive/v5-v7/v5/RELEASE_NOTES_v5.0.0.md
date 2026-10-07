@@ -24,7 +24,7 @@ while maintaining full backward compatibility with the IPSC domain refactoring f
   standards
 - **Version format:** `MAJOR.MINOR.PATCH` (e.g., 5.0.0)
 - **Legacy versioning archived:** All previous releases using non-semantic versioning (v1.x through v4.x) are
-  now documented in the [Legacy Release Archive](/documentation/archive/ARCHIVE.md)
+  now documented in the [Legacy Release Archive](/documentation/legacy/ARCHIVE.md)
 - **Future releases:** Will follow SemVer conventions with clear major, minor, and patch version increments
 
 ### ⚙️ Infrastructure & Architecture
@@ -238,7 +238,7 @@ Version 5.0.0 maintains the performance characteristics of version 4.1.0:
 
 - **Architecture Guide:** See [ARCHITECTURE.md](/ARCHITECTURE.md) for detailed system design
 - **README:** See [README.md](/README.md) for setup and configuration instructions
-- **Legacy Releases:** See [ARCHIVE.md](/documentation/archive/ARCHIVE.md) for historical release information
+- **Legacy Releases:** See [ARCHIVE.md](/documentation/legacy/ARCHIVE.md) for historical release information
 - **API Docs:** Available via Swagger UI at `/swagger-ui.html` when running the application
 
 ---
@@ -316,7 +316,7 @@ project's [GitHub Issues](https://github.com/tahoni/hpsc-web-springboot/issues) 
 - **v5.0.0** - 2026-02-24: Initial semantic versioning release
 - **v4.1.0** - 2026-02-13: CRUD enhancement and feature completion
 - **v4.0.0** - 2026-02-11: Major IPSC domain refactoring
-- **[Earlier versions...]** — See [ARCHIVE.md](/documentation/archive/ARCHIVE.md)
+- **[Earlier versions...]** — See [ARCHIVE.md](/documentation/legacy/ARCHIVE.md)
 
 ---
 
