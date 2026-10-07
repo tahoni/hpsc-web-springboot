@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 12.0.0](#-1200---2026-10-05) ← Current
+- [🧾 Version 13.0.0](#-1300---2026-10-07) ← Current
+- [🧾 Version 12.0.0](#-1200---2026-10-05)
 - [🧾 Version 11.0.0](#-1100---2026-10-04)
 - [🧾 Version 10.0.0](#-1000---2026-10-03)
 - [🧾 Version 9.1.0](#-910---2026-10-03)
@@ -50,6 +51,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+---
+
+### 🧾 [13.0.0] - 2026-10-07
+
 #### ➕ Added
 
 ##### Documentation
@@ -57,6 +62,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** New open Gap #38 — eight utility and
   enum methods and `SystemConstants.DEFAULT_SCALE` are used only by tests, with a matching task block, Roadmap row and
   Success Criteria entry
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** New open Gap #39 —
+  `ClubIdentifier.code` and `fromCode` are used only by tests, with a matching task block, Roadmap row and Success
+  Criteria entry
 
 ##### Mappers
 
@@ -120,6 +128,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Documentation
 
 - **`ARCHITECTURE.md`:** Project Structure trees and a new Mappers section describe the `mappers` package
+- **`ARCHITECTURE.md`, `README.md`:** The `models/ipsc/shared/` comment no longer calls the shared score fields
+  groundwork, and the Match Scoring Domain Model bullet says the match competitor endpoints are built on them while
+  the shooter-log layer is still to come
+- **`documentation/recommendations/flyway-migration-versioning.md`:** Current State table gains rows for `V11_4_0` and
+  `V11_5_0`, and `V11_2_0` and `V11_3_0` are attributed to this release
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #38 is partially completed —
+  `Division.fromAbbreviationOrName` and the other test-only enum methods are removed — with the Roadmap row, At a
+  Glance and Success Criteria updated to match
 
 ##### Domain
 

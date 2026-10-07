@@ -1703,6 +1703,73 @@ backward-incompatible, so it is MAJOR under the Semantic Versioning rules.
 - Three-tier tests for the lookup wiring, the partial import, the club filter and `ClubService`; the suite stands at
   1,227 passing tests
 
+### Phase 47: Mappers, Division–Firearm Type Consistency & Match Competitor Contract Tightening (v13.0.0)
+
+**Duration:** October 7, 2026
+
+A major release: the field copying and lookups leave the three IPSC services for mapper components, a division records
+the firearm type it is shot with and has a name of its own, and the match competitor's contract tightens. Three groups
+of changes are backward-incompatible, so it is MAJOR under the Semantic Versioning rules.
+
+**Key Accomplishments:**
+
+**Mappers**
+
+- New `CompetitorMapper`, `MatchMapper` and `MatchCompetitorMapper` hold `applyFields`, a new `applyPatchFields` and the
+  gender, club, match, category, firearm type, division and power factor lookups that the services carried, so a service
+  constructor takes a mapper in place of the repositories those lookups used
+- `MatchCompetitorMapper` rejects a division that does not belong to the firearm type, through
+  `validateDivisionMatchesFirearmType`, checking a patch against the other value's current one, and takes a missing
+  firearm type from the division
+
+**Enums**
+
+- `Division` gains a `firearmType` and every division has a unique name: the shotgun, .22 and mini rifle divisions that
+  shared a handgun name are renamed, the semi auto rifle divisions become `Rifle Open Division` and
+  `Rifle Standard Division`, and `SHOTGUN_STANDARD_MANUAL` becomes `Shotgun Standard Manual Division`
+- **Breaking:** the accepted division names change, and `SENIOR_LADY` is now `Lady Senior`, so a request using
+  `Lady, Senior` is rejected
+- The unused `code` and `abbreviation` fields and the lookups that only tests called are removed from `Division`,
+  `FirearmType`, `PowerFactor` and `CompetitorCategory`, which gains an abbreviation instead of its code
+
+**Database**
+
+- `V11_2_0` makes `match_competitor.firearm_type` and `power_factor` `NOT NULL`, `V11_3_0` adds the optional
+  `date_calculated` column, `V11_4_0` renames the stored divisions by firearm type and `V11_5_0` renames the stored
+  category `Lady, Senior` to `Lady Senior`
+
+**Models**
+
+- **Breaking:** `MatchCompetitorResponse` replaces `competitorName` with a `competitorNames` list holding the
+  competitor's "First Last" and "Nick Last" names once each
+- **Breaking:** `powerFactor` is required on a match competitor request, as `firearmType` already was; `firearmType` is
+  then made optional again, taken from the division when left out
+- `MatchCompetitorRequest` and `MatchCompetitorPatchRequest` extend `IpscMatchScore`, `weightedPoints` is renamed
+  `points` and the power factor leaves the score models
+- `CompetitorRequest`, `MatchRequest` and `MatchCompetitorRequest` each carry their own `validate()`, and
+  `CompetitorResponse`, `MatchResponse` and `MatchCompetitorResponse` build themselves from their entities
+
+**Housekeeping**
+
+- `NumberUtil.calculatePercentage` and `calculateSum` take a `scale` and the percentage rounding is fixed, null
+  contracts are marked `@Nullable`, `.gitattributes` normalises text files to LF and `qodana.yaml` moves to the
+  `qodana.recommended` profile
+- Improvement plan Gap #38 is partially completed and Gap #39 is recorded
+
+**Build & Metadata**
+
+- Project version bumped to 13.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Separating mapping from orchestration, and making the match competitor's enumerated values agree with each other
+
+**Test Coverage:**
+
+- Unit tests for the three mappers, including `applyPatchFields`, the division and firearm type checks and the new
+  enum behaviour, with the integration tests adjusted for the stricter requests; the suite stands at 1,265 passing
+  tests
+
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**

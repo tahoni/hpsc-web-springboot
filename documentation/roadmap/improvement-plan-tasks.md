@@ -423,7 +423,13 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-*No gaps are currently open.*
+**`ClubIdentifier.code` and `fromCode`** *(improvement-plan.md → Gap #39)*
+
+- [ ] Confirm with the IDE's find-usages that `ClubIdentifier.fromCode` and the `code` field have no production caller
+- [ ] Either keep them because a planned caller exists, or remove them together with the `fromCode` tests in
+  `ClubIdentifierTest`
+- [ ] Change `AGENTS.md`'s Test Conventions example heading `// fromCode()` to one that still exists in the cited test
+  classes (for example `// fromName()`)
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

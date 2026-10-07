@@ -93,8 +93,10 @@ current at the time it's authored. Treat any resemblance between the two as coin
 | `V10_3_0__remove_match_competitor_hit_factor.sql`                 | v10.0.0                | Drops the `hit_factor` column `V10_1_0` added                                                                                                                                 |
 | `V11_0_0__rename_competitor_nickname_to_nick_name.sql`            | v11.0.0                | Renames `competitor.nickname` to `nick_name`                                                                                                                                  |
 | `V11_1_0__change_competitor_number_to_int.sql`                    | v11.0.0                | Changes `competitor.competitor_number` from `VARCHAR(255)` to `INT`; refused if a value is not a whole number                                                                 |
-| `V11_2_0__make_match_competitor_firearm_type_and_power_factor_required.sql`| Unreleased             | Makes `match_competitor.firearm_type` and `power_factor` `NOT NULL` (reversing `V8_1_0`'s `firearm_type` change); refused if any row has a `NULL`                             |
-| `V11_3_0__add_match_competitor_date_calculated.sql`               | Unreleased             | Adds the optional `match_competitor.date_calculated` column, placed before `date_created`                                                                                     |
+| `V11_2_0__make_match_competitor_firearm_type_and_power_factor_required.sql`| v13.0.0                | Makes `match_competitor.firearm_type` and `power_factor` `NOT NULL` (reversing `V8_1_0`'s `firearm_type` change); refused if any row has a `NULL`                             |
+| `V11_3_0__add_match_competitor_date_calculated.sql`               | v13.0.0                | Adds the optional `match_competitor.date_calculated` column, placed before `date_created`                                                                                     |
+| `V11_4_0__make_non_handgun_division_names_unique.sql`             | v13.0.0                | Renames the stored `division` of `match_competitor` and `shooter_log_competitor` to the renamed `Division` names (non-handgun, semi auto rifle and shotgun standard manual divisions)
+| `V11_5_0__rename_lady_senior_competitor_category.sql`             | v13.0.0                | Renames the stored competitor category `Lady, Senior` to `Lady Senior` in `match_competitor`, `shooter_log_competitor` and `shooter_log_overall`
 
 ---
 

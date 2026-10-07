@@ -124,7 +124,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
   - #38 Eight utility and enum methods and `SystemConstants.DEFAULT_SCALE` are used only by tests — progressed
     v13.0.0 (`Division.fromAbbreviationOrName` removed; seven methods and `DEFAULT_SCALE` remain)
-- **⚪ Open (0):** None
+- **⚪ Open (1):**
+  - #39 `ClubIdentifier.code` and `ClubIdentifier.fromCode` are used only by tests
 
 ### ✅ Completed
 
@@ -1238,7 +1239,24 @@ matches the class.
 
 ### ⚪ Open
 
-*No gaps are currently open.*
+#### 39. `ClubIdentifier.code` and `ClubIdentifier.fromCode` are used only by tests
+
+**Evidence:** Grepping `src/main` for `fromCode` and `getCode` finds `ClubIdentifier.fromCode` only at its own
+declaration (`ClubIdentifier.java:111`), and its only caller is `ClubIdentifierTest` (nine tests). The `code` field it
+searches (`"C SOSC"`, `"B HPSC"`, `"A PMPSC"`, `"U VISITOR"`) is read nowhere else. The `feature/qodana` branch removed
+the same pattern from `Division`, `CompetitorCategory`, `FirearmType` and `PowerFactor` (see Gap #38's Progress), which
+leaves `ClubIdentifier` as the one enum that still carries it; `fromAbbreviation`, in contrast, is used by
+`IpscConstants`, `ClubIdentifierConverter` and `MatchCompetitorMapper`. `AGENTS.md`'s Test Conventions also give
+`// fromCode()` as an example test-group heading, "matching the style already used in `FirearmTypeTest`", although
+`FirearmTypeTest` no longer has one. The scan was name-based, so confirm with the IDE's find-usages before deleting.
+
+**Why it matters:** The same shape as Gaps #37 and #38: inert code a reader assumes is part of the production
+behaviour, kept alive only by tests that exercise it, and with a public API to maintain. The four codes were also
+changed on this branch, so someone is evidently maintaining values that nothing reads.
+
+**Proposed improvement:** Decide whether a caller for the code is coming. If not, remove `ClubIdentifier.code` and
+`fromCode` together with their tests, and change `AGENTS.md`'s example heading to one that still exists (for example
+`// fromName()`); if so, record the planned caller here.
 
 ---
 
@@ -1247,7 +1265,7 @@ matches the class.
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0, the shooter-log service and controller remain                                                                                  |
-| **Next**    | Decide which remaining test-only utility methods and `SystemConstants.DEFAULT_SCALE` to keep or remove (#38, `Division.fromAbbreviationOrName` removed in v13.0.0); #36 and #37 closed in v12.0.0                                                                                                                                                                                                    |
+| **Next**    | Decide which remaining test-only utility methods and `SystemConstants.DEFAULT_SCALE` to keep or remove (#38, #39, `Division.fromAbbreviationOrName` removed in v13.0.0); #36 and #37 closed in v12.0.0                                             |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -1342,6 +1360,8 @@ matches the class.
   that only tests call is either given a production caller or removed with its tests, `SystemConstants.DEFAULT_SCALE`'s
   Javadoc matches how the constant is used, and `ARCHITECTURE.md`'s `NumberUtil` description matches the class,
   closing Gap #38.
+- ⚪ Open: `ClubIdentifier.code` and `fromCode` are either given a production caller or removed with their tests, and
+  `AGENTS.md`'s `// fromCode()` example heading names a test group that exists, closing Gap #39.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

@@ -86,7 +86,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │   │   ├───match/response/      # IPSC match response DTOs
 │   │   │   │   ├───matchcompetitor/request/  # IPSC match competitor request DTOs
 │   │   │   │   ├───matchcompetitor/response/ # IPSC match competitor response DTOs
-│   │   │   │   └───shared/              # Comstock-scoring shared fields (groundwork)
+│   │   │   │   └───shared/              # Comstock-scoring shared fields (extended by the match competitor requests)
 │   │   │   └───(root)          # Top-level request/response wrapper models
 │   │   ├───repositories/       # Spring Data JPA interfaces, one per entity
 │   │   ├───services/           # Service interfaces
