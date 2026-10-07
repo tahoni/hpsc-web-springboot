@@ -325,17 +325,14 @@ class MatchCompetitorRequestTest {
     }
 
     @Test
-    void testValidate_whenFirearmTypeIsNullEmptyOrBlank_thenThrowsValidationException() {
+    void testValidate_whenFirearmTypeIsNullEmptyOrBlank_thenReturnsTrue() {
         for (String value : new String[]{null, "", "   "}) {
             // Arrange
             MatchCompetitorRequest request = validRequest();
             request.setFirearmType(value);
 
-            // Act
-            ValidationException exception = assertThrows(ValidationException.class, request::validate);
-
-            // Assert
-            assertEquals("Firearm type is required.", exception.getMessage());
+            // Act & Assert
+            assertTrue(request.validate());
         }
     }
 

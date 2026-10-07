@@ -357,8 +357,6 @@ class IpscMatchCompetitorServiceImplTest {
         noMatch.setMatchId(null);
         MatchCompetitorRequest noCategory = completeRequest();
         noCategory.setCompetitorCategory(null);
-        MatchCompetitorRequest noFirearm = completeRequest();
-        noFirearm.setFirearmType(null);
         MatchCompetitorRequest noDivision = completeRequest();
         noDivision.setDivision(null);
         MatchCompetitorRequest noPowerFactor = completeRequest();
@@ -370,7 +368,6 @@ class IpscMatchCompetitorServiceImplTest {
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(noCompetitor));
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(noMatch));
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(noCategory));
-        assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(noFirearm));
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(noDivision));
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(noPowerFactor));
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(blankPowerFactor));

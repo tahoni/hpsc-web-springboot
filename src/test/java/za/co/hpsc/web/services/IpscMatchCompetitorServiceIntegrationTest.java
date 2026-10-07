@@ -118,6 +118,22 @@ class IpscMatchCompetitorServiceIntegrationTest {
     }
 
     @Test
+    void testCreateMatchCompetitor_whenFirearmTypeIsBlank_thenTakesItFromTheDivision() {
+        // Arrange
+        Competitor competitor = createCompetitor("HPSC-MC-004");
+        IpscMatch match = createMatch();
+        MatchCompetitorRequest request = validRequest(competitor.getId(), match.getId());
+        request.setFirearmType(null);
+        request.setDivision("Rifle Open Division");
+
+        // Act
+        MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(request);
+
+        // Assert
+        assertEquals(FirearmType.RIFLE, response.getFirearmType());
+    }
+
+    @Test
     void testCreateMatchCompetitor_whenSameCompetitorAndMatchButOtherFirearmType_thenCreatesIt() {
         // Arrange
         Competitor competitor = createCompetitor("HPSC-MC-003");

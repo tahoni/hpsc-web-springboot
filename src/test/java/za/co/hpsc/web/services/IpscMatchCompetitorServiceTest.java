@@ -111,16 +111,6 @@ public class IpscMatchCompetitorServiceTest {
     }
 
     @Test
-    void testCreateMatchCompetitor_whenFirearmTypeIsBlank_thenThrowsValidationException() {
-        // Arrange
-        MatchCompetitorRequest request = validRequest();
-        request.setFirearmType("  ");
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
-    }
-
-    @Test
     void testCreateMatchCompetitor_whenDivisionIsBlank_thenThrowsValidationException() {
         // Arrange
         MatchCompetitorRequest request = validRequest();

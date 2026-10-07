@@ -58,8 +58,10 @@ public class MatchCompetitorRequest extends IpscMatchScore {
     /** The competitor's category at the match; resolved against {@link za.co.hpsc.web.enums.CompetitorCategory} by name. */
     @JsonProperty(required = true)
     private String competitorCategory;
-    /** The firearm type the competitor shot; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. */
-    @JsonProperty(required = true)
+    /**
+     * The firearm type the competitor shot; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. May be
+     * null or blank, in which case it is taken from the division.
+     */
     private String firearmType;
     /** The division the competitor shot; resolved against {@link za.co.hpsc.web.enums.Division} by name. */
     @JsonProperty(required = true)
@@ -91,7 +93,8 @@ public class MatchCompetitorRequest extends IpscMatchScore {
      * @param competitorCategory the competitor's category at the match; resolved against
      *                           {@link za.co.hpsc.web.enums.CompetitorCategory} by name. Must not be null or blank.
      * @param firearmType        the firearm type the competitor shot; resolved against
-     *                           {@link za.co.hpsc.web.enums.FirearmType} by name.
+     *                           {@link za.co.hpsc.web.enums.FirearmType} by name. May be null or blank, in which case
+     *                           it is taken from the division.
      * @param division           the division the competitor shot; resolved against
      *                           {@link za.co.hpsc.web.enums.Division} by name. Must not be null or blank.
      * @param powerFactor        the competitor's power factor; resolved against
@@ -176,21 +179,21 @@ public class MatchCompetitorRequest extends IpscMatchScore {
      * <ul>
      *     <li>{@code competitorId} is set, or {@code competitorNumber} or {@code competitorName} has text;</li>
      *     <li>{@code matchId} is set; and</li>
-     *     <li>{@code competitorCategory}, {@code firearmType}, {@code division} and {@code powerFactor} each have text;
-     *     and</li>
+     *     <li>{@code competitorCategory}, {@code division} and {@code powerFactor} each have text; and</li>
      *     <li>the {@code division}, when it and the {@code firearmType} both name a known value, is one shot with that
      *     firearm type.</li>
      * </ul>
      *
      * <p>
-     * The category, firearm type, division, club and power factor are resolved against their enums later, so a value
-     * that is present but unknown is not caught here; it only skips the firearm type and division check.
+     * The {@code firearmType} is optional: when it is blank the mapper takes it from the division. The category,
+     * firearm type, division, club and power factor are resolved against their enums later, so a value that is present
+     * but unknown is not caught here; it only skips the firearm type and division check.
      * </p>
      *
      * @return always {@code true}; an invalid request throws instead of returning {@code false}.
      * @throws ValidationException if the competitor ID, number and name are all missing, if the match ID,
-     *                             competitor category, firearm type, division or power factor is missing, or if the
-     *                             division does not belong to the firearm type.
+     *                             competitor category, division or power factor is missing, or if the division does not
+     *                             belong to the firearm type.
      */
     public boolean validate() {
         if ((getCompetitorId() == null) && !hasText(getCompetitorNumber())
@@ -202,9 +205,6 @@ public class MatchCompetitorRequest extends IpscMatchScore {
         }
         if (!hasText(getCompetitorCategory())) {
             throw new ValidationException("Competitor category is required.");
-        }
-        if (!hasText(getFirearmType())) {
-            throw new ValidationException("Firearm type is required.");
         }
         if (!hasText(getDivision())) {
             throw new ValidationException("Division is required.");
