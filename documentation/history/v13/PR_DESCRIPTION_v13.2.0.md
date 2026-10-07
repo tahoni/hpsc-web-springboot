@@ -5,6 +5,8 @@
   value.
 - **Stops the name patterns backtracking**: `CompetitorHelpers` uses possessive `POSITION_PREFIX` and `WHITESPACE`
   patterns and a fixed `MC_PREFIX` tested with `lookingAt()`.
+- **Splits the history archives by version range**: versions 1.0.0 – 9.1.0 move into `documentation/archive/v1-v4/`,
+  `v5-v7/` and `v8-v9/`, and `CHANGELOG.md`, `HISTORY.md` and `EVOLUTION_OVERVIEW.md` keep versions 10.0.0 onwards.
 - A **MINOR** release: nothing breaking and no database migration.
 
 ## 📦 Key Changes
@@ -20,7 +22,9 @@
 - `MC_PREFIX` uses `lookingAt()` with a fixed-length pattern; behaviour is unchanged
 - `AwardServiceImpl.mapAwards` drops a `@NonNull` on its parameter that its own null check contradicted
 - Archived versions 1.0.0 – 9.1.0 move to `documentation/archive/v1-v4/`, `v5-v7/` and `v8-v9/`, and `ARCHIVE.md` to
-  `documentation/legacy/`
+  `documentation/legacy/`; the main history documents point at the archives, and the links in `README.md`,
+  `AGENTS.md`, the `prep-version-release` skill and `improvement-plan.md` follow
+- Stray `../` prefixes that earlier file moves left in the archived files are removed and their long lines rewrapped
 - Version bumped to 13.2.0 in `pom.xml` and `@OpenAPIDefinition`
 
 **Fixed**
@@ -30,7 +34,7 @@
 
 ## 🧪 Test Plan
 
-- [x] `./mvnw test` — 1,280 tests, no failures, errors or skips
+- [x] `./mvnw test` — 1,280 tests, no failures, errors or skips (only Markdown changed since)
 - [ ] Qodana, CodeQL and Docker workflows pass on this PR
 - [x] `RELEASE_NOTES.md` archived byte-for-byte to `documentation/history/v13/RELEASE_NOTES_v13.2.0.md`
 

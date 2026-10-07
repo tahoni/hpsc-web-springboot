@@ -10,8 +10,9 @@
 
 Version 13.2.0 is a minor release. A competitor is now looked up by club number first, before the number is
 converted to an integer. The regular expressions that clean a competitor's name no longer backtrack. A misleading
-error message in the award service is also corrected. No database migration runs and no existing request is rejected
-that was accepted before.
+error message in the award service is also corrected. The earliest versions' history moves out of `CHANGELOG.md`,
+`HISTORY.md` and `EVOLUTION_OVERVIEW.md` into archives split by version range. No database migration runs and no
+existing request is rejected that was accepted before.
 
 ---
 
@@ -30,6 +31,16 @@ that was accepted before.
   possessive run of two or more whitespace characters, and `MC_PREFIX` is a fixed pattern tested with `lookingAt()`
 - A leading position is now any number of digits followed by an optional whitespace character and a hyphen, so
   `123-John` cleans to `John` and `-12-John Smith` is left alone
+
+### 🗄️ Archives Split by Version Range
+
+- The v1 – v7 archive splits in two and the v8 and v9 entries join it: `documentation/archive/v1-v4/` (1.0.0 – 4.1.0),
+  `v5-v7/` (5.0.0 – 7.4.1) and `v8-v9/` (8.0.0 – 9.1.0) each hold that range's `CHANGELOG_*`, `HISTORY_*` and
+  `EVOLUTION_OVERVIEW_*` archives and its per-version release notes and pull request descriptions
+- `CHANGELOG.md`, `HISTORY.md` and `EVOLUTION_OVERVIEW.md` keep only versions 10.0.0 onwards, with a pointer to each
+  archive, and `ARCHIVE.md` moves to `documentation/legacy/`
+- The stray `../` prefixes that earlier file moves left in backticked paths inside the archived files are removed, and
+  two references in `improvement-plan.md` that the moves mangled are restored
 
 ### 🐛 A Truthful Error
 
@@ -52,7 +63,11 @@ that was accepted before.
 - `CompetitorHelpers.MC_PREFIX` is tested only at the start of the word with `lookingAt()`; its behaviour is unchanged
 - `AwardServiceImpl.mapAwards` drops a `@NonNull` on its parameter that its own null check contradicted
 - The archived versions 1.0.0 – 9.1.0 move from `documentation/history/` to `documentation/archive/v1-v4/`, `v5-v7/` and
-  `v8-v9/`, and `ARCHIVE.md` moves to `documentation/legacy/`; the documentation links follow
+  `v8-v9/`, and `ARCHIVE.md` moves to `documentation/legacy/`; `CHANGELOG.md`, `HISTORY.md` and
+  `EVOLUTION_OVERVIEW.md` now hold versions 10.0.0 onwards and point at the archives, and the links in `README.md`,
+  `AGENTS.md`, the `prep-version-release` skill and `improvement-plan.md` follow
+- The archived files lose the stray `../` prefixes that earlier file moves left in backticked paths, and their long
+  lines are rewrapped to 120 characters
 
 ### Fixed
 
@@ -63,18 +78,20 @@ that was accepted before.
 
 ## 🚀 Migration Guide
 
-No migration is needed. Two behaviours differ for an unusual input: a competitor number that is both one competitor's
-club number and another's competitor number now finds the club number's competitor, and a name with a hyphen after a
-long run of digits, such as `123-John`, now has the digits removed as a position.
+No migration is needed. Anything that links to the old documentation paths — `documentation/history/v1/` to `v9/`, or
+`CHANGELOG_v1-v7.md`, `HISTORY_v1-v7.md` and `EVOLUTION_OVERVIEW_v1-v7.md` — should use the new `documentation/archive/`
+locations. Two behaviours differ for an unusual input: a competitor number that is both one competitor's club number and
+another's competitor number now finds the club number's competitor, and a name with a hyphen after a long run of digits,
+such as `123-John`, now has the digits removed as a position.
 
 ---
 
 ## 📊 Statistics
 
-- **Files Changed:** 108 against `main`, including this release's notes and PR description; 6921
-  insertions and 6326 deletions
+- **Files Changed:** 108 against `main`, including this release's notes and PR description; 6,962
+  insertions and 6,327 deletions
 - **New Source Files:** 0
-- **Renamed Source Files:** 0
+- **Renamed Source Files:** 0 (82 documentation files moved to `documentation/archive/` and `documentation/legacy/`)
 - **Deleted Source Files:** 0
 - **New Dependencies:** 0
 
@@ -94,6 +111,7 @@ long run of digits, such as `123-John`, now has the digits removed as a position
 ## 🧪 Testing
 
 - `./mvnw test` passes: 1,280 tests with no failures, errors or skips.
+- Only Markdown changed after the last test run, so the suite was not re-run for the archive split.
 - New unit tests cover the club number match, a blank number skipping the club query, the fall back to the competitor
   number, the cleaned position and whitespace, and the `mapAwards` message.
 
