@@ -52,6 +52,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Helpers
+
+- **`CompetitorHelpers.cleanCompetitorName`:** The position and whitespace patterns no longer backtrack:
+  `POSITION_PREFIX` is possessive and `WHITESPACE` matches only a run of two or more whitespace characters. A leading
+  position is now any number of digits followed by an optional whitespace character and a hyphen, at the very start of
+  the name, so `123-John` now cleans to `John` and `-12-John Smith` is left alone; a single tab or newline between
+  words is no longer turned into a space
+
 ---
 
 ### 🧾 [13.1.0] - 2026-10-07
