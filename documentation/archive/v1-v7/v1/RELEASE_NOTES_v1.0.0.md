@@ -129,7 +129,7 @@ and better maintainability.
 
 ### 👨‍💻 Development Configuration
 
-- **`.gitignore`:** Configured to exclude IDE and build artefacts
+- **`../../../../.gitignore`:** Configured to exclude IDE and build artefacts
 - **IDE setup:** Ready for IntelliJ IDEA, Eclipse, VS Code
 - **Git ready:** Configured for version control
 

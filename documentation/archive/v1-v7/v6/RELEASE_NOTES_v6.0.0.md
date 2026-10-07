@@ -228,7 +228,7 @@ Eight new test classes were added; and one removed.
 #### Config & Infrastructure
 
 - `ControllerAdvice` — logging added; `ValidationException` removed from handler signatures
-- `pom.xml` — Spring Boot 4.0.5 → 4.0.6; license, developer, SCM metadata populated
+- `../../../../pom.xml` — Spring Boot 4.0.5 → 4.0.6; license, developer, SCM metadata populated
 - `logback-spring.xml` — additional logger configuration
 
 ### Removed

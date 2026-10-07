@@ -9,7 +9,7 @@
 
 **Test Suite Conventions, AI-Agent Tooling & Dependency Maintenance**
 
-Version 7.2.0 touches no domain entities, repositories, or API surface — it's a release-hygiene pass across the test suite, the project's AI-agent tooling, and its dependency baseline. A JaCoCo coverage audit closed four real gaps (a Lombok-adjacent constructor, an enum `toString()`, and three exception-handling branches in `ControllerAdvice`), and a new AGENTS.md convention for grouping and ordering tests by method was retrofitted across 26 existing test files with zero behavioural change. `AwardService`/`ImageService` gain proper interface-contract unit tests, exercised through the interface type rather than the impl class, and two new Claude Code commands (`/scaffold-unit-tests`, `/scaffold-integration-tests`) codify these conventions for future test authoring. Separately, the Spring Boot parent is upgraded from 4.0.7 to 4.1.0, with several now-redundant `pom.xml` version overrides cleaned up along the way (including a long-standing typo that meant a `commons-lang3` override had never actually applied) and the Flyway plugin's MySQL driver bumped to match Boot's newly-managed Flyway version.
+Version 7.2.0 touches no domain entities, repositories, or API surface — it's a release-hygiene pass across the test suite, the project's AI-agent tooling, and its dependency baseline. A JaCoCo coverage audit closed four real gaps (a Lombok-adjacent constructor, an enum `toString()`, and three exception-handling branches in `ControllerAdvice`), and a new AGENTS.md convention for grouping and ordering tests by method was retrofitted across 26 existing test files with zero behavioural change. `AwardService`/`ImageService` gain proper interface-contract unit tests, exercised through the interface type rather than the impl class, and two new Claude Code commands (`/scaffold-unit-tests`, `/scaffold-integration-tests`) codify these conventions for future test authoring. Separately, the Spring Boot parent is upgraded from 4.0.7 to 4.1.0, with several now-redundant `../../../../pom.xml` version overrides cleaned up along the way (including a long-standing typo that meant a `commons-lang3` override had never actually applied) and the Flyway plugin's MySQL driver bumped to match Boot's newly-managed Flyway version.
 
 ---
 
@@ -38,21 +38,21 @@ Version 7.2.0 touches no domain entities, repositories, or API surface — it's 
 
 - **`/scaffold-unit-tests`** — migrated from a stale `.github/prompts/scaffold-unit-tests.prompt.md` that referenced a different project's package (`za.co.signio.apexservices`) and an invented "Layer 1/2/3" abstract-interface-test pattern that doesn't exist in this codebase. Corrected to the real convention: interface-contract tests named `[Class]Test` in `services/`, impl-only helper tests in `services/impl/`, no Lombok-only tests.
 - **`/scaffold-integration-tests`** — new, `@SpringBootTest`-based, following `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` as the template: mandatory `@ActiveProfiles("test")`, `@EnableAutoConfiguration` excluding datasource/JPA/messaging auto-configuration, and public-interface-only calls (never an impl class's protected/private helpers).
-- Both commands accept multiple targets per invocation, defer to their loaded `AGENTS.md`/`CLAUDE.md` rather than restating conventions inline (so they can't drift out of sync), and never commit on their own.
+- Both commands accept multiple targets per invocation, defer to their loaded `../../../../AGENTS.md`/`CLAUDE.md` rather than restating conventions inline (so they can't drift out of sync), and never commit on their own.
 
 ### 📦 Spring Boot 4.0.7 → 4.1.0
 
-- Verified each `pom.xml` change against Spring Boot 4.1.0's actual dependency-management POM rather than guessing. Removed the `spring-framework.version`/`tomcat.version` overrides (now identical to Boot 4.1.0's own defaults) and a `commons.lang3.version` property that turned out to be a long-standing typo — Boot's real property is hyphenated `commons-lang3.version`, so the override had never actually taken effect. Removed the `maven-dependency-plugin` version pin, since Boot 4.1.0 now manages that plugin itself.
+- Verified each `../../../../pom.xml` change against Spring Boot 4.1.0's actual dependency-management POM rather than guessing. Removed the `spring-framework.version`/`tomcat.version` overrides (now identical to Boot 4.1.0's own defaults) and a `commons.lang3.version` property that turned out to be a long-standing typo — Boot's real property is hyphenated `commons-lang3.version`, so the override had never actually taken effect. Removed the `maven-dependency-plugin` version pin, since Boot 4.1.0 now manages that plugin itself.
 - Kept the `jackson-databind`/`jackson-bom` patch-ahead overrides unchanged, since Boot 4.1.0's own managed versions are still one patch behind the known-fixed versions.
 - Bumped the flyway-maven-plugin's separately-pinned `flyway-mysql` dependency from `11.14.1` to `12.4.0`, matching the `flyway.version` Boot 4.1.0 now manages — plugin-scoped dependencies don't inherit Boot's dependency management, so this now needs manual sync on every future parent bump (documented inline in the POM).
 - Verified via the full test suite, `./mvnw verify -Pcoverage` (including the repackage step), and `./mvnw flyway:info`/`flyway:migrate` against a real local MySQL 9.5 dev database.
 
 ### 🔀 Documentation & Process
 
-- New `CLAUDE.md` Git Workflow section states the branching model's PR targets directly (`feature/*` → `develop`; `release/vX.Y.Z`/`hotfix/*` → `main`) and the develop-first-for-testing rule, instead of deferring entirely to `AGENTS.md`; `AGENTS.md`/`CONTRIBUTING.md`'s develop-first rule gains the same "for testing before they ship" clarification.
-- AGENTS.md's Evergreen Documentation rule broadened to prohibit version *ranges* (e.g. `1.x – 4.x`), not just exact version numbers, in `README.md`/`ARCHITECTURE.md`.
-- `CLAUDE.md` now cross-links to `AGENTS.md` (previously the only project doc missing this reference), and its package-overview table now correctly attributes `ControllerAdvice` to `configs/` rather than `exceptions/`.
-- Removed a false claim, present across `AGENTS.md`/`CLAUDE.md`/`README.md`/`ARCHITECTURE.md`/`CONTRIBUTING.md`, that AssertJ is used for assertions — `assertj-core` is in fact explicitly excluded from `spring-boot-starter-webmvc-test` in `pom.xml`, and the entire suite uses plain JUnit Jupiter `Assertions`.
+- New `../../../../CLAUDE.md` Git Workflow section states the branching model's PR targets directly (`feature/*` → `develop`; `release/vX.Y.Z`/`hotfix/*` → `main`) and the develop-first-for-testing rule, instead of deferring entirely to `AGENTS.md`; `AGENTS.md`/`CONTRIBUTING.md`'s develop-first rule gains the same "for testing before they ship" clarification.
+- AGENTS.md's Evergreen Documentation rule broadened to prohibit version *ranges* (e.g. `1.x – 4.x`), not just exact version numbers, in `../../../../README.md`/`ARCHITECTURE.md`.
+- `../../../../CLAUDE.md` now cross-links to `AGENTS.md` (previously the only project doc missing this reference), and its package-overview table now correctly attributes `ControllerAdvice` to `configs/` rather than `exceptions/`.
+- Removed a false claim, present across `../../../../AGENTS.md`/`CLAUDE.md`/`README.md`/`ARCHITECTURE.md`/`CONTRIBUTING.md`, that AssertJ is used for assertions — `assertj-core` is in fact explicitly excluded from `spring-boot-starter-webmvc-test` in `pom.xml`, and the entire suite uses plain JUnit Jupiter `Assertions`.
 
 ---
 
@@ -80,17 +80,17 @@ Version 7.2.0 touches no domain entities, repositories, or API surface — it's 
 
 #### Build & Metadata
 
-- `pom.xml`: Spring Boot parent `4.0.7` → `4.1.0`; `flyway-mysql` `11.14.1` → `12.4.0`; several redundant version overrides removed
+- `../../../../pom.xml`: Spring Boot parent `4.0.7` → `4.1.0`; `flyway-mysql` `11.14.1` → `12.4.0`; several redundant version overrides removed
 
 #### Documentation
 
-- `AGENTS.md`, `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md` — explicit Git Workflow PR-target guidance in `CLAUDE.md`, evergreen version-range rule, AssertJ correction, cross-links
+- `../../../../AGENTS.md`, `CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md` — explicit Git Workflow PR-target guidance in `CLAUDE.md`, evergreen version-range rule, AssertJ correction, cross-links
 
 ### Fixed
 
 #### Documentation
 
-- `CLAUDE.md` — missing `AGENTS.md` cross-link; package-overview table's `ControllerAdvice` attribution
+- `../../../../CLAUDE.md` — missing `AGENTS.md` cross-link; package-overview table's `ControllerAdvice` attribution
 
 ### Removed
 
@@ -151,7 +151,7 @@ Version 7.2.0 touches no domain entities, repositories, or API surface — it's 
 
 - Carried over from v7.0.0/v7.1.0: `ShooterLogService` to compute/persist best-4 `ShooterLog` snapshots; controller/service endpoints exposing shooter logs.
 - Retrofit the remaining out-of-scope test-convention violations noted during this release's audit (e.g. `ControllerAdviceTest`'s exception-severity ordering) if a future pass decides they're worth aligning.
-- Identify and eliminate whatever is generating stray, unversioned Flyway migration files (`V1__.sql`) in `src/main/resources/db/migration/` — encountered but not root-caused during this release's Flyway verification.
+- Identify and eliminate whatever is generating stray, unversioned Flyway migration files (`V1__.sql`) in `../../../../src/main/resources/db/migration` — encountered but not root-caused during this release's Flyway verification.
 
 ---
 

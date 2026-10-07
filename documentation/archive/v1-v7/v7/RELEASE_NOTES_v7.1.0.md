@@ -9,7 +9,7 @@
 
 **Shooter Log Refinement — Power Factor Scoping & Match Reference**
 
-Version 7.1.0 is a focused follow-up to v7.0.0's shooter-log data model. `ShooterLogEntry` is renamed to `ShooterLogCompetitor`, reflecting its role as a per-competitor snapshot row rather than a generic log entry, and the schema is corrected before any calculation service is built against it: `ShooterLog` gains a `powerFactor` column so best-4-match snapshots are scoped by power factor as well as firearm type, and `ShooterLogCompetitor` gains a `points` field and a direct `match` reference alongside its existing `matchCompetitor` link. Both tables remain schema-only — no calculation job/service consumes them yet — so the accompanying Flyway migration renames the table and its constraints in place with no backfill required. Alongside the schema work, this release also migrates the repository's AI-agent prompt files to Claude Code commands, adopts the GitFlow branching model, and adds `CONTRIBUTING.md` for new-developer onboarding.
+Version 7.1.0 is a focused follow-up to v7.0.0's shooter-log data model. `ShooterLogEntry` is renamed to `ShooterLogCompetitor`, reflecting its role as a per-competitor snapshot row rather than a generic log entry, and the schema is corrected before any calculation service is built against it: `ShooterLog` gains a `powerFactor` column so best-4-match snapshots are scoped by power factor as well as firearm type, and `ShooterLogCompetitor` gains a `points` field and a direct `match` reference alongside its existing `matchCompetitor` link. Both tables remain schema-only — no calculation job/service consumes them yet — so the accompanying Flyway migration renames the table and its constraints in place with no backfill required. Alongside the schema work, this release also migrates the repository's AI-agent prompt files to Claude Code commands, adopts the GitFlow branching model, and adds `../../../../CONTRIBUTING.md` for new-developer onboarding.
 
 ---
 
@@ -41,10 +41,10 @@ Version 7.1.0 is a focused follow-up to v7.0.0's shooter-log data model. `Shoote
 
 ### 🔀 Tooling & Process
 
-- AI-agent prompt files migrated from `.github/prompts/*.prompt.md` (VS Code Copilot format) to `.claude/commands/*.md` (Claude Code slash commands), with live `git status`/`git diff`/`git log` context injection and `AGENTS.md` conventions loaded inline.
-- `AGENTS.md` adopts the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) branching model (`develop`/`main`/`feature`/`release`/`hotfix`), documenting branch naming, merge mechanics, and a develop-first rule.
-- New **`CONTRIBUTING.md`** for new-developer onboarding — setup, database profiles, testing conventions, and the Git workflow — cross-linked from `AGENTS.md` and `README.md`.
-- Stale references to classes no longer in the codebase (`IpscMatchController`, `TransformationService`, and others removed, pending the IPSC-service rebuild) removed from `ARCHITECTURE.md`/`CLAUDE.md`; controller mapping paths corrected.
+- AI-agent prompt files migrated from `.github/prompts/*.prompt.md` (VS Code Copilot format) to `.claude/commands/*.md` (Claude Code slash commands), with live `git status`/`git diff`/`git log` context injection and `../../../../AGENTS.md` conventions loaded inline.
+- `../../../../AGENTS.md` adopts the [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) branching model (`develop`/`main`/`feature`/`release`/`hotfix`), documenting branch naming, merge mechanics, and a develop-first rule.
+- New **`../../../../CONTRIBUTING.md`** for new-developer onboarding — setup, database profiles, testing conventions, and the Git workflow — cross-linked from `../../../../AGENTS.md` and `README.md`.
+- Stale references to classes no longer in the codebase (`IpscMatchController`, `TransformationService`, and others removed, pending the IPSC-service rebuild) removed from `../../../../ARCHITECTURE.md`/`CLAUDE.md`; controller mapping paths corrected.
 - Prose reflowed from hard wraps to soft wraps throughout the documentation set, including the archived v7.0.0 release docs.
 
 ---
@@ -70,7 +70,7 @@ Version 7.1.0 is a focused follow-up to v7.0.0's shooter-log data model. `Shoote
 #### Tooling & Documentation
 
 - `../../.claude/commands/generate-commit-message.md`, `.claude/commands/generate-pr-description.md`
-- `CONTRIBUTING.md`
+- `../../../../CONTRIBUTING.md`
 
 ### Changed
 
@@ -84,7 +84,7 @@ Version 7.1.0 is a focused follow-up to v7.0.0's shooter-log data model. `Shoote
 
 #### Documentation
 
-- `AGENTS.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `HELP.md`, `HISTORY.md`, `README.md`, `RELEASE_NOTES.md` — GitFlow adoption, stale reference removal, hard-wrap reflow
+- `../../../../AGENTS.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `HELP.md`, `HISTORY.md`, `README.md`, `RELEASE_NOTES.md` — GitFlow adoption, stale reference removal, hard-wrap reflow
 
 ### Removed
 
@@ -169,7 +169,7 @@ Development Team
 
 ## 📝 Notes
 
-This release combines a small, deliberate domain-model correction with release-hygiene and tooling work. The shooter-log schema introduced in v7.0.0 is corrected — renamed for clarity and rescoped by power factor — while it is still empty and unconsumed, avoiding a more disruptive change once a calculation service and real data exist. Alongside that, the release also adopts GitFlow as the project's formal branching model, adds `CONTRIBUTING.md` for new-developer onboarding, and migrates the repository's AI-agent prompt files from GitHub Copilot's format to Claude Code commands — leaving the project on a clean footing for the shooter-log calculation service that remains future work.
+This release combines a small, deliberate domain-model correction with release-hygiene and tooling work. The shooter-log schema introduced in v7.0.0 is corrected — renamed for clarity and rescoped by power factor — while it is still empty and unconsumed, avoiding a more disruptive change once a calculation service and real data exist. Alongside that, the release also adopts GitFlow as the project's formal branching model, adds `../../../../CONTRIBUTING.md` for new-developer onboarding, and migrates the repository's AI-agent prompt files from GitHub Copilot's format to Claude Code commands — leaving the project on a clean footing for the shooter-log calculation service that remains future work.
 
 ---
 

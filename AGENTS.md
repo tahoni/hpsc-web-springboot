@@ -202,7 +202,7 @@ Every documentation file in this repository follows the same shape:
 
 Every heading listed in a Table of Contents is prefixed with an emoji, and its ToC entry uses the same emoji. Reuse an
 icon already established for a concept rather than inventing a new one; only pick a new emoji when introducing a
-genuinely new concept. This registry is kept in sync with the shared project template's; its core icons apply to any
+genuinely new concept. This registry is kept in sync with the shared project template; its core icons apply to any
 project:
 
 | Icon | Concept                                             |
@@ -343,7 +343,7 @@ Four documentation-only folders supplement these:
   | `HISTORY_v1-v7.md`            | `HISTORY.md`'s archive of the per-version v1.0.0 – v7.4.1 entries, moved unchanged and not edited by releases    |
   | `EVOLUTION_OVERVIEW_v1-v7.md` | `EVOLUTION_OVERVIEW.md`'s archive of Phases 1 – 18 (v1.0.0 – v7.4.1), moved unchanged and not edited by releases |
 
-- **`documentation/archive/ARCHIVE.md`** is the legacy release archive covering the project's pre-v5.0.0,
+- **`documentation/legacy/ARCHIVE.md`** is the legacy release archive covering the project's pre-v5.0.0,
   non-semantic-versioning era. It is a historical record only and is not maintained going forward.
 - **`documentation/roadmap/`** holds in-progress planning documents that sit outside the standard documentation set
   above — see [🛤️ Roadmap Planning](#-roadmap-planning) below for the file structure and conventions.
@@ -439,7 +439,7 @@ updating if `.claude/`'s own layout changes, not for individual skill additions.
 - Follow an Arrange-Act-Assert structure, marking each phase present with a `// Arrange`, `// Act` or `// Assert`
   comment — omit a phase's comment only when that phase doesn't apply to the test. Tests that verify a thrown
   exception (typically via `assertThrows(...)`) mark that call with a single `// Act & Assert` comment instead,
-  since invoking the method under test and asserting it throws happen in one statement; precede it with `// Arrange`
+  since invoking the method under test and asserting it throws, happen in one statement; precede it with `// Arrange`
   too if the test builds fixtures first. Avoid brittle assertions such as over-specified `verify(mock, times(N))`
   calls or assertions on private/internal state.
 - Don't write tests whose sole purpose is verifying Lombok-generated behaviour. Such as a test that only sets a value via a
@@ -523,7 +523,7 @@ change it contains, relative to the previous release:
   removed, renamed, retyped or made required), an accepted import format (CSV/JSON) no longer accepted, or a
   configuration property/environment variable renamed or removed so an existing deployment breaks without changes.
 - **MINOR** (`Y` → `Y+1`, resetting `Z` to `0`) — backward-compatible new functionality: a new endpoint, a new
-  optional request field or new response field, a new import format, a new optional configuration property, or
+  optional request field or new response field, a new import format, a new optional configuration property or
   anything newly marked deprecated (deprecations are announced in a MINOR release and only removed in a later MAJOR).
 - **PATCH** (`Z` → `Z+1`) — backward-compatible fixes only: bug fixes, security fixes that don't break the API, and
   changes with no externally visible behaviour change (internal refactors, tests, documentation, tooling, dependency
@@ -538,7 +538,7 @@ Rules:
 - **Flag breaking changes as they land,** not at release time — a `CHANGELOG.md` entry for a backward-incompatible
   change says so explicitly (e.g. prefix its description with `**Breaking:**`), so the classification is visible
   before anyone cuts the release.
-- **Increment by exactly one step** from the latest released version — no skipped numbers, no reused numbers, and a
+- **Increment by exactly one step** from the latest released version — no skipped numbers, no reused numbers. A
   released version's contents are never changed; a fix after the fact is a new PATCH release.
 - **Versions are plain `X.Y.Z`** — no leading `v` in `pom.xml`, the OpenAPI version or `CHANGELOG.md` headings (the `v`
   prefix belongs only in branch names, tags and file names such as `release/vX.Y.Z`/`RELEASE_NOTES_vX.Y.Z.md`), and no
@@ -546,7 +546,7 @@ Rules:
 - **Flyway migration versions are out of scope** — they follow their own counter (see
   [⚙️ Tech Stack](#-tech-stack)), and a schema migration alone does not decide the app version; what it changes in the
   API does.
-- **When in doubt, go higher, and ask.** If a change's compatibility is unclear, raise it with the author before the
+- **When in doubt, go higher and ask.** If a change's compatibility is unclear, raise it with the author before the
   version is fixed rather than guessing downward.
 
 ### Conventions
@@ -610,8 +610,8 @@ anything downstream references them:
    goal into that entry's narrative, or adding a new `Version N.x` entry for a new major version. Then check whether
    `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching update — it's
    synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change here can leave that table
-   stale. Versions 1.0.0 – 7.4.1 are archived in `documentation/history/CHANGELOG_v1-v7.md` and
-   `documentation/history/HISTORY_v1-v7.md`; a release never edits those two files.
+   stale. Versions 1.0.0 – 7.4.1 are archived in `documentation/archive/v1-v7/CHANGELOG_v1-v7.md` and
+   `documentation/archive/v1-v7/HISTORY_v1-v7.md`; a release never edits those two files.
 7. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key Highlights → What's New
    (Added/Changed/Fixed/Removed) → Migration Guide → Statistics → Design Notes → Testing → Known Issues → Future
    Enhancements → Contributors → Notes. Cover **everything** that changed for this version, not just the most recent
@@ -622,7 +622,7 @@ anything downstream references them:
    account found, bots (e.g. `dependabot[bot]`, `ImgBotApp`) included.
 8. **Update `CONTRIBUTING.md`** only if this version's changes affect developer setup, database profiles, workflow or
    testing conventions documented there.
-9. **Verify `ARCHITECTURE.md`'s Project Structure tree against disk.** Per-change Directory Tree Maintenance
+9. **Verify `ARCHITECTURE.md`'s Project Structure tree against disk.** The Per-change Directory Tree Maintenance
    (above) still lets drift slip through, so treat every release as a backstop: cross-check the tree against the
    actual repository structure and correct any directory that's missing, renamed or gone stale, including tracked
    tooling directories (`.claude/`, `.github/`) — not just `src/`. Likewise, cross-check

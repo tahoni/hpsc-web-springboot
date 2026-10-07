@@ -1,11 +1,11 @@
 # HPSC Website Backend Evolution Overview Archive (v1.0.0 – v7.4.1)
 
 The Phase-by-phase narrative for Phases 1 to 18 (versions 1.0.0 to 7.4.1) of the HPSC Website Backend project,
-archived from [`EVOLUTION_OVERVIEW.md`](/EVOLUTION_OVERVIEW.md) to keep that file a manageable
-size. The entries are moved unchanged. See [`EVOLUTION_OVERVIEW.md`](/EVOLUTION_OVERVIEW.md) for
-Phase 19 (v8.0.0) onwards, [`HISTORY_v1-v7.md`](/documentation/history/HISTORY_v1-v7.md) for the archived
+archived from [`../../../EVOLUTION_OVERVIEW.md`](/EVOLUTION_OVERVIEW.md) to keep that file a manageable
+size. The entries are moved unchanged. See [`../../../EVOLUTION_OVERVIEW.md`](/EVOLUTION_OVERVIEW.md) for
+Phase 19 (v8.0.0) onwards, [`HISTORY_v1-v7.md`](/documentation/archive/v1-v7/HISTORY_v1-v7.md) for the archived
 timeline, milestones and architectural evolution, and
-[`CHANGELOG_v1-v7.md`](/documentation/history/CHANGELOG_v1-v7.md) for the archived change log.
+[`CHANGELOG_v1-v7.md`](/documentation/archive/v1-v7/CHANGELOG_v1-v7.md) for the archived change log.
 
 ---
 
@@ -826,10 +826,10 @@ major service renaming and CI/CD quality gate integration.
 
 **CI/CD & Code Quality**
 
-- Qodana JVM linter configured in `qodana.yaml` (`jetbrains/qodana-jvm`)
-- JaCoCo 0.8.14 coverage profile added to `../../pom.xml`; reports to `/coverage` directory
+- Qodana JVM linter configured in `../../../qodana.yaml` (`jetbrains/qodana-jvm`)
+- JaCoCo 0.8.14 coverage profile added to `../../../pom.xml`; reports to `/coverage` directory
 - `code_quality.yml` enhanced with extended branch patterns and dependency installation step
-- `qodana.yml` removed (duplicate); `../../.aiignore` file added
+- `qodana.yml` removed (duplicate); `../../../.aiignore` file added
 
 **Bug Fixes**
 
@@ -929,7 +929,7 @@ restructured all IPSC model packages for long-term growth.
 **Build & Metadata**
 
 - Spring Boot upgraded 4.0.5 → 4.0.6
-- MIT Licence, developer profile and SCM connection added to `../../pom.xml`
+- MIT Licence, developer profile and SCM connection added to `../../../pom.xml`
 - `logback-spring.xml` updated with additional logger configuration
 
 **Test Coverage**
@@ -1017,7 +1017,7 @@ fully rebuilt repository layer.
 
 **Build & Metadata**
 
-- Project version bumped to 7.0.0 in `../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- Project version bumped to 7.0.0 in `../../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 **Test Coverage**
 
@@ -1081,11 +1081,11 @@ A focused follow-up to the v7.0.0 shooter-log data model, correcting its scope (
 **Tooling & Process**
 
 - AI agent prompt files migrated from `.github/prompts/*.prompt.md` to `.claude/commands/*.md`
-- `../../AGENTS.md` adopts the GitFlow branching model; `CONTRIBUTING.md` added for new-developer onboarding
+- `../../../AGENTS.md` adopts the GitFlow branching model; `CONTRIBUTING.md` added for new-developer onboarding
 
 **Build & Metadata**
 
-- Project version bumped to 7.1.0 in `../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- Project version bumped to 7.1.0 in `../../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 **Test Coverage**
 
@@ -1135,14 +1135,14 @@ coverage gaps identified by JaCoCo, adds two new Claude Code scaffolding command
   test split
 - New `/scaffold-integration-tests`, `@SpringBootTest`-based, following `AwardServiceIntegrationTest`/
   `ImageServiceIntegrationTest` as the template
-- Both commands defer to their loaded `../../AGENTS.md`/`CLAUDE.md` rather than restating conventions inline, accept multiple
+- Both commands defer to their loaded `../../../AGENTS.md`/`CLAUDE.md` rather than restating conventions inline, accept multiple
   targets per invocation and never commit on their own
 - `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` now exclude datasource/JPA/messaging autoconfiguration,
   since neither service touches the database
 
 **Dependency Maintenance**
 
-- Spring Boot parent upgraded `4.0.7` → `4.1.0`; now-redundant `../../pom.xml` version overrides cleaned up
+- Spring Boot parent upgraded `4.0.7` → `4.1.0`; now-redundant `../../../pom.xml` version overrides cleaned up
   (`spring-framework.version`/`tomcat.version` now match Boot's own defaults; a long-standing `commons.lang3.version`
   typo — Boot's real property is hyphenated — removed; `maven-dependency-plugin` pin removed, now Boot-managed)
 - flyway-maven-plugin's separately-pinned `flyway-mysql` bumped `11.14.1` → `12.4.0` to match Boot's newly-managed
@@ -1157,11 +1157,11 @@ coverage gaps identified by JaCoCo, adds two new Claude Code scaffolding command
 - CLAUDE.md now cross-links to AGENTS.md and corrects its package-overview table (`ControllerAdvice` lives in
   `configs/`, not `exceptions/`)
 - A false claim that AssertJ is used for assertions (it is explicitly excluded from `spring-boot-starter-webmvc-test` in
-  `../../pom.xml`) removed from AGENTS.md, CLAUDE.md, README.md, ARCHITECTURE.md and CONTRIBUTING.md
+  `../../../pom.xml`) removed from AGENTS.md, CLAUDE.md, README.md, ARCHITECTURE.md and CONTRIBUTING.md
 
 **Build & Metadata**
 
-- Project version bumped to 7.2.0 in `../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- Project version bumped to 7.2.0 in `../../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 **Test Coverage**
 
@@ -1214,7 +1214,7 @@ documentation-convention tightening applied across the existing docs.
 - New AGENTS.md Serial commas rule — lists of three or more items no longer take a comma before the final `and`/`or`
 - AGENTS.md's British English rule tightened to cover code identifiers (class/method/variable names) as well as prose,
   dropping the previous exception
-- Both rules applied retroactively across `../../CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`,
+- Both rules applied retroactively across `../../../CLAUDE.md`, `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`,
   `CHANGELOG.md`, `HISTORY.md` and the Claude Code command files; the identifier-spelling sweep surfaced and corrected
   two American-spelled test method names (`Initializes`→`Initialises`, `Recognized`→`Recognised`) across `RequestTest`,
   `ResponseTest`, `AwardRequestForCSVTest` and `ImageResponseTest`
@@ -1224,9 +1224,9 @@ documentation-convention tightening applied across the existing docs.
 **AI-Agent Tooling & Process**
 
 - New Claude Code command `/sync-unreleased-changes` — diffs the current branch against its base plus any uncommitted
-  changes, cross-checks the result against `../../CHANGELOG.md`'s `[Unreleased]` section and fills in any missing entries
+  changes, cross-checks the result against `../../../CHANGELOG.md`'s `[Unreleased]` section and fills in any missing entries
   directly in the file
-- `../../RELEASE_NOTES.md`'s Contributors section now sourced from `git log`'s unique commit authors (bots included) instead
+- `../../../RELEASE_NOTES.md`'s Contributors section now sourced from `git log`'s unique commit authors (bots included) instead
   of a generic placeholder, per a new AGENTS.md Release Checklist rule
 
 **Release Hygiene**
@@ -1234,12 +1234,12 @@ documentation-convention tightening applied across the existing docs.
 - `log4j-api` overridden `2.25.4` → `2.25.5`, closing CVE-2026-49844 — a transitive dependency via
   `spring-boot-starter-logging`, never actually reachable since this project uses Logback, but the pin removes the
   flagged advisory
-- `../../.gitignore`/`.aiignore` refreshed from the latest upstream templates; `README.md`'s H1 heading restored (lost in an
+- `../../../.gitignore`/`.aiignore` refreshed from the latest upstream templates; `README.md`'s H1 heading restored (lost in an
   earlier commit)
 
 **Build & Metadata**
 
-- Project version bumped to 7.4.0 in `../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- Project version bumped to 7.4.0 in `../../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 **Test Coverage:**
 
@@ -1266,13 +1266,13 @@ documentation-convention tightening applied across the existing docs.
 **Duration:** August 29, 2026
 
 A documentation-only patch release: no domain-model, API or test-behaviour change. Rewraps the entire root-level
-documentation set to a consistent line width and extends `../../HISTORY.md`'s own narrative sections.
+documentation set to a consistent line width and extends `../../../HISTORY.md`'s own narrative sections.
 
 **Key Accomplishments:**
 
 **Documentation Reflow**
 
-- `../../AGENTS.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md`, `README.md` and
+- `../../../AGENTS.md`, `ARCHITECTURE.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `HISTORY.md`, `README.md` and
   `RELEASE_NOTES.md` rewrapped to a consistent ~120-character line width — prose, list items and table columns
   realigned, matching `CLAUDE.md`'s pre-existing wrap width
 - A handful of incidental copyedits surfaced along the way, including a fix to AGENTS.md's own serial-comma rule
@@ -1287,7 +1287,7 @@ documentation set to a consistent line width and extends `../../HISTORY.md`'s ow
 
 **Build & Metadata**
 
-- Project version bumped to 7.4.1 in `../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- Project version bumped to 7.4.1 in `../../../pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 **Test Coverage:**
 
