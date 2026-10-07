@@ -51,8 +51,8 @@ that was accepted before.
   turned into a space
 - `CompetitorHelpers.MC_PREFIX` is tested only at the start of the word with `lookingAt()`; its behaviour is unchanged
 - `AwardServiceImpl.mapAwards` drops a `@NonNull` on its parameter that its own null check contradicted
-- The archived versions 1.0.0 – 7.4.1 move from `documentation/history/` to `documentation/archive/v1-v7/`, and
-  `ARCHIVE.md` moves to `documentation/legacy/`; the documentation links follow
+- The archived versions 1.0.0 – 9.1.0 move from `documentation/history/` to `documentation/archive/v1-v4/`, `v5-v7/` and
+  `v8-v9/`, and `ARCHIVE.md` moves to `documentation/legacy/`; the documentation links follow
 
 ### Fixed
 

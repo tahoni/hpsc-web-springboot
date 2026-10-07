@@ -19,7 +19,8 @@
   longer turned into a space
 - `MC_PREFIX` uses `lookingAt()` with a fixed-length pattern; behaviour is unchanged
 - `AwardServiceImpl.mapAwards` drops a `@NonNull` on its parameter that its own null check contradicted
-- Archived versions 1.0.0 – 7.4.1 move to `documentation/archive/v1-v7/` and `ARCHIVE.md` to `documentation/legacy/`
+- Archived versions 1.0.0 – 9.1.0 move to `documentation/archive/v1-v4/`, `v5-v7/` and `v8-v9/`, and `ARCHIVE.md` to
+  `documentation/legacy/`
 - Version bumped to 13.2.0 in `pom.xml` and `@OpenAPIDefinition`
 
 **Fixed**
