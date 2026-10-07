@@ -134,7 +134,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   one are renamed so every name is unique (for example `SHOTGUN_OPEN` is now `"Shotgun Open Division"` and `OPEN_22`
   `".22 Open Division"`), so `Division.fromName(String)` and `DivisionConverter` resolve each division unambiguously
 - **`Division`:** **Breaking:** `RIFLE_SEMI_AUTO_OPEN` and `RIFLE_SEMI_AUTO_STANDARD` are renamed `"Rifle Open Division"`
-  and `"Rifle Standard Division"`, `SHOTGUN_STANDARD` is renamed `"Shotgun Semi Division"`, and
+  and `"Rifle Standard Division"`, `SHOTGUN_STANDARD` is renamed `"Shotgun Semi Division"`, `SHOTGUN_STANDARD_MANUAL` is renamed
+  `"Shotgun Standard Manual Division"`, and
   `RIFLE_MANUAL_ACTION_CONTEMPORARY` and `RIFLE_MANUAL_ACTION_BOLT` are replaced by `RIFLE_STANDARD_MANUAL`
   (`"Rifle Standard Manual Division"`)
 - **`Division`:** **Breaking:** Removed the `abbreviation` and `code` fields and `fromAbbreviation(String)`,

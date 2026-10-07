@@ -41,7 +41,7 @@ public enum Division {
     SHOTGUN_OPEN("Shotgun Open Division", FirearmType.SHOTGUN),
     SHOTGUN_MODIFIED("Shotgun Modified Division", FirearmType.SHOTGUN),
     SHOTGUN_STANDARD("Shotgun Semi Division", FirearmType.SHOTGUN),
-    SHOTGUN_STANDARD_MANUAL("Standard Manual Division", FirearmType.SHOTGUN),
+    SHOTGUN_STANDARD_MANUAL("Shotgun Standard Manual Division", FirearmType.SHOTGUN),
 
     // PCC Divisions
     PCC_OPTICS("PCC Optic Division", FirearmType.PCC),

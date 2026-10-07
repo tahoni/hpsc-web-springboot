@@ -4,7 +4,8 @@
 -- .22 and mini rifle divisions shared a display name with a handgun one (for example
 -- "Open Division"), and always read back as the handgun division.
 --
--- The semi auto rifle divisions become "Rifle Open Division" and "Rifle Standard Division". The
+-- The semi auto rifle divisions become "Rifle Open Division" and "Rifle Standard Division", and
+-- "Standard Manual Division" becomes "Shotgun Standard Manual Division". The
 -- handgun and PCC divisions keep their names. Each row's division is renamed
 -- according to its firearm type, taken from match_competitor.firearm_type (and, for
 -- shooter_log_competitor, from the match_competitor it points at).
@@ -46,6 +47,7 @@ UPDATE match_competitor
 SET division = CASE division
                    WHEN 'Semi Auto Open Division' THEN 'Rifle Open Division'
                    WHEN 'Semi Auto Standard Division' THEN 'Rifle Standard Division'
+                   WHEN 'Standard Manual Division' THEN 'Shotgun Standard Manual Division'
                    ELSE division
     END;
 
@@ -53,5 +55,6 @@ UPDATE shooter_log_competitor
 SET division = CASE division
                    WHEN 'Semi Auto Open Division' THEN 'Rifle Open Division'
                    WHEN 'Semi Auto Standard Division' THEN 'Rifle Standard Division'
+                   WHEN 'Standard Manual Division' THEN 'Shotgun Standard Manual Division'
                    ELSE division
     END;
