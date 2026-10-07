@@ -71,8 +71,8 @@ long run of digits, such as `123-John`, now has the digits removed as a position
 
 ## 📊 Statistics
 
-- **Files Changed:** 53 against `main`, including this release's notes and PR description; 868
-  insertions and 471 deletions
+- **Files Changed:** 108 against `main`, including this release's notes and PR description; 6921
+  insertions and 6326 deletions
 - **New Source Files:** 0
 - **Renamed Source Files:** 0
 - **Deleted Source Files:** 0
