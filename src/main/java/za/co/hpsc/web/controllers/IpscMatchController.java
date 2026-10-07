@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -74,7 +75,7 @@ public class IpscMatchController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<MatchResponse> createMatch(@RequestBody MatchRequest request)
+    ResponseEntity<MatchResponse> createMatch(@Valid @RequestBody MatchRequest request)
             throws ValidationException, NonFatalException, FatalException {
         return ResponseEntity.status(HttpStatus.CREATED).body(ipscMatchService.createMatch(request));
     }
@@ -156,7 +157,7 @@ public class IpscMatchController {
     })
     ResponseEntity<MatchResponse> updateMatch(
             @Parameter(description = "Identifier of the match to replace.") @PathVariable Long matchId,
-            @RequestBody MatchRequest request)
+            @Valid @RequestBody MatchRequest request)
             throws ValidationException, NonFatalException, FatalException {
         return ResponseEntity.ok(ipscMatchService.updateMatch(matchId, request));
     }
@@ -193,7 +194,7 @@ public class IpscMatchController {
     })
     ResponseEntity<MatchResponse> patchMatch(
             @Parameter(description = "Identifier of the match to update.") @PathVariable Long matchId,
-            @RequestBody MatchPatchRequest request)
+            @Valid @RequestBody MatchPatchRequest request)
             throws ValidationException, NonFatalException, FatalException {
         return ResponseEntity.ok(ipscMatchService.patchMatch(matchId, request));
     }

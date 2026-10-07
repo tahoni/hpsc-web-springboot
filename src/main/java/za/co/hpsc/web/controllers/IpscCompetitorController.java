@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -73,7 +74,7 @@ public class IpscCompetitorController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<CompetitorResponse> createCompetitor(@RequestBody CompetitorRequest request)
+    ResponseEntity<CompetitorResponse> createCompetitor(@Valid @RequestBody CompetitorRequest request)
             throws ValidationException, NonFatalException {
         return ResponseEntity.status(HttpStatus.CREATED).body(ipscCompetitorService.createCompetitor(request));
     }
@@ -156,7 +157,7 @@ public class IpscCompetitorController {
     })
     ResponseEntity<CompetitorResponse> updateCompetitor(
             @Parameter(description = "Identifier of the competitor to replace.") @PathVariable Long competitorId,
-            @RequestBody CompetitorRequest request)
+            @Valid @RequestBody CompetitorRequest request)
             throws ValidationException, NonFatalException {
         return ResponseEntity.ok(ipscCompetitorService.updateCompetitor(competitorId, request));
     }
@@ -194,7 +195,7 @@ public class IpscCompetitorController {
     })
     ResponseEntity<CompetitorResponse> patchCompetitor(
             @Parameter(description = "Identifier of the competitor to update.") @PathVariable Long competitorId,
-            @RequestBody CompetitorPatchRequest request)
+            @Valid @RequestBody CompetitorPatchRequest request)
             throws ValidationException, NonFatalException {
         return ResponseEntity.ok(ipscCompetitorService.patchCompetitor(competitorId, request));
     }

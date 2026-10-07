@@ -51,12 +51,30 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Configuration
+
+- **`ControllerAdvice`:** New `handleMethodArgumentNotValidException` maps a request body that fails Bean Validation to
+  a `400 Bad Request` listing every violated constraint, instead of the generic `500`
+
+##### Models
+
+- **`CompetitorRequest`, `MatchRequest`, `MatchCompetitorRequest`:** Added `@NotBlank` and `@NotNull` constraints for
+  the fields `validate()` already requires, with the same messages, so a `@Valid` request body is checked on arrival
+
 #### 🔄 Changed
 
 ##### Build & Configuration
 
 - **`pom.xml`:** Declared `org.jspecify:jspecify` as a direct dependency (version managed by Spring Boot), as the
   code now uses its `@NonNull` annotation rather than receiving it transitively
+
+##### Controllers
+
+- **`IpscCompetitorController`, `IpscMatchController`, `IpscMatchCompetitorController`:** Annotated the
+  `@RequestBody` request parameters with `@Valid`, so a request missing a required field is now rejected with a `400`
+  by Bean Validation before it reaches the service
 
 ##### Models
 
