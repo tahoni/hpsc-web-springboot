@@ -21,6 +21,28 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 13.2.0 (October 7, 2026)
+
+**Theme:** Club Number Matching & Backtracking-Free Name Patterns
+
+**Key Focus:**
+
+- `EntityIpscCompetitorServiceImpl.findCompetitor` first matches the trimmed competitor number as a club number with
+  `CompetitorRepository.findByClubNumber`, before converting it to a number, so a numeric club number takes precedence
+  over a competitor number with the same value; the competitor number, ID number and name lookups follow when no club
+  number matches
+- `CompetitorHelpers` no longer backtracks: `POSITION_PREFIX` is possessive and now accepts any number of digits at the
+  very start of the name, `WHITESPACE` matches only a run of two or more whitespace characters, possessively, and
+  `MC_PREFIX` tests the start of the word with `lookingAt()` and a fixed pattern
+- The `AwardServiceImpl.mapAwards` null error said "Image request list", copied from the image service, and now says
+  "Award request list"
+- Scoped as `v13.2.0` **MINOR**: the club-number stage is an addition, nothing is backward-incompatible and no migration
+  is needed
+- No improvement plan gaps are closed or progressed: 35 stay closed, #6, #26 and #38 stay partially completed and #39
+  stays open
+- The suite stands at 1,280 passing tests
+- Project version bumped to 13.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 13.1.0 (October 7, 2026)
 
 **Theme:** Request-Body Validation, jspecify Nullness & Competitor Name Cleaning
@@ -1294,6 +1316,13 @@ stored values to match.
 - A competitor name carrying a leading position, an `RO` marker or full stops now finds its competitor
 - The first MINOR release since v9.1.0, and the end of the run of five consecutive MAJOR releases
 
+### Milestone 49: Club Number Matching & Backtracking-Free Name Patterns (v13.2.0)
+
+- A numeric club number now finds its competitor ahead of a competitor number with the same value
+- The competitor name patterns are possessive or fixed, so none of them backtracks, and a leading position may be any
+  number of digits
+- The award list's null error now names the right request list
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -1693,14 +1722,15 @@ MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
   competitor number is matched, what a bulk import answers, the name of a response field and which rows an import
   creates, the release is the project's fourth consecutive MAJOR, with each breaking change flagged in `CHANGELOG.md`
   as it landed.
-- **Version 13.x (v13.0.0 – v13.1.0):** Make the match competitor's values consistent and the services thinner — field
+- **Version 13.x (v13.0.0 – v13.2.0):** Make the match competitor's values consistent and the services thinner — field
   copying and lookups move into mappers, a division belongs to a firearm type and has a name of its own, and a response
   lists a competitor's names once each. Because that changes the shape of a response field, requires a power factor and
   changes the division and category names a request may use, v13.0.0 is the project's fifth consecutive MAJOR release,
   with each breaking change flagged in `CHANGELOG.md` as it landed. v13.1.0 then makes the contract enforceable at the
   door and forgiving of the data's names — `@Valid` request bodies answer `400`, jspecify's `@NonNull` expresses
-  nullness and `CompetitorHelpers.cleanCompetitorName` normalises a competitor's name — as a backward-compatible
-  MINOR.
+  nullness and `CompetitorHelpers.cleanCompetitorName` normalises a competitor's name — as a backward-compatible MINOR.
+  v13.2.0 then tightens that matching — a numeric club number takes precedence over a competitor number of the same
+  value, and the name-cleaning patterns no longer backtrack — as a second backward-compatible MINOR.
 
 ### Initial Phase (v1.0.0)
 
@@ -1999,7 +2029,7 @@ MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v13.1.0, the following areas are identified for future enhancement:
+Based on the evolution to v13.2.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/history/HISTORY_v1-v7.md`](/documentation/history/HISTORY_v1-v7.md).
@@ -2239,7 +2269,17 @@ The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived,
 - Gap #31 recorded and closed, leaving only Gap #6 open
 - Project version bumped to 8.11.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
-### Recently Completed (v13.1.0)
+### Recently Completed (v13.2.0)
+
+- `EntityIpscCompetitorServiceImpl.findCompetitor` matches the competitor number as a club number first, with
+  `CompetitorRepository.findByClubNumber`
+- `CompetitorHelpers`' `POSITION_PREFIX`, `WHITESPACE` and `MC_PREFIX` patterns no longer backtrack
+- `AwardServiceImpl.mapAwards` names the "Award request list" in its null error
+- Improvement plan unchanged: 35 gaps closed, #6, #26 and #38 partially completed and #39 open
+- The suite stands at 1,280 passing tests
+- Project version bumped to 13.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v13.1.0)
 
 - `@Valid` on the three IPSC controllers' request bodies, with Bean Validation constraints on the requests and
   `ControllerAdvice.handleMethodArgumentNotValidException` answering `400 Bad Request` for a violation
@@ -2521,3 +2561,8 @@ Version 13.1.0 makes that contract enforceable and the competitor lookup more fo
 request bodies and answer `400` for a missing field, jspecify's `@NonNull` expresses nullness and a competitor's name is
 cleaned of a leading position, an `RO` marker and full stops before it is matched. It is a MINOR release, because the
 `400` response and the broader name matching are additions and nothing is backward-incompatible.
+
+Version 13.2.0 tightens that name matching without changing its contract: a competitor number is tried as a club number
+first, so a numeric club number wins over a competitor number of the same value, and the name-cleaning patterns are
+hardened so that none of them backtracks. It is a MINOR release, because the club-number stage is an addition and
+nothing is backward-incompatible.

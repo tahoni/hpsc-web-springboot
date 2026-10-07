@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 13.1.0](#-1310---2026-10-07) ← Current
+- [🧾 Version 13.2.0](#-1320---2026-10-07) ← Current
+- [🧾 Version 13.1.0](#-1310---2026-10-07)
 - [🧾 Version 13.0.0](#-1300---2026-10-07)
 - [🧾 Version 12.0.0](#-1200---2026-10-05)
 - [🧾 Version 11.0.0](#-1100---2026-10-04)
@@ -52,6 +53,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+---
+
+### 🧾 [13.2.0] - 2026-10-07
+
+#### ➕ Added
+
+##### Services
+
+- **`EntityIpscCompetitorServiceImpl.findCompetitor`:** New first stage matches the trimmed competitor number as a club
+  number with `CompetitorRepository.findByClubNumber`, before converting it to a number, and returns that competitor at
+  once; a numeric club number therefore takes precedence over a competitor number with the same value. The competitor
+  number, ID number and name lookups follow when no club number matches
+
 #### 🔄 Changed
 
 ##### Helpers
@@ -64,19 +78,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorHelpers.MC_PREFIX`:** Tests only the start of the word with `lookingAt()`, so the pattern is a fixed
   four-step match with no trailing `.*`; no change in behaviour
 
-##### Services
-
-- **`EntityIpscCompetitorServiceImpl.findCompetitor`:** Now first matches the trimmed competitor number as a club number
-  with `CompetitorRepository.findByClubNumber`, before converting it to a number, and returns that competitor at once;
-  a numeric club number therefore takes precedence over a competitor number with the same value. The competitor number,
-  ID number and name lookups follow when no club number matches
-
 #### 🐛 Fixed
 
 ##### Services
 
 - **`AwardServiceImpl.mapAwards`:** The error logged and the `ValidationException` thrown for a null list said "Image
   request list" (copied from the image service); they now say "Award request list", and the test asserts the message
+
+##### Models
+
+- **`ImageResponse.setMimeType`:** A blank MIME type that could not be inferred from the file name is now reset to
+  an empty string, as a null one already was, because the check tests `hasText` on the field rather than only null
 
 ---
 

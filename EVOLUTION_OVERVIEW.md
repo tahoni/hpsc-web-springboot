@@ -1821,6 +1821,51 @@ it is backward-compatible, so it is MINOR under the Semantic Versioning rules.
   invalid request body
 - The suite stands at 1,277 passing tests
 
+### Phase 49: Club Number Matching & Backtracking-Free Name Patterns (v13.2.0)
+
+**Duration:** October 7, 2026
+
+A small minor release: the competitor lookup tries the number as a club number first, and the name-cleaning patterns
+stop backtracking. It is backward-compatible and needs no migration, so it is MINOR under the Semantic Versioning
+rules.
+
+**Key Accomplishments:**
+
+**Competitor Lookup**
+
+- `EntityIpscCompetitorServiceImpl.findCompetitor` matches the trimmed competitor number as a club number with
+  `CompetitorRepository.findByClubNumber` before converting it to a number, and returns that competitor at once, so a
+  numeric club number takes precedence over a competitor number with the same value; the competitor number, ID number
+  and name lookups follow when no club number matches
+
+**Name Patterns**
+
+- `CompetitorHelpers.POSITION_PREFIX` is possessive and a leading position is now any number of digits followed by an
+  optional whitespace character and a hyphen, at the very start of the name, so `123-John` cleans to `John` and
+  `-12-John Smith` is left alone
+- `WHITESPACE` matches only a run of two or more whitespace characters, possessively, so a single tab or newline between
+  words is no longer turned into a space
+- `MC_PREFIX` tests the start of the word with `lookingAt()` and a fixed pattern, with no change in behaviour
+
+**Error Message**
+
+- The null-list error in `AwardServiceImpl.mapAwards` said "Image request list", copied from the image service, and now
+  says "Award request list"; the test asserts the message
+- Improvement plan unchanged: 35 gaps closed, #6, #26 and #38 partially completed and #39 open
+
+**Build & Metadata**
+
+- Project version bumped to 13.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Keeping the competitor lookup's precedence explicit, and removing backtracking from the patterns that clean a name
+
+**Test Coverage:**
+
+- Tests cover the club-number stage, the hardened name patterns and the `mapAwards` message
+- The suite stands at 1,280 passing tests
+
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**
