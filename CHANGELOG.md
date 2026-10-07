@@ -101,6 +101,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Database
 
+- **`V11_5_0__rename_lady_senior_competitor_category.sql`:** Renames the stored competitor category `Lady, Senior` to
+  `Lady Senior` in `match_competitor`, `shooter_log_competitor` and `shooter_log_overall`, matching the renamed
+  `CompetitorCategory.SENIOR_LADY`; without it those rows no longer match a category
 - **`V11_4_0__make_non_handgun_division_names_unique.sql`:** Renames the stored division of each `match_competitor`
   and `shooter_log_competitor` row to match the renamed `Division` names, using the row's firearm type where the old
   name was shared; `shooter_log_overall`
@@ -125,8 +128,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Enums
 
 - **`ClubIdentifier`:** The `code` values are now `"C SOSC"` (SOSC), `"B HPSC"`, `"A PMPSC"` and `"U VISITOR"`
-- **`CompetitorCategory`:** The `SENIOR_LADY` name is now `"Lady Senior"` (was `"Lady, Senior"`), and the
-  `fromName` Javadoc says "category" rather than "division"; the converter tests use the new name
+- **`CompetitorCategory`:** **Breaking:** The `SENIOR_LADY` name is now `"Lady Senior"` (was `"Lady, Senior"`), so an
+  import row or request using the old name is rejected; the `fromName` Javadoc also says "category" rather than
+  "division", and the converter tests use the new name
 - **`CompetitorCategory`:** **Breaking:** Replaced the `code` field and `fromCode(Integer)` with a `String`
   `abbreviation` field (`J`, `SJ`, `L`, `LS`, `S`, `SS`, `GS`)
 - **`Division`:** Added a `firearmType` field (a `FirearmType`) recording the firearm type each division is shot with
