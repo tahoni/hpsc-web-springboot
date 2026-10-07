@@ -13,7 +13,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.repositories.ClubRepository;
-import za.co.hpsc.web.services.ClubService;
+import za.co.hpsc.web.services.IpscEntityClubService;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -32,11 +32,11 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
 @Component
 public class CompetitorMapper {
     private final ClubRepository clubRepository;
-    private final ClubService clubService;
+    private final IpscEntityClubService ipscEntityClubService;
 
-    public CompetitorMapper(ClubRepository clubRepository, ClubService clubService) {
+    public CompetitorMapper(ClubRepository clubRepository, IpscEntityClubService ipscEntityClubService) {
         this.clubRepository = clubRepository;
-        this.clubService = clubService;
+        this.ipscEntityClubService = ipscEntityClubService;
     }
 
     /**
@@ -194,7 +194,7 @@ public class CompetitorMapper {
      *
      * <p>
      * The club is compared with {@code homeClubIdentifier} through
-     * {@link ClubService#isSameClub(Club, ClubIdentifier)}, so a {@code null} club, a club with no identifier or a
+     * {@link IpscEntityClubService#isSameClub(Club, ClubIdentifier)}, so a {@code null} club, a club with no identifier or a
      * {@code null} {@code homeClubIdentifier} is simply not a member.
      * </p>
      *
@@ -206,7 +206,7 @@ public class CompetitorMapper {
      * otherwise.
      */
     public boolean isMemberOfHomeClub(Club club, ClubIdentifier homeClubIdentifier) {
-        return clubService.isSameClub(club, homeClubIdentifier);
+        return ipscEntityClubService.isSameClub(club, homeClubIdentifier);
     }
 
     /**

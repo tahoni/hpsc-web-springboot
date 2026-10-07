@@ -19,7 +19,7 @@ import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
-import za.co.hpsc.web.services.EntityIpscCompetitorService;
+import za.co.hpsc.web.services.IpscEntityCompetitorService;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
- * Unit tests for {@link MatchCompetitorMapper}, with its repositories and {@link EntityIpscCompetitorService}
+ * Unit tests for {@link MatchCompetitorMapper}, with its repositories and {@link IpscEntityCompetitorService}
  * mocked.
  */
 @ExtendWith(MockitoExtension.class)
@@ -45,7 +45,7 @@ class MatchCompetitorMapperTest {
     private IpscMatchRepository ipscMatchRepository;
 
     @Mock
-    private EntityIpscCompetitorService entityIpscCompetitorService;
+    private IpscEntityCompetitorService ipscEntityCompetitorService;
 
     @InjectMocks
     private MatchCompetitorMapper matchCompetitorMapper;
@@ -195,7 +195,7 @@ class MatchCompetitorMapperTest {
         assertEquals(new BigDecimal("50"), matchCompetitor.getPoints());
         assertEquals(7, matchCompetitor.getAlpha());
         assertEquals(Boolean.FALSE, matchCompetitor.getIsVisitor());
-        verifyNoInteractions(competitorRepository, ipscMatchRepository, entityIpscCompetitorService);
+        verifyNoInteractions(competitorRepository, ipscMatchRepository, ipscEntityCompetitorService);
     }
 
     @Test
@@ -223,7 +223,7 @@ class MatchCompetitorMapperTest {
         MatchCompetitor matchCompetitor = existingMatchCompetitor();
         Competitor competitor = new Competitor();
         competitor.setId(3L);
-        when(entityIpscCompetitorService.findCompetitor(null, "J Smith")).thenReturn(Optional.of(competitor));
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName(null, "J Smith")).thenReturn(Optional.of(competitor));
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
         request.setCompetitorName("1 - J.  Smith (RO)");
 
@@ -260,7 +260,7 @@ class MatchCompetitorMapperTest {
         MatchCompetitor matchCompetitor = existingMatchCompetitor();
         Competitor competitor = new Competitor();
         competitor.setId(9L);
-        when(entityIpscCompetitorService.findCompetitor("123", "Jane Doe")).thenReturn(Optional.of(competitor));
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("123", "Jane Doe")).thenReturn(Optional.of(competitor));
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
         request.setCompetitorNumber("123");
         request.setCompetitorName("Jane Doe");
@@ -425,7 +425,7 @@ class MatchCompetitorMapperTest {
 
         // Act & Assert
         assertSame(competitor, matchCompetitorMapper.resolveCompetitor(1L, "1", "Someone Else"));
-        verifyNoInteractions(entityIpscCompetitorService);
+        verifyNoInteractions(ipscEntityCompetitorService);
     }
 
     @Test
@@ -433,7 +433,7 @@ class MatchCompetitorMapperTest {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(4L);
-        when(entityIpscCompetitorService.findCompetitor("123", "Jane Doe")).thenReturn(Optional.of(competitor));
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("123", "Jane Doe")).thenReturn(Optional.of(competitor));
 
         // Act & Assert
         assertSame(competitor, matchCompetitorMapper.resolveCompetitor(null, "123", "Jane Doe"));
@@ -445,7 +445,7 @@ class MatchCompetitorMapperTest {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(3L);
-        when(entityIpscCompetitorService.findCompetitor(null, "Jane Doe")).thenReturn(Optional.of(competitor));
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName(null, "Jane Doe")).thenReturn(Optional.of(competitor));
 
         // Act & Assert
         assertSame(competitor, matchCompetitorMapper.resolveCompetitor(null, null, "Jane Doe"));
@@ -456,7 +456,7 @@ class MatchCompetitorMapperTest {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(5L);
-        when(entityIpscCompetitorService.findCompetitor("123", null)).thenReturn(Optional.of(competitor));
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("123", null)).thenReturn(Optional.of(competitor));
 
         // Act & Assert
         assertSame(competitor, matchCompetitorMapper.resolveCompetitor(null, "123", null));
@@ -465,7 +465,7 @@ class MatchCompetitorMapperTest {
     @Test
     void testResolveCompetitor_whenTheEntityServiceFindsNoCompetitor_thenThrowsNonFatalException() {
         // Arrange
-        when(entityIpscCompetitorService.findCompetitor("123", "Jane Doe"))
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("123", "Jane Doe"))
                 .thenThrow(new NonFatalException("No competitors found"));
 
         // Act & Assert
@@ -476,7 +476,7 @@ class MatchCompetitorMapperTest {
     @Test
     void testResolveCompetitor_whenTheEntityServiceFindsSeveralCompetitors_thenThrowsValidationException() {
         // Arrange
-        when(entityIpscCompetitorService.findCompetitor("123", "Jane Doe"))
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("123", "Jane Doe"))
                 .thenThrow(new ValidationException("Two or more competitors found"));
 
         // Act & Assert
@@ -487,7 +487,7 @@ class MatchCompetitorMapperTest {
     @Test
     void testResolveCompetitor_whenTheEntityServiceRejectsBlankInput_thenThrowsValidationException() {
         // Arrange
-        when(entityIpscCompetitorService.findCompetitor("", "  "))
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("", "  "))
                 .thenThrow(new ValidationException("Full name or competitor number is required"));
 
         // Act & Assert

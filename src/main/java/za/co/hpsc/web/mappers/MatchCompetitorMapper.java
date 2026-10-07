@@ -14,7 +14,7 @@ import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRe
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
-import za.co.hpsc.web.services.EntityIpscCompetitorService;
+import za.co.hpsc.web.services.IpscEntityCompetitorService;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 
@@ -31,14 +31,14 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
 public class MatchCompetitorMapper {
     private final CompetitorRepository competitorRepository;
     private final IpscMatchRepository ipscMatchRepository;
-    private final EntityIpscCompetitorService entityIpscCompetitorService;
+    private final IpscEntityCompetitorService ipscEntityCompetitorService;
 
     public MatchCompetitorMapper(CompetitorRepository competitorRepository,
                                  IpscMatchRepository ipscMatchRepository,
-                                 EntityIpscCompetitorService entityIpscCompetitorService) {
+                                 IpscEntityCompetitorService ipscEntityCompetitorService) {
         this.competitorRepository = competitorRepository;
         this.ipscMatchRepository = ipscMatchRepository;
-        this.entityIpscCompetitorService = entityIpscCompetitorService;
+        this.ipscEntityCompetitorService = ipscEntityCompetitorService;
     }
 
     /**
@@ -185,7 +185,7 @@ public class MatchCompetitorMapper {
      * there is none.
      *
      * <p>
-     * The lookup is delegated to {@link EntityIpscCompetitorService#findCompetitor(String, String)}, which tries the
+     * The lookup is delegated to {@link IpscEntityCompetitorService#findCompetitor(String, String)}, which tries the
      * competitor number first, then the ID number, then the full name and itself throws when it does not find
      * exactly one competitor. The {@link NonFatalException} thrown here is therefore a safeguard for an empty result.
      * </p>
@@ -201,7 +201,7 @@ public class MatchCompetitorMapper {
      */
     public Competitor findCompetitorOrThrow(String competitorNumber, String competitorName) {
         String trimmedCompetitorNumber = (competitorNumber == null) ? null : competitorNumber.trim();
-        return entityIpscCompetitorService.findCompetitor(trimmedCompetitorNumber, competitorName)
+        return ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName(trimmedCompetitorNumber, competitorName)
                 .orElseThrow(() -> new NonFatalException(
                         String.format("No competitor found with competitor number of %s or name %s ",
                                 competitorNumber, competitorName)));

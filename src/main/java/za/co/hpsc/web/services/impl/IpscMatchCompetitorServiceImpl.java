@@ -29,7 +29,7 @@ import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkRe
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
-import za.co.hpsc.web.services.ClubService;
+import za.co.hpsc.web.services.IpscEntityClubService;
 import za.co.hpsc.web.services.IpscMatchCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
 
@@ -46,16 +46,16 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
 
     private final MatchCompetitorMapper matchCompetitorMapper;
 
-    private final ClubService clubService;
+    private final IpscEntityClubService ipscEntityClubService;
     private final TransactionService transactionService;
 
     public IpscMatchCompetitorServiceImpl(MatchCompetitorRepository matchCompetitorRepository,
                                           MatchCompetitorMapper matchCompetitorMapper,
-                                          ClubService clubService,
+                                          IpscEntityClubService ipscEntityClubService,
                                           TransactionService transactionService) {
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.matchCompetitorMapper = matchCompetitorMapper;
-        this.clubService = clubService;
+        this.ipscEntityClubService = ipscEntityClubService;
         this.transactionService = transactionService;
     }
 
@@ -295,13 +295,13 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         }
 
         // Test the competitor in the match's club against the target club
-        if (clubService.isSameClub(matchCompetitorMapper.resolveMatchClub(request.getMatchClub()), targetClub)) {
+        if (ipscEntityClubService.isSameClub(matchCompetitorMapper.resolveMatchClub(request.getMatchClub()), targetClub)) {
             return true;
         }
 
         // Test the competitor's home club against the target club
         try {
-            return clubService.isSameClub(resolveCompetitorHomeClub(request), targetClub);
+            return ipscEntityClubService.isSameClub(resolveCompetitorHomeClub(request), targetClub);
         } catch (ValidationException | NonFatalException e) {
             return false;
         }

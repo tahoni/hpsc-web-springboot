@@ -9,7 +9,7 @@ import za.co.hpsc.web.enums.ClubIdentifier;
  *
  * @since 12.0.0
  */
-public interface ClubService {
+public interface IpscEntityClubService {
     /**
      * Checks whether a club is the club with the given identifier.
      *

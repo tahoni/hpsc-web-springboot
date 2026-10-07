@@ -23,8 +23,8 @@ import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorRespon
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
-import za.co.hpsc.web.services.ClubService;
-import za.co.hpsc.web.services.EntityIpscCompetitorService;
+import za.co.hpsc.web.services.IpscEntityClubService;
+import za.co.hpsc.web.services.IpscEntityCompetitorService;
 import za.co.hpsc.web.services.IpscMatchCompetitorService;
 import za.co.hpsc.web.services.IpscMatchCompetitorServiceTest;
 
@@ -58,18 +58,18 @@ class IpscMatchCompetitorServiceImplTest {
     private IpscMatchRepository ipscMatchRepository;
 
     @Mock
-    private EntityIpscCompetitorService entityIpscCompetitorService;
+    private IpscEntityCompetitorService ipscEntityCompetitorService;
 
     @Spy
-    private final ClubService clubService = new ClubServiceImpl();
+    private final IpscEntityClubService ipscEntityClubService = new IpscEntityClubServiceImpl();
 
     private IpscMatchCompetitorServiceImpl matchCompetitorServiceImpl;
 
     @BeforeEach
     void setUp() {
         matchCompetitorServiceImpl = new IpscMatchCompetitorServiceImpl(matchCompetitorRepository,
-                new MatchCompetitorMapper(competitorRepository, ipscMatchRepository, entityIpscCompetitorService),
-                clubService, null);
+                new MatchCompetitorMapper(competitorRepository, ipscMatchRepository, ipscEntityCompetitorService),
+                ipscEntityClubService, null);
     }
 
     // findMatchCompetitorOrThrow()
@@ -99,7 +99,7 @@ class IpscMatchCompetitorServiceImplTest {
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
         request.setCompetitorName("Jane Doe");
-        when(entityIpscCompetitorService.findCompetitor("7001", "Jane Doe"))
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("7001", "Jane Doe"))
                 .thenReturn(Optional.of(competitorWithHomeClub(ClubIdentifier.HPSC)));
 
         // Act & Assert
@@ -116,7 +116,7 @@ class IpscMatchCompetitorServiceImplTest {
 
         // Act & Assert
         assertEquals(ClubIdentifier.SOSC, matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
-        verifyNoInteractions(entityIpscCompetitorService);
+        verifyNoInteractions(ipscEntityCompetitorService);
     }
 
     @Test
@@ -124,7 +124,7 @@ class IpscMatchCompetitorServiceImplTest {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
-        when(entityIpscCompetitorService.findCompetitor("7001", null))
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("7001", null))
                 .thenReturn(Optional.of(new Competitor()));
 
         // Act & Assert
@@ -138,7 +138,7 @@ class IpscMatchCompetitorServiceImplTest {
         request.setCompetitorNumber("7001");
         Competitor competitor = new Competitor();
         competitor.setHomeClub(new Club());
-        when(entityIpscCompetitorService.findCompetitor("7001", null)).thenReturn(Optional.of(competitor));
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("7001", null)).thenReturn(Optional.of(competitor));
 
         // Act & Assert
         assertNull(matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
@@ -149,7 +149,7 @@ class IpscMatchCompetitorServiceImplTest {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
-        when(entityIpscCompetitorService.findCompetitor("7001", null)).thenReturn(Optional.empty());
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("7001", null)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NonFatalException.class, () -> matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
@@ -160,7 +160,7 @@ class IpscMatchCompetitorServiceImplTest {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
-        when(entityIpscCompetitorService.findCompetitor("7001", null))
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("7001", null))
                 .thenThrow(new ValidationException("More than one competitor"));
 
         // Act & Assert
@@ -209,7 +209,7 @@ class IpscMatchCompetitorServiceImplTest {
         request.setCompetitorNumber("7001");
         request.setCompetitorName("Jane Doe");
         request.setMatchClub("SOSC");
-        when(entityIpscCompetitorService.findCompetitor("7001", "Jane Doe"))
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("7001", "Jane Doe"))
                 .thenReturn(Optional.of(competitorWithHomeClub(ClubIdentifier.HPSC)));
 
         // Act & Assert
@@ -221,7 +221,7 @@ class IpscMatchCompetitorServiceImplTest {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
-        when(entityIpscCompetitorService.findCompetitor("7001", null))
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("7001", null))
                 .thenReturn(Optional.of(competitorWithHomeClub(ClubIdentifier.SOSC)));
 
         // Act & Assert
@@ -233,7 +233,7 @@ class IpscMatchCompetitorServiceImplTest {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
-        when(entityIpscCompetitorService.findCompetitor("7001", null))
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("7001", null))
                 .thenReturn(Optional.of(new Competitor()));
 
         // Act & Assert
@@ -245,7 +245,7 @@ class IpscMatchCompetitorServiceImplTest {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setMatchClub("SOSC");
-        when(entityIpscCompetitorService.findCompetitor(null, null))
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName(null, null))
                 .thenThrow(new ValidationException("Competitor number or name is required"));
 
         // Act & Assert
@@ -258,7 +258,7 @@ class IpscMatchCompetitorServiceImplTest {
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
         request.setMatchClub("SOSC");
-        when(entityIpscCompetitorService.findCompetitor("7001", null)).thenReturn(Optional.empty());
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("7001", null)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertFalse(matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
@@ -286,7 +286,7 @@ class IpscMatchCompetitorServiceImplTest {
 
         // Assert
         assertTrue(result);
-        verifyNoInteractions(entityIpscCompetitorService, competitorRepository);
+        verifyNoInteractions(ipscEntityCompetitorService, competitorRepository);
     }
 
     @Test
@@ -313,7 +313,7 @@ class IpscMatchCompetitorServiceImplTest {
 
         // Assert
         assertTrue(result);
-        verifyNoInteractions(entityIpscCompetitorService);
+        verifyNoInteractions(ipscEntityCompetitorService);
     }
 
     @Test

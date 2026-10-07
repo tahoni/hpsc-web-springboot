@@ -12,15 +12,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Integration tests for the {@link ClubService} contract against a real Spring context, which also checks the
+ * Integration tests for the {@link IpscEntityClubService} contract against a real Spring context, which also checks the
  * service is registered as a bean.
  */
 @ActiveProfiles("test")
 @EnableAutoConfiguration(excludeName = "org.springframework.boot.amqp.autoconfigure.RabbitAutoConfiguration")
 @SpringBootTest
-class ClubServiceIntegrationTest {
+class IpscEntityClubServiceIntegrationTest {
     @Autowired
-    private ClubService clubService;
+    private IpscEntityClubService ipscEntityClubService;
 
     // isSameClub(Club, ClubIdentifier)
     @Test
@@ -30,7 +30,7 @@ class ClubServiceIntegrationTest {
         club.setIdentifier(ClubIdentifier.HPSC);
 
         // Act & Assert
-        assertTrue(clubService.isSameClub(club, ClubIdentifier.HPSC));
+        assertTrue(ipscEntityClubService.isSameClub(club, ClubIdentifier.HPSC));
     }
 
     @Test
@@ -40,19 +40,19 @@ class ClubServiceIntegrationTest {
         club.setIdentifier(ClubIdentifier.HPSC);
 
         // Act & Assert
-        assertFalse(clubService.isSameClub(club, ClubIdentifier.SOSC));
+        assertFalse(ipscEntityClubService.isSameClub(club, ClubIdentifier.SOSC));
     }
 
     @Test
     void testIsSameClub_whenClubHasNoIdentifier_thenReturnsFalse() {
         // Act & Assert
-        assertFalse(clubService.isSameClub(new Club(), ClubIdentifier.HPSC));
+        assertFalse(ipscEntityClubService.isSameClub(new Club(), ClubIdentifier.HPSC));
     }
 
     @Test
     void testIsSameClub_whenClubIsNull_thenReturnsFalse() {
         // Act & Assert
-        assertFalse(clubService.isSameClub((Club) null, ClubIdentifier.HPSC));
+        assertFalse(ipscEntityClubService.isSameClub((Club) null, ClubIdentifier.HPSC));
     }
 
     @Test
@@ -62,39 +62,39 @@ class ClubServiceIntegrationTest {
         club.setIdentifier(ClubIdentifier.HPSC);
 
         // Act & Assert
-        assertFalse(clubService.isSameClub(club, null));
+        assertFalse(ipscEntityClubService.isSameClub(club, null));
     }
 
     @Test
     void testIsSameClub_whenClubAndTargetIdentifierAreBothNull_thenReturnsFalse() {
         // Act & Assert
-        assertFalse(clubService.isSameClub((Club) null, null));
-        assertFalse(clubService.isSameClub(new Club(), null));
+        assertFalse(ipscEntityClubService.isSameClub((Club) null, null));
+        assertFalse(ipscEntityClubService.isSameClub(new Club(), null));
     }
 
     // isSameClub(ClubIdentifier, ClubIdentifier)
     @Test
     void testIsSameClubIdentifier_whenIdentifiersMatch_thenReturnsTrue() {
         // Act & Assert
-        assertTrue(clubService.isSameClub(ClubIdentifier.HPSC, ClubIdentifier.HPSC));
+        assertTrue(ipscEntityClubService.isSameClub(ClubIdentifier.HPSC, ClubIdentifier.HPSC));
     }
 
     @Test
     void testIsSameClubIdentifier_whenIdentifiersDiffer_thenReturnsFalse() {
         // Act & Assert
-        assertFalse(clubService.isSameClub(ClubIdentifier.HPSC, ClubIdentifier.SOSC));
+        assertFalse(ipscEntityClubService.isSameClub(ClubIdentifier.HPSC, ClubIdentifier.SOSC));
     }
 
     @Test
     void testIsSameClubIdentifier_whenIdentifierIsNull_thenReturnsFalse() {
         // Act & Assert
-        assertFalse(clubService.isSameClub((ClubIdentifier) null, ClubIdentifier.HPSC));
-        assertFalse(clubService.isSameClub(ClubIdentifier.HPSC, (ClubIdentifier) null));
+        assertFalse(ipscEntityClubService.isSameClub((ClubIdentifier) null, ClubIdentifier.HPSC));
+        assertFalse(ipscEntityClubService.isSameClub(ClubIdentifier.HPSC, (ClubIdentifier) null));
     }
 
     @Test
     void testIsSameClubIdentifier_whenBothIdentifiersAreNull_thenReturnsFalse() {
         // Act & Assert
-        assertFalse(clubService.isSameClub((ClubIdentifier) null, (ClubIdentifier) null));
+        assertFalse(ipscEntityClubService.isSameClub((ClubIdentifier) null, (ClubIdentifier) null));
     }
 }

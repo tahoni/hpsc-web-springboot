@@ -12,7 +12,6 @@ import java.util.List;
  * one per imported row, each recording whether that row succeeded.
  *
  * @see MatchCompetitorBulkResponse
- * @see MatchCompetitorResponseHolder
  * @since 11.0.0
  */
 @Getter

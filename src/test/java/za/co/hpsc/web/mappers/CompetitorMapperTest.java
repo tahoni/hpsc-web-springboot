@@ -16,8 +16,8 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.repositories.ClubRepository;
-import za.co.hpsc.web.services.ClubService;
-import za.co.hpsc.web.services.impl.ClubServiceImpl;
+import za.co.hpsc.web.services.IpscEntityClubService;
+import za.co.hpsc.web.services.impl.IpscEntityClubServiceImpl;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -40,7 +40,7 @@ class CompetitorMapperTest {
     private ClubRepository clubRepository;
 
     @Spy
-    private ClubService clubService = new ClubServiceImpl();
+    private IpscEntityClubService ipscEntityClubService = new IpscEntityClubServiceImpl();
 
     @InjectMocks
     private CompetitorMapper competitorMapper;

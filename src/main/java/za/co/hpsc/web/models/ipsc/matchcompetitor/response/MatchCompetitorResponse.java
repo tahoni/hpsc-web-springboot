@@ -44,7 +44,6 @@ public class MatchCompetitorResponse {
     @NonNull
     private Long matchCompetitorId;
     /** The identifier of the competitor who shot the match. */
-    @NonNull
     private Long competitorId;
     /** The identifier of the match the competitor shot. */
     @NonNull

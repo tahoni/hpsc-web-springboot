@@ -31,6 +31,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Services
+
+- **`ClubService` and `EntityIpscCompetitorService`:** Renamed to `IpscEntityClubService` and
+  `IpscEntityCompetitorService` (and their implementations and tests) so the IPSC entity services share a naming
+  pattern; `findCompetitor` is now `findCompetitorByIdentifierAndFullName`, and dependants rename their fields to match
+
+##### Models
+
+- **`MatchCompetitorResponse.competitorId`:** Dropped `@NonNull`, so a response can be built for a match competitor
+  that is not linked to a competitor
+
+#### 🗑️ Removed
+
+##### Models
+
+- **`MatchCompetitorResponseHolder`:** Removed the unused container class; bulk imports return
+  `MatchCompetitorBulkResponseHolder`
+
 ---
 
 ### 🧾 [13.3.0] - 2026-10-07
