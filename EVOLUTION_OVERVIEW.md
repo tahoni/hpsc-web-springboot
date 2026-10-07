@@ -383,3 +383,45 @@ rules.
 ---
 
 **For the full project history, see [HISTORY.md](/HISTORY.md)**
+
+### Phase 50: NGPSA Membership Flag & Club Number Normalisation (v13.3.0)
+
+**Duration:** October 7, 2026
+
+A small minor release: a competitor records whether their NGPSA membership is paid up, and a club number is stored
+without spaces. It is backward-compatible and its migration adds a nullable column, so it is MINOR under the Semantic
+Versioning rules.
+
+**Key Accomplishments:**
+
+**Database**
+
+- `V11_6_0__add_competitor_paid_up_ngpsa.sql` adds a nullable `competitor.paid_up_ngpsa` boolean column after
+  `paid_up_sapsa`
+
+**Models**
+
+- `Competitor.paidUpNgpsa` is a new `Boolean` field; `CompetitorRequest`, `CompetitorPatchRequest` and
+  `CompetitorResponse` gain an optional `paidUpNgpsa` and the CSV import a `PaidUpNgpsa` column, stored as `null` when
+  omitted; the `CompetitorRequest` all-arguments constructor gains a parameter between `paidUpSapsa` and `paidUpClub`
+
+**Mappers & Services**
+
+- `CompetitorMapper.applyFields` and `applyPatchFields` copy `paidUpNgpsa`, and the patch leaves it unchanged when
+  omitted; `IpscCompetitorServiceImpl` carries it from a CSV row to the request
+- `CompetitorMapper.resolveClubNumber` removes all spaces from a club number and trims it, so a consistent value is
+  stored
+- Improvement plan unchanged: 35 gaps closed, #6, #26 and #38 partially completed and #39 open
+
+**Build & Metadata**
+
+- Project version bumped to 13.3.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Recording the NGPSA membership next to the SAPSA and club flags, and keeping stored club numbers consistent
+
+**Test Coverage:**
+
+- Tests cover `paidUpNgpsa` across the mapper, JSON, CSV and entity-to-response paths, and the club number
+  normalisation
