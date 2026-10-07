@@ -64,6 +64,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorHelpers.MC_PREFIX`:** Tests only the start of the word with `lookingAt()`, so the pattern is a fixed
   four-step match with no trailing `.*`; no change in behaviour
 
+##### Services
+
+- **`EntityIpscCompetitorServiceImpl.findCompetitor`:** Now first matches the trimmed competitor number as a club number
+  with `CompetitorRepository.findByClubNumber`, before converting it to a number, and returns that competitor at once;
+  a numeric club number therefore takes precedence over a competitor number with the same value. The competitor number,
+  ID number and name lookups follow when no club number matches
+
 #### 🐛 Fixed
 
 ##### Services

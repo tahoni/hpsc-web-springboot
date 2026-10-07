@@ -31,6 +31,9 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
      * <p><b>Implementation notes:</b> the lookup is attempted in stages, returning as soon as a
      * stage yields exactly one competitor:</p>
      * <ol>
+     *     <li>Club number: the supplied competitor number, trimmed of surrounding whitespace, is first
+     *     matched as it is, before any conversion to a number, against the competitors' club numbers.
+     *     A club number is unique, so a match returns that competitor.</li>
      *     <li>Competitor number (SAPSA or club number): only when the number is made up entirely
      *     of digits and converts to a value greater than zero. Surrounding whitespace is ignored,
      *     so {@code " 42 "} is looked up as {@code 42}. A number with any other character (such
@@ -70,6 +73,16 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
         String normalisedCompetitorFullName = CompetitorHelpers.cleanCompetitorName(fullName);
         // Normalise competitor number
         String normalisedCompetitorNumber = StringUtils.trimToEmpty(competitorNumber);
+
+        // First try to match the competitor number as a club number, before it is converted to a number
+        if (hasText(normalisedCompetitorNumber)) {
+            Optional<Competitor> competitorWithClubNumber =
+                    competitorRepository.findByClubNumber(normalisedCompetitorNumber);
+            if (competitorWithClubNumber.isPresent()) {
+                return competitorWithClubNumber;
+            }
+        }
+
         // A numeric value too long for an int (such as an ID number) is not a competitor number
         int competitorNumberInt = 0;
         if (StringUtils.isNumeric(normalisedCompetitorNumber)) {
@@ -77,7 +90,7 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
         }
 
         List<Competitor> competitorsWithCompetitorNumberList = new ArrayList<>();
-        // First try to match using competitor number (SAPSA or club number)
+        // Then try to match using competitor number (SAPSA or club number)
         if (competitorNumberInt > 0) {
             competitorsWithCompetitorNumberList =
                     IpscConstants.EXCLUDE_ICS_ALIAS.contains(competitorNumberInt)
