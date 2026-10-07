@@ -68,6 +68,9 @@ public class Competitor {
     @Column(name = "paid_up_sapsa")
     private Boolean paidUpSapsa;
 
+    @Column(name = "paid_up_ngpsa")
+    private Boolean paidUpNgpsa;
+
     @Column(name = "paid_up_club")
     private Boolean paidUpClub;
 

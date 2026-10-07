@@ -21,6 +21,25 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 13.3.0 (October 7, 2026)
+
+**Theme:** NGPSA Membership Flag & Club Number Normalisation
+
+**Key Focus:**
+
+- New `Competitor.paidUpNgpsa` nullable `Boolean`, stored in a `paid_up_ngpsa` column that the
+  `V11_6_0__add_competitor_paid_up_ngpsa.sql` migration adds after `paid_up_sapsa`, records whether a competitor's NGPSA
+  membership is paid up
+- `CompetitorRequest`, `CompetitorPatchRequest` and `CompetitorResponse` gain an optional `paidUpNgpsa` field, and the
+  competitor CSV import a `PaidUpNgpsa` column; it is stored as `null` when omitted, and a patch leaves it unchanged
+- `CompetitorMapper.resolveClubNumber` removes all spaces from a club number and trims it, so `applyFields` and
+  `applyPatchFields` store a consistent value
+- Scoped as `v13.3.0` **MINOR**: the new optional field and CSV column are additions, nothing is backward-incompatible
+  and the migration adds a nullable column
+- No improvement plan gaps are closed or progressed: 35 stay closed, #6, #26 and #38 stay partially completed and #39
+  stays open
+- Project version bumped to 13.3.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 13.2.0 (October 7, 2026)
 
 **Theme:** Club Number Matching & Backtracking-Free Name Patterns
@@ -316,6 +335,12 @@ stored values to match.
   number of digits
 - The award list's null error now names the right request list, and a blank image MIME type is reset to an empty string
 - The archived v1 – v9 history moves to `documentation/archive/v1-v4/`, `v5-v7/` and `v8-v9/`
+
+### Milestone 50: NGPSA Membership Flag & Club Number Normalisation (v13.3.0)
+
+- A competitor records whether their NGPSA membership is paid up, through the request, patch, response and CSV import
+- A club number loses its spaces and surrounding whitespace before it is stored
+- `V11_6_0__add_competitor_paid_up_ngpsa.sql` adds the nullable column
 
 ---
 
@@ -634,7 +659,7 @@ MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
   competitor number is matched, what a bulk import answers, the name of a response field and which rows an import
   creates, the release is the project's fourth consecutive MAJOR, with each breaking change flagged in `CHANGELOG.md`
   as it landed.
-- **Version 13.x (v13.0.0 – v13.2.0):** Make the match competitor's values consistent and the services thinner — field
+- **Version 13.x (v13.0.0 – v13.3.0):** Make the match competitor's values consistent and the services thinner — field
   copying and lookups move into mappers, a division belongs to a firearm type and has a name of its own, and a response
   lists a competitor's names once each. Because that changes the shape of a response field, requires a power factor and
   changes the division and category names a request may use, v13.0.0 is the project's fifth consecutive MAJOR release,
@@ -642,7 +667,9 @@ MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
   door and forgiving of the data's names — `@Valid` request bodies answer `400`, jspecify's `@NonNull` expresses
   nullness and `CompetitorHelpers.cleanCompetitorName` normalises a competitor's name — as a backward-compatible MINOR.
   v13.2.0 then tightens that matching — a numeric club number takes precedence over a competitor number of the same
-  value, and the name-cleaning patterns no longer backtrack — as a second backward-compatible MINOR.
+  value, and the name-cleaning patterns no longer backtrack — as a second backward-compatible MINOR. v13.3.0 then
+  records whether a competitor's NGPSA membership is paid up and stores a club number without spaces — a third
+  backward-compatible MINOR.
 
 ### Initial Phase (v1.0.0)
 
@@ -941,7 +968,7 @@ MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v13.2.0, the following areas are identified for future enhancement:
+Based on the evolution to v13.3.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -949,7 +976,15 @@ The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived,
 The completed-work logs for versions 8.0.0 to 9.1.0 are archived, unchanged, in
 [`documentation/archive/v8-v9/HISTORY_v8-v9.md`](/documentation/archive/v8-v9/HISTORY_v8-v9.md).
 
-### Recently Completed (v13.2.0)
+### Recently Completed (v13.3.0)
+
+- New `Competitor.paidUpNgpsa` with the `V11_6_0__add_competitor_paid_up_ngpsa.sql` migration, carried through
+  `CompetitorRequest`, `CompetitorPatchRequest`, `CompetitorResponse`, the competitor CSV import and `CompetitorMapper`
+- `CompetitorMapper.resolveClubNumber` removes all spaces from a club number and trims it
+- Improvement plan unchanged: 35 gaps closed, #6, #26 and #38 partially completed and #39 open
+- Project version bumped to 13.3.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v13.2.0)
 
 - `EntityIpscCompetitorServiceImpl.findCompetitor` matches the competitor number as a club number first, with
   `CompetitorRepository.findByClubNumber`
@@ -1167,3 +1202,7 @@ Version 13.2.0 tightens that name matching without changing its contract: a comp
 first, so a numeric club number wins over a competitor number of the same value, and the name-cleaning patterns are
 hardened so that none of them backtracks. It is a MINOR release, because the club-number stage is an addition and
 nothing is backward-incompatible.
+
+Version 13.3.0 adds an optional `paidUpNgpsa` flag to a competitor, through a nullable `paid_up_ngpsa` column and the
+request, patch, response and CSV import, and stores a club number without spaces. It is a MINOR release, because the
+flag is an addition, nothing is backward-incompatible and the migration adds a nullable column.

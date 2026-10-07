@@ -21,7 +21,7 @@ class CompetitorRequestTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequest request = new CompetitorRequest(
                 1L, "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "7001", "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com"), true, false,
+                12345, "7001", "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com"), true, true, false,
                 true);
 
         // Act
@@ -43,6 +43,7 @@ class CompetitorRequestTest {
         assertEquals("9001015800083", node.get("idNumber").asText());
         assertEquals("0821234567", node.get("cellphoneNumber").asText());
         assertTrue(node.get("paidUpSapsa").asBoolean());
+        assertTrue(node.get("paidUpNgpsa").asBoolean());
         assertFalse(node.get("paidUpClub").asBoolean());
         assertTrue(node.get("isVerified").asBoolean());
         assertEquals(1, node.get("emailAddresses").size());
@@ -55,7 +56,7 @@ class CompetitorRequestTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequest request = new CompetitorRequest(
                 1L, "Jane", "Doe", "Ann", "Janie", LocalDate.of(1990, 1, 1), "Female", "Test Club",
-                12345, "7001", "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com", "jane2.doe@example.com"), true, false,
+                12345, "7001", "HPSC-001", "9001015800083", "0821234567", List.of("jane.doe@example.com", "jane2.doe@example.com"), true, null, false,
                 null);
 
         // Act
@@ -74,7 +75,7 @@ class CompetitorRequestTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequest request = new CompetitorRequest(
                 null, "Jane", "Doe", null, null, null, null, null, null, null, "HPSC-001", null, null, null, null, null,
-                null);
+                null, null);
 
         // Act
         String json = mapper.writeValueAsString(request);
@@ -89,6 +90,7 @@ class CompetitorRequestTest {
         assertTrue(node.get("dateOfBirth").isNull());
         assertTrue(node.get("competitorNumber").isNull());
         assertTrue(node.get("paidUpSapsa").isNull());
+        assertTrue(node.get("paidUpNgpsa").isNull());
         assertTrue(node.get("paidUpClub").isNull());
         assertTrue(node.get("isVerified").isNull());
     }
@@ -114,6 +116,7 @@ class CompetitorRequestTest {
                   "idNumber": "9001015800083",
                   "cellphoneNumber": "0821234567",
                   "paidUpSapsa": true,
+                  "paidUpNgpsa": true,
                   "paidUpClub": false,
                   "isVerified": true,
                   "emailAddresses": ["jane.doe@example.com"]
@@ -138,6 +141,7 @@ class CompetitorRequestTest {
         assertEquals("9001015800083", request.getIdNumber());
         assertEquals("0821234567", request.getCellphoneNumber());
         assertEquals(Boolean.TRUE, request.getPaidUpSapsa());
+        assertEquals(Boolean.TRUE, request.getPaidUpNgpsa());
         assertEquals(Boolean.FALSE, request.getPaidUpClub());
         assertEquals(Boolean.TRUE, request.getIsVerified());
         assertEquals(List.of("jane.doe@example.com"), request.getEmailAddresses());

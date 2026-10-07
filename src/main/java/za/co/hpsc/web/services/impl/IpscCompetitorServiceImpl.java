@@ -230,6 +230,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 csvRow.getCellphoneNumber(),
                 new ArrayList<>(csvRow.getEmailAddresses()),
                 csvRow.getPaidUpSapsa(),
+                csvRow.getPaidUpNgpsa(),
                 csvRow.getPaidUpClub(),
                 csvRow.getIsVerified());
     }
