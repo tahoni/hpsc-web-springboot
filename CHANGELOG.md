@@ -104,10 +104,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`V11_5_0__rename_lady_senior_competitor_category.sql`:** Renames the stored competitor category `Lady, Senior` to
   `Lady Senior` in `match_competitor`, `shooter_log_competitor` and `shooter_log_overall`, matching the renamed
   `CompetitorCategory.SENIOR_LADY`; without it those rows no longer match a category
-- **`V11_4_0__make_non_handgun_division_names_unique.sql`:** Renames the stored division of each `match_competitor`
-  and `shooter_log_competitor` row to match the renamed `Division` names, using the row's firearm type where the old
-  name was shared; `shooter_log_overall`
-  has no firearm type and keeps its names, which read back as the handgun divisions
+- **`V11_4_0__make_non_handgun_division_names_unique.sql`:** Renames the stored divisions in `match_competitor` and
+  `shooter_log_competitor` to match the renamed `Division` names — the shotgun, .22 and mini rifle divisions that shared
+  a handgun name are renamed by the row's firearm type, `Semi Auto Open Division` and `Semi Auto Standard Division`
+  become `Rifle Open Division` and `Rifle Standard Division`, and `Standard Manual Division` becomes
+  `Shotgun Standard Manual Division`; `shooter_log_overall` has no firearm type and keeps its names, which read back as
+  the handgun divisions
 - **`V11_2_0__make_match_competitor_firearm_type_and_power_factor_required.sql`:** `match_competitor.firearm_type` and
   `power_factor` become `NOT NULL`, reversing `V8_1_0`'s `firearm_type` change and restoring one entry per competitor,
   match and firearm type; the migration is refused, leaving the columns as they were, if any existing row has a `NULL`
@@ -157,6 +159,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now reject a division that does not belong to the
   firearm type, through the new `validateDivisionMatchesFirearmType`; a patch that changes either one is checked against
   the other's current value
+- **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now take a missing firearm type from the division (a
+  blank request value in `applyFields`, or an entity with none after a patch)
 
 ##### Models
 
@@ -175,7 +179,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   holding the competitor's "First Last" and "Nick Last" names once each (a null or duplicate nickname is skipped), so
   the JSON of `/ipsc/match-competitors` responses and bulk import results changes shape; also gains a constructor that
   builds it from a `MatchCompetitor`, and its Javadoc now covers the partly set response for a failed bulk import row
-
 - **`CompetitorRequest.validate`, `MatchRequest.validate`:** Now documented in Javadoc, and unit tests added for them
   and for `MatchCompetitorRequest.validate`
 - **`MatchCompetitorRequest.validate`:** New method, with Javadoc, holding the required-field checks that
