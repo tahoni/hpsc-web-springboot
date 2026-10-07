@@ -61,6 +61,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   position is now any number of digits followed by an optional whitespace character and a hyphen, at the very start of
   the name, so `123-John` now cleans to `John` and `-12-John Smith` is left alone; a single tab or newline between
   words is no longer turned into a space
+- **`CompetitorHelpers.MC_PREFIX`:** Tests only the start of the word with `lookingAt()`, so the pattern is a fixed
+  four-step match with no trailing `.*`; no change in behaviour
 
 ---
 

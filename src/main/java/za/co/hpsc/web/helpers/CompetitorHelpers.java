@@ -23,7 +23,7 @@ public final class CompetitorHelpers {
     private static final Pattern WORD = Pattern.compile("[^ \\-]+");
 
     /** Gaelic "Mc" prefix (e.g. "McDonald"), excluding "Mch" and "Mcu", which start Zulu surnames (e.g. "Mchunu"). */
-    private static final Pattern MC_PREFIX = Pattern.compile("(?i)^mc(?![hu])[a-z].*");
+    private static final Pattern MC_PREFIX = Pattern.compile("(?i)mc(?![hu])[a-z]");
 
     /** A leading position of one or more digits, followed by an optional whitespace character and a hyphen. */
     private static final Pattern POSITION_PREFIX = Pattern.compile("^\\d++\\s?+-");
@@ -139,7 +139,7 @@ public final class CompetitorHelpers {
         if (!isLastWord && isPrefix(word)) {
             return word.toLowerCase();
         }
-        if (MC_PREFIX.matcher(word).matches()) {
+        if (MC_PREFIX.matcher(word).lookingAt()) {
             return "Mc" + Character.toUpperCase(word.charAt(2)) + word.substring(3);
         }
         return word;
