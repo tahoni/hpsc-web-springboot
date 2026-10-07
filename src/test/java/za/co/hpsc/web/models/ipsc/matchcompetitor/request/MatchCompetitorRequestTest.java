@@ -370,6 +370,30 @@ class MatchCompetitorRequestTest {
     }
 
     @Test
+    void testValidate_whenDivisionDoesNotMatchFirearmType_thenThrowsValidationException() {
+        // Arrange
+        MatchCompetitorRequest request = validRequest();
+        request.setFirearmType("Shotgun");
+
+        // Act
+        ValidationException exception = assertThrows(ValidationException.class, request::validate);
+
+        // Assert
+        assertEquals("Division Open Division is not a Shotgun division.", exception.getMessage());
+    }
+
+    @Test
+    void testValidate_whenDivisionMatchesNonHandgunFirearmType_thenReturnsTrue() {
+        // Arrange
+        MatchCompetitorRequest request = validRequest();
+        request.setFirearmType("Shotgun");
+        request.setDivision("Shotgun Open Division");
+
+        // Act & Assert
+        assertTrue(request.validate());
+    }
+
+    @Test
     void testValidate_whenUnknownEnumValuesGiven_thenStillReturnsTrue() {
         // Arrange
         MatchCompetitorRequest request = validRequest();
@@ -377,6 +401,16 @@ class MatchCompetitorRequestTest {
         request.setFirearmType("Not A Firearm");
         request.setDivision("Not A Division");
         request.setPowerFactor("Not A Power Factor");
+
+        // Act & Assert
+        assertTrue(request.validate());
+    }
+
+    @Test
+    void testValidate_whenOnlyOneOfFirearmTypeAndDivisionIsUnknown_thenStillReturnsTrue() {
+        // Arrange
+        MatchCompetitorRequest request = validRequest();
+        request.setDivision("Not A Division");
 
         // Act & Assert
         assertTrue(request.validate());

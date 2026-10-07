@@ -156,6 +156,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Models
 
+- **`MatchCompetitorRequest`:** `validate()` now also rejects a division that does not belong to the firearm type, when
+  both are known values, so a create or replace is refused before anything is looked up
 - **`IpscCommonScore`, `IpscMatchScore`, `IpscMatchStageScore`:** `weightedPoints` is renamed `points`, and
   `powerFactor` is removed from the score, which the competitor's entry holds instead; the fields are now `protected`
   so subclasses can use them, and the constructors lose their `powerFactor` parameter

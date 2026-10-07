@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
 import za.co.hpsc.web.models.ipsc.shared.IpscMatchScore;
@@ -174,17 +176,21 @@ public class MatchCompetitorRequest extends IpscMatchScore {
      * <ul>
      *     <li>{@code competitorId} is set, or {@code competitorNumber} or {@code competitorName} has text;</li>
      *     <li>{@code matchId} is set; and</li>
-     *     <li>{@code competitorCategory}, {@code firearmType}, {@code division} and {@code powerFactor} each have text.</li>
+     *     <li>{@code competitorCategory}, {@code firearmType}, {@code division} and {@code powerFactor} each have text;
+     *     and</li>
+     *     <li>the {@code division}, when it and the {@code firearmType} both name a known value, is one shot with that
+     *     firearm type.</li>
      * </ul>
      *
      * <p>
      * The category, firearm type, division, club and power factor are resolved against their enums later, so a value
-     * that is present but unknown is not caught here.
+     * that is present but unknown is not caught here; it only skips the firearm type and division check.
      * </p>
      *
      * @return always {@code true}; an invalid request throws instead of returning {@code false}.
-     * @throws ValidationException if the competitor ID, number and name are all missing, or if the match ID,
-     *                             competitor category, firearm type, division or power factor is missing.
+     * @throws ValidationException if the competitor ID, number and name are all missing, if the match ID,
+     *                             competitor category, firearm type, division or power factor is missing, or if the
+     *                             division does not belong to the firearm type.
      */
     public boolean validate() {
         if ((getCompetitorId() == null) && !hasText(getCompetitorNumber())
@@ -206,6 +212,15 @@ public class MatchCompetitorRequest extends IpscMatchScore {
         if (!hasText(getPowerFactor())) {
             throw new ValidationException("Power factor is required.");
         }
+        validateDivisionMatchesFirearmType();
         return true;
+    }
+
+    private void validateDivisionMatchesFirearmType() {
+        Division division = Division.fromName(getDivision()).orElse(null);
+        FirearmType firearmType = FirearmType.fromName(getFirearmType()).orElse(null);
+        if ((division != null) && (firearmType != null) && (division.getFirearmType() != firearmType)) {
+            throw new ValidationException("Division " + division + " is not a " + firearmType + " division.");
+        }
     }
 }
