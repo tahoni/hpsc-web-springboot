@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 12.0.0](#-1200---2026-10-05) ← Current
+- [🧾 Version 13.0.0](#-1300---2026-10-07) ← Current
+- [🧾 Version 12.0.0](#-1200---2026-10-05)
 - [🧾 Version 11.0.0](#-1100---2026-10-04)
 - [🧾 Version 10.0.0](#-1000---2026-10-03)
 - [🧾 Version 9.1.0](#-910---2026-10-03)
@@ -49,6 +50,197 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [13.0.0] - 2026-10-07
+
+#### ➕ Added
+
+##### Documentation
+
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** New open Gap #38 — eight utility and
+  enum methods and `SystemConstants.DEFAULT_SCALE` are used only by tests, with a matching task block, Roadmap row and
+  Success Criteria entry
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** New open Gap #39 —
+  `ClubIdentifier.code` and `fromCode` are used only by tests, with a matching task block, Roadmap row and Success
+  Criteria entry
+
+##### Mappers
+
+- **`CompetitorMapper`:** New component holding `applyFields`, the new `applyPatchFields` and the gender, home club,
+  club number and competitor number lookups that `IpscCompetitorServiceImpl` carried, so a request model no longer
+  needs a repository to be copied onto an entity
+- **`MatchMapper`:** New component holding `applyFields`, the new `applyPatchFields` and the club, firearm type and
+  match category lookups that `IpscMatchServiceImpl` carried
+- **`MatchCompetitorMapper`:** New component holding `applyFields`, the new `applyPatchFields` and the competitor,
+  match, match club, competitor category, firearm type, division and power factor lookups that
+  `IpscMatchCompetitorServiceImpl` carried
+
+##### Tests
+
+- **`CompetitorMapperTest`, `MatchMapperTest`, `MatchCompetitorMapperTest`:** The unit tests for the moved helpers,
+  plus new `applyPatchFields` tests covering unchanged fields, partial patches, club number re-resolution and the
+  lookup failures
+
+#### 🔄 Changed
+
+##### Build & Configuration
+
+- **`.gitattributes`:** Added `* text=auto eol=lf` so text files are checked out with LF line endings regardless of
+  `core.autocrlf`; the `mvnw` and `*.cmd` rules still apply
+- **`qodana.yaml`:** Switched from the `qodana.starter` to the `qodana.recommended` profile — adds the `LicenseAudit`
+  inspection with `licenseRules` that allow permissive licences (Apache-2.0, MIT, BSD, EPL-2.0, ISC) and prohibit GPL
+  and AGPL dependencies, plus further Java best-practice inspections alongside `JavadocReference`
+
+##### Constants
+
+- **`SystemConstants`:** Now `final`, as it is a utility class with a private constructor
+
+##### Controllers
+
+- **`IpscMatchCompetitorController.createMatchCompetitors`:** Now uses `HttpStatus.UNPROCESSABLE_CONTENT` instead of the
+  deprecated `UNPROCESSABLE_ENTITY` when every row fails — the response is still `422`, so the API is unchanged
+
+##### Converters
+
+- **`ClubIdentifierConverter`, `FirearmTypeConverter`:** Conversion methods that can return `null` are now annotated
+  `@Nullable` (JSpecify), so the null contract is explicit
+
+##### Database
+
+- **`V11_5_0__rename_lady_senior_competitor_category.sql`:** Renames the stored competitor category `Lady, Senior` to
+  `Lady Senior` in `match_competitor`, `shooter_log_competitor` and `shooter_log_overall`, matching the renamed
+  `CompetitorCategory.SENIOR_LADY`; without it those rows no longer match a category
+- **`V11_4_0__make_non_handgun_division_names_unique.sql`:** Renames the stored divisions in `match_competitor` and
+  `shooter_log_competitor` to match the renamed `Division` names — the shotgun, .22 and mini rifle divisions that shared
+  a handgun name are renamed by the row's firearm type, `Semi Auto Open Division` and `Semi Auto Standard Division`
+  become `Rifle Open Division` and `Rifle Standard Division`, and `Standard Manual Division` becomes
+  `Shotgun Standard Manual Division`; `shooter_log_overall` has no firearm type and keeps its names, which read back as
+  the handgun divisions
+- **`V11_2_0__make_match_competitor_firearm_type_and_power_factor_required.sql`:** `match_competitor.firearm_type` and
+  `power_factor` become `NOT NULL`, reversing `V8_1_0`'s `firearm_type` change and restoring one entry per competitor,
+  match and firearm type; the migration is refused, leaving the columns as they were, if any existing row has a `NULL`
+  in either — backfill those rows first
+- **`V11_3_0__add_match_competitor_date_calculated.sql`:** Adds the nullable `match_competitor.date_calculated`
+  column after `is_visitor`, so it sits before `date_created`; existing rows stay `NULL`
+
+##### Documentation
+
+- **`ARCHITECTURE.md`:** Project Structure trees and a new Mappers section describe the `mappers` package
+- **`ARCHITECTURE.md`, `README.md`:** The `models/ipsc/shared/` comment no longer calls the shared score fields
+  groundwork, and the Match Scoring Domain Model bullet says the match competitor endpoints are built on them while
+  the shooter-log layer is still to come
+- **`documentation/recommendations/flyway-migration-versioning.md`:** Current State table gains rows for `V11_4_0` and
+  `V11_5_0`, and `V11_2_0` and `V11_3_0` are attributed to this release
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #38 is partially completed —
+  `Division.fromAbbreviationOrName` and the other test-only enum methods are removed — with the Roadmap row, At a
+  Glance and Success Criteria updated to match
+
+##### Domain
+
+- **`MatchCompetitor`:** `firearmType` and `powerFactor` are now `nullable = false`
+- **`MatchCompetitor.dateCalculated`:** New optional `date_calculated` column, placed before `dateCreated`, recording
+  when the row's scores were calculated — as `ShooterLogCompetitor` and `ShooterLogOverall` already do
+
+##### Enums
+
+- **`ClubIdentifier`:** The `code` values are now `"C SOSC"` (SOSC), `"B HPSC"`, `"A PMPSC"` and `"U VISITOR"`
+- **`CompetitorCategory`:** **Breaking:** The `SENIOR_LADY` name is now `"Lady Senior"` (was `"Lady, Senior"`), so an
+  import row or request using the old name is rejected; the `fromName` Javadoc also says "category" rather than
+  "division", and the converter tests use the new name
+- **`CompetitorCategory`:** **Breaking:** Replaced the `code` field and `fromCode(Integer)` with a `String`
+  `abbreviation` field (`J`, `SJ`, `L`, `LS`, `S`, `SS`, `GS`)
+- **`Division`:** Added a `firearmType` field (a `FirearmType`) recording the firearm type each division is shot with
+- **`Division`:** **Breaking:** The shotgun, .22 and mini rifle divisions that shared a display name with a handgun
+  one are renamed so every name is unique (for example `SHOTGUN_OPEN` is now `"Shotgun Open Division"` and `OPEN_22`
+  `".22 Open Division"`), so `Division.fromName(String)` and `DivisionConverter` resolve each division unambiguously
+- **`Division`:** **Breaking:** `RIFLE_SEMI_AUTO_OPEN` and `RIFLE_SEMI_AUTO_STANDARD` are renamed `"Rifle Open Division"`
+  and `"Rifle Standard Division"`, `SHOTGUN_STANDARD` is renamed `"Shotgun Semi Division"`, `SHOTGUN_STANDARD_MANUAL` is renamed
+  `"Shotgun Standard Manual Division"`, and
+  `RIFLE_MANUAL_ACTION_CONTEMPORARY` and `RIFLE_MANUAL_ACTION_BOLT` are replaced by `RIFLE_STANDARD_MANUAL`
+  (`"Rifle Standard Manual Division"`)
+- **`Division`:** **Breaking:** Removed the `abbreviation` and `code` fields and `fromAbbreviation(String)`,
+  `fromAbbreviationOrName(String)` and `fromCode(Integer)`; `fromName(String)` is unchanged
+- **`FirearmType`:** **Breaking:** Removed the `code` field and `fromCode(Integer)`
+- **`PowerFactor`:** **Breaking:** Removed the `abbreviation` field and `fromAbbreviation(String)`
+
+##### Helpers
+
+- **`CompetitorHelpers.toSentenceCaseLastName`:** A null last name now returns an empty string instead of `null`;
+  Javadoc and unit test updated
+
+##### Mappers
+
+- **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now reject a division that does not belong to the
+  firearm type, through the new `validateDivisionMatchesFirearmType`; a patch that changes either one is checked against
+  the other's current value
+- **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now take a missing firearm type from the division (a
+  blank request value in `applyFields`, or an entity with none after a patch)
+
+##### Models
+
+- **`MatchCompetitorRequest`:** **Breaking:** `firearmType` is no longer required: `validate()` accepts a null or blank
+  value and `MatchCompetitorMapper` takes the firearm type from the division instead
+- **`MatchCompetitorRequest`:** `validate()` now also rejects a division that does not belong to the firearm type, when
+  both are known values, so a create or replace is refused before anything is looked up
+- **`IpscCommonScore`, `IpscMatchScore`, `IpscMatchStageScore`:** `weightedPoints` is renamed `points`, and
+  `powerFactor` is removed from the score, which the competitor's entry holds instead; the fields are now `protected`
+  so subclasses can use them, and the constructors lose their `powerFactor` parameter
+- **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`:** Extend `IpscMatchScore` instead of declaring their own
+  copies of the score fields (`points`, `percentage`, `time`, the hit counts and penalties); the JSON is unchanged
+- **`CompetitorResponse`, `MatchResponse`:** Each gains a constructor that builds the response from its entity, and
+  its Javadoc now states which fields may be null
+- **`MatchCompetitorResponse`:** **Breaking:** The `competitorName` string is replaced by a `competitorNames` list
+  holding the competitor's "First Last" and "Nick Last" names once each (a null or duplicate nickname is skipped), so
+  the JSON of `/ipsc/match-competitors` responses and bulk import results changes shape; also gains a constructor that
+  builds it from a `MatchCompetitor`, and its Javadoc now covers the partly set response for a failed bulk import row
+- **`CompetitorRequest.validate`, `MatchRequest.validate`:** Now documented in Javadoc, and unit tests added for them
+  and for `MatchCompetitorRequest.validate`
+- **`MatchCompetitorRequest.validate`:** New method, with Javadoc, holding the required-field checks that
+  `IpscMatchCompetitorServiceImpl.validateForCreate` repeated inline; `validateForCreate` now calls it
+- **`MatchCompetitorRequest`, `MatchCompetitorResponse`:** **Breaking:** `powerFactor` is now required, as
+  `firearmType` already was — `validate()` rejects a request without one ("Power factor is required."), so bulk import
+  rows and API calls that omit it now fail; `firearmType` and `powerFactor` are `@NotNull` on the response
+
+##### Services
+
+- **`IpscCompetitorServiceImpl`, `IpscMatchServiceImpl`:** Map entities with the new response constructors instead of
+  long all-args calls
+- **`IpscCompetitorServiceImpl`, `IpscMatchServiceImpl`:** `validateForCreate` calls `CompetitorRequest.validate` and
+  `MatchRequest.validate` instead of repeating the required-field checks inline; the rules and messages are unchanged
+- **`IpscMatchCompetitorServiceImpl`:** `patchMatchCompetitor` ignores a blank `powerFactor` instead of clearing the
+  power factor
+- **`IpscMatchCompetitorServiceImpl`:** `toResponse` uses the new constructor, and `toFailedResponse` wraps the
+  requested name in a list, or leaves it empty when the request has none
+- **`IpscCompetitorServiceImpl`:** `resolveClubNumber`, `resolveGender`, `resolveHomeClub` and `parseCompetitorNumber`
+  are now annotated `@Nullable`, so the null contract is explicit
+- **`IpscMatchCompetitorServiceImpl`:** `resolveCompetitorHomeClub`, `resolveMatchClub` and `resolvePowerFactor` are now
+  annotated `@Nullable`, so the null contract is explicit
+- **`IpscCompetitorServiceImpl`:** Delegates field copying and lookups to `CompetitorMapper`; its constructor takes the
+  mapper in place of `ClubRepository` and `ClubService`, and `patchCompetitor` calls `applyPatchFields`
+- **`IpscMatchServiceImpl`:** Delegates field copying and lookups to `MatchMapper`; its constructor takes the mapper in
+  place of `ClubRepository`, and `patchMatch` calls `applyPatchFields`
+- **`IpscMatchCompetitorServiceImpl`:** Delegates field copying and lookups to `MatchCompetitorMapper`; its
+  constructor takes the mapper in place of `CompetitorRepository`, `IpscMatchRepository` and
+  `EntityIpscCompetitorService`, and `patchMatchCompetitor` calls `applyPatchFields`
+- **`IpscMatchCompetitorServiceImpl`:** Removed the unused `parseCompetitorNumber`; `toFailedResponse` still uses the
+  lenient `CompetitorHelpers.getCompetitorNumberAsInteger`
+
+##### Utils
+
+- **`NumberUtil`:** `calculatePercentage` and `calculateSum` now take a `scale` parameter instead of always using
+  `SystemConstants.DEFAULT_SCALE`, so callers choose the result's decimal places; Javadoc updated and unit tests added
+  for non-default scales
+- **`StringUtil`:** `toString` and `toProperCase` are now annotated `@Nullable`, as both return `null` for a null input
+
+#### 🐛 Fixed
+
+##### Utils
+
+- **`NumberUtil.calculatePercentage`:** The intermediate division now uses `scale + 2` digits instead of `scale * 2` —
+  a scale below 2 rounded the ratio too early (2/3 at scale 0 gave `100` instead of `67`); results at the default scale
+  are unchanged
 
 ---
 

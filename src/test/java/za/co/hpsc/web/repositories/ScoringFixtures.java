@@ -11,6 +11,7 @@ import za.co.hpsc.web.domain.ShooterLogCompetitor;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
+import za.co.hpsc.web.enums.PowerFactor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ final class ScoringFixtures {
         matchCompetitor.setCompetitorCategory(CompetitorCategory.NONE);
         matchCompetitor.setFirearmType(FirearmType.HANDGUN);
         matchCompetitor.setDivision(Division.OPEN);
+        matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
         entityManager.persist(matchCompetitor);
         return matchCompetitor;
     }

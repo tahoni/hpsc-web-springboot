@@ -14,6 +14,7 @@ import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.Gender;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.mappers.CompetitorMapper;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
@@ -73,9 +74,9 @@ public class IpscCompetitorServiceTest {
     void setUp() {
         TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
                 ipscMatchRepository, matchCompetitorRepository, transactionManager);
-        ipscCompetitorService = new IpscCompetitorServiceImpl(competitorRepository, clubRepository,
+        ipscCompetitorService = new IpscCompetitorServiceImpl(competitorRepository,
                 matchCompetitorRepository, shooterLogCompetitorRepository, shooterLogOverallRepository,
-                new ClubServiceImpl(), transactionService);
+                new CompetitorMapper(clubRepository, new ClubServiceImpl()), transactionService);
     }
 
     // createCompetitor()

@@ -14,8 +14,7 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
  * <p>
  * A power factor defines the level of energy a bullet carries, which is used
  * to categorise participants based on the calibre and velocity of ammunition used.
- * Each power factor is associated with a name and an abbreviation for easy reference and
- * presentation.
+ * Each power factor is associated with a name for easy reference and presentation.
  * </p>
  *
  * @since 1.1.3
@@ -23,11 +22,10 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
 @Getter
 @AllArgsConstructor
 public enum PowerFactor {
-    MINOR("Minor", "Min"),
-    MAJOR("Major", "Maj");
+    MINOR("Minor"),
+    MAJOR("Major");
 
     private final String name;
-    private final String abbreviation;
 
     /**
      * Retrieves an optional {@code PowerFactor} instance based on the provided name.
@@ -51,31 +49,6 @@ public enum PowerFactor {
 
         return Arrays.stream(PowerFactor.values())
                 .filter(powerFactor -> powerFactor.getName().equalsIgnoreCase(name))
-                .findFirst();
-    }
-
-    /**
-     * Retrieves an optional {@code PowerFactor} instance based on the provided abbreviation.
-     *
-     * <p>
-     * The method performs a case-insensitive search to find a matching power factor
-     * by its abbreviation. If the input is null, empty or no match is found, an
-     * empty {@code Optional} is returned.
-     * </p>
-     *
-     * @param abbreviation the abbreviation of the power factor to search for.
-     *                     Can be null or empty.
-     * @return an {@code Optional} containing the matching {@code PowerFactor} if found,
-     * or an empty {@code Optional} otherwise.
-     * @since 1.1.3
-     */
-    public static Optional<PowerFactor> fromAbbreviation(String abbreviation) {
-        if (!hasText(abbreviation)) {
-            return Optional.empty();
-        }
-
-        return Arrays.stream(PowerFactor.values())
-                .filter(powerFactor -> powerFactor.getAbbreviation().equalsIgnoreCase(abbreviation))
                 .findFirst();
     }
 

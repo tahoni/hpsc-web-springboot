@@ -406,11 +406,30 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
   `tomcat.version` override and its comment from `pom.xml` in the same pass as the parent
   bump, and update this plan's Ongoing roadmap row and Goals & Constraints table
 
+**Test-only utility methods and `DEFAULT_SCALE`** *(improvement-plan.md → Gap #38)* —
+🟡 Partially completed in v13.0.0
+
+- [ ] Confirm with the IDE's find-usages that `NumberUtil.calculatePercentage`, `calculateSum` and `formatBigDecimal`,
+  `DateUtil.formatDate` and `formatDateTime`, `StringUtil.formatStringWithNamedParameters`,
+  `ValueUtil.nullAsZeroBigDecimal` and `Division.fromAbbreviationOrName` have no production caller
+- [ ] For each, either keep it because a planned caller exists (e.g. the scoring layer, Gap #6) or remove it together
+  with its unit tests — partly done: `Division.fromAbbreviationOrName` was removed with its tests in v13.0.0; the
+  other seven remain
+- [ ] Correct `SystemConstants.DEFAULT_SCALE`'s Javadoc, which still describes it as `NumberUtil`'s default scale, or
+  remove the constant if nothing is going to use it
+- [ ] Correct `ARCHITECTURE.md`'s `utils/` table, which calls `NumberUtil` "Numeric parsing and formatting helpers"
+
 ---
 
 ## ⚪ Open
 
-*No gaps are currently open.*
+**`ClubIdentifier.code` and `fromCode`** *(improvement-plan.md → Gap #39)*
+
+- [ ] Confirm with the IDE's find-usages that `ClubIdentifier.fromCode` and the `code` field have no production caller
+- [ ] Either keep them because a planned caller exists, or remove them together with the `fromCode` tests in
+  `ClubIdentifierTest`
+- [ ] Change `AGENTS.md`'s Test Conventions example heading `// fromCode()` to one that still exists in the cited test
+  classes (for example `// fromName()`)
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

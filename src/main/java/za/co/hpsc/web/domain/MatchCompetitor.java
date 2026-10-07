@@ -39,7 +39,7 @@ public class MatchCompetitor {
     private CompetitorCategory competitorCategory;
 
     @Convert(converter = FirearmTypeConverter.class)
-    @Column(name = "firearm_type")
+    @Column(name = "firearm_type", nullable = false)
     private FirearmType firearmType;
 
     @Convert(converter = DivisionConverter.class)
@@ -47,7 +47,7 @@ public class MatchCompetitor {
     private Division division;
 
     @Convert(converter = PowerFactorConverter.class)
-    @Column(name = "power_factor")
+    @Column(name = "power_factor", nullable = false)
     private PowerFactor powerFactor;
 
     @Column(name = "points", precision = 19, scale = 6)
@@ -94,6 +94,9 @@ public class MatchCompetitor {
 
     @Column(name = "is_visitor")
     private Boolean isVisitor;
+
+    @Column(name = "date_calculated")
+    private LocalDateTime dateCalculated;
 
     @CreationTimestamp
     @Column(name = "date_created", updatable = false)

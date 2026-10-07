@@ -118,6 +118,22 @@ class IpscMatchCompetitorServiceIntegrationTest {
     }
 
     @Test
+    void testCreateMatchCompetitor_whenFirearmTypeIsBlank_thenTakesItFromTheDivision() {
+        // Arrange
+        Competitor competitor = createCompetitor("HPSC-MC-004");
+        IpscMatch match = createMatch();
+        MatchCompetitorRequest request = validRequest(competitor.getId(), match.getId());
+        request.setFirearmType(null);
+        request.setDivision("Rifle Open Division");
+
+        // Act
+        MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(request);
+
+        // Assert
+        assertEquals(FirearmType.RIFLE, response.getFirearmType());
+    }
+
+    @Test
     void testCreateMatchCompetitor_whenSameCompetitorAndMatchButOtherFirearmType_thenCreatesIt() {
         // Arrange
         Competitor competitor = createCompetitor("HPSC-MC-003");
@@ -125,6 +141,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()));
         MatchCompetitorRequest rifle = validRequest(competitor.getId(), match.getId());
         rifle.setFirearmType("Rifle");
+        rifle.setDivision("Rifle Open Division");
 
         // Act
         MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(rifle);
@@ -197,9 +214,9 @@ class IpscMatchCompetitorServiceIntegrationTest {
         Competitor second = createCompetitor("HPSC-MC-011");
         IpscMatch match = createMatch();
         String csvData = String.format("""
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
-                %d,%d,HPSC,Junior,Handgun,Open Division
-                %d,%d,HPSC,Senior,Handgun,Production Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                %d,%d,HPSC,Junior,Handgun,Open Division,Major
+                %d,%d,HPSC,Senior,Handgun,Production Division,Major
                 """, first.getId(), match.getId(), second.getId(), match.getId());
 
         // Act
@@ -220,10 +237,10 @@ class IpscMatchCompetitorServiceIntegrationTest {
         Competitor competitor = createCompetitor("HPSC-MC-020");
         IpscMatch match = createMatch();
         String csvData = String.format("""
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
-                %d,%d,HPSC,Junior,Handgun,Open Division
-                %d,%d,SOSC,Junior,Handgun,Open Division
-                %d,%d,,Junior,Handgun,Open Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                %d,%d,HPSC,Junior,Handgun,Open Division,Major
+                %d,%d,SOSC,Junior,Handgun,Open Division,Major
+                %d,%d,,Junior,Handgun,Open Division,Major
                 """, competitor.getId(), match.getId(), competitor.getId(), match.getId(),
                 competitor.getId(), match.getId());
 
@@ -253,8 +270,8 @@ class IpscMatchCompetitorServiceIntegrationTest {
         competitor = competitorRepository.save(competitor);
         IpscMatch match = createMatch();
         String csvData = String.format("""
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
-                %d,%d,SOSC,Junior,Handgun,Open Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                %d,%d,SOSC,Junior,Handgun,Open Division,Major
                 """, competitor.getId(), match.getId());
 
         // Act
@@ -271,8 +288,8 @@ class IpscMatchCompetitorServiceIntegrationTest {
         // Arrange
         IpscMatch match = createMatch();
         String csvData = String.format("""
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
-                999999,%d,SOSC,Junior,Handgun,Open Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                999999,%d,SOSC,Junior,Handgun,Open Division,Major
                 """, match.getId());
 
         // Act
@@ -291,10 +308,10 @@ class IpscMatchCompetitorServiceIntegrationTest {
         Competitor competitor = createCompetitor("HPSC-MC-020");
         IpscMatch match = createMatch();
         String csvData = String.format("""
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
-                %d,%d,HPSC,Junior,Handgun,Open Division
-                %d,%d,SOSC,Junior,Handgun,Open Division
-                %d,%d,,Junior,Handgun,Open Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                %d,%d,HPSC,Junior,Handgun,Open Division,Major
+                %d,%d,SOSC,Junior,Handgun,Open Division,Major
+                %d,%d,,Junior,Handgun,Open Division,Major
                 """, competitor.getId(), match.getId(), competitor.getId(), match.getId(),
                 competitor.getId(), match.getId());
 
@@ -327,9 +344,9 @@ class IpscMatchCompetitorServiceIntegrationTest {
         Competitor competitor = createCompetitor("HPSC-MC-012");
         IpscMatch match = createMatch();
         String csvData = String.format("""
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
-                %d,%d,HPSC,Junior,Handgun,Open Division
-                %d,%d,HPSC,Junior,Handgun,Open Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                %d,%d,HPSC,Junior,Handgun,Open Division,Major
+                %d,%d,HPSC,Junior,Handgun,Open Division,Major
                 """, competitor.getId(), match.getId(), competitor.getId() + 1000, match.getId());
 
         // Act
@@ -349,8 +366,8 @@ class IpscMatchCompetitorServiceIntegrationTest {
         IpscMatch match = createMatch();
         ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()));
         String csvData = String.format("""
-                CompetitorId,MatchId,Class,Cats,FirearmType,Div
-                %d,%d,HPSC,Junior,Handgun,Open Division
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                %d,%d,HPSC,Junior,Handgun,Open Division,Major
                 """, competitor.getId(), match.getId());
 
         // Act
@@ -497,6 +514,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         request.setCompetitorCategory("Junior");
         request.setFirearmType("Handgun");
         request.setDivision("Open Division");
+        request.setPowerFactor("Major");
         return request;
     }
 }

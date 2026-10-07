@@ -3,6 +3,44 @@
 ####################################################################################################################
 version: "1.0"
 profile:
-  name: qodana.starter
+  name: qodana.recommended
 include:
+  # License checking (requires a JVM Ultimate-based linter, e.g. jetbrains/qodana-jvm)
+  - name: LicenseAudit
+  # Java best practices
   - name: JavadocReference
+  - name: FieldMayBeFinal
+  - name: OptionalUsedAsFieldOrParameterType
+  - name: ReturnNull
+  - name: EqualsAndHashcode
+  - name: StringEquality
+  - name: ThrowablePrintStackTrace
+  - name: SystemOutErr
+  - name: ClassWithOnlyPrivateConstructors
+  - name: UnnecessaryLocalVariable
+  - name: SizeReplaceableByIsEmpty
+  - name: DuplicatedCode
+# Allowed and prohibited licenses for project dependencies; adjust to match the project's licensing policy.
+licenseRules:
+  - keys:
+      - "Apache-2.0"
+      - "MIT"
+      - "BSD-2-Clause"
+      - "BSD-3-Clause"
+      - "EPL-2.0"
+      - "ISC"
+    allowed:
+      - "Apache-2.0"
+      - "MIT"
+      - "BSD-2-Clause"
+      - "BSD-3-Clause"
+      - "EPL-2.0"
+      - "ISC"
+  - keys:
+      - "GPL-2.0"
+      - "GPL-3.0"
+      - "AGPL-3.0"
+    prohibited:
+      - "GPL-2.0"
+      - "GPL-3.0"
+      - "AGPL-3.0"

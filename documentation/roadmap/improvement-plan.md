@@ -116,13 +116,16 @@ number or a newly met precondition on an existing gap — see the `update-improv
     v12.0.0 (wired into `IpscMatchCompetitorServiceImpl`; the bulk import returns
     `MatchCompetitorBulkResponseHolder` per row)
   - #37 `IpscConstants`' four score-scale constants are declared but never used — closed v12.0.0 (constants removed)
-- **🟡 Partially Completed (2):**
+- **🟡 Partially Completed (3):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v10.0.0 (the
     match competitor service and `/ipsc/match-competitors` controller are built, extended in v10.0.0 with
     competitor lookup by number or name and overall-score fields; the shooter-log layer is not)
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
-- **⚪ Open (0):** none
+  - #38 Eight utility and enum methods and `SystemConstants.DEFAULT_SCALE` are used only by tests — progressed
+    v13.0.0 (`Division.fromAbbreviationOrName` removed; seven methods and `DEFAULT_SCALE` remain)
+- **⚪ Open (1):**
+  - #39 `ClubIdentifier.code` and `ClubIdentifier.fromCode` are used only by tests
 
 ### ✅ Completed
 
@@ -1202,9 +1205,58 @@ Jackson and Flyway, which the same release-time check should also revisit. The g
 release manages `11.0.26` or later and the override is dropped (the threshold was `11.0.25` until v9.0.0 raised the
 pin).
 
+#### 38. Eight utility and enum methods and `SystemConstants.DEFAULT_SCALE` are used only by tests — 🟡 Partially completed in v13.0.0
+
+**Evidence:** Grepping `src/main` for each name finds only its own declaration, while each has a test class exercising
+it: `NumberUtil.calculatePercentage`, `NumberUtil.calculateSum` and `NumberUtil.formatBigDecimal`,
+`DateUtil.formatDate` and `DateUtil.formatDateTime`, `StringUtil.formatStringWithNamedParameters`,
+`ValueUtil.nullAsZeroBigDecimal` and `Division.fromAbbreviationOrName`. `SystemConstants.DEFAULT_SCALE` is in the same
+position: the `feature/qodana` branch gave `NumberUtil.calculatePercentage` and `calculateSum` a `scale` parameter, so
+nothing in `src/main` reads the constant any more, yet its Javadoc still says it is the scale "`NumberUtil`'s
+calculations round/format to by default". `ARCHITECTURE.md` (the `utils/` table) describes `NumberUtil` as "Numeric
+parsing and formatting helpers", though it has no parsing method. The scan was name-based, so each result should be
+confirmed with the IDE's find-usages before anything is deleted.
+
+**Why it matters:** The same shape as Gaps #9 and #37: inert code that a reader assumes is part of the production
+behaviour. Passing coverage hides it, because the tests keep these methods "used", and each one is a public API that
+has to be kept working and documented without delivering any behaviour. The stale `DEFAULT_SCALE` Javadoc already
+misdescribes the code.
+
+**Proposed improvement:** Decide per method whether a caller is coming (the scoring layer in Gap #6 would use the
+percentage and sum helpers) or whether it should be removed together with its tests. Delete what has no planned
+caller, correct the `DEFAULT_SCALE` Javadoc (or remove the constant) either way, and correct `ARCHITECTURE.md`'s
+`NumberUtil` description to match whatever remains.
+
+**Progress:** `Division.fromAbbreviationOrName` is gone: the `feature/qodana` branch removed it together with its unit
+tests when it removed `Division`'s `abbreviation` and `code` fields, and with it `Division.fromAbbreviation` and
+`fromCode`, `CompetitorCategory.fromCode`, `FirearmType.fromCode` and `PowerFactor.fromAbbreviation`, which only tests
+called as well. So one of the eight methods listed in the Evidence is resolved. The other seven (`NumberUtil`'s three,
+`DateUtil`'s two, `StringUtil.formatStringWithNamedParameters` and `ValueUtil.nullAsZeroBigDecimal`) are still called
+only by tests, `SystemConstants.DEFAULT_SCALE` is still unread in `src/main`, and `ARCHITECTURE.md`'s `NumberUtil`
+description is unchanged. The gap closes once each remaining method is either given a production caller or removed
+with its tests, the `DEFAULT_SCALE` Javadoc is corrected (or the constant removed) and the `NumberUtil` description
+matches the class.
+
 ### ⚪ Open
 
-*No gaps are currently open.*
+#### 39. `ClubIdentifier.code` and `ClubIdentifier.fromCode` are used only by tests
+
+**Evidence:** Grepping `src/main` for `fromCode` and `getCode` finds `ClubIdentifier.fromCode` only at its own
+declaration (`ClubIdentifier.java:111`), and its only caller is `ClubIdentifierTest` (nine tests). The `code` field it
+searches (`"C SOSC"`, `"B HPSC"`, `"A PMPSC"`, `"U VISITOR"`) is read nowhere else. The `feature/qodana` branch removed
+the same pattern from `Division`, `CompetitorCategory`, `FirearmType` and `PowerFactor` (see Gap #38's Progress), which
+leaves `ClubIdentifier` as the one enum that still carries it; `fromAbbreviation`, in contrast, is used by
+`IpscConstants`, `ClubIdentifierConverter` and `MatchCompetitorMapper`. `AGENTS.md`'s Test Conventions also give
+`// fromCode()` as an example test-group heading, "matching the style already used in `FirearmTypeTest`", although
+`FirearmTypeTest` no longer has one. The scan was name-based, so confirm with the IDE's find-usages before deleting.
+
+**Why it matters:** The same shape as Gaps #37 and #38: inert code a reader assumes is part of the production
+behaviour, kept alive only by tests that exercise it, and with a public API to maintain. The four codes were also
+changed on this branch, so someone is evidently maintaining values that nothing reads.
+
+**Proposed improvement:** Decide whether a caller for the code is coming. If not, remove `ClubIdentifier.code` and
+`fromCode` together with their tests, and change `AGENTS.md`'s example heading to one that still exists (for example
+`// fromName()`); if so, record the planned caller here.
 
 ---
 
@@ -1213,7 +1265,7 @@ pin).
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0, the shooter-log service and controller remain                                                                                  |
-| **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0                                                                                                                                                                                                                                                                    |
+| **Next**    | Decide which remaining test-only utility methods and `SystemConstants.DEFAULT_SCALE` to keep or remove (#38, #39, `Division.fromAbbreviationOrName` removed in v13.0.0); #36 and #37 closed in v12.0.0                                             |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
@@ -1304,6 +1356,12 @@ pin).
   closing Gap #36.
 - ✅ Met in v12.0.0: `IpscConstants`' `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE` and `PERCENTAGE_SCALE`
   are removed rather than left unused, closing Gap #37.
+- 🟡 Partly met in v13.0.0 (`Division.fromAbbreviationOrName` is removed with its tests): every method in `src/main`
+  that only tests call is either given a production caller or removed with its tests, `SystemConstants.DEFAULT_SCALE`'s
+  Javadoc matches how the constant is used, and `ARCHITECTURE.md`'s `NumberUtil` description matches the class,
+  closing Gap #38.
+- ⚪ Open: `ClubIdentifier.code` and `fromCode` are either given a production caller or removed with their tests, and
+  `AGENTS.md`'s `// fromCode()` example heading names a test group that exists, closing Gap #39.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

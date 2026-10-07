@@ -16,6 +16,7 @@ import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
+import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.enums.Gender;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
@@ -750,6 +751,7 @@ class IpscCompetitorServiceIntegrationTest {
         matchCompetitor.setCompetitorCategory(CompetitorCategory.NONE);
         matchCompetitor.setFirearmType(FirearmType.HANDGUN);
         matchCompetitor.setDivision(Division.OPEN);
+        matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
         matchCompetitorRepository.save(matchCompetitor);
     }
 }

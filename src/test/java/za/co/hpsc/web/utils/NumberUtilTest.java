@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NumberUtilTest {
 
-    // calculatePercentage(BigDecimal, BigDecimal)
+    // calculatePercentage(BigDecimal, BigDecimal, int)
     @Test
     void testCalculatePercentage_whenValidInputs_thenReturnsCorrectPercentage() {
         // Arrange
@@ -22,7 +22,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, total);
+        BigDecimal result = NumberUtil.calculatePercentage(part, total, SystemConstants.DEFAULT_SCALE);
 
         // Assert
         assertEquals(expected, result);
@@ -37,7 +37,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, total);
+        BigDecimal result = NumberUtil.calculatePercentage(part, total, SystemConstants.DEFAULT_SCALE);
 
         // Assert
         assertEquals(expected, result);
@@ -52,7 +52,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, total);
+        BigDecimal result = NumberUtil.calculatePercentage(part, total, SystemConstants.DEFAULT_SCALE);
 
         // Assert
         assertEquals(expected, result);
@@ -67,7 +67,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, total);
+        BigDecimal result = NumberUtil.calculatePercentage(part, total, SystemConstants.DEFAULT_SCALE);
 
         // Assert
         assertEquals(expected, result);
@@ -82,7 +82,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, total);
+        BigDecimal result = NumberUtil.calculatePercentage(part, total, SystemConstants.DEFAULT_SCALE);
 
         // Assert
         assertEquals(expected, result);
@@ -96,13 +96,53 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculatePercentage(part, null);
+        BigDecimal result = NumberUtil.calculatePercentage(part, null, SystemConstants.DEFAULT_SCALE);
 
         // Assert
         assertEquals(expected, result);
     }
 
-    // calculateSum(List)
+    @Test
+    void testCalculatePercentage_whenCustomScale_thenReturnsPercentageWithGivenScale() {
+        // Arrange
+        BigDecimal part = BigDecimal.ONE;
+        BigDecimal total = BigDecimal.valueOf(3);
+        BigDecimal expected = new BigDecimal("33.3333");
+
+        // Act
+        BigDecimal result = NumberUtil.calculatePercentage(part, total, 4);
+
+        // Assert
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void testCalculatePercentage_whenZeroScale_thenReturnsRoundedWholeNumber() {
+        // Arrange
+        BigDecimal part = BigDecimal.valueOf(2);
+        BigDecimal total = BigDecimal.valueOf(3);
+        BigDecimal expected = new BigDecimal("67");
+
+        // Act
+        BigDecimal result = NumberUtil.calculatePercentage(part, total, 0);
+
+        // Assert
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void testCalculatePercentage_whenNullTotalAndCustomScale_thenReturnsZeroWithGivenScale() {
+        // Arrange
+        BigDecimal expected = new BigDecimal("0.000");
+
+        // Act
+        BigDecimal result = NumberUtil.calculatePercentage(BigDecimal.TEN, null, 3);
+
+        // Assert
+        assertEquals(expected, result);
+    }
+
+    // calculateSum(List, int)
     @Test
     void testCalculateSum_whenPositiveNumbers_thenReturnsCorrectSum() {
         // Arrange
@@ -115,7 +155,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculateSum(values);
+        BigDecimal result = NumberUtil.calculateSum(values, SystemConstants.DEFAULT_SCALE);
 
         // Assert
         assertEquals(expected, result);
@@ -133,7 +173,7 @@ public class NumberUtilTest {
                 RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculateSum(values);
+        BigDecimal result = NumberUtil.calculateSum(values, SystemConstants.DEFAULT_SCALE);
 
         // Assert
         assertEquals(expected, result);
@@ -146,7 +186,7 @@ public class NumberUtilTest {
         BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculateSum(values);
+        BigDecimal result = NumberUtil.calculateSum(values, SystemConstants.DEFAULT_SCALE);
 
         // Assert
         assertEquals(expected, result);
@@ -158,7 +198,45 @@ public class NumberUtilTest {
         BigDecimal expected = BigDecimal.ZERO.setScale(SystemConstants.DEFAULT_SCALE, RoundingMode.HALF_UP);
 
         // Act
-        BigDecimal result = NumberUtil.calculateSum(null);
+        BigDecimal result = NumberUtil.calculateSum(null, SystemConstants.DEFAULT_SCALE);
+
+        // Assert
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void testCalculateSum_whenCustomScale_thenReturnsSumWithGivenScale() {
+        // Arrange
+        List<BigDecimal> values = List.of(new BigDecimal("1.2345"), new BigDecimal("2.3456"));
+        BigDecimal expected = new BigDecimal("3.5801");
+
+        // Act
+        BigDecimal result = NumberUtil.calculateSum(values, 4);
+
+        // Assert
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void testCalculateSum_whenZeroScale_thenReturnsRoundedWholeNumber() {
+        // Arrange
+        List<BigDecimal> values = List.of(new BigDecimal("1.5"), new BigDecimal("1.0"));
+        BigDecimal expected = new BigDecimal("3");
+
+        // Act
+        BigDecimal result = NumberUtil.calculateSum(values, 0);
+
+        // Assert
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void testCalculateSum_whenNullListAndCustomScale_thenReturnsZeroWithGivenScale() {
+        // Arrange
+        BigDecimal expected = new BigDecimal("0.000");
+
+        // Act
+        BigDecimal result = NumberUtil.calculateSum(null, 3);
 
         // Assert
         assertEquals(expected, result);

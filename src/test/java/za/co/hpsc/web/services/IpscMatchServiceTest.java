@@ -15,6 +15,7 @@ import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.mappers.MatchMapper;
 import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
@@ -73,8 +74,9 @@ public class IpscMatchServiceTest {
     void setUp() {
         TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
                 ipscMatchRepository, matchCompetitorRepository, transactionManager);
-        ipscMatchService = new IpscMatchServiceImpl(ipscMatchRepository, clubRepository,
-                matchCompetitorRepository, shooterLogRepository, shooterLogCompetitorRepository, transactionService);
+        ipscMatchService = new IpscMatchServiceImpl(ipscMatchRepository,
+                matchCompetitorRepository, shooterLogRepository, shooterLogCompetitorRepository,
+                new MatchMapper(clubRepository), transactionService);
     }
 
     // createMatch()

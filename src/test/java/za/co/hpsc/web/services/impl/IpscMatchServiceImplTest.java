@@ -1,8 +1,8 @@
 package za.co.hpsc.web.services.impl;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.constants.IpscConstants;
@@ -10,9 +10,9 @@ import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
-import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.mappers.MatchMapper;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
@@ -29,10 +29,9 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link IpscMatchServiceImpl}'s impl-only protected helper methods
- * ({@code applyFields}, {@code findMatchOrThrow}, {@code newMatch}, {@code readMatches},
- * {@code resolveClub}, {@code resolveFirearmType}, {@code resolveMatchCategory},
- * {@code toResponse}, {@code validateForCreate}) - not declared on
- * {@link za.co.hpsc.web.services.IpscMatchService}.
+ * ({@code findMatchOrThrow}, {@code newMatch}, {@code readMatches}, {@code toResponse},
+ * {@code validateForCreate}) - not declared on {@link za.co.hpsc.web.services.IpscMatchService}. The field-copying
+ * and lookup helpers are covered by {@link za.co.hpsc.web.mappers.MatchMapperTest}.
  * The interface's create/update/patch/get/get-all contract is covered by
  * {@link za.co.hpsc.web.services.IpscMatchServiceTest}.
  */
@@ -45,69 +44,12 @@ class IpscMatchServiceImplTest {
     @Mock
     private ClubRepository clubRepository;
 
-    @InjectMocks
     private IpscMatchServiceImpl ipscMatchServiceImpl;
 
-    // applyFields()
-    @Test
-    void testApplyFields_whenRequestIsValid_thenCopiesAllFieldsOntoMatch() {
-        // Arrange
-        Club club = new Club();
-        club.setId(10L);
-        club.setName("Test Club");
-        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
-        MatchRequest request = validRequest("Test Club");
-        IpscMatch match = new IpscMatch();
-
-        // Act
-        assertDoesNotThrow(() -> ipscMatchServiceImpl.applyFields(match, request));
-
-        // Assert
-        assertSame(club, match.getClub());
-        assertEquals("Club Championship", match.getName());
-        assertEquals(LocalDate.of(2026, 9, 12).atStartOfDay(), match.getScheduledDate());
-        assertEquals(LocalTime.of(8, 0), match.getStartTime());
-        assertEquals(LocalTime.of(17, 0), match.getEndTime());
-        assertEquals(FirearmType.HANDGUN, match.getMatchFirearmType());
-        assertEquals(MatchCategory.CLUB_SHOOT, match.getMatchCategory());
-        assertEquals("https://example.com/matches/1", match.getUrl());
-    }
-
-    @Test
-    void testApplyFields_whenClubDoesNotExist_thenThrowsNonFatalException() {
-        // Arrange
-        when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
-        MatchRequest request = validRequest("No Such Club");
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscMatchServiceImpl.applyFields(new IpscMatch(), request));
-    }
-
-    @Test
-    void testApplyFields_whenFirearmTypeIsUnrecognised_thenThrowsValidationException() {
-        // Arrange
-        Club club = new Club();
-        club.setName("Test Club");
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
-        MatchRequest request = validRequest("Test Club");
-        request.setMatchFirearmType("Not A Firearm Type");
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.applyFields(new IpscMatch(), request));
-    }
-
-    @Test
-    void testApplyFields_whenMatchCategoryIsUnrecognised_thenThrowsValidationException() {
-        // Arrange
-        Club club = new Club();
-        club.setName("Test Club");
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
-        MatchRequest request = validRequest("Test Club");
-        request.setMatchCategory("Not A Category");
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.applyFields(new IpscMatch(), request));
+    @BeforeEach
+    void setUp() {
+        ipscMatchServiceImpl = new IpscMatchServiceImpl(ipscMatchRepository, null, null, null,
+                new MatchMapper(clubRepository), null);
     }
 
     // findMatchOrThrow()
@@ -242,160 +184,6 @@ class IpscMatchServiceImplTest {
     void testReadMatches_whenCsvDataIsNull_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.readMatches(null));
-    }
-
-    // resolveClub()
-    @Test
-    void testResolveClub_whenClubExists_thenReturnsClub() {
-        // Arrange
-        Club club = new Club();
-        club.setName("Test Club");
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
-
-        // Act
-        Club resolved = assertDoesNotThrow(() -> ipscMatchServiceImpl.resolveClub("Test Club"));
-
-        // Assert
-        assertSame(club, resolved);
-    }
-
-    @Test
-    void testResolveClub_whenClubDoesNotExist_thenThrowsNonFatalException() {
-        // Arrange
-        when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscMatchServiceImpl.resolveClub("No Such Club"));
-    }
-
-    @Test
-    void testResolveClub_whenClubNameIsNull_thenReturnsDefaultMatchClub() {
-        // Arrange
-        Club defaultClub = new Club();
-        defaultClub.setIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
-        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
-                .thenReturn(Optional.of(defaultClub));
-
-        // Act
-        Club resolved = assertDoesNotThrow(() -> ipscMatchServiceImpl.resolveClub(null));
-
-        // Assert
-        assertSame(defaultClub, resolved);
-    }
-
-    @Test
-    void testResolveClub_whenClubNameIsBlank_thenReturnsDefaultMatchClub() {
-        // Arrange
-        Club defaultClub = new Club();
-        defaultClub.setIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
-        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
-                .thenReturn(Optional.of(defaultClub));
-
-        // Act
-        Club resolved = assertDoesNotThrow(() -> ipscMatchServiceImpl.resolveClub("  "));
-
-        // Assert
-        assertSame(defaultClub, resolved);
-    }
-
-    @Test
-    void testResolveClub_whenClubNameIsNullAndDefaultClubDoesNotExist_thenThrowsNonFatalException() {
-        // Arrange
-        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
-                .thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscMatchServiceImpl.resolveClub(null));
-    }
-
-    @Test
-    void testResolveClub_whenClubNameIsNullAndDefaultIdentifierIsNull_thenThrowsFatalException() {
-        // Act & Assert
-        assertThrows(FatalException.class, () -> ipscMatchServiceImpl.resolveClub(null, null));
-    }
-
-    @Test
-    void testResolveClub_whenClubNameIsBlankAndDefaultIdentifierIsNull_thenThrowsFatalException() {
-        // Act & Assert
-        assertThrows(FatalException.class, () -> ipscMatchServiceImpl.resolveClub("  ", null));
-    }
-
-    @Test
-    void testResolveClub_whenClubNameIsSuppliedAndDefaultIdentifierIsNull_thenIgnoresDefaultIdentifier() {
-        // Arrange
-        Club club = new Club();
-        club.setName("Test Club");
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
-
-        // Act
-        Club resolved = assertDoesNotThrow(() -> ipscMatchServiceImpl.resolveClub("Test Club", null));
-
-        // Assert
-        assertSame(club, resolved);
-    }
-
-    // resolveFirearmType()
-    @Test
-    void testResolveFirearmType_whenFirearmTypeIsValid_thenReturnsMatchingFirearmType() {
-        assertEquals(FirearmType.HANDGUN, ipscMatchServiceImpl.resolveFirearmType(FirearmType.HANDGUN.toString()));
-    }
-
-    @Test
-    void testResolveFirearmType_whenFirearmTypeIsUnrecognised_thenThrowsValidationException() {
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.resolveFirearmType("Not A Firearm Type"));
-    }
-
-    // resolveMatchCategory()
-    @Test
-    void testResolveMatchCategory_whenMatchCategoryIsValid_thenReturnsMatchingCategory() {
-        assertEquals(MatchCategory.CLUB_SHOOT, ipscMatchServiceImpl.resolveMatchCategory(MatchCategory.CLUB_SHOOT.toString()));
-    }
-
-    @Test
-    void testResolveMatchCategory_whenMatchCategoryIsNullEmptyOrBlank_thenReturnsTheDefaultCategory() {
-        // Act & Assert
-        assertEquals(IpscConstants.DEFAULT_MATCH_CATEGORY, ipscMatchServiceImpl.resolveMatchCategory(null));
-        assertEquals(IpscConstants.DEFAULT_MATCH_CATEGORY, ipscMatchServiceImpl.resolveMatchCategory(""));
-        assertEquals(IpscConstants.DEFAULT_MATCH_CATEGORY, ipscMatchServiceImpl.resolveMatchCategory("  	 "));
-    }
-
-    @Test
-    void testResolveMatchCategory_whenMatchCategoryIsUnrecognised_thenThrowsValidationException() {
-        // Act
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> ipscMatchServiceImpl.resolveMatchCategory("Not A Category"));
-
-        // Assert - a supplied category that doesn't resolve is an error, not a fall back to the default
-        assertEquals("Unknown match category: Not A Category", exception.getMessage());
-    }
-
-    @Test
-    void testResolveMatchCategory_whenMatchCategoryIsTheEnumConstantName_thenReturnsMatchingCategory() {
-        // Arrange - the constant name differs from the display name, "Club Shoot"
-        assertNotEquals(MatchCategory.CLUB_SHOOT.getName(), MatchCategory.CLUB_SHOOT.name());
-
-        // Act & Assert
-        assertEquals(MatchCategory.CLUB_SHOOT, ipscMatchServiceImpl.resolveMatchCategory("CLUB_SHOOT"));
-        assertEquals(MatchCategory.CLUB_SHOOT, ipscMatchServiceImpl.resolveMatchCategory("club_shoot"));
-    }
-
-    @Test
-    void testResolveMatchCategory_whenMatchCategoryHasSurroundingWhitespace_thenReturnsMatchingCategory() {
-        // Act & Assert
-        assertEquals(MatchCategory.CLUB_SHOOT,
-                ipscMatchServiceImpl.resolveMatchCategory(" " + MatchCategory.CLUB_SHOOT.getName() + "	"));
-        assertEquals(MatchCategory.CLUB_SHOOT, ipscMatchServiceImpl.resolveMatchCategory("  CLUB_SHOOT  "));
-    }
-
-    @Test
-    void testResolveMatchCategory_whenUnrecognisedCategoryHasSurroundingWhitespace_thenMessageKeepsTheSuppliedValue() {
-        // Act
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> ipscMatchServiceImpl.resolveMatchCategory(" Not A Category "));
-
-        // Assert
-        assertEquals("Unknown match category:  Not A Category ", exception.getMessage());
     }
 
     // toResponse()

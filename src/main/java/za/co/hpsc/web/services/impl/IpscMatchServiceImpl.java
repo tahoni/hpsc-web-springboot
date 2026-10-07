@@ -12,20 +12,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
-import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
-import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.mappers.MatchMapper;
 import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
-import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
@@ -36,7 +34,6 @@ import za.co.hpsc.web.services.TransactionService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 
@@ -44,23 +41,23 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
 @Service
 public class IpscMatchServiceImpl implements IpscMatchService {
     private final IpscMatchRepository ipscMatchRepository;
-    private final ClubRepository clubRepository;
     private final MatchCompetitorRepository matchCompetitorRepository;
     private final ShooterLogRepository shooterLogRepository;
     private final ShooterLogCompetitorRepository shooterLogCompetitorRepository;
+    private final MatchMapper matchMapper;
     private final TransactionService transactionService;
 
     public IpscMatchServiceImpl(IpscMatchRepository ipscMatchRepository,
-                                 ClubRepository clubRepository,
                                  MatchCompetitorRepository matchCompetitorRepository,
                                  ShooterLogRepository shooterLogRepository,
                                  ShooterLogCompetitorRepository shooterLogCompetitorRepository,
+                                 MatchMapper matchMapper,
                                  TransactionService transactionService) {
         this.ipscMatchRepository = ipscMatchRepository;
-        this.clubRepository = clubRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.shooterLogRepository = shooterLogRepository;
         this.shooterLogCompetitorRepository = shooterLogCompetitorRepository;
+        this.matchMapper = matchMapper;
         this.transactionService = transactionService;
     }
 
@@ -96,7 +93,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         validateForCreate(request);
         IpscMatch match = findMatchOrThrow(matchId);
 
-        applyFields(match, request);
+        matchMapper.applyFields(match, request);
         return toResponse(transactionService.saveMatch(match));
     }
 
@@ -104,30 +101,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     public MatchResponse patchMatch(Long matchId, MatchPatchRequest request) throws FatalException {
         IpscMatch match = findMatchOrThrow(matchId);
 
-        if (request.getClub() != null) {
-            match.setClub(resolveClub(request.getClub()));
-        }
-        if (request.getMatchName() != null) {
-            match.setName(request.getMatchName());
-        }
-        if (request.getMatchDate() != null) {
-            match.setScheduledDate(request.getMatchDate().atStartOfDay());
-        }
-        if (request.getStartTime() != null) {
-            match.setStartTime(request.getStartTime());
-        }
-        if (request.getEndTime() != null) {
-            match.setEndTime(request.getEndTime());
-        }
-        if (request.getMatchFirearmType() != null) {
-            match.setMatchFirearmType(resolveFirearmType(request.getMatchFirearmType()));
-        }
-        if (request.getMatchCategory() != null) {
-            match.setMatchCategory(resolveMatchCategory(request.getMatchCategory()));
-        }
-        if (request.getUrl() != null) {
-            match.setUrl(request.getUrl());
-        }
+        matchMapper.applyPatchFields(match, request);
 
         return toResponse(transactionService.saveMatch(match));
     }
@@ -185,7 +159,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         validateForCreate(request);
 
         IpscMatch match = new IpscMatch();
-        applyFields(match, request);
+        matchMapper.applyFields(match, request);
         return match;
     }
 
@@ -224,28 +198,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Copies the match-level fields of a {@link MatchRequest} onto an {@link IpscMatch},
-     * resolving the named club in the process, defaulting to
-     * {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} when none is supplied.
-     *
-     * @param match   the entity to populate; must not be null.
-     * @param request the request carrying the field values; must not be null.
-     * @throws NonFatalException if the request's club name doesn't match an existing club, or no
-     *                           club exists for {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
-     * @throws FatalException    if {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
-     */
-    protected void applyFields(@NotNull IpscMatch match, @NotNull MatchRequest request) throws FatalException {
-        match.setClub(resolveClub(request.getClub()));
-        match.setName(request.getMatchName());
-        match.setScheduledDate(request.getMatchDate().atStartOfDay());
-        match.setStartTime(request.getStartTime());
-        match.setEndTime(request.getEndTime());
-        match.setMatchFirearmType(resolveFirearmType(request.getMatchFirearmType()));
-        match.setMatchCategory(resolveMatchCategory(request.getMatchCategory()));
-        match.setUrl(request.getUrl());
-    }
-
-    /**
      * Retrieves an existing match or throws if none exists with the given ID.
      *
      * @param matchId the identifier to look up.
@@ -258,102 +210,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     /**
-     * Resolves a club by name, defaulting to {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
-     * when none is supplied.
-     *
-     * @param clubName the club name to look up; may be null or blank, in which case the default
-     *                 match club identifier is resolved instead.
-     * @return the matching {@link Club}.
-     * @throws NonFatalException if {@code clubName} was supplied but doesn't match an existing
-     *                           club, or if no club exists for
-     *                           {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
-     * @throws FatalException    if {@code clubName} wasn't supplied and
-     *                           {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
-     */
-    protected Club resolveClub(String clubName) throws FatalException {
-        return resolveClub(clubName, IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
-    }
-
-    /**
-     * Resolves a club by name, defaulting to {@code defaultIdentifier} when none is supplied.
-     *
-     * <p>
-     * {@code defaultIdentifier} is taken as a parameter, rather than read directly from
-     * {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} in this method, purely so this check
-     * stays unit testable if that constant were ever null (which cannot happen with today's
-     * value, but which this method is deliberately written to guard against rather than
-     * silently mishandle).
-     * </p>
-     *
-     * @param clubName          the club name to look up; may be null or blank, in which case
-     *                          {@code defaultIdentifier} is resolved instead.
-     * @param defaultIdentifier the identifier to resolve when {@code clubName} isn't supplied;
-     *                          may be null.
-     * @return the matching {@link Club}.
-     * @throws NonFatalException if {@code clubName} was supplied but doesn't match an existing
-     *                           club, or if no club exists for {@code defaultIdentifier}.
-     * @throws FatalException    if {@code clubName} wasn't supplied and {@code defaultIdentifier}
-     *                           is null.
-     */
-    protected Club resolveClub(String clubName, ClubIdentifier defaultIdentifier) throws FatalException {
-        if (!hasText(clubName)) {
-            if (defaultIdentifier == null) {
-                throw new FatalException("IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER is not configured.");
-            }
-
-            return clubRepository.findByIdentifier(defaultIdentifier)
-                    .orElseThrow(() -> new NonFatalException("No club found with identifier " + defaultIdentifier));
-        }
-
-        return clubRepository.findByName(clubName)
-                .orElseThrow(() -> new NonFatalException("No club found with name " + clubName));
-    }
-
-    /**
-     * Resolves a firearm type by name.
-     *
-     * @param firearmType the firearm type name to look up.
-     * @return the matching {@link FirearmType}.
-     * @throws ValidationException if no firearm type matches {@code firearmType}.
-     */
-    protected FirearmType resolveFirearmType(String firearmType) {
-        return FirearmType.fromName(firearmType)
-                .orElseThrow(() -> new ValidationException("Unknown match firearm type: " + firearmType));
-    }
-
-    /**
-     * Resolves a match category by name, defaulting when none is given.
-     *
-     * <p>
-     * A match category is not mandatory here: when {@code category} is null, empty or blank, the default,
-     * {@link IpscConstants#DEFAULT_MATCH_CATEGORY}, is returned instead of an error. A category that is supplied
-     * must still be a known one: its display name (such as {@code "Club Shoot"}) or its constant name (such as
-     * {@code "CLUB_SHOOT"}), matched ignoring case and surrounding whitespace.
-     * </p>
-     *
-     * @param category the match category name to look up; may be null or blank, in which case the default
-     *                 match category is used.
-     * @return the matching {@link MatchCategory}, or {@link IpscConstants#DEFAULT_MATCH_CATEGORY} if
-     * {@code category} wasn't supplied.
-     * @throws ValidationException if {@code category} was supplied but no match category matches it.
-     */
-    protected MatchCategory resolveMatchCategory(String category) {
-        if (!hasText(category)) {
-            return IpscConstants.DEFAULT_MATCH_CATEGORY;
-        }
-
-        String trimmedCategory = category.trim();
-        return MatchCategory.fromName(trimmedCategory)
-                .or(() -> Stream.of(MatchCategory.values())
-                        .filter(matchCategory -> matchCategory.name().equalsIgnoreCase(trimmedCategory))
-                        .findFirst())
-                .orElseThrow(() -> new ValidationException("Unknown match category: " + category));
-    }
-
-    /**
      * Validates that a request carries every field required to create or fully replace a
      * match: a name, date and firearm type. The club and match category are not required, as each
-     * defaults when omitted (see {@link #resolveClub(String)} and {@link #resolveMatchCategory(String)}).
+     * defaults when omitted (see {@link MatchMapper#resolveClub(String)} and {@link MatchMapper#resolveMatchCategory(String)}).
      *
      * @param request the request to validate.
      * @throws ValidationException if a required field is missing.
@@ -362,15 +221,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         if (request == null) {
             throw new ValidationException("Match request cannot be null.");
         }
-        if (!hasText(request.getMatchName())) {
-            throw new ValidationException("Match name is required.");
-        }
-        if (request.getMatchDate() == null) {
-            throw new ValidationException("Match date is required.");
-        }
-        if (!hasText(request.getMatchFirearmType())) {
-            throw new ValidationException("Match firearm type is required.");
-        }
+        request.validate();
     }
 
     /**
@@ -380,15 +231,6 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @return the mapped {@link MatchResponse}.
      */
     protected MatchResponse toResponse(IpscMatch match) {
-        return new MatchResponse(
-                match.getId(),
-                match.getName(),
-                match.getScheduledDate().toLocalDate(),
-                match.getStartTime(),
-                match.getEndTime(),
-                ((match.getClub() != null) ? match.getClub().getIdentifier() : null),
-                match.getMatchFirearmType(),
-                match.getMatchCategory(),
-                match.getUrl());
+        return new MatchResponse(match);
     }
 }

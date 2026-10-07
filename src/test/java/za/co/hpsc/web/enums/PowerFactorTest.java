@@ -8,66 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PowerFactorTest {
 
-    // fromAbbreviation()
-    @Test
-    void testFromAbbreviation_withExactMatch_thenReturnsCorrectPowerFactor() {
-        // Arrange
-        String validAbbreviation = "Min";
-
-        // Act
-        Optional<PowerFactor> result = PowerFactor.fromAbbreviation(validAbbreviation);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(PowerFactor.MINOR, result.get());
-    }
-
-    @Test
-    void testFromAbbreviation_withCaseInsensitiveMatch_thenReturnsCorrectPowerFactor() {
-        // Arrange
-        String validAbbreviation = "mAJ";
-
-        // Act
-        Optional<PowerFactor> result = PowerFactor.fromAbbreviation(validAbbreviation);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(PowerFactor.MAJOR, result.get());
-    }
-
-    @Test
-    void testFromAbbreviation_withNoMatch_thenReturnsEmptyOptional() {
-        // Arrange
-        String invalidAbbreviation = "Xyz";
-
-        // Act
-        Optional<PowerFactor> result = PowerFactor.fromAbbreviation(invalidAbbreviation);
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    void testFromAbbreviation_withNullInput_thenReturnsEmptyOptional() {
-        // Act
-        Optional<PowerFactor> result = PowerFactor.fromAbbreviation(null);
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    void testFromAbbreviation_withBlankInput_thenReturnsEmptyOptional() {
-        // Arrange
-        String blankAbbreviation = "   ";
-
-        // Act
-        Optional<PowerFactor> result = PowerFactor.fromAbbreviation(blankAbbreviation);
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
     // fromName()
     @Test
     void testFromName_withExactMatch_thenReturnsCorrectPowerFactor() {

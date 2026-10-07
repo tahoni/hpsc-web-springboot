@@ -22,27 +22,24 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
  */
 @Getter
 public enum FirearmType {
-    HANDGUN("Handgun", 1),
-    PCC(List.of("PCC", "Pistol Caliber Carbine"), 7),
-    SHOTGUN("Shotgun", 3),
-    RIFLE("Rifle", 2),
-    HANDGUN_22(List.of("Handgun .22", "Handgun .22LR", "22", ".22LR"), 10),
-    MINI_RIFLE("Mini Rifle", 6);
+    HANDGUN("Handgun"),
+    PCC(List.of("PCC", "Pistol Caliber Carbine")),
+    SHOTGUN("Shotgun"),
+    RIFLE("Rifle"),
+    HANDGUN_22(List.of("Handgun .22", "Handgun .22LR", "22", ".22LR")),
+    MINI_RIFLE("Mini Rifle");
 
     private final List<String> names;
-    private final int code;
 
     private static final String DEFAULT_SEPARATOR = " ";
     private static final String ALTERNATE_SEPARATOR = "-";
 
-    FirearmType(String name, int code) {
+    FirearmType(String name) {
         this.names = List.of(name);
-        this.code = code;
     }
 
-    FirearmType(List<String> names, int code) {
+    FirearmType(List<String> names) {
         this.names = names;
-        this.code = code;
     }
 
     /**
@@ -66,31 +63,6 @@ public enum FirearmType {
 
         return Stream.of(FirearmType.values())
                 .filter(firearmType -> firearmType.isNameMatch(name))
-                .findFirst();
-    }
-
-    /**
-     * Retrieves an optional {@code FirearmType} instance based on the provided code.
-     *
-     * <p>
-     * The method searches for a firearm type with a code matching the provided input.
-     * If no match is found, an empty {@code Optional} is returned.
-     * </p>
-     *
-     * @param code the code of the firearm typee to search for.
-     *             The code can be {@code null} or negative, in which case an
-     *             empty {@code Optional} is returned.
-     * @return an {@code Optional} containing the matching {@code Division} if found,
-     * or empty otherwise.
-     * @since 2.0.0
-     */
-    public static Optional<FirearmType> fromCode(Integer code) {
-        if ((code == null) || (code <= 0)) {
-            return Optional.empty();
-        }
-
-        return Stream.of(FirearmType.values())
-                .filter(firearmType -> code.equals(firearmType.getCode()))
                 .findFirst();
     }
 

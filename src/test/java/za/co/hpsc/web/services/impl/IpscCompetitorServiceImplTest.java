@@ -9,34 +9,30 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
-import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.Gender;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.mappers.CompetitorMapper;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
-import za.co.hpsc.web.services.ClubService;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link IpscCompetitorServiceImpl}'s impl-only protected helper methods
- * ({@code applyFields}, {@code findCompetitorOrThrow}, {@code isMemberOfHomeClub}, {@code newCompetitor},
- * {@code readCompetitors},
- * {@code resolveClubNumber}, {@code resolveCompetitorNumber}, {@code resolveGender}, {@code resolveHomeClub},
- * {@code normaliseCsvRequest}, {@code toResponse}, {@code validateForCreate}) -
- * not declared on {@link za.co.hpsc.web.services.IpscCompetitorService}.
+ * ({@code findCompetitorOrThrow}, {@code newCompetitor}, {@code readCompetitors}, {@code normaliseCsvRequest},
+ * {@code toResponse}, {@code validateForCreate}) - not declared on
+ * {@link za.co.hpsc.web.services.IpscCompetitorService}. The field-copying and lookup helpers are covered by
+ * {@link za.co.hpsc.web.mappers.CompetitorMapperTest}.
  * The interface's create/update/patch/get contract is covered by
  * {@link za.co.hpsc.web.services.IpscCompetitorServiceTest}.
  */
@@ -46,219 +42,11 @@ class IpscCompetitorServiceImplTest {
     @Mock
     private CompetitorRepository competitorRepository;
 
-    @Mock
-    private ClubRepository clubRepository;
-
     @Spy
-    private ClubService clubService = new ClubServiceImpl();
+    private CompetitorMapper competitorMapper = new CompetitorMapper(mock(ClubRepository.class), new ClubServiceImpl());
 
     @InjectMocks
     private IpscCompetitorServiceImpl ipscCompetitorServiceImpl;
-
-    // applyFields()
-    @Test
-    void testApplyFields_whenRequestHasAllFields_thenCopiesAllFieldsOntoCompetitor() {
-        // Arrange
-        Club club = new Club();
-        club.setId(10L);
-        club.setName("Test Club");
-        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
-
-        CompetitorRequest request = new CompetitorRequest();
-        request.setFirstName("Jane");
-        request.setLastName("Doe");
-        request.setMiddleNames("Ann");
-        request.setNickName("Janie");
-        request.setDateOfBirth(LocalDate.of(1990, 1, 1));
-        request.setGender(Gender.Female.toString());
-        request.setHomeClub("Test Club");
-        request.setSapsaNumber(12345);
-        request.setCompetitorNumber("7001");
-        request.setClubNumber("HPSC-001");
-        request.setIdNumber("9001015800083");
-        request.setCellphoneNumber("0821234567");
-        request.setPaidUpSapsa(true);
-        request.setPaidUpClub(true);
-        request.setIsVerified(true);
-        request.setEmailAddresses(List.of("jane.doe@example.com"));
-
-        Competitor competitor = new Competitor();
-
-        // Act
-        ipscCompetitorServiceImpl.applyFields(competitor, request);
-
-        // Assert
-        assertEquals("Jane", competitor.getFirstName());
-        assertEquals("Doe", competitor.getLastName());
-        assertEquals("Ann", competitor.getMiddleNames());
-        assertEquals("Janie", competitor.getNickName());
-        assertEquals(LocalDate.of(1990, 1, 1), competitor.getDateOfBirth());
-        assertEquals(Gender.Female, competitor.getGender());
-        assertSame(club, competitor.getHomeClub());
-        assertEquals(12345, competitor.getSapsaNumber());
-        assertEquals(7001, competitor.getCompetitorNumber());
-        assertEquals("HPSC-001", competitor.getClubNumber());
-        assertEquals("9001015800083", competitor.getIdNumber());
-        assertEquals("0821234567", competitor.getCellphoneNumber());
-        assertEquals(Boolean.TRUE, competitor.getPaidUpSapsa());
-        assertEquals(Boolean.TRUE, competitor.getPaidUpClub());
-        assertEquals(Boolean.TRUE, competitor.getIsVerified());
-        assertEquals(List.of("jane.doe@example.com"), competitor.getEmailAddresses());
-    }
-
-    @Test
-    void testApplyFields_whenNickNameIsNull_thenNickNameDefaultsToTheFirstName() {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        request.setFirstName("Jane");
-        request.setLastName("Doe");
-        Competitor competitor = new Competitor();
-
-        // Act
-        ipscCompetitorServiceImpl.applyFields(competitor, request);
-
-        // Assert
-        assertEquals("Jane", competitor.getNickName());
-    }
-
-    @Test
-    void testApplyFields_whenNickNameIsEmptyOrBlank_thenNickNameDefaultsToTheFirstName() {
-        // Arrange
-        CompetitorRequest emptyNickName = new CompetitorRequest();
-        emptyNickName.setFirstName("Jane");
-        emptyNickName.setLastName("Doe");
-        emptyNickName.setNickName("");
-        CompetitorRequest blankNickName = new CompetitorRequest();
-        blankNickName.setFirstName("John");
-        blankNickName.setLastName("Doe");
-        blankNickName.setNickName("   ");
-        Competitor first = new Competitor();
-        Competitor second = new Competitor();
-
-        // Act
-        ipscCompetitorServiceImpl.applyFields(first, emptyNickName);
-        ipscCompetitorServiceImpl.applyFields(second, blankNickName);
-
-        // Assert
-        assertEquals("Jane", first.getNickName());
-        assertEquals("John", second.getNickName());
-    }
-
-    @Test
-    void testApplyFields_whenNickNameIsNull_thenReplacesAnExistingNickName() {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        request.setFirstName("Jane");
-        request.setLastName("Doe");
-        Competitor competitor = new Competitor();
-        competitor.setNickName("Janie");
-
-        // Act
-        ipscCompetitorServiceImpl.applyFields(competitor, request);
-
-        // Assert
-        assertEquals("Jane", competitor.getNickName());
-    }
-
-    @Test
-    void testApplyFields_whenNickNameIsSupplied_thenKeepsItInsteadOfTheFirstName() {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        request.setFirstName("Jane");
-        request.setLastName("Doe");
-        request.setNickName("Janie");
-        Competitor competitor = new Competitor();
-
-        // Act
-        ipscCompetitorServiceImpl.applyFields(competitor, request);
-
-        // Assert
-        assertEquals("Janie", competitor.getNickName());
-    }
-
-    @Test
-    void testApplyFields_whenPaidUpFlagsAreNull_thenCompetitorPaidUpFlagsAreNull() {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        request.setFirstName("Jane");
-        request.setLastName("Doe");
-        Competitor competitor = new Competitor();
-        competitor.setPaidUpSapsa(true);
-        competitor.setPaidUpClub(true);
-        competitor.setIsVerified(true);
-
-        // Act
-        ipscCompetitorServiceImpl.applyFields(competitor, request);
-
-        // Assert
-        assertNull(competitor.getPaidUpSapsa());
-        assertNull(competitor.getPaidUpClub());
-        assertNull(competitor.getIsVerified());
-    }
-
-    @Test
-    void testApplyFields_whenEmailAddressesIsNull_thenCompetitorEmailAddressesIsEmpty() {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        request.setFirstName("Jane");
-        request.setLastName("Doe");
-        Competitor competitor = new Competitor();
-
-        // Act
-        ipscCompetitorServiceImpl.applyFields(competitor, request);
-
-        // Assert
-        assertEquals(List.of(), competitor.getEmailAddresses());
-    }
-
-    @Test
-    void testApplyFields_whenMultipleEmailAddresses_thenCompetitorHasAllOfThem() {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        request.setFirstName("Jane");
-        request.setLastName("Doe");
-        request.setEmailAddresses(List.of("jane.doe@example.com", "jane2.doe@example.com"));
-        Competitor competitor = new Competitor();
-
-        // Act
-        ipscCompetitorServiceImpl.applyFields(competitor, request);
-
-        // Assert
-        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), competitor.getEmailAddresses());
-    }
-
-    @Test
-    void testApplyFields_whenHomeClubIsBlank_thenHomeClubAndClubNumberAreNull() {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        request.setFirstName("Jane");
-        request.setLastName("Doe");
-        request.setHomeClub("  ");
-        request.setClubNumber("HPSC-001");
-        Competitor competitor = new Competitor();
-
-        // Act
-        ipscCompetitorServiceImpl.applyFields(competitor, request);
-
-        // Assert
-        assertNull(competitor.getHomeClub());
-        assertNull(competitor.getClubNumber());
-        verifyNoInteractions(clubRepository);
-    }
-
-    @Test
-    void testApplyFields_whenGenderIsUnrecognised_thenThrowsValidationException() {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        request.setFirstName("Jane");
-        request.setLastName("Doe");
-        request.setGender("Not A Gender");
-
-        // Act & Assert
-        assertThrows(ValidationException.class,
-                () -> ipscCompetitorServiceImpl.applyFields(new Competitor(), request));
-    }
 
     // findCompetitorOrThrow()
     @Test
@@ -282,89 +70,6 @@ class IpscCompetitorServiceImplTest {
 
         // Assert
         assertSame(competitor, found);
-    }
-
-    // isMemberOfHomeClub()
-    @Test
-    void testIsMemberOfHomeClub_whenClubIsNull_thenReturnsFalse() {
-        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(null));
-    }
-
-    @Test
-    void testIsMemberOfHomeClub_whenClubHasNoIdentifier_thenReturnsFalse() {
-        // Arrange - shouldn't occur via a real persisted Club, whose identifier column is non-null
-        Club club = new Club();
-
-        // Act & Assert
-        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(club));
-    }
-
-    @Test
-    void testIsMemberOfHomeClub_whenClubIdentifierDoesNotMatch_thenReturnsFalse() {
-        // Arrange
-        Club club = new Club();
-        club.setIdentifier(ClubIdentifier.SOSC);
-
-        // Act & Assert
-        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(club));
-    }
-
-    @Test
-    void testIsMemberOfHomeClub_whenClubIdentifierMatches_thenReturnsTrue() {
-        // Arrange
-        Club club = new Club();
-        club.setIdentifier(ClubIdentifier.HPSC);
-
-        // Act & Assert
-        assertTrue(ipscCompetitorServiceImpl.isMemberOfHomeClub(club));
-    }
-
-    // isMemberOfHomeClub(Club, ClubIdentifier)
-    @Test
-    void testIsMemberOfHomeClubWithIdentifier_whenClubHasThatIdentifier_thenReturnsTrue() {
-        // Arrange
-        Club club = new Club();
-        club.setIdentifier(ClubIdentifier.SOSC);
-
-        // Act & Assert
-        assertTrue(ipscCompetitorServiceImpl.isMemberOfHomeClub(club, ClubIdentifier.SOSC));
-    }
-
-    @Test
-    void testIsMemberOfHomeClubWithIdentifier_whenClubHasDifferentIdentifier_thenReturnsFalse() {
-        // Arrange - the default home club is no longer special once another is passed in
-        Club club = new Club();
-        club.setIdentifier(ClubIdentifier.HPSC);
-
-        // Act & Assert
-        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(club, ClubIdentifier.SOSC));
-    }
-
-    @Test
-    void testIsMemberOfHomeClubWithIdentifier_whenIdentifierIsNull_thenReturnsFalse() {
-        // Arrange
-        Club club = new Club();
-        club.setIdentifier(ClubIdentifier.HPSC);
-
-        // Act & Assert
-        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(club, null));
-    }
-
-    @Test
-    void testIsMemberOfHomeClubWithIdentifier_whenClubIsNull_thenReturnsFalse() {
-        // Act & Assert
-        assertFalse(ipscCompetitorServiceImpl.isMemberOfHomeClub(null, ClubIdentifier.HPSC));
-    }
-
-    @Test
-    void testIsMemberOfHomeClub_whenNoIdentifierIsGiven_thenDefaultsToTheHomeClubIdentifier() {
-        // Arrange
-        Club club = new Club();
-        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
-
-        // Act & Assert
-        assertTrue(ipscCompetitorServiceImpl.isMemberOfHomeClub(club));
-        assertEquals(ClubIdentifier.HPSC, IpscConstants.HOME_CLUB_IDENTIFIER);
     }
 
     // newCompetitor()
@@ -726,183 +431,6 @@ class IpscCompetitorServiceImplTest {
     void testReadCompetitors_whenCsvDataIsNull_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.readCompetitors(null));
-    }
-
-    // resolveClubNumber()
-    @Test
-    void testResolveClubNumber_whenHomeClubIsNull_thenReturnsNull() {
-        assertNull(ipscCompetitorServiceImpl.resolveClubNumber(null, "HPSC-001"));
-    }
-
-    @Test
-    void testResolveClubNumber_whenHomeClubIsNotHpsc_thenReturnsNull() {
-        // Arrange
-        Club club = new Club();
-        club.setIdentifier(ClubIdentifier.SOSC);
-
-        // Act & Assert
-        assertNull(ipscCompetitorServiceImpl.resolveClubNumber(club, "HPSC-001"));
-    }
-
-    @Test
-    void testResolveClubNumber_whenHomeClubIsHpscAndClubNumberIsNull_thenThrowsValidationException() {
-        // Arrange
-        Club club = new Club();
-        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.resolveClubNumber(club, null));
-    }
-
-    @Test
-    void testResolveClubNumber_whenHomeClubIsHpscAndClubNumberIsBlank_thenThrowsValidationException() {
-        // Arrange
-        Club club = new Club();
-        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.resolveClubNumber(club, "  "));
-    }
-
-    @Test
-    void testResolveClubNumber_whenHomeClubIsHpscAndClubNumberIsValid_thenReturnsClubNumber() {
-        // Arrange
-        Club club = new Club();
-        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
-
-        // Act & Assert
-        assertEquals("HPSC-001", ipscCompetitorServiceImpl.resolveClubNumber(club, "HPSC-001"));
-    }
-
-    // resolveGender()
-    @Test
-    void testResolveGender_whenGenderIsNull_thenReturnsNull() {
-        assertNull(ipscCompetitorServiceImpl.resolveGender(null));
-    }
-
-    @Test
-    void testResolveGender_whenGenderIsBlank_thenReturnsNull() {
-        assertNull(ipscCompetitorServiceImpl.resolveGender("  "));
-    }
-
-    @Test
-    void testResolveGender_whenGenderIsUnrecognised_thenThrowsValidationException() {
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.resolveGender("Not A Gender"));
-    }
-
-    @Test
-    void testResolveGender_whenGenderIsValid_thenReturnsMatchingGender() {
-        assertEquals(Gender.Female, ipscCompetitorServiceImpl.resolveGender(Gender.Female.toString()));
-    }
-
-    // resolveHomeClub()
-    @Test
-    void testResolveHomeClub_whenClubNameIsNull_thenReturnsNull() {
-        assertNull(ipscCompetitorServiceImpl.resolveHomeClub(null));
-        verifyNoInteractions(clubRepository);
-    }
-
-    @Test
-    void testResolveHomeClub_whenClubNameIsBlank_thenReturnsNull() {
-        assertNull(ipscCompetitorServiceImpl.resolveHomeClub("  "));
-        verifyNoInteractions(clubRepository);
-    }
-
-    @Test
-    void testResolveHomeClub_whenClubNameMatchesNeitherNameNorAbbreviation_thenThrowsNonFatalException() {
-        // Arrange
-        when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
-        when(clubRepository.findByAbbreviation("No Such Club")).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscCompetitorServiceImpl.resolveHomeClub("No Such Club"));
-    }
-
-    @Test
-    void testResolveHomeClub_whenClubNameMatchesExistingClub_thenReturnsClub() {
-        // Arrange
-        Club club = new Club();
-        club.setId(10L);
-        club.setName("Test Club");
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
-
-        // Act
-        Club resolved = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.resolveHomeClub("Test Club"));
-
-        // Assert
-        assertSame(club, resolved);
-        verify(clubRepository, never()).findByAbbreviation(anyString());
-    }
-
-    @Test
-    void testResolveHomeClub_whenClubNameMatchesOnlyAnAbbreviation_thenReturnsClub() {
-        // Arrange
-        Club club = new Club();
-        club.setId(10L);
-        club.setName("Test Club");
-        when(clubRepository.findByName("TC")).thenReturn(Optional.empty());
-        when(clubRepository.findByAbbreviation("TC")).thenReturn(Optional.of(club));
-
-        // Act
-        Club resolved = assertDoesNotThrow(() -> ipscCompetitorServiceImpl.resolveHomeClub("TC"));
-
-        // Assert
-        assertSame(club, resolved);
-    }
-
-    // parseCompetitorNumber()
-    @Test
-    void testParseCompetitorNumber_whenNumberHasSurroundingSpaces_thenReturnsTheWholeNumber() {
-        assertEquals(123, ipscCompetitorServiceImpl.parseCompetitorNumber(" 123 "));
-    }
-
-    @Test
-    void testParseCompetitorNumber_whenNullOrBlank_thenReturnsNull() {
-        assertNull(ipscCompetitorServiceImpl.parseCompetitorNumber(null));
-        assertNull(ipscCompetitorServiceImpl.parseCompetitorNumber("  "));
-    }
-
-    @Test
-    void testParseCompetitorNumber_whenNotAWholeNumber_thenThrowsValidationException() {
-        assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.parseCompetitorNumber("C-1"));
-        assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.parseCompetitorNumber("12.5"));
-    }
-
-    // resolveCompetitorNumber()
-    @Test
-    void testResolveCompetitorNumber_whenBothAreNull_thenReturnsNull() {
-        assertNull(ipscCompetitorServiceImpl.resolveCompetitorNumber(null, null));
-    }
-
-    @Test
-    void testResolveCompetitorNumber_whenOnlyCompetitorNumberIsSupplied_thenReturnsCompetitorNumber() {
-        assertEquals(123, ipscCompetitorServiceImpl.resolveCompetitorNumber("123", null));
-    }
-
-    @Test
-    void testResolveCompetitorNumber_whenOnlySapsaNumberIsSupplied_thenReturnsSapsaNumber() {
-        assertEquals(4567, ipscCompetitorServiceImpl.resolveCompetitorNumber(null, 4567));
-    }
-
-    @Test
-    void testResolveCompetitorNumber_whenBothAreSupplied_thenCompetitorNumberTakesPrecedence() {
-        assertEquals(123, ipscCompetitorServiceImpl.resolveCompetitorNumber("123", 4567));
-    }
-
-    @Test
-    void testResolveCompetitorNumber_whenCompetitorNumberIsBlank_thenFallsBackToSapsaNumber() {
-        assertEquals(4567, ipscCompetitorServiceImpl.resolveCompetitorNumber("  ", 4567));
-    }
-
-    @Test
-    void testResolveCompetitorNumber_whenCompetitorNumberIsBlankAndSapsaNumberIsNull_thenReturnsNull() {
-        assertNull(ipscCompetitorServiceImpl.resolveCompetitorNumber("  ", null));
-    }
-
-    @Test
-    void testResolveCompetitorNumber_whenCompetitorNumberIsNotAWholeNumber_thenThrowsValidationException() {
-        assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.resolveCompetitorNumber("C-1", 4567));
     }
 
     // toResponse()

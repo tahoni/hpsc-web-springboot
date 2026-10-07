@@ -1,6 +1,7 @@
 package za.co.hpsc.web.utils;
 
 import org.apache.commons.text.WordUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public final class StringUtil {
      * @return the string representation of the object, or null if the input object is null.
      * @since 4.1.0
      */
-    public static String toString(Object object) {
+    public static @Nullable String toString(Object object) {
         if (object == null) {
             return null;
         }
@@ -74,7 +75,7 @@ public final class StringUtil {
      * @return the proper-cased string, or null if {@code value} is null.
      * @since 8.12.0
      */
-    public static String toProperCase(String value) {
+    public static @Nullable String toProperCase(String value) {
         if (value == null) {
             return null;
         }
