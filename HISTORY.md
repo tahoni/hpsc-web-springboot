@@ -35,7 +35,12 @@ evolution of architecture, features and design philosophy across all versions.
   very start of the name, `WHITESPACE` matches only a run of two or more whitespace characters, possessively, and
   `MC_PREFIX` tests the start of the word with `lookingAt()` and a fixed pattern
 - The `AwardServiceImpl.mapAwards` null error said "Image request list", copied from the image service, and now says
-  "Award request list"
+  "Award request list", and its parameter drops a `@NonNull` that its own null check contradicted
+- `ImageResponse.setMimeType` resets a blank MIME type that cannot be inferred from the file name to an empty string,
+  as a null one already was
+- The archived versions 1.0.0 – 7.4.1 move from `documentation/history/` to `documentation/archive/v1-v7/`, and
+  `ARCHIVE.md` moves to `documentation/legacy/`, with the links in the documentation and the `prep-version-release`
+  skill updated
 - Scoped as `v13.2.0` **MINOR**: the club-number stage is an addition, nothing is backward-incompatible and no migration
   is needed
 - No improvement plan gaps are closed or progressed: 35 stay closed, #6, #26 and #38 stay partially completed and #39
@@ -881,7 +886,7 @@ evolution of architecture, features and design philosophy across all versions.
 - Project version bumped to 8.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 The entries for versions 1.0.0 to 7.4.1 are archived, unchanged, in
-[`documentation/history/HISTORY_v1-v7.md`](/documentation/history/HISTORY_v1-v7.md).
+[`documentation/archive/v1-v7/HISTORY_v1-v7.md`](/documentation/archive/v1-v7/HISTORY_v1-v7.md).
 
 ---
 
@@ -898,7 +903,7 @@ manageable size, since that narrative alone had grown to roughly half of it. See
 ## 🎯 Major Milestones
 
 Milestones 1 to 18 (versions 1.0.0 to 7.4.1) are archived, unchanged, in
-[`documentation/history/HISTORY_v1-v7.md`](/documentation/history/HISTORY_v1-v7.md).
+[`documentation/archive/v1-v7/HISTORY_v1-v7.md`](/documentation/archive/v1-v7/HISTORY_v1-v7.md).
 
 ---
 
@@ -1321,14 +1326,15 @@ stored values to match.
 - A numeric club number now finds its competitor ahead of a competitor number with the same value
 - The competitor name patterns are possessive or fixed, so none of them backtracks, and a leading position may be any
   number of digits
-- The award list's null error now names the right request list
+- The award list's null error now names the right request list, and a blank image MIME type is reset to an empty string
+- The archived v1 – v7 history moves to `documentation/archive/v1-v7/`
 
 ---
 
 ## 🏛️ Architectural Evolution
 
 The entries for versions 1.0.0 to 7.2.0 are archived, unchanged, in
-[`documentation/history/HISTORY_v1-v7.md`](/documentation/history/HISTORY_v1-v7.md).
+[`documentation/archive/v1-v7/HISTORY_v1-v7.md`](/documentation/archive/v1-v7/HISTORY_v1-v7.md).
 
 ---
 
@@ -2032,7 +2038,7 @@ MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
 Based on the evolution to v13.2.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
-[`documentation/history/HISTORY_v1-v7.md`](/documentation/history/HISTORY_v1-v7.md).
+[`documentation/archive/v1-v7/HISTORY_v1-v7.md`](/documentation/archive/v1-v7/HISTORY_v1-v7.md).
 
 ### Previously Completed (v8.0.0)
 
@@ -2171,7 +2177,7 @@ The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived,
 ### Previously Completed (v8.6.1)
 
 - `HISTORY.md`'s Evolution Overview split out into `documentation/EVOLUTION_OVERVIEW.md`
-- All 52 archived release notes/PR descriptions regrouped into `documentation/history/v1/`–`v8/` by major version,
+- All 52 archived release notes/PR descriptions regrouped into `documentation/archive/v1-v7/v1`–`v8/` by major version,
   with `AGENTS.md`, `README.md` and the affected skills updated to the new paths
 - Scoped as a **PATCH**, since the whole diff proved documentation/tooling-only
 - Project version bumped to 8.6.1 in `pom.xml` and the `@OpenAPIDefinition` annotation

@@ -9,9 +9,9 @@
 **Club Number Matching & Backtracking-Free Name Patterns**
 
 Version 13.2.0 is a minor release. A competitor is now looked up by club number first, before the number is
-converted to an integer, the regular expressions that clean a competitor's name no longer backtrack, and a misleading
-error message in the award service is corrected. No database migration runs and no existing request is rejected that
-was accepted before.
+converted to an integer. The regular expressions that clean a competitor's name no longer backtrack. A misleading
+error message in the award service is also corrected. No database migration runs and no existing request is rejected
+that was accepted before.
 
 ---
 
@@ -20,7 +20,7 @@ was accepted before.
 ### 🔎 Club Number First
 
 - `EntityIpscCompetitorServiceImpl.findCompetitor` matches the trimmed competitor number as a club number with
-  `CompetitorRepository.findByClubNumber` before anything else, and returns that competitor at once
+  `CompetitorRepository.findByClubNumber` before anything else and returns that competitor at once
 - The competitor number, ID number and name lookups follow only when no club number matches, so a numeric club number
   now wins over a competitor number with the same value
 
@@ -50,6 +50,9 @@ was accepted before.
   position is any number of digits at the start of the name, and a single tab or newline between words is no longer
   turned into a space
 - `CompetitorHelpers.MC_PREFIX` is tested only at the start of the word with `lookingAt()`; its behaviour is unchanged
+- `AwardServiceImpl.mapAwards` drops a `@NonNull` on its parameter that its own null check contradicted
+- The archived versions 1.0.0 – 7.4.1 move from `documentation/history/` to `documentation/archive/v1-v7/`, and
+  `ARCHIVE.md` moves to `documentation/legacy/`; the documentation links follow
 
 ### Fixed
 
@@ -68,8 +71,8 @@ long run of digits, such as `123-John`, now has the digits removed as a position
 
 ## 📊 Statistics
 
-- **Files Changed:** 16 against `main`, including this release's notes and PR description; 440
-  insertions and 78 deletions
+- **Files Changed:** 53 against `main`, including this release's notes and PR description; 868
+  insertions and 471 deletions
 - **New Source Files:** 0
 - **Renamed Source Files:** 0
 - **Deleted Source Files:** 0

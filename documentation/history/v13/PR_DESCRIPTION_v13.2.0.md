@@ -18,6 +18,8 @@
 - A leading position is any number of digits at the start of the name, and a single tab or newline between words is no
   longer turned into a space
 - `MC_PREFIX` uses `lookingAt()` with a fixed-length pattern; behaviour is unchanged
+- `AwardServiceImpl.mapAwards` drops a `@NonNull` on its parameter that its own null check contradicted
+- Archived versions 1.0.0 – 7.4.1 move to `documentation/archive/v1-v7/` and `ARCHIVE.md` to `documentation/legacy/`
 - Version bumped to 13.2.0 in `pom.xml` and `@OpenAPIDefinition`
 
 **Fixed**

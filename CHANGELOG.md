@@ -78,6 +78,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorHelpers.MC_PREFIX`:** Tests only the start of the word with `lookingAt()`, so the pattern is a fixed
   four-step match with no trailing `.*`; no change in behaviour
 
+##### Services
+
+- **`AwardServiceImpl.mapAwards`:** Dropped `@NonNull` from the `awardRequestList` parameter, as the method checks for
+  null itself and throws a `ValidationException`; no change in behaviour
+
 ##### Documentation
 
 - **Archived versions 1.0.0 – 7.4.1:** Moved `CHANGELOG_v1-v7.md`, `HISTORY_v1-v7.md`, `EVOLUTION_OVERVIEW_v1-v7.md` and

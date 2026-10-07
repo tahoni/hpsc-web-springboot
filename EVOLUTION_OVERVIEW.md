@@ -14,7 +14,7 @@ The HPSC Website Backend project has evolved through distinct phases, each addre
 requirements:
 
 Phases 1 to 18 (versions 1.0.0 to 7.4.1) are archived, unchanged, in
-[`documentation/history/EVOLUTION_OVERVIEW_v1-v7.md`](/documentation/history/EVOLUTION_OVERVIEW_v1-v7.md).
+[`documentation/archive/v1-v7/EVOLUTION_OVERVIEW_v1-v7.md`](/documentation/archive/v1-v7/EVOLUTION_OVERVIEW_v1-v7.md).
 
 ---
 
@@ -1850,8 +1850,16 @@ rules.
 **Error Message**
 
 - The null-list error in `AwardServiceImpl.mapAwards` said "Image request list", copied from the image service, and now
-  says "Award request list"; the test asserts the message
+  says "Award request list"; the test asserts the message, and the parameter drops a `@NonNull` that its own null check
+  contradicted
+- `ImageResponse.setMimeType` resets a blank MIME type that cannot be inferred from the file name to an empty string
 - Improvement plan unchanged: 35 gaps closed, #6, #26 and #38 partially completed and #39 open
+
+**Documentation**
+
+- The archived versions 1.0.0 – 7.4.1 move from `documentation/history/` to `documentation/archive/v1-v7/`, and
+  `ARCHIVE.md` moves to `documentation/legacy/`, with the links in the documentation and the `prep-version-release`
+  skill updated
 
 **Build & Metadata**
 
