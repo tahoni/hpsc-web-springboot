@@ -43,6 +43,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### Enums
+
+- **`Division`:** **Breaking:** dropped the trailing " Division" from each division's name (for example "Open" instead of
+  "Open Division"), so divisions are matched by their short names; a trailing " Division" on a name being looked up is still
+  accepted, so stored and imported values in the old form keep resolving
+
+##### Helpers
+
+- **`CompetitorHelpers.cleanCompetitorName`:** Now removes every leading position prefix, not only the first
+
 ##### Mappers
 
 - **`CompetitorMapper.resolveHomeClub`:** **Breaking:** now resolves a competitor's home club through

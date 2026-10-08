@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 
@@ -22,40 +23,43 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
 @Getter
 public enum Division {
     // Handgun Divisions
-    OPEN("Open Division", FirearmType.HANDGUN),
-    STANDARD("Standard Division", FirearmType.HANDGUN),
-    MODIFIED("Modified Division", FirearmType.HANDGUN),
-    CLASSIC("Classic Division", FirearmType.HANDGUN),
-    PRODUCTION("Production Division", FirearmType.HANDGUN),
-    PRODUCTION_OPTICS("Production Optics Division", FirearmType.HANDGUN),
-    PRODUCTION_OPTICS_LIGHT("Production Optics Light Division", FirearmType.HANDGUN),
-    OPTICS("Optics Division", FirearmType.HANDGUN),
-    REVOLVER("Revolver Division", FirearmType.HANDGUN),
+    OPEN("Open", FirearmType.HANDGUN),
+    STANDARD("Standard", FirearmType.HANDGUN),
+    MODIFIED("Modified", FirearmType.HANDGUN),
+    CLASSIC("Classic", FirearmType.HANDGUN),
+    PRODUCTION("Production", FirearmType.HANDGUN),
+    PRODUCTION_OPTICS("Production Optics", FirearmType.HANDGUN),
+    PRODUCTION_OPTICS_LIGHT("Production Optics Light", FirearmType.HANDGUN),
+    OPTICS("Optics", FirearmType.HANDGUN),
+    REVOLVER("Revolver", FirearmType.HANDGUN),
 
     // Rifle Divisions
-    RIFLE_SEMI_AUTO_OPEN("Rifle Open Division", FirearmType.RIFLE),
-    RIFLE_SEMI_AUTO_STANDARD("Rifle Standard Division", FirearmType.RIFLE),
-    RIFLE_STANDARD_MANUAL("Rifle Standard Manual Division", FirearmType.RIFLE),
+    RIFLE_SEMI_AUTO_OPEN("Rifle Open", FirearmType.RIFLE),
+    RIFLE_SEMI_AUTO_STANDARD("Rifle Standard", FirearmType.RIFLE),
+    RIFLE_STANDARD_MANUAL("Rifle Standard Manual", FirearmType.RIFLE),
 
     // Shotgun Divisions
-    SHOTGUN_OPEN("Shotgun Open Division", FirearmType.SHOTGUN),
-    SHOTGUN_MODIFIED("Shotgun Modified Division", FirearmType.SHOTGUN),
-    SHOTGUN_STANDARD("Shotgun Semi Division", FirearmType.SHOTGUN),
-    SHOTGUN_STANDARD_MANUAL("Shotgun Standard Manual Division", FirearmType.SHOTGUN),
+    SHOTGUN_OPEN("Shotgun Open", FirearmType.SHOTGUN),
+    SHOTGUN_MODIFIED("Shotgun Modified", FirearmType.SHOTGUN),
+    SHOTGUN_STANDARD("Shotgun Semi", FirearmType.SHOTGUN),
+    SHOTGUN_STANDARD_MANUAL("Shotgun Standard Manual", FirearmType.SHOTGUN),
 
     // PCC Divisions
-    PCC_OPTICS("PCC Optic Division", FirearmType.PCC),
-    PCC_IRON("PCC Iron Division", FirearmType.PCC),
+    PCC_OPTICS("PCC Optic", FirearmType.PCC),
+    PCC_IRON("PCC Iron", FirearmType.PCC),
 
     // .22 Divisions
-    OPEN_22(".22 Open Division", FirearmType.HANDGUN_22),
-    STANDARD_22(".22 Standard Division", FirearmType.HANDGUN_22),
-    CLASSIC_22(".22 Classic Division", FirearmType.HANDGUN_22),
-    OPTICS_22(".22 Optics Division", FirearmType.HANDGUN_22),
+    OPEN_22(".22 Open", FirearmType.HANDGUN_22),
+    STANDARD_22(".22 Standard", FirearmType.HANDGUN_22),
+    CLASSIC_22(".22 Classic", FirearmType.HANDGUN_22),
+    OPTICS_22(".22 Optics", FirearmType.HANDGUN_22),
 
     // Mini Rifle Divisions
-    MINI_RIFLE_OPEN("Mini Rifle Open Division", FirearmType.MINI_RIFLE),
-    MINI_RIFLE_STANDARD("Mini Rifle Standard Division", FirearmType.MINI_RIFLE);
+    MINI_RIFLE_OPEN("Mini Rifle Open", FirearmType.MINI_RIFLE),
+    MINI_RIFLE_STANDARD("Mini Rifle Standard", FirearmType.MINI_RIFLE);
+
+    /** The " Division" suffix that division names used to carry, still accepted when looking a division up. */
+    private static final Pattern LEGACY_SUFFIX = Pattern.compile("(?i)\s+division$");
 
     private final String name;
     private final FirearmType firearmType;
@@ -70,7 +74,8 @@ public enum Division {
      *
      * <p>
      * The method performs a case-insensitive match to find a division with the given name.
-     * If no match is found or the input is null/blank, an empty {@code Optional} is returned.
+     * A trailing {@code " Division"} on the name is ignored, so the legacy form (e.g. {@code "Open Division"}) still
+     * matches. If no match is found or the input is null/blank, an empty {@code Optional} is returned.
      * </p>
      *
      * @param name the name of the division to search for.
@@ -84,8 +89,9 @@ public enum Division {
             return Optional.empty();
         }
 
+        String trimmedName = LEGACY_SUFFIX.matcher(name.trim()).replaceFirst("");
         return Arrays.stream(Division.values())
-                .filter(division -> division.isNameMatch(name))
+                .filter(division -> division.isNameMatch(trimmedName))
                 .findFirst();
     }
 

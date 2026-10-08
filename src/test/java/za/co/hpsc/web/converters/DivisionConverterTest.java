@@ -17,7 +17,7 @@ class DivisionConverterTest {
         String databaseValue = converter.convertToDatabaseColumn(Division.PRODUCTION_OPTICS);
 
         // Assert
-        assertEquals("Production Optics Division", databaseValue);
+        assertEquals("Production Optics", databaseValue);
     }
 
     @Test

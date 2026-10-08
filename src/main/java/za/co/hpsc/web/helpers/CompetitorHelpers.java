@@ -60,7 +60,7 @@ public final class CompetitorHelpers {
             return "";
         }
 
-        String name = POSITION_PREFIX.matcher(competitorName).replaceFirst("");
+        String name = POSITION_PREFIX.matcher(competitorName).replaceAll("");
         name = RANGE_OFFICER_MARKER.matcher(name).replaceAll(" ");
         name = name.replace(".", "");
         return WHITESPACE.matcher(name).replaceAll(" ").trim();
