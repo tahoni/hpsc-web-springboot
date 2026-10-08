@@ -349,6 +349,85 @@ class MatchCompetitorMapperTest {
     }
 
     @Test
+    void testApplyPatchFields_whenEntityHasNeitherFirearmTypeNorDivisionAndNeitherIsPatched_thenLeavesThemNull() {
+        // Arrange
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setPoints(new BigDecimal("50"));
+
+        // Act
+        matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(new BigDecimal("50"), matchCompetitor.getPoints());
+        assertNull(matchCompetitor.getFirearmType());
+        assertNull(matchCompetitor.getDivision());
+    }
+
+    @Test
+    void testApplyPatchFields_whenEntityHasDivisionButNoFirearmTypeAndNeitherIsPatched_thenLeavesFirearmTypeNull() {
+        // Arrange
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.setDivision(Division.PRODUCTION);
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setPoints(new BigDecimal("50"));
+
+        // Act
+        matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
+
+        // Assert
+        assertNull(matchCompetitor.getFirearmType());
+        assertEquals(Division.PRODUCTION, matchCompetitor.getDivision());
+    }
+
+    @Test
+    void testApplyPatchFields_whenEntityHasNoFirearmTypeAndDivisionIsBlank_thenLeavesBothUnchanged() {
+        // Arrange
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setDivision("  ");
+
+        // Act
+        matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
+
+        // Assert
+        assertNull(matchCompetitor.getFirearmType());
+        assertNull(matchCompetitor.getDivision());
+    }
+
+    @Test
+    void testApplyPatchFields_whenFirearmTypeIsBlankAndDivisionIsPatchedOnEntityWithoutFirearmType_thenTakesItFromDivision() {
+        // Arrange
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.setDivision(Division.PRODUCTION);
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setFirearmType("  ");
+        request.setDivision("Rifle Open Division");
+
+        // Act
+        matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(Division.RIFLE_SEMI_AUTO_OPEN, matchCompetitor.getDivision());
+        assertEquals(FirearmType.RIFLE, matchCompetitor.getFirearmType());
+    }
+
+    @Test
+    void testApplyPatchFields_whenEntityHasFirearmTypeAndDivisionIsPatchedToSameFirearmType_thenKeepsFirearmType() {
+        // Arrange
+        MatchCompetitor matchCompetitor = existingMatchCompetitor();
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setDivision("Classic Division");
+
+        // Act
+        matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(Division.CLASSIC, matchCompetitor.getDivision());
+        assertEquals(FirearmType.HANDGUN, matchCompetitor.getFirearmType());
+    }
+
+    @Test
     void testApplyFields_whenFirearmTypeIsBlank_thenInitialisesFirearmTypeFromDivision() {
         // Arrange
         Competitor competitor = new Competitor();
@@ -371,6 +450,155 @@ class MatchCompetitorMapperTest {
 
         // Assert
         assertEquals(FirearmType.RIFLE, matchCompetitor.getFirearmType());
+    }
+
+    @Test
+    void testApplyFields_whenFirearmTypeIsNull_thenInitialisesFirearmTypeFromDivision() {
+        // Arrange
+        stubCompetitorAndMatch();
+        MatchCompetitorRequest request = requestWith(null, "Shotgun Open Division");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.applyFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(FirearmType.SHOTGUN, matchCompetitor.getFirearmType());
+        assertEquals(Division.SHOTGUN_OPEN, matchCompetitor.getDivision());
+    }
+
+    @Test
+    void testApplyFields_whenFirearmTypeIsUnrecognised_thenInitialisesFirearmTypeFromDivision() {
+        // Arrange
+        stubCompetitorAndMatch();
+        MatchCompetitorRequest request = requestWith("Nope", "PCC Iron Division");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.applyFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(FirearmType.PCC, matchCompetitor.getFirearmType());
+    }
+
+    @Test
+    void testApplyFields_whenFirearmTypeAndDivisionMatch_thenSetsBoth() {
+        // Arrange
+        stubCompetitorAndMatch();
+        MatchCompetitorRequest request = requestWith("Rifle", "Rifle Open Division");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.applyFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(FirearmType.RIFLE, matchCompetitor.getFirearmType());
+        assertEquals(Division.RIFLE_SEMI_AUTO_OPEN, matchCompetitor.getDivision());
+    }
+
+    @Test
+    void testApplyFields_whenDivisionDoesNotBelongToFirearmType_thenThrowsValidationException() {
+        // Arrange
+        stubCompetitorAndMatch();
+        MatchCompetitorRequest request = requestWith("Shotgun", "Rifle Open Division");
+
+        // Act & Assert
+        assertThrows(ValidationException.class,
+                () -> matchCompetitorMapper.applyFields(new MatchCompetitor(), request));
+    }
+
+    @Test
+    void testApplyFields_whenDivisionIsUnrecognised_thenThrowsValidationException() {
+        // Arrange
+        stubCompetitorAndMatch();
+        MatchCompetitorRequest request = requestWith("Rifle", "Not A Division");
+
+        // Act & Assert
+        assertThrows(ValidationException.class,
+                () -> matchCompetitorMapper.applyFields(new MatchCompetitor(), request));
+    }
+
+    @Test
+    void testApplyPatchFields_whenFirearmTypeIsUnrecognised_thenFallsBackToExistingDivisionFirearmType() {
+        // Arrange
+        MatchCompetitor matchCompetitor = existingMatchCompetitor();
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setFirearmType("Nope");
+
+        // Act
+        matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(FirearmType.HANDGUN, matchCompetitor.getFirearmType());
+        assertEquals(Division.PRODUCTION, matchCompetitor.getDivision());
+    }
+
+    @Test
+    void testApplyPatchFields_whenFirearmTypeIsUnrecognisedAndThereIsNoDivision_thenThrowsValidationException() {
+        // Arrange
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setFirearmType("Nope");
+
+        // Act & Assert
+        assertThrows(ValidationException.class,
+                () -> matchCompetitorMapper.applyPatchFields(new MatchCompetitor(), request));
+    }
+
+    @Test
+    void testApplyPatchFields_whenFirearmTypeIsUnrecognisedAndDivisionIsPatched_thenUsesPatchedDivisionFirearmType() {
+        // Arrange
+        MatchCompetitor matchCompetitor = existingMatchCompetitor();
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setFirearmType("Nope");
+        request.setDivision("Shotgun Open Division");
+
+        // Act
+        matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(FirearmType.SHOTGUN, matchCompetitor.getFirearmType());
+        assertEquals(Division.SHOTGUN_OPEN, matchCompetitor.getDivision());
+    }
+
+    @Test
+    void testApplyPatchFields_whenFirearmTypeMatchesExistingDivision_thenAcceptsIt() {
+        // Arrange
+        MatchCompetitor matchCompetitor = existingMatchCompetitor();
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setFirearmType("Handgun");
+
+        // Act
+        matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(FirearmType.HANDGUN, matchCompetitor.getFirearmType());
+    }
+
+    @Test
+    void testApplyPatchFields_whenDivisionBelongsToExistingFirearmType_thenAcceptsIt() {
+        // Arrange
+        MatchCompetitor matchCompetitor = existingMatchCompetitor();
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setDivision("Open Division");
+
+        // Act
+        matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(Division.OPEN, matchCompetitor.getDivision());
+        assertEquals(FirearmType.HANDGUN, matchCompetitor.getFirearmType());
+    }
+
+    @Test
+    void testApplyPatchFields_whenFirearmTypeAndDivisionDoNotMatch_thenThrowsValidationException() {
+        // Arrange
+        MatchCompetitor matchCompetitor = existingMatchCompetitor();
+        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
+        request.setFirearmType("Rifle");
+        request.setDivision("Shotgun Open Division");
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> matchCompetitorMapper.applyPatchFields(matchCompetitor, request));
     }
 
     // validateDivisionMatchesFirearmType()
@@ -513,8 +741,7 @@ class MatchCompetitorMapperTest {
     @Test
     void testResolveFirearmType_whenUnknownOrNullAndDivisionIsGiven_thenReturnsFirearmTypeOfDivision() {
         // Act & Assert
-        assertEquals(FirearmType.RIFLE,
-                matchCompetitorMapper.resolveFirearmType("Nope", Division.RIFLE_SEMI_AUTO_OPEN));
+        assertEquals(FirearmType.RIFLE, matchCompetitorMapper.resolveFirearmType("Nope", Division.RIFLE_STANDARD_MANUAL));
         assertEquals(FirearmType.PCC, matchCompetitorMapper.resolveFirearmType(null, Division.PCC_IRON));
     }
 
@@ -535,14 +762,13 @@ class MatchCompetitorMapperTest {
     @Test
     void testResolveMatchClub_whenCodeMatches_thenReturnsClub() {
         // Act & Assert
-        assertEquals(ClubIdentifier.HPSC, matchCompetitorMapper.resolveMatchClub(ClubIdentifier.HPSC.getCode()));
+        assertEquals(ClubIdentifier.HPSC, matchCompetitorMapper.resolveMatchClub("B HPSC"));
     }
 
     @Test
-    void testResolveMatchClub_whenOnlyNameMatches_thenThrowsValidationException() {
+    void testResolveMatchClub_whenNameMatches_thenReturnsClub() {
         // Act & Assert
-        assertThrows(ValidationException.class,
-                () -> matchCompetitorMapper.resolveMatchClub(ClubIdentifier.HPSC.getName()));
+        assertEquals(ClubIdentifier.HPSC, matchCompetitorMapper.resolveMatchClub("Hartbeespoortdam Practical Shooting Club"));
     }
 
     @Test
@@ -572,6 +798,26 @@ class MatchCompetitorMapperTest {
     }
 
     // Helpers
+    private void stubCompetitorAndMatch() {
+        Competitor competitor = new Competitor();
+        competitor.setId(1L);
+        IpscMatch match = new IpscMatch();
+        match.setId(2L);
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+    }
+
+    private MatchCompetitorRequest requestWith(String firearmType, String division) {
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorId(1L);
+        request.setMatchId(2L);
+        request.setCompetitorCategory("Lady");
+        request.setFirearmType(firearmType);
+        request.setDivision(division);
+        request.setPowerFactor("Minor");
+        return request;
+    }
+
     private MatchCompetitor existingMatchCompetitor() {
         Competitor competitor = new Competitor();
         competitor.setId(1L);

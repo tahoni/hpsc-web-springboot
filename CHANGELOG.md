@@ -57,8 +57,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   for the club lookup
 - **`MatchCompetitorMapper.resolveFirearmType`:** Now takes the competitor's `Division` and falls back to the
   division's firearm type when the firearm type name is unknown, instead of throwing
-- **`MatchCompetitorMapper.resolveMatchClub`:** **Breaking:** now matches a club by identifier code or abbreviation
-  only; a full club name is no longer accepted
+- **`MatchCompetitorMapper.resolveMatchClub`:** Now matches a club by name, abbreviation or identifier code, in that
+  order
 
 ##### Services
 
@@ -357,8 +357,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now reject a division that does not belong to the
   firearm type, through the new `validateDivisionMatchesFirearmType`; a patch that changes either one is checked against
   the other's current value
-- **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now take a missing firearm type from the division (a
-  blank request value in `applyFields`, or an entity with none after a patch)
+- **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now take a missing or unrecognised firearm type from the
+  division (`applyFields`, or `applyPatchFields` when the entity has none and the request patches the division)
 
 ##### Models
 

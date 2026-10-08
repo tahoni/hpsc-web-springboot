@@ -32,12 +32,6 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
 @Component
 public class MatchMapper {
     private final IpscEntityClubService ipscEntityClubService;
-
-    /**
-     * Creates the mapper.
-     *
-     * @param ipscEntityClubService the service used to resolve a club by abbreviation, name or identifier.
-     */
     public MatchMapper(IpscEntityClubService ipscEntityClubService) {
         this.ipscEntityClubService = ipscEntityClubService;
     }
