@@ -20,6 +20,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.mappers.MatchCompetitorMapper;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
+import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -61,7 +63,7 @@ class IpscMatchCompetitorServiceImplTest {
     private IpscEntityCompetitorService ipscEntityCompetitorService;
 
     @Spy
-    private final IpscEntityClubService ipscEntityClubService = new IpscEntityClubServiceImpl();
+    private final IpscEntityClubService ipscEntityClubService = new IpscEntityClubServiceImpl(mock(ClubRepository.class));
 
     private IpscMatchCompetitorServiceImpl matchCompetitorServiceImpl;
 
@@ -180,16 +182,16 @@ class IpscMatchCompetitorServiceImplTest {
     }
 
     @Test
-    void testIsForClub_whenRowClubMatchesByNameOrAbbreviation_thenReturnsTrue() {
+    void testIsForClub_whenRowClubMatchesByCodeOrAbbreviation_thenReturnsTrue() {
         // Arrange
         MatchCompetitorRequest byAbbreviation = new MatchCompetitorRequest();
         byAbbreviation.setMatchClub("HPSC");
-        MatchCompetitorRequest byName = new MatchCompetitorRequest();
-        byName.setMatchClub(ClubIdentifier.HPSC.getName());
+        MatchCompetitorRequest byCode = new MatchCompetitorRequest();
+        byCode.setMatchClub(ClubIdentifier.HPSC.getCode());
 
         // Act & Assert
         assertTrue(matchCompetitorServiceImpl.isForClub(byAbbreviation, ClubIdentifier.HPSC));
-        assertTrue(matchCompetitorServiceImpl.isForClub(byName, ClubIdentifier.HPSC));
+        assertTrue(matchCompetitorServiceImpl.isForClub(byCode, ClubIdentifier.HPSC));
     }
 
     @Test

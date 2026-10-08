@@ -8,12 +8,11 @@ import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
-import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
-import za.co.hpsc.web.repositories.ClubRepository;
+import za.co.hpsc.web.services.IpscEntityClubService;
 
 import java.util.stream.Stream;
 
@@ -24,30 +23,38 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
  * values that need a lookup, such as the club, firearm type and match category, along the way.
  *
  * <p>
- * Kept out of the request classes because resolving a club needs the {@link ClubRepository}, which a request model
- * shouldn't depend on.
+ * Kept out of the request classes because resolving a club needs the {@link IpscEntityClubService}, which a request
+ * model shouldn't depend on.
  * </p>
+ *
+ * @see IpscEntityClubService
  */
 @Component
 public class MatchMapper {
-    private final ClubRepository clubRepository;
+    private final IpscEntityClubService ipscEntityClubService;
 
-    public MatchMapper(ClubRepository clubRepository) {
-        this.clubRepository = clubRepository;
+    /**
+     * Creates the mapper.
+     *
+     * @param ipscEntityClubService the service used to resolve a club by abbreviation, name or identifier.
+     */
+    public MatchMapper(IpscEntityClubService ipscEntityClubService) {
+        this.ipscEntityClubService = ipscEntityClubService;
     }
 
     /**
-     * Copies the match-level fields of a {@link MatchRequest} onto an {@link IpscMatch},
-     * resolving the named club in the process, defaulting to
-     * {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} when none is supplied.
+     * Copies the match-level fields of a {@link MatchRequest} onto an {@link IpscMatch}, resolving the named club,
+     * firearm type and match category in the process. A missing club defaults to
+     * {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} and a missing match category to
+     * {@link IpscConstants#DEFAULT_MATCH_CATEGORY}.
      *
      * @param match   the entity to populate; must not be null.
      * @param request the request carrying the field values; must not be null.
-     * @throws NonFatalException if the request's club name doesn't match an existing club, or no
-     *                           club exists for {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
-     * @throws FatalException    if {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
+     * @throws ValidationException if the request's club, firearm type or match category doesn't match a known one.
+     * @throws NonFatalException   if the request's club is a known club identifier but no club exists with it, or if
+     *                             no club exists for {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
      */
-    public void applyFields(@NonNull IpscMatch match, @NonNull MatchRequest request) throws FatalException {
+    public void applyFields(@NonNull IpscMatch match, @NonNull MatchRequest request) {
         match.setClub(resolveClub(request.getClub()));
         match.setName(request.getMatchName());
         match.setScheduledDate(request.getMatchDate().atStartOfDay());
@@ -61,16 +68,17 @@ public class MatchMapper {
     /**
      * Copies only the non-null fields of a {@link MatchPatchRequest} onto an {@link IpscMatch}, resolving the
      * named club, firearm type and match category in the process. Fields that are null in the request are left
-     * unchanged, so unlike {@link #applyFields} a missing club or match category isn't defaulted.
+     * unchanged, so unlike {@link #applyFields} a missing club or match category isn't defaulted. A club that is
+     * supplied but blank does resolve to {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
      *
      * @param match   the entity to patch; must not be null.
      * @param request the request carrying the field values; must not be null.
-     * @throws NonFatalException   if the request's club name doesn't match an existing club.
-     * @throws ValidationException if the request's firearm type or match category doesn't match a known one.
-     * @throws FatalException      if the club name is blank and
-     *                             {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
+     * @throws ValidationException if the request's club, firearm type or match category doesn't match a known one.
+     * @throws NonFatalException   if the request's club is a known club identifier but no club exists with it, or if
+     *                             the club is blank and no club exists for
+     *                             {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
      */
-    public void applyPatchFields(@NonNull IpscMatch match, @NonNull MatchPatchRequest request) throws FatalException {
+    public void applyPatchFields(@NonNull IpscMatch match, @NonNull MatchPatchRequest request) {
         if (request.getClub() != null) {
             match.setClub(resolveClub(request.getClub()));
         }
@@ -98,55 +106,50 @@ public class MatchMapper {
     }
 
     /**
-     * Resolves a club by name, defaulting to {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
-     * when none is supplied.
+     * Resolves a club by abbreviation, name, or club identifier code or abbreviation, defaulting to
+     * {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} when none is supplied.
      *
-     * @param clubName the club name to look up; may be null or blank, in which case the default
-     *                 match club identifier is resolved instead.
+     * <p>
+     * The lookup is delegated to {@link IpscEntityClubService#findByCodeOrAbbreviationWithDefault(String,
+     * ClubIdentifier)}, passing {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} as the default.
+     * </p>
+     *
+     * @param clubName the club abbreviation, name, or identifier code or abbreviation to look up; may be null or
+     *                 blank, in which case the club for {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is
+     *                 resolved instead.
      * @return the matching {@link Club}.
-     * @throws NonFatalException if {@code clubName} was supplied but doesn't match an existing
-     *                           club, or if no club exists for
-     *                           {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
-     * @throws FatalException    if {@code clubName} wasn't supplied and
-     *                           {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
+     * @throws ValidationException if {@code clubName} was supplied but matches no existing club and is not a known
+     *                             club identifier code or abbreviation.
+     * @throws NonFatalException   if {@code clubName} is a known club identifier but no club exists with it, or if
+     *                             {@code clubName} wasn't supplied and no club exists for
+     *                             {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
      */
-    public Club resolveClub(String clubName) throws FatalException {
-        return resolveClub(clubName, IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
+    public Club resolveClub(String clubName) {
+        return ipscEntityClubService.findByCodeOrAbbreviationWithDefault(clubName, IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
     }
 
     /**
-     * Resolves a club by name, defaulting to {@code defaultIdentifier} when none is supplied.
+     * Resolves a club by abbreviation, name, or club identifier code or abbreviation, defaulting to
+     * {@code defaultIdentifier} when none is supplied.
      *
      * <p>
-     * {@code defaultIdentifier} is taken as a parameter, rather than read directly from
-     * {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} in this method, purely so this check
-     * stays unit testable if that constant were ever null (which cannot happen with today's
-     * value, but which this method is deliberately written to guard against rather than
-     * silently mishandle).
+     * The lookup is delegated to {@link IpscEntityClubService#findByCodeOrAbbreviationWithDefault(String,
+     * ClubIdentifier)}. {@code defaultIdentifier} is taken as a parameter, rather than read directly from
+     * {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} in this method, so the default can be varied in tests.
      * </p>
      *
-     * @param clubName          the club name to look up; may be null or blank, in which case
-     *                          {@code defaultIdentifier} is resolved instead.
-     * @param defaultIdentifier the identifier to resolve when {@code clubName} isn't supplied;
-     *                          may be null.
+     * @param clubName          the club abbreviation, name, or identifier code or abbreviation to look up; may be
+     *                          null or blank, in which case {@code defaultIdentifier} is resolved instead.
+     * @param defaultIdentifier the identifier to resolve when {@code clubName} isn't supplied; may be null.
      * @return the matching {@link Club}.
-     * @throws NonFatalException if {@code clubName} was supplied but doesn't match an existing
-     *                           club, or if no club exists for {@code defaultIdentifier}.
-     * @throws FatalException    if {@code clubName} wasn't supplied and {@code defaultIdentifier}
-     *                           is null.
+     * @throws ValidationException if {@code clubName} was supplied but matches no existing club and is not a known
+     *                             club identifier code or abbreviation.
+     * @throws NonFatalException   if {@code clubName} is a known club identifier but no club exists with it, or if
+     *                             {@code clubName} wasn't supplied and {@code defaultIdentifier} is null or has no
+     *                             club.
      */
-    public Club resolveClub(String clubName, ClubIdentifier defaultIdentifier) throws FatalException {
-        if (!hasText(clubName)) {
-            if (defaultIdentifier == null) {
-                throw new FatalException("IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER is not configured.");
-            }
-
-            return clubRepository.findByIdentifier(defaultIdentifier)
-                    .orElseThrow(() -> new NonFatalException("No club found with identifier " + defaultIdentifier));
-        }
-
-        return clubRepository.findByName(clubName)
-                .orElseThrow(() -> new NonFatalException("No club found with name " + clubName));
+    public Club resolveClub(String clubName, ClubIdentifier defaultIdentifier) {
+        return ipscEntityClubService.findByCodeOrAbbreviationWithDefault(clubName, defaultIdentifier);
     }
 
     /**

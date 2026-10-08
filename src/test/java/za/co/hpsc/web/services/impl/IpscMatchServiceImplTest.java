@@ -17,6 +17,7 @@ import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
+import za.co.hpsc.web.services.IpscEntityClubService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -44,12 +45,15 @@ class IpscMatchServiceImplTest {
     @Mock
     private ClubRepository clubRepository;
 
+    @Mock
+    private IpscEntityClubService ipscEntityClubService;
+
     private IpscMatchServiceImpl ipscMatchServiceImpl;
 
     @BeforeEach
     void setUp() {
         ipscMatchServiceImpl = new IpscMatchServiceImpl(ipscMatchRepository, null, null, null,
-                new MatchMapper(clubRepository), null);
+                new MatchMapper(ipscEntityClubService), null);
     }
 
     // findMatchOrThrow()
@@ -82,7 +86,8 @@ class IpscMatchServiceImplTest {
         // Arrange
         Club club = new Club();
         club.setName("Test Club");
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
+        when(ipscEntityClubService.findByCodeOrAbbreviationWithDefault("Test Club", IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
+                .thenReturn(club);
 
         // Act
         IpscMatch match = assertDoesNotThrow(() -> ipscMatchServiceImpl.newMatch(validRequest("Test Club")));
@@ -101,7 +106,7 @@ class IpscMatchServiceImplTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscMatchServiceImpl.newMatch(request));
-        verifyNoInteractions(clubRepository);
+        verifyNoInteractions(ipscEntityClubService);
     }
 
     // readMatches()

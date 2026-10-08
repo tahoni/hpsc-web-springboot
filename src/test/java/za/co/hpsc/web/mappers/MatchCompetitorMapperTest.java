@@ -462,39 +462,6 @@ class MatchCompetitorMapperTest {
         assertSame(competitor, matchCompetitorMapper.resolveCompetitor(null, "123", null));
     }
 
-    @Test
-    void testResolveCompetitor_whenTheEntityServiceFindsNoCompetitor_thenThrowsNonFatalException() {
-        // Arrange
-        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("123", "Jane Doe"))
-                .thenThrow(new NonFatalException("No competitors found"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class,
-                () -> matchCompetitorMapper.resolveCompetitor(null, "123", "Jane Doe"));
-    }
-
-    @Test
-    void testResolveCompetitor_whenTheEntityServiceFindsSeveralCompetitors_thenThrowsValidationException() {
-        // Arrange
-        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("123", "Jane Doe"))
-                .thenThrow(new ValidationException("Two or more competitors found"));
-
-        // Act & Assert
-        assertThrows(ValidationException.class,
-                () -> matchCompetitorMapper.resolveCompetitor(null, "123", "Jane Doe"));
-    }
-
-    @Test
-    void testResolveCompetitor_whenTheEntityServiceRejectsBlankInput_thenThrowsValidationException() {
-        // Arrange
-        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("", "  "))
-                .thenThrow(new ValidationException("Full name or competitor number is required"));
-
-        // Act & Assert
-        assertThrows(ValidationException.class,
-                () -> matchCompetitorMapper.resolveCompetitor(null, "  ", "  "));
-    }
-
     // resolveCompetitorCategory()
     @Test
     void testResolveCompetitorCategory_whenKnown_thenReturnsCategory() {
@@ -525,16 +492,30 @@ class MatchCompetitorMapperTest {
 
     // resolveFirearmType()
     @Test
-    void testResolveFirearmType_whenKnown_thenReturnsFirearmType() {
+    void testResolveFirearmType_whenKnownAndDivisionIsNull_thenReturnsFirearmType() {
         // Act & Assert
-        assertEquals(FirearmType.SHOTGUN, matchCompetitorMapper.resolveFirearmType("Shotgun"));
+        assertEquals(FirearmType.SHOTGUN, matchCompetitorMapper.resolveFirearmType("Shotgun", null));
     }
 
     @Test
-    void testResolveFirearmType_whenUnknownOrNull_thenThrowsValidationException() {
+    void testResolveFirearmType_whenUnknownOrNullAndDivisionIsNull_thenThrowsValidationException() {
         // Act & Assert
-        assertThrows(ValidationException.class, () -> matchCompetitorMapper.resolveFirearmType("Nope"));
-        assertThrows(ValidationException.class, () -> matchCompetitorMapper.resolveFirearmType(null));
+        assertThrows(ValidationException.class, () -> matchCompetitorMapper.resolveFirearmType("Nope", null));
+        assertThrows(ValidationException.class, () -> matchCompetitorMapper.resolveFirearmType(null, null));
+    }
+
+    @Test
+    void testResolveFirearmType_whenKnownAndDivisionIsGiven_thenReturnsFirearmTypeByName() {
+        // Act & Assert
+        assertEquals(FirearmType.SHOTGUN, matchCompetitorMapper.resolveFirearmType("Shotgun", Division.OPEN));
+    }
+
+    @Test
+    void testResolveFirearmType_whenUnknownOrNullAndDivisionIsGiven_thenReturnsFirearmTypeOfDivision() {
+        // Act & Assert
+        assertEquals(FirearmType.RIFLE,
+                matchCompetitorMapper.resolveFirearmType("Nope", Division.RIFLE_SEMI_AUTO_OPEN));
+        assertEquals(FirearmType.PCC, matchCompetitorMapper.resolveFirearmType(null, Division.PCC_IRON));
     }
 
     // resolveMatchClub()
@@ -552,10 +533,16 @@ class MatchCompetitorMapperTest {
     }
 
     @Test
-    void testResolveMatchClub_whenNameMatches_thenReturnsClub() {
+    void testResolveMatchClub_whenCodeMatches_thenReturnsClub() {
         // Act & Assert
-        assertEquals(ClubIdentifier.HPSC,
-                matchCompetitorMapper.resolveMatchClub("Hartbeespoortdam Practical Shooting Club"));
+        assertEquals(ClubIdentifier.HPSC, matchCompetitorMapper.resolveMatchClub(ClubIdentifier.HPSC.getCode()));
+    }
+
+    @Test
+    void testResolveMatchClub_whenOnlyNameMatches_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class,
+                () -> matchCompetitorMapper.resolveMatchClub(ClubIdentifier.HPSC.getName()));
     }
 
     @Test

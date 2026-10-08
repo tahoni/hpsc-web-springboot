@@ -31,7 +31,34 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Services
+
+- **`IpscEntityClubService.findByCodeOrAbbreviation`:** New lookup of a club by abbreviation, name, or club identifier
+  code, abbreviation or name; `IpscEntityClubServiceImpl` now takes a `ClubRepository`. An unknown club throws
+  `ValidationException`, and a blank code throws `NonFatalException`
+- **`IpscEntityClubService.findByCodeOrAbbreviationWithDefault`:** New lookup that uses a default club identifier when
+  the club name is blank
+
 #### 🔄 Changed
+
+##### Mappers
+
+- **`CompetitorMapper.resolveHomeClub`:** **Breaking:** now resolves a competitor's home club through
+  `IpscEntityClubService.findByCodeOrAbbreviationWithDefault`, so it can be given by club identifier code,
+  abbreviation or name as well as abbreviation or name; an unknown home club now throws `ValidationException` (400)
+  instead of `NonFatalException` (404). A blank home club is still left unset
+- **`MatchMapper.resolveClub`:** **Breaking:** now resolves a club through
+  `IpscEntityClubService.findByCodeOrAbbreviationWithDefault`, so a match's club can be given by abbreviation, name,
+  or club identifier code or abbreviation; an unknown club now throws `ValidationException` (400) instead of
+  `NonFatalException` (404). `MatchMapper` no longer takes a `ClubRepository`, and `FatalException` is dropped from
+  `resolveClub`, `applyFields`, `applyPatchFields` and the match service and controller methods that only declared it
+  for the club lookup
+- **`MatchCompetitorMapper.resolveFirearmType`:** Now takes the competitor's `Division` and falls back to the
+  division's firearm type when the firearm type name is unknown, instead of throwing
+- **`MatchCompetitorMapper.resolveMatchClub`:** **Breaking:** now matches a club by identifier code or abbreviation
+  only; a full club name is no longer accepted
 
 ##### Services
 

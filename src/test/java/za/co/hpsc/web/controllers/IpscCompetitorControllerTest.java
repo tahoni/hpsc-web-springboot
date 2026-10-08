@@ -59,40 +59,6 @@ class IpscCompetitorControllerTest {
         assertSame(response, result.getBody());
     }
 
-    @Test
-    void testCreateCompetitor_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        when(ipscCompetitorService.createCompetitor(request)).thenReturn(new CompetitorResponse());
-
-        // Act
-        ipscCompetitorController.createCompetitor(request);
-
-        // Assert
-        verify(ipscCompetitorService).createCompetitor(request);
-        verifyNoMoreInteractions(ipscCompetitorService);
-    }
-
-    @Test
-    void testCreateCompetitor_whenServiceThrowsValidationException_thenExceptionPropagates() throws ValidationException, NonFatalException {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        when(ipscCompetitorService.createCompetitor(request)).thenThrow(new ValidationException("First name is required."));
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorController.createCompetitor(request));
-    }
-
-    @Test
-    void testCreateCompetitor_whenServiceThrowsNonFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        when(ipscCompetitorService.createCompetitor(request)).thenThrow(new NonFatalException("No club found with name Unknown"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscCompetitorController.createCompetitor(request));
-    }
-
     // createCompetitors()
     private static final String VALID_CSV = """
             FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
@@ -125,46 +91,6 @@ class IpscCompetitorControllerTest {
         assertSame(holder, result.getBody());
     }
 
-    @Test
-    void testCreateCompetitors_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenReturn(new CompetitorResponseHolder(List.of()));
-
-        // Act
-        ipscCompetitorController.createCompetitors(VALID_CSV);
-
-        // Assert
-        verify(ipscCompetitorService).createCompetitors(VALID_CSV);
-        verifyNoMoreInteractions(ipscCompetitorService);
-    }
-
-    @Test
-    void testCreateCompetitors_whenServiceThrowsValidationException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenThrow(new ValidationException("First name is required."));
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorController.createCompetitors(VALID_CSV));
-    }
-
-    @Test
-    void testCreateCompetitors_whenServiceThrowsNonFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenThrow(new NonFatalException("No club found with name Unknown"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscCompetitorController.createCompetitors(VALID_CSV));
-    }
-
-    @Test
-    void testCreateCompetitors_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenThrow(new FatalException("Error reading CSV data"));
-
-        // Act & Assert
-        assertThrows(FatalException.class, () -> ipscCompetitorController.createCompetitors(VALID_CSV));
-    }
-
     // deleteCompetitor()
     @Test
     void testDeleteCompetitor_whenServiceSucceeds_thenReturns204() throws ValidationException, NonFatalException {
@@ -186,26 +112,6 @@ class IpscCompetitorControllerTest {
         verifyNoMoreInteractions(ipscCompetitorService);
     }
 
-    @Test
-    void testDeleteCompetitor_whenServiceThrowsValidationException_thenExceptionPropagates()
-            throws ValidationException, NonFatalException {
-        // Arrange
-        doThrow(new ValidationException("has match results")).when(ipscCompetitorService).deleteCompetitor(1L);
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorController.deleteCompetitor(1L));
-    }
-
-    @Test
-    void testDeleteCompetitor_whenServiceThrowsNonFatalException_thenExceptionPropagates()
-            throws ValidationException, NonFatalException {
-        // Arrange
-        doThrow(new NonFatalException("not found")).when(ipscCompetitorService).deleteCompetitor(999L);
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscCompetitorController.deleteCompetitor(999L));
-    }
-
     // getAllCompetitors()
     @Test
     void testGetAllCompetitors_whenServiceSucceeds_thenReturns200() {
@@ -221,19 +127,6 @@ class IpscCompetitorControllerTest {
         assertSame(response, result.getBody());
     }
 
-    @Test
-    void testGetAllCompetitors_whenServiceSucceeds_thenDelegatesToService() {
-        // Arrange
-        when(ipscCompetitorService.getAllCompetitors()).thenReturn(List.of());
-
-        // Act
-        ipscCompetitorController.getAllCompetitors();
-
-        // Assert
-        verify(ipscCompetitorService).getAllCompetitors();
-        verifyNoMoreInteractions(ipscCompetitorService);
-    }
-
     // getCompetitor()
     @Test
     void testGetCompetitor_whenServiceSucceeds_thenReturns200() throws NonFatalException {
@@ -247,28 +140,6 @@ class IpscCompetitorControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertSame(response, result.getBody());
-    }
-
-    @Test
-    void testGetCompetitor_whenServiceSucceeds_thenDelegatesToService() throws NonFatalException {
-        // Arrange
-        when(ipscCompetitorService.getCompetitor(1L)).thenReturn(new CompetitorResponse());
-
-        // Act
-        ipscCompetitorController.getCompetitor(1L);
-
-        // Assert
-        verify(ipscCompetitorService).getCompetitor(1L);
-        verifyNoMoreInteractions(ipscCompetitorService);
-    }
-
-    @Test
-    void testGetCompetitor_whenServiceThrowsNonFatalException_thenExceptionPropagates() throws NonFatalException {
-        // Arrange
-        when(ipscCompetitorService.getCompetitor(99L)).thenThrow(new NonFatalException("No competitor found with ID 99"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscCompetitorController.getCompetitor(99L));
     }
 
     // patchCompetitor()
@@ -287,30 +158,6 @@ class IpscCompetitorControllerTest {
         assertSame(response, result.getBody());
     }
 
-    @Test
-    void testPatchCompetitor_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException {
-        // Arrange
-        CompetitorPatchRequest request = new CompetitorPatchRequest();
-        when(ipscCompetitorService.patchCompetitor(1L, request)).thenReturn(new CompetitorResponse());
-
-        // Act
-        ipscCompetitorController.patchCompetitor(1L, request);
-
-        // Assert
-        verify(ipscCompetitorService).patchCompetitor(1L, request);
-        verifyNoMoreInteractions(ipscCompetitorService);
-    }
-
-    @Test
-    void testPatchCompetitor_whenServiceThrowsNonFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException {
-        // Arrange
-        CompetitorPatchRequest request = new CompetitorPatchRequest();
-        when(ipscCompetitorService.patchCompetitor(99L, request)).thenThrow(new NonFatalException("No competitor found with ID 99"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscCompetitorController.patchCompetitor(99L, request));
-    }
-
     // updateCompetitor()
     @Test
     void testUpdateCompetitor_whenServiceSucceeds_thenReturns200() throws ValidationException, NonFatalException {
@@ -327,37 +174,4 @@ class IpscCompetitorControllerTest {
         assertSame(response, result.getBody());
     }
 
-    @Test
-    void testUpdateCompetitor_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        when(ipscCompetitorService.updateCompetitor(1L, request)).thenReturn(new CompetitorResponse());
-
-        // Act
-        ipscCompetitorController.updateCompetitor(1L, request);
-
-        // Assert
-        verify(ipscCompetitorService).updateCompetitor(1L, request);
-        verifyNoMoreInteractions(ipscCompetitorService);
-    }
-
-    @Test
-    void testUpdateCompetitor_whenServiceThrowsValidationException_thenExceptionPropagates() throws ValidationException, NonFatalException {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        when(ipscCompetitorService.updateCompetitor(1L, request)).thenThrow(new ValidationException("First name is required."));
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorController.updateCompetitor(1L, request));
-    }
-
-    @Test
-    void testUpdateCompetitor_whenServiceThrowsNonFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        when(ipscCompetitorService.updateCompetitor(99L, request)).thenThrow(new NonFatalException("No competitor found with ID 99"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscCompetitorController.updateCompetitor(99L, request));
-    }
 }

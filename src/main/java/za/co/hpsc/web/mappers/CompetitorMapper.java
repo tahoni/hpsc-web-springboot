@@ -227,20 +227,28 @@ public class CompetitorMapper {
     }
 
     /**
-     * Resolves a competitor's home club by name or abbreviation.
+     * Resolves a competitor's home club by abbreviation, name, or club identifier code or abbreviation.
      *
-     * @param clubName the club name/abbreviation to look up; may be null or blank, in which case
-     *                 no home club is set.
-     * @return the matching {@link Club}, or {@code null} if {@code clubName} wasn't supplied.
-     * @throws NonFatalException if {@code clubName} was supplied but doesn't match an existing club.
+     * <p>
+     * The lookup is delegated to
+     * {@link IpscEntityClubService#findByCodeOrAbbreviationWithDefault(String, ClubIdentifier)}, defaulting to
+     * {@link IpscConstants#HOME_CLUB_IDENTIFIER} when no club is supplied.
+     * </p>
+     *
+     * @param clubName the club abbreviation, name, or identifier code or abbreviation to look up; may be null or
+     *                 blank, in which case the home club is resolved instead.
+     * @return the matching {@link Club}.
+     * @throws ValidationException if {@code clubName} was supplied but matches no persisted club and is not a known
+     *                             club identifier code, abbreviation or name.
+     * @throws NonFatalException   if {@code clubName} is a known club identifier, or is blank, but no club is
+     *                             persisted with the identifier looked up.
      */
     public @Nullable Club resolveHomeClub(String clubName) {
         if (!hasText(clubName)) {
             return null;
         }
 
-        Optional<Club> optionalClub = clubRepository.findByName(clubName).or(() -> clubRepository.findByAbbreviation(clubName));
-        return optionalClub.orElseThrow(() -> new NonFatalException("No club found with name " + clubName));
+        return ipscEntityClubService.findByCodeOrAbbreviationWithDefault(clubName, null);
     }
 
     /**

@@ -24,6 +24,7 @@ import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponseHolder;
+import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
@@ -70,7 +71,7 @@ public class IpscMatchCompetitorServiceTest {
                 ipscMatchRepository, matchCompetitorRepository, transactionManager);
         ipscMatchCompetitorService = new IpscMatchCompetitorServiceImpl(matchCompetitorRepository,
                 new MatchCompetitorMapper(competitorRepository, ipscMatchRepository, ipscEntityCompetitorService),
-                new IpscEntityClubServiceImpl(), transactionService);
+                new IpscEntityClubServiceImpl(mock(ClubRepository.class)), transactionService);
     }
 
     // createMatchCompetitor()
@@ -164,14 +165,20 @@ public class IpscMatchCompetitorServiceTest {
     }
 
     @Test
-    void testCreateMatchCompetitor_whenFirearmTypeIsUnknown_thenThrowsValidationException() {
+    void testCreateMatchCompetitor_whenFirearmTypeIsUnknown_thenUsesTheFirearmTypeOfTheDivision() {
         // Arrange
         stubCompetitorAndMatch();
+        when(matchCompetitorRepository.save(any(MatchCompetitor.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
         MatchCompetitorRequest request = validRequest();
         request.setFirearmType("Not A Firearm");
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchCompetitorService.createMatchCompetitor(request));
+        // Act
+        MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(request);
+
+        // Assert
+        assertEquals(FirearmType.HANDGUN, response.getFirearmType());
+        assertEquals(Division.OPEN, response.getDivision());
     }
 
     @Test

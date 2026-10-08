@@ -62,7 +62,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     @Override
-    public MatchResponse createMatch(MatchRequest request) throws FatalException {
+    public MatchResponse createMatch(MatchRequest request) {
         return toResponse(transactionService.saveMatch(newMatch(request)));
     }
 
@@ -89,7 +89,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     @Override
-    public MatchResponse updateMatch(Long matchId, MatchRequest request) throws FatalException {
+    public MatchResponse updateMatch(Long matchId, MatchRequest request) {
         validateForCreate(request);
         IpscMatch match = findMatchOrThrow(matchId);
 
@@ -98,7 +98,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     @Override
-    public MatchResponse patchMatch(Long matchId, MatchPatchRequest request) throws FatalException {
+    public MatchResponse patchMatch(Long matchId, MatchPatchRequest request) {
         IpscMatch match = findMatchOrThrow(matchId);
 
         matchMapper.applyPatchFields(match, request);
@@ -153,9 +153,8 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      *                             doesn't match a known {@link FirearmType}/{@link MatchCategory}.
      * @throws NonFatalException   if the request's club name doesn't match an existing club, or no
      *                             club exists for {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
-     * @throws FatalException      if {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER} is null.
      */
-    protected IpscMatch newMatch(MatchRequest request) throws FatalException {
+    protected IpscMatch newMatch(MatchRequest request) {
         validateForCreate(request);
 
         IpscMatch match = new IpscMatch();

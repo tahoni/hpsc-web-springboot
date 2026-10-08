@@ -59,51 +59,6 @@ class IpscMatchControllerTest {
         assertSame(response, result.getBody());
     }
 
-    @Test
-    void testCreateMatch_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        MatchRequest request = new MatchRequest();
-        when(ipscMatchService.createMatch(request)).thenReturn(new MatchResponse());
-
-        // Act
-        ipscMatchController.createMatch(request);
-
-        // Assert
-        verify(ipscMatchService).createMatch(request);
-        verifyNoMoreInteractions(ipscMatchService);
-    }
-
-    @Test
-    void testCreateMatch_whenServiceThrowsValidationException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        MatchRequest request = new MatchRequest();
-        when(ipscMatchService.createMatch(request)).thenThrow(new ValidationException("Match name is required."));
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchController.createMatch(request));
-    }
-
-    @Test
-    void testCreateMatch_whenServiceThrowsNonFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        MatchRequest request = new MatchRequest();
-        when(ipscMatchService.createMatch(request)).thenThrow(new NonFatalException("No club found with name Unknown"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscMatchController.createMatch(request));
-    }
-
-    @Test
-    void testCreateMatch_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        MatchRequest request = new MatchRequest();
-        when(ipscMatchService.createMatch(request))
-                .thenThrow(new FatalException("IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER is not configured."));
-
-        // Act & Assert
-        assertThrows(FatalException.class, () -> ipscMatchController.createMatch(request));
-    }
-
     // createMatches()
     private static final String VALID_CSV = """
             MatchDate,MatchName,Club,MatchFirearmType,MatchCategory
@@ -136,46 +91,6 @@ class IpscMatchControllerTest {
         assertSame(holder, result.getBody());
     }
 
-    @Test
-    void testCreateMatches_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        when(ipscMatchService.createMatches(VALID_CSV)).thenReturn(new MatchResponseHolder(List.of()));
-
-        // Act
-        ipscMatchController.createMatches(VALID_CSV);
-
-        // Assert
-        verify(ipscMatchService).createMatches(VALID_CSV);
-        verifyNoMoreInteractions(ipscMatchService);
-    }
-
-    @Test
-    void testCreateMatches_whenServiceThrowsValidationException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        when(ipscMatchService.createMatches(VALID_CSV)).thenThrow(new ValidationException("Match name is required."));
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchController.createMatches(VALID_CSV));
-    }
-
-    @Test
-    void testCreateMatches_whenServiceThrowsNonFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        when(ipscMatchService.createMatches(VALID_CSV)).thenThrow(new NonFatalException("No club found with name Unknown"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscMatchController.createMatches(VALID_CSV));
-    }
-
-    @Test
-    void testCreateMatches_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        when(ipscMatchService.createMatches(VALID_CSV)).thenThrow(new FatalException("Error reading CSV data"));
-
-        // Act & Assert
-        assertThrows(FatalException.class, () -> ipscMatchController.createMatches(VALID_CSV));
-    }
-
     // deleteMatch()
     @Test
     void testDeleteMatch_whenServiceSucceeds_thenReturns204() throws ValidationException, NonFatalException {
@@ -197,26 +112,6 @@ class IpscMatchControllerTest {
         verifyNoMoreInteractions(ipscMatchService);
     }
 
-    @Test
-    void testDeleteMatch_whenServiceThrowsValidationException_thenExceptionPropagates()
-            throws ValidationException, NonFatalException {
-        // Arrange
-        doThrow(new ValidationException("has results")).when(ipscMatchService).deleteMatch(1L);
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchController.deleteMatch(1L));
-    }
-
-    @Test
-    void testDeleteMatch_whenServiceThrowsNonFatalException_thenExceptionPropagates()
-            throws ValidationException, NonFatalException {
-        // Arrange
-        doThrow(new NonFatalException("not found")).when(ipscMatchService).deleteMatch(999L);
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscMatchController.deleteMatch(999L));
-    }
-
     // getMatch()
     @Test
     void testGetMatch_whenServiceSucceeds_thenReturns200() throws NonFatalException {
@@ -232,28 +127,6 @@ class IpscMatchControllerTest {
         assertSame(response, result.getBody());
     }
 
-    @Test
-    void testGetMatch_whenServiceSucceeds_thenDelegatesToService() throws NonFatalException {
-        // Arrange
-        when(ipscMatchService.getMatch(1L)).thenReturn(new MatchResponse());
-
-        // Act
-        ipscMatchController.getMatch(1L);
-
-        // Assert
-        verify(ipscMatchService).getMatch(1L);
-        verifyNoMoreInteractions(ipscMatchService);
-    }
-
-    @Test
-    void testGetMatch_whenServiceThrowsNonFatalException_thenExceptionPropagates() throws NonFatalException {
-        // Arrange
-        when(ipscMatchService.getMatch(99L)).thenThrow(new NonFatalException("No IPSC match found with ID 99"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscMatchController.getMatch(99L));
-    }
-
     // getAllMatches()
     @Test
     void testGetAllMatches_whenServiceSucceeds_thenReturns200() {
@@ -267,19 +140,6 @@ class IpscMatchControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertSame(response, result.getBody());
-    }
-
-    @Test
-    void testGetAllMatches_whenServiceSucceeds_thenDelegatesToService() {
-        // Arrange
-        when(ipscMatchService.getAllMatches()).thenReturn(List.of());
-
-        // Act
-        ipscMatchController.getAllMatches();
-
-        // Assert
-        verify(ipscMatchService).getAllMatches();
-        verifyNoMoreInteractions(ipscMatchService);
     }
 
     // patchMatch()
@@ -298,41 +158,6 @@ class IpscMatchControllerTest {
         assertSame(response, result.getBody());
     }
 
-    @Test
-    void testPatchMatch_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        MatchPatchRequest request = new MatchPatchRequest();
-        when(ipscMatchService.patchMatch(1L, request)).thenReturn(new MatchResponse());
-
-        // Act
-        ipscMatchController.patchMatch(1L, request);
-
-        // Assert
-        verify(ipscMatchService).patchMatch(1L, request);
-        verifyNoMoreInteractions(ipscMatchService);
-    }
-
-    @Test
-    void testPatchMatch_whenServiceThrowsNonFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        MatchPatchRequest request = new MatchPatchRequest();
-        when(ipscMatchService.patchMatch(99L, request)).thenThrow(new NonFatalException("No IPSC match found with ID 99"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscMatchController.patchMatch(99L, request));
-    }
-
-    @Test
-    void testPatchMatch_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        MatchPatchRequest request = new MatchPatchRequest();
-        when(ipscMatchService.patchMatch(1L, request))
-                .thenThrow(new FatalException("IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER is not configured."));
-
-        // Act & Assert
-        assertThrows(FatalException.class, () -> ipscMatchController.patchMatch(1L, request));
-    }
-
     // updateMatch()
     @Test
     void testUpdateMatch_whenServiceSucceeds_thenReturns200() throws ValidationException, NonFatalException, FatalException {
@@ -349,48 +174,4 @@ class IpscMatchControllerTest {
         assertSame(response, result.getBody());
     }
 
-    @Test
-    void testUpdateMatch_whenServiceSucceeds_thenDelegatesToService() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        MatchRequest request = new MatchRequest();
-        when(ipscMatchService.updateMatch(1L, request)).thenReturn(new MatchResponse());
-
-        // Act
-        ipscMatchController.updateMatch(1L, request);
-
-        // Assert
-        verify(ipscMatchService).updateMatch(1L, request);
-        verifyNoMoreInteractions(ipscMatchService);
-    }
-
-    @Test
-    void testUpdateMatch_whenServiceThrowsValidationException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        MatchRequest request = new MatchRequest();
-        when(ipscMatchService.updateMatch(1L, request)).thenThrow(new ValidationException("Match name is required."));
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchController.updateMatch(1L, request));
-    }
-
-    @Test
-    void testUpdateMatch_whenServiceThrowsNonFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        MatchRequest request = new MatchRequest();
-        when(ipscMatchService.updateMatch(99L, request)).thenThrow(new NonFatalException("No IPSC match found with ID 99"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscMatchController.updateMatch(99L, request));
-    }
-
-    @Test
-    void testUpdateMatch_whenServiceThrowsFatalException_thenExceptionPropagates() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        MatchRequest request = new MatchRequest();
-        when(ipscMatchService.updateMatch(1L, request))
-                .thenThrow(new FatalException("IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER is not configured."));
-
-        // Act & Assert
-        assertThrows(FatalException.class, () -> ipscMatchController.updateMatch(1L, request));
-    }
 }

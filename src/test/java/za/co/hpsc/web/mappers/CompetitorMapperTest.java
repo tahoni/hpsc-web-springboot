@@ -1,5 +1,6 @@
 package za.co.hpsc.web.mappers;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -39,11 +41,12 @@ class CompetitorMapperTest {
     @Mock
     private ClubRepository clubRepository;
 
-    @Spy
-    private IpscEntityClubService ipscEntityClubService = new IpscEntityClubServiceImpl();
-
-    @InjectMocks
     private CompetitorMapper competitorMapper;
+
+    @BeforeEach
+    void setUp() {
+        competitorMapper = new CompetitorMapper(clubRepository, new IpscEntityClubServiceImpl(clubRepository));
+    }
 
     // applyFields()
     @Test
@@ -509,7 +512,7 @@ class CompetitorMapperTest {
     }
 
     @Test
-    void testApplyPatchFields_whenHomeClubIsUnknown_thenThrowsNonFatalException() {
+    void testApplyPatchFields_whenHomeClubIsUnknown_thenThrowsValidationException() {
         // Arrange
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
         when(clubRepository.findByAbbreviation("No Such Club")).thenReturn(Optional.empty());
@@ -517,7 +520,7 @@ class CompetitorMapperTest {
         request.setHomeClub("No Such Club");
 
         // Act & Assert
-        assertThrows(NonFatalException.class,
+        assertThrows(ValidationException.class,
                 () -> competitorMapper.applyPatchFields(new Competitor(), request));
     }
 
@@ -751,13 +754,13 @@ class CompetitorMapperTest {
     }
 
     @Test
-    void testResolveHomeClub_whenClubNameMatchesNeitherNameNorAbbreviation_thenThrowsNonFatalException() {
+    void testResolveHomeClub_whenClubNameMatchesNeitherNameNorAbbreviation_thenThrowsValidationException() {
         // Arrange
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
         when(clubRepository.findByAbbreviation("No Such Club")).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> competitorMapper.resolveHomeClub("No Such Club"));
+        assertThrows(ValidationException.class, () -> competitorMapper.resolveHomeClub("No Such Club"));
     }
 
     @Test
@@ -773,7 +776,6 @@ class CompetitorMapperTest {
 
         // Assert
         assertSame(club, resolved);
-        verify(clubRepository, never()).findByAbbreviation(anyString());
     }
 
     @Test
@@ -782,7 +784,6 @@ class CompetitorMapperTest {
         Club club = new Club();
         club.setId(10L);
         club.setName("Test Club");
-        when(clubRepository.findByName("TC")).thenReturn(Optional.empty());
         when(clubRepository.findByAbbreviation("TC")).thenReturn(Optional.of(club));
 
         // Act
@@ -790,6 +791,7 @@ class CompetitorMapperTest {
 
         // Assert
         assertSame(club, resolved);
+        verify(clubRepository, never()).findByName("TC");
     }
 
     // Helpers

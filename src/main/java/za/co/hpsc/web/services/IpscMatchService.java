@@ -28,13 +28,10 @@ public interface IpscMatchService {
      *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
      *                             {@link za.co.hpsc.web.enums.MatchCategory}.
      * @throws NonFatalException   if the named club cannot be found.
-     * @throws FatalException      if no club is named and
-     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
-     *                             is null.
      * @since 8.0.0
      */
     MatchResponse createMatch(MatchRequest request)
-            throws ValidationException, NonFatalException, FatalException;
+            throws ValidationException, NonFatalException;
 
     /**
      * Creates a batch of new IPSC matches from CSV data.
@@ -55,10 +52,7 @@ public interface IpscMatchService {
      *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
      *                             {@link za.co.hpsc.web.enums.MatchCategory}.
      * @throws NonFatalException   if a row's named club cannot be found.
-     * @throws FatalException      if an I/O error occurs while reading the CSV data, or a row names
-     *                             no club and
-     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
-     *                             is null.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
      * @since 8.0.0
      */
     MatchResponseHolder createMatches(String csvData)
@@ -76,13 +70,10 @@ public interface IpscMatchService {
      *                             {@link za.co.hpsc.web.enums.MatchCategory}.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
-     * @throws FatalException      if no club is named and
-     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
-     *                             is null.
      * @since 8.0.0
      */
     MatchResponse updateMatch(Long matchId, MatchRequest request)
-            throws ValidationException, NonFatalException, FatalException;
+            throws ValidationException, NonFatalException;
 
     /**
      * Partially updates an existing IPSC match, applying only the non-null fields on the
@@ -102,13 +93,10 @@ public interface IpscMatchService {
      *                             cannot be found, or the request's {@code club} is blank and no
      *                             club exists for
      *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
-     * @throws FatalException      if the request's {@code club} is blank and
-     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
-     *                             is null.
      * @since 8.0.0
      */
     MatchResponse patchMatch(Long matchId, MatchPatchRequest request)
-            throws ValidationException, NonFatalException, FatalException;
+            throws ValidationException, NonFatalException;
 
     /**
      * Retrieves an existing IPSC match.

@@ -43,7 +43,7 @@ class IpscCompetitorServiceImplTest {
     private CompetitorRepository competitorRepository;
 
     @Spy
-    private CompetitorMapper competitorMapper = new CompetitorMapper(mock(ClubRepository.class), new IpscEntityClubServiceImpl());
+    private CompetitorMapper competitorMapper = new CompetitorMapper(mock(ClubRepository.class), new IpscEntityClubServiceImpl(mock(ClubRepository.class)));
 
     @InjectMocks
     private IpscCompetitorServiceImpl ipscCompetitorServiceImpl;

@@ -67,9 +67,8 @@ public final class IpscConstants {
     public static final String HOME_CLUB_ABBREVIATION = "HPSC";
     /**
      * {@link ClubIdentifier} resolved from {@link #HOME_CLUB_ABBREVIATION}, the default home club; null only if that
-     * abbreviation ever
-     * stopped matching a known identifier — tolerated rather than asserted, so a resolution failure degrades
-     * gracefully instead of crashing the app at class-load time.
+     * abbreviation ever stopped matching a known identifier — tolerated rather than asserted, so a resolution
+     * failure degrades gracefully instead of crashing the app at class-load time.
      */
     public static final ClubIdentifier HOME_CLUB_IDENTIFIER =
             ClubIdentifier.fromAbbreviation(HOME_CLUB_ABBREVIATION).orElse(null);

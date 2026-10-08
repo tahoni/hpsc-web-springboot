@@ -16,6 +16,8 @@ import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.services.IpscEntityCompetitorService;
 
+import java.util.Optional;
+
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 
 /**
@@ -58,9 +60,9 @@ public class MatchCompetitorMapper {
         matchCompetitor.setMatch(findMatchOrThrow(request.getMatchId()));
         matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
         matchCompetitor.setCompetitorCategory(resolveCompetitorCategory(request.getCompetitorCategory()));
-        matchCompetitor.setFirearmType(hasText(request.getFirearmType())
-                ? resolveFirearmType(request.getFirearmType()) : null);
         matchCompetitor.setDivision(resolveDivision(request.getDivision()));
+        matchCompetitor.setFirearmType(hasText(request.getFirearmType())
+                ? resolveFirearmType(request.getFirearmType(), matchCompetitor.getDivision()) : null);
         initialiseFirearmTypeFromDivision(matchCompetitor);
         validateDivisionMatchesFirearmType(matchCompetitor.getDivision(), matchCompetitor.getFirearmType());
         matchCompetitor.setPowerFactor(resolvePowerFactor(request.getPowerFactor()));
@@ -108,11 +110,11 @@ public class MatchCompetitorMapper {
         if (hasText(request.getCompetitorCategory())) {
             matchCompetitor.setCompetitorCategory(resolveCompetitorCategory(request.getCompetitorCategory()));
         }
-        if (hasText(request.getFirearmType())) {
-            matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
-        }
         if (hasText(request.getDivision())) {
             matchCompetitor.setDivision(resolveDivision(request.getDivision()));
+        }
+        if (hasText(request.getFirearmType())) {
+            matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType(), matchCompetitor.getDivision()));
         }
         initialiseFirearmTypeFromDivision(matchCompetitor);
         if (hasText(request.getFirearmType()) || hasText(request.getDivision())) {
@@ -256,7 +258,7 @@ public class MatchCompetitorMapper {
             return null;
         }
 
-        return ClubIdentifier.fromName(matchClub).or(() -> ClubIdentifier.fromAbbreviation(matchClub))
+        return ClubIdentifier.fromCode(matchClub).or(() -> ClubIdentifier.fromAbbreviation(matchClub))
                 .orElseThrow(() -> new ValidationException("Unknown match club: " + matchClub));
     }
 
@@ -276,15 +278,37 @@ public class MatchCompetitorMapper {
     }
 
     /**
-     * Resolves a firearm type by name.
+     * Resolves a firearm type by name, falling back to the firearm type of the division.
+     *
+     * <p>
+     * If the name matches a known firearm type, that type is returned. Otherwise, when a division is supplied, the
+     * firearm type belonging to the division is used instead.
      *
      * @param firearmType the firearm type name to look up.
-     * @return the matching {@link FirearmType}.
-     * @throws ValidationException if no firearm type matches {@code firearmType}.
+     * @param division    the division to take the firearm type from when the name is not recognised; may be
+     *                    {@code null}, in which case the name must match a known firearm type.
+     * @return the matching {@link FirearmType}, or the division's firearm type when the name is not recognised.
+     * @throws ValidationException if the name matches no firearm type and the division is {@code null} or has no
+     *                             firearm type.
      */
-    public FirearmType resolveFirearmType(String firearmType) {
-        return FirearmType.fromName(firearmType)
-                .orElseThrow(() -> new ValidationException("Unknown firearm type: " + firearmType));
+    public FirearmType resolveFirearmType(String firearmType, Division division) {
+        Optional<FirearmType> firearmTypeOptional = FirearmType.fromName(firearmType);
+        if (division == null) {
+            // If no division is provided, return the firearm type if it exists, otherwise throw an exception
+            return firearmTypeOptional.orElseThrow(() -> new ValidationException("Unknown firearm type: " + firearmType));
+        } else if (firearmTypeOptional.isPresent()) {
+            // If the firearm type is provided, return it
+            return firearmTypeOptional.get();
+        } else {
+            // If the firearm type is not provided, return the firearm type from the division if it exists,
+            // otherwise throw an exception
+            FirearmType divisionFirearmType = division.getFirearmType();
+            if (divisionFirearmType != null) {
+                return divisionFirearmType;
+            } else {
+                throw new ValidationException("Unknown firearm type: " + firearmType);
+            }
+        }
     }
 
     /**
