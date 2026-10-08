@@ -33,6 +33,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ➕ Added
 
+##### Helpers
+
+- **`MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields`:** New helper that describes each required field
+  still unset on a match competitor, saying whether the request left it out or gave a value that could not be
+  resolved; a blank or generic competitor number is treated as not specified
+
 ##### Services
 
 - **`IpscEntityClubService.findByCodeOrAbbreviation`:** New lookup of a club by abbreviation, name, or club identifier
@@ -78,6 +84,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Models
 
+- **`MatchCompetitorRequest`:** **Breaking:** the match ID, competitor category, division and power factor are no
+  longer rejected by bean validation, and the competitor category is optional in the CSV import (`Cats`), so a bulk
+  import can report a row that is missing them instead of failing the whole request; `validate()` still requires
+  them when a match competitor is created or replaced
 - **`MatchCompetitorResponse.competitorId`:** Dropped `@NonNull`, so a response can be built for a match competitor
   that is not linked to a competitor
 

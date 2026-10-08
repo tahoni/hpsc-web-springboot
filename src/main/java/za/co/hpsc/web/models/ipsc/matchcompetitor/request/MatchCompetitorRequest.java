@@ -2,8 +2,6 @@ package za.co.hpsc.web.models.ipsc.matchcompetitor.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -53,14 +51,11 @@ public class MatchCompetitorRequest extends IpscMatchScore {
     @JsonProperty("competitorNumber")
     private String competitorNumber;
     /** The identifier of the match the competitor shot. */
-    @NotNull(message = "Match ID is required.")
     @JsonProperty(required = true)
     private Long matchId;
     /** The club the competitor represented at the match; resolved against {@link za.co.hpsc.web.enums.ClubIdentifier} by name or abbreviation. */
     private String matchClub;
     /** The competitor's category at the match; resolved against {@link za.co.hpsc.web.enums.CompetitorCategory} by name. */
-    @NotBlank(message = "Competitor category is required.")
-    @JsonProperty(required = true)
     private String competitorCategory;
     /**
      * The firearm type the competitor shot; resolved against {@link za.co.hpsc.web.enums.FirearmType} by name. May be
@@ -68,11 +63,9 @@ public class MatchCompetitorRequest extends IpscMatchScore {
      */
     private String firearmType;
     /** The division the competitor shot; resolved against {@link za.co.hpsc.web.enums.Division} by name. */
-    @NotBlank(message = "Division is required.")
     @JsonProperty(required = true)
     private String division;
     /** The competitor's power factor; resolved against {@link za.co.hpsc.web.enums.PowerFactor} by name. */
-    @NotBlank(message = "Power factor is required.")
     @JsonProperty(required = true)
     private String powerFactor;
     /** The competitor's overall ranking in the match. */
@@ -93,18 +86,22 @@ public class MatchCompetitorRequest extends IpscMatchScore {
      *                           {@code competitorId} and {@code competitorNumber} are both null.
      * @param competitorNumber   the competitor's number, as assigned for competition, matched exactly; only used when
      *                           {@code competitorId} is null.
-     * @param matchId            the identifier of the match the competitor shot. Must not be null.
+     * @param matchId            the identifier of the match the competitor shot. Required in the JSON.
      * @param matchClub          the club the competitor represented at the match; resolved against
-     *                           {@link za.co.hpsc.web.enums.ClubIdentifier} by name or abbreviation.
+     *                           {@link za.co.hpsc.web.enums.ClubIdentifier} by name or abbreviation; may be null
+     *                           or blank.
      * @param competitorCategory the competitor's category at the match; resolved against
-     *                           {@link za.co.hpsc.web.enums.CompetitorCategory} by name. Must not be null or blank.
+     *                           {@link za.co.hpsc.web.enums.CompetitorCategory} by name. Required in the JSON, but
+     *                           validated by {@link #validate()} rather than on construction.
      * @param firearmType        the firearm type the competitor shot; resolved against
      *                           {@link za.co.hpsc.web.enums.FirearmType} by name. May be null or blank, in which case
      *                           it is taken from the division.
      * @param division           the division the competitor shot; resolved against
-     *                           {@link za.co.hpsc.web.enums.Division} by name. Must not be null or blank.
+     *                           {@link za.co.hpsc.web.enums.Division} by name. Required in the JSON, but validated
+     *                           by {@link #validate()} rather than on construction.
      * @param powerFactor        the competitor's power factor; resolved against
-     *                           {@link za.co.hpsc.web.enums.PowerFactor} by name.
+     *                           {@link za.co.hpsc.web.enums.PowerFactor} by name; may be null or blank, in which
+     *                           case the match competitor is reported as missing it.
      * @param points             the competitor's match points.
      * @param percentage                  the competitor's overall match score as a percentage of the match winner's score.
      * @param time                        the competitor's total time, in seconds, taken across the match's stages.

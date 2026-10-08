@@ -375,7 +375,7 @@ class MatchCompetitorRequestTest {
         ValidationException exception = assertThrows(ValidationException.class, request::validate);
 
         // Assert
-        assertEquals("Division Open Division is not a Shotgun division.", exception.getMessage());
+        assertEquals("Division Open is not a Shotgun division.", exception.getMessage());
     }
 
     @Test
