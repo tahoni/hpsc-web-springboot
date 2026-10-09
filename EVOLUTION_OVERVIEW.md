@@ -425,3 +425,53 @@ Versioning rules.
 
 - Tests cover `paidUpNgpsa` across the mapper, JSON, CSV and entity-to-response paths, and the club number
   normalisation
+
+### Phase 51: Complete Failure Reporting for Bulk Imports, Club Resolution & Shorter Division Names (v14.0.0)
+
+**Duration:** October 9, 2026
+
+A major release: a failed bulk match competitor row now lists every missing or unresolvable field with the values it
+supplied, a club is resolved by code, abbreviation or name through one service, and the divisions lose their trailing
+" Division". The division names, the `400` for an unknown club, the renamed `matchCompetitorResults` field and the
+`null` failed-row response are backward-incompatible, so it is MAJOR under the Semantic Versioning rules.
+
+**Key Accomplishments:**
+
+**Database**
+
+- `V11_7_0__drop_division_suffix_from_division_names.sql` renames the stored `division` in `match_competitor`,
+  `shooter_log_competitor` and `shooter_log_overall`
+
+**Helpers, Mappers & Models**
+
+- `MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields` describes each required field still unset, and
+  `MatchCompetitorMapper.populateResolvableFields` resolves what it can without throwing
+- `MatchCompetitorRow` and `MatchCompetitorRowMapper` describe a failed row by the values already resolved; the
+  `MatchCompetitorBulkResponse.matchCompetitor` of a failed row is `null`
+- `MatchCompetitor` fields are `@NotNull`, and `Division` and `CompetitorCategory` follow the new naming and lookup
+  rules
+
+**Services**
+
+- `IpscEntityClubService` finds a club by code, abbreviation or name; `ClubService` and `EntityIpscCompetitorService`
+  are renamed, and `FatalException` is dropped where only the club lookup declared it
+- `IpscMatchCompetitorServiceImpl.createMatchCompetitors` checks a row once and lists every problem
+
+**Removals**
+
+- `NumberUtil`, `DateUtil`, `SystemConstants.DEFAULT_SCALE`, two unused utility methods and
+  `MatchCompetitorResponseHolder`, together with controller tests that only checked delegation
+- Improvement plan: Gaps #38, #39 and #40 closed, leaving 38 closed and #6 and #26 partially completed
+
+**Build & Metadata**
+
+- Project version bumped to 14.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Making a failed bulk import actionable, resolving clubs in one place and matching divisions by their short names
+
+**Test Coverage:**
+
+- The suite stands at 1,263 passing tests, with new tests for the helper, the row mapper, the club service and the new
+  division names
