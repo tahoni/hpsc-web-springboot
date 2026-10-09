@@ -180,8 +180,8 @@ Contains all business logic.
 | `IpscMatchService`            | `IpscMatchServiceImpl`            | IPSC match CRUD + bulk CSV import                                                    |
 | `IpscCompetitorService`       | `IpscCompetitorServiceImpl`       | IPSC competitor CRUD + bulk CSV import                                               |
 | `IpscMatchCompetitorService`  | `IpscMatchCompetitorServiceImpl`  | IPSC match competitor CRUD + bulk CSV import                                         |
-| `EntityIpscCompetitorService` | `EntityIpscCompetitorServiceImpl` | Looks up a persisted competitor from the loosely-specified identity in imported data |
-| `ClubService`                 | `ClubServiceImpl`                 | Null-safe comparisons of clubs and club identifiers                                  |
+| `IpscEntityCompetitorService` | `IpscEntityCompetitorServiceImpl` | Looks up a persisted competitor from the loosely-specified identity in imported data |
+| `IpscEntityClubService`       | `IpscEntityClubServiceImpl`       | Resolves clubs by code, abbreviation or name; null-safe comparisons of clubs         |
 | `TransactionService`          | `TransactionServiceImpl`          | Commits competitor/match/match competitor writes, each in its own transaction        |
 
 > `AwardService.createAwards()`/`ImageService.createImages()` are stateless by design, not an unfinished persistence
@@ -299,17 +299,19 @@ shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchS
 
 #### Helpers (`za.co.hpsc.web.helpers`)
 
-| Class               | Responsibility                                                                |
-|---------------------|-------------------------------------------------------------------------------|
-| `CompetitorHelpers` | Competitor detail normalisation (e.g. last name particle case, name cleaning) |
+| Class                    | Responsibility                                                                |
+|--------------------------|-------------------------------------------------------------------------------|
+| `CompetitorHelpers`      | Competitor detail normalisation (e.g. last name particle case, name cleaning) |
+| `MatchCompetitorHelpers` | Describes the required match competitor fields still unset or unresolvable    |
 
 #### Mappers (`za.co.hpsc.web.mappers`)
 
-| Class                   | Responsibility                                                                                             |
-|-------------------------|------------------------------------------------------------------------------------------------------------|
-| `CompetitorMapper`      | Copies competitor request fields onto a `Competitor`, resolving gender, home club and club number          |
-| `MatchMapper`           | Copies match request fields onto an `IpscMatch`, resolving the club, firearm type and match category       |
-| `MatchCompetitorMapper` | Copies match competitor request fields onto a `MatchCompetitor`, resolving the competitor, match and enums |
+| Class                      | Responsibility                                                                                             |
+|----------------------------|------------------------------------------------------------------------------------------------------------|
+| `CompetitorMapper`         | Copies competitor request fields onto a `Competitor`, resolving gender, home club and club number          |
+| `MatchMapper`              | Copies match request fields onto an `IpscMatch`, resolving the club, firearm type and match category       |
+| `MatchCompetitorMapper`    | Copies match competitor request fields onto a `MatchCompetitor`, resolving the competitor, match and enums |
+| `MatchCompetitorRowMapper` | Describes a failed bulk import row by the values already resolved onto its `MatchCompetitor`               |
 
 #### Constants (`za.co.hpsc.web.constants`)
 
@@ -424,11 +426,12 @@ Client uploads CSV (Content-Type: text/plain, optional ?club=...)
         → IpscMatchCompetitorService.createMatchCompetitors
             (parses CSV via Jackson CsvMapper into MatchCompetitorRequest rows)
             → for each row, on its own:
-                a row for another club (its match club, else its competitor's home club, via ClubService)
+                a row for another club (its match club, else its competitor's home club, via IpscEntityClubService)
                     → reported as skipped
                 otherwise: validate → resolve the competitor (by ID, else through
-                    EntityIpscCompetitorService) and match → resolve the enums
-                    → save in its own transaction (a duplicate or invalid row is reported as failed)
+                    IpscEntityCompetitorService) and match → resolve the enums
+                    → save in its own transaction (a duplicate row, or one with missing or unresolvable fields, is
+                    reported as failed, with the values it supplied)
         ← MatchCompetitorBulkResponseHolder (one MatchCompetitorBulkResponse per row)
     ← ResponseEntity<...> (201, or 422 if every row failed)
 ← JSON response
