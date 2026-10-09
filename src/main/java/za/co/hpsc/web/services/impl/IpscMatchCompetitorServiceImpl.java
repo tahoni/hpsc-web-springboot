@@ -105,7 +105,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                 String missingFields = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(
                         resolvable, request);
                 if (hasText(missingFields)) {
-                    log.warn("Match competitor skipped: {}", missingFields);
+                    log.warn("Match competitor skipped due to missing or unresolvable required fields: {}", missingFields);
                     matchCompetitorBulkResponses.add(failedRow(missingFields, request, resolvable));
                     continue;
                 }
@@ -115,7 +115,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                 matchCompetitorBulkResponses.add(
                         new MatchCompetitorBulkResponse(true, "", toResponse(save(matchCompetitor)), null));
             } catch (ValidationException | NonFatalException e) {
-                log.warn("Match competitor skipped: {}", e.getMessage());
+                log.warn("Match competitor skipped due to error: {}", e.getMessage());
                 matchCompetitorBulkResponses.add(failedRow(e.getMessage(), request, matchCompetitor));
             }
         }

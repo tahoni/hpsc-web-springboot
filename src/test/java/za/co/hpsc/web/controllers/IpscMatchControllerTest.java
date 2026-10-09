@@ -32,7 +32,7 @@ class IpscMatchControllerTest {
 
     // createMatch()
     @Test
-    void testCreateMatch_whenServiceSucceeds_thenReturns201() throws ValidationException, NonFatalException, FatalException {
+    void testCreateMatch_whenServiceSucceeds_thenReturns201() throws ValidationException, NonFatalException {
         // Arrange
         MatchRequest request = new MatchRequest();
         MatchResponse response = new MatchResponse();
@@ -46,7 +46,7 @@ class IpscMatchControllerTest {
     }
 
     @Test
-    void testCreateMatch_whenServiceSucceeds_thenResponseBodyIsReturnedFromService() throws ValidationException, NonFatalException, FatalException {
+    void testCreateMatch_whenServiceSucceeds_thenResponseBodyIsReturnedFromService() throws ValidationException, NonFatalException {
         // Arrange
         MatchRequest request = new MatchRequest();
         MatchResponse response = new MatchResponse();
@@ -144,7 +144,7 @@ class IpscMatchControllerTest {
 
     // patchMatch()
     @Test
-    void testPatchMatch_whenServiceSucceeds_thenReturns200() throws ValidationException, NonFatalException, FatalException {
+    void testPatchMatch_whenServiceSucceeds_thenReturns200() throws ValidationException, NonFatalException {
         // Arrange
         MatchPatchRequest request = new MatchPatchRequest();
         MatchResponse response = new MatchResponse();
@@ -160,7 +160,7 @@ class IpscMatchControllerTest {
 
     // updateMatch()
     @Test
-    void testUpdateMatch_whenServiceSucceeds_thenReturns200() throws ValidationException, NonFatalException, FatalException {
+    void testUpdateMatch_whenServiceSucceeds_thenReturns200() throws ValidationException, NonFatalException {
         // Arrange
         MatchRequest request = new MatchRequest();
         MatchResponse response = new MatchResponse();

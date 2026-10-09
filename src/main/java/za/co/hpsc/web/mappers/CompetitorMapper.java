@@ -16,7 +16,6 @@ import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.services.IpscEntityClubService;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 
@@ -31,11 +30,9 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
  */
 @Component
 public class CompetitorMapper {
-    private final ClubRepository clubRepository;
     private final IpscEntityClubService ipscEntityClubService;
 
-    public CompetitorMapper(ClubRepository clubRepository, IpscEntityClubService ipscEntityClubService) {
-        this.clubRepository = clubRepository;
+    public CompetitorMapper(IpscEntityClubService ipscEntityClubService) {
         this.ipscEntityClubService = ipscEntityClubService;
     }
 

@@ -30,11 +30,16 @@ import static org.mockito.Mockito.when;
 /**
  * Unit tests for {@link IpscCompetitorServiceImpl}'s impl-only protected helper methods
  * ({@code findCompetitorOrThrow}, {@code newCompetitor}, {@code readCompetitors}, {@code normaliseCsvRequest},
- * {@code toResponse}, {@code validateForCreate}) - not declared on
- * {@link za.co.hpsc.web.services.IpscCompetitorService}. The field-copying and lookup helpers are covered by
- * {@link za.co.hpsc.web.mappers.CompetitorMapperTest}.
- * The interface's create/update/patch/get contract is covered by
- * {@link za.co.hpsc.web.services.IpscCompetitorServiceTest}.
+ * {@code toResponse} and {@code validateForCreate}), which are not declared on
+ * {@link za.co.hpsc.web.services.IpscCompetitorService}.
+ *
+ * <p>
+ * The field-copying and lookup helpers are covered by {@link za.co.hpsc.web.mappers.CompetitorMapperTest}, and the
+ * interface's create, update, patch, get and delete contract by
+ * {@link za.co.hpsc.web.services.IpscCompetitorServiceTest}. The {@link CompetitorMapper} is a spy over a real
+ * instance, whose club lookup goes through an {@link IpscEntityClubServiceImpl} with a mocked
+ * {@link ClubRepository}.
+ * </p>
  */
 @ExtendWith(MockitoExtension.class)
 class IpscCompetitorServiceImplTest {
@@ -43,7 +48,7 @@ class IpscCompetitorServiceImplTest {
     private CompetitorRepository competitorRepository;
 
     @Spy
-    private CompetitorMapper competitorMapper = new CompetitorMapper(mock(ClubRepository.class), new IpscEntityClubServiceImpl(mock(ClubRepository.class)));
+    private CompetitorMapper competitorMapper = new CompetitorMapper(new IpscEntityClubServiceImpl(mock(ClubRepository.class)));
 
     @InjectMocks
     private IpscCompetitorServiceImpl ipscCompetitorServiceImpl;

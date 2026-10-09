@@ -42,7 +42,7 @@ class IpscEntityClubServiceIntegrationTest {
     }
 
     @Test
-    void testFindByCodeOrAbbreviation_whenAbbreviationMatches_thenReturnsClub() throws FatalException {
+    void testFindByCodeOrAbbreviation_whenAbbreviationMatches_thenReturnsClub() {
         // Arrange
         Club club = persistedClub(ClubIdentifier.HPSC);
         club.setAbbreviation("HPSC-TEST");
@@ -53,7 +53,7 @@ class IpscEntityClubServiceIntegrationTest {
     }
 
     @Test
-    void testFindByCodeOrAbbreviation_whenNameMatches_thenReturnsClub() throws FatalException {
+    void testFindByCodeOrAbbreviation_whenNameMatches_thenReturnsClub() {
         // Arrange
         Club club = persistedClub(ClubIdentifier.HPSC);
 
@@ -62,7 +62,7 @@ class IpscEntityClubServiceIntegrationTest {
     }
 
     @Test
-    void testFindByCodeOrAbbreviation_whenOnlyIdentifierCodeMatches_thenReturnsClubWithThatIdentifier() throws FatalException {
+    void testFindByCodeOrAbbreviation_whenOnlyIdentifierCodeMatches_thenReturnsClubWithThatIdentifier() {
         // Arrange
         Club club = persistedClub(ClubIdentifier.HPSC);
 
@@ -72,14 +72,14 @@ class IpscEntityClubServiceIntegrationTest {
     }
 
     @Test
-    void testFindByCodeOrAbbreviation_whenNothingMatches_thenThrowsValidationException() throws FatalException {
+    void testFindByCodeOrAbbreviation_whenNothingMatches_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscEntityClubService.findByCodeOrAbbreviation("Nope"));
     }
 
     // findByCodeOrAbbreviationWithDefault()
     @Test
-    void testFindByCodeOrAbbreviationWithDefault_whenBlank_thenReturnsClubOfDefaultIdentifier() throws FatalException {
+    void testFindByCodeOrAbbreviationWithDefault_whenBlank_thenReturnsClubOfDefaultIdentifier() {
         // Arrange
         Club club = persistedClub(ClubIdentifier.HPSC);
 
@@ -96,7 +96,7 @@ class IpscEntityClubServiceIntegrationTest {
     }
 
     @Test
-    void testFindByCodeOrAbbreviationWithDefault_whenClubCodeIsGiven_thenIgnoresTheDefault() throws FatalException {
+    void testFindByCodeOrAbbreviationWithDefault_whenClubCodeIsGiven_thenIgnoresTheDefault() {
         // Arrange
         Club club = persistedClub(ClubIdentifier.HPSC);
 

@@ -3,21 +3,17 @@ package za.co.hpsc.web.mappers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.Gender;
-import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.repositories.ClubRepository;
-import za.co.hpsc.web.services.IpscEntityClubService;
 import za.co.hpsc.web.services.impl.IpscEntityClubServiceImpl;
 
 import java.time.LocalDate;
@@ -25,18 +21,13 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link CompetitorMapper}, with {@link ClubRepository} mocked.
  */
 @ExtendWith(MockitoExtension.class)
-class CompetitorMapperTest {
+public class CompetitorMapperTest {
 
     @Mock
     private ClubRepository clubRepository;
@@ -45,7 +36,7 @@ class CompetitorMapperTest {
 
     @BeforeEach
     void setUp() {
-        competitorMapper = new CompetitorMapper(clubRepository, new IpscEntityClubServiceImpl(clubRepository));
+        competitorMapper = new CompetitorMapper(new IpscEntityClubServiceImpl(clubRepository));
     }
 
     // applyFields()

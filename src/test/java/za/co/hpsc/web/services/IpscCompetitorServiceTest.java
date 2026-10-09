@@ -76,7 +76,7 @@ public class IpscCompetitorServiceTest {
                 ipscMatchRepository, matchCompetitorRepository, transactionManager);
         ipscCompetitorService = new IpscCompetitorServiceImpl(competitorRepository,
                 matchCompetitorRepository, shooterLogCompetitorRepository, shooterLogOverallRepository,
-                new CompetitorMapper(clubRepository, new IpscEntityClubServiceImpl(clubRepository)), transactionService);
+                new CompetitorMapper(new IpscEntityClubServiceImpl(clubRepository)), transactionService);
     }
 
     // createCompetitor()

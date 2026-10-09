@@ -55,7 +55,7 @@ class IpscEntityClubServiceTest {
     }
 
     @Test
-    void testFindByCodeOrAbbreviation_whenAbbreviationMatches_thenReturnsClub() throws FatalException {
+    void testFindByCodeOrAbbreviation_whenAbbreviationMatches_thenReturnsClub() {
         // Arrange
         Club club = club(ClubIdentifier.HPSC);
         when(clubRepository.findByAbbreviation("HPSC")).thenReturn(Optional.of(club));
@@ -65,7 +65,7 @@ class IpscEntityClubServiceTest {
     }
 
     @Test
-    void testFindByCodeOrAbbreviation_whenOnlyNameMatches_thenReturnsClub() throws FatalException {
+    void testFindByCodeOrAbbreviation_whenOnlyNameMatches_thenReturnsClub() {
         // Arrange
         Club club = club(ClubIdentifier.HPSC);
         String name = ClubIdentifier.HPSC.getName();
@@ -77,7 +77,7 @@ class IpscEntityClubServiceTest {
     }
 
     @Test
-    void testFindByCodeOrAbbreviation_whenOnlyIdentifierCodeMatches_thenReturnsClubWithThatIdentifier() throws FatalException {
+    void testFindByCodeOrAbbreviation_whenOnlyIdentifierCodeMatches_thenReturnsClubWithThatIdentifier() {
         // Arrange
         Club club = club(ClubIdentifier.HPSC);
         String code = ClubIdentifier.HPSC.getCode();
@@ -90,7 +90,7 @@ class IpscEntityClubServiceTest {
     }
 
     @Test
-    void testFindByCodeOrAbbreviation_whenIdentifierMatchesButNoClubIsPersisted_thenThrowsNonFatalException() throws FatalException {
+    void testFindByCodeOrAbbreviation_whenIdentifierMatchesButNoClubIsPersisted_thenThrowsNonFatalException() {
         // Arrange
         String code = ClubIdentifier.HPSC.getCode();
         when(clubRepository.findByAbbreviation(code)).thenReturn(Optional.empty());
@@ -102,7 +102,7 @@ class IpscEntityClubServiceTest {
     }
 
     @Test
-    void testFindByCodeOrAbbreviation_whenNothingMatches_thenThrowsValidationException() throws FatalException {
+    void testFindByCodeOrAbbreviation_whenNothingMatches_thenThrowsValidationException() {
         // Arrange
         when(clubRepository.findByAbbreviation("Nope")).thenReturn(Optional.empty());
         when(clubRepository.findByName("Nope")).thenReturn(Optional.empty());
@@ -114,8 +114,7 @@ class IpscEntityClubServiceTest {
 
     // findByCodeOrAbbreviationWithDefault()
     @Test
-    void testFindByCodeOrAbbreviationWithDefault_whenNullOrBlank_thenReturnsClubOfDefaultIdentifier()
-            throws FatalException {
+    void testFindByCodeOrAbbreviationWithDefault_whenNullOrBlank_thenReturnsClubOfDefaultIdentifier() {
         // Arrange
         Club club = club(ClubIdentifier.HPSC);
         when(clubRepository.findByIdentifier(ClubIdentifier.HPSC)).thenReturn(Optional.of(club));
@@ -145,7 +144,7 @@ class IpscEntityClubServiceTest {
     }
 
     @Test
-    void testFindByCodeOrAbbreviationWithDefault_whenClubCodeIsGiven_thenIgnoresTheDefault() throws FatalException {
+    void testFindByCodeOrAbbreviationWithDefault_whenClubCodeIsGiven_thenIgnoresTheDefault() {
         // Arrange
         Club club = club(ClubIdentifier.SOSC);
         when(clubRepository.findByAbbreviation("SOSC")).thenReturn(Optional.of(club));

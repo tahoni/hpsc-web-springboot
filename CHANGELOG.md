@@ -86,7 +86,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorMapper.resolveHomeClub`:** **Breaking:** now resolves a competitor's home club through
   `IpscEntityClubService.findByCodeOrAbbreviationWithDefault`, so it can be given by club identifier code,
   abbreviation or name as well as abbreviation or name; an unknown home club now throws `ValidationException` (400)
-  instead of `NonFatalException` (404). A blank home club is still left unset
+  instead of `NonFatalException` (404). A blank home club is still left unset. `CompetitorMapper` no longer takes a
+  `ClubRepository`
 - **`MatchMapper.resolveClub`:** **Breaking:** now resolves a club through
   `IpscEntityClubService.findByCodeOrAbbreviationWithDefault`, so a match's club can be given by abbreviation, name,
   or club identifier code or abbreviation; an unknown club now throws `ValidationException` (400) instead of

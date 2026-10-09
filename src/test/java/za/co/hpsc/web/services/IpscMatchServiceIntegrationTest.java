@@ -212,7 +212,7 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testDeleteMatch_whenMatchHasNoDependents_thenDeletesMatch() throws FatalException {
+    void testDeleteMatch_whenMatchHasNoDependents_thenDeletesMatch() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchRequest request = validRequest("Test Club");
@@ -227,8 +227,7 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testDeleteMatch_whenMatchHasCompetitorResults_thenThrowsValidationExceptionAndKeepsMatch()
-            throws FatalException {
+    void testDeleteMatch_whenMatchHasCompetitorResults_thenThrowsValidationExceptionAndKeepsMatch() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
@@ -247,7 +246,7 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testGetMatch_whenMatchExists_thenReturnsMatch() throws FatalException {
+    void testGetMatch_whenMatchExists_thenReturnsMatch() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchRequest request = validRequest("Test Club");
@@ -275,7 +274,7 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testGetAllMatches_whenMatchesExist_thenReturnsAll() throws FatalException {
+    void testGetAllMatches_whenMatchesExist_thenReturnsAll() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchRequest firstRequest = validRequest("Test Club");
@@ -306,7 +305,7 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testPatchMatch_whenOnlyMatchNameIsProvided_thenOnlyMatchNameChanges() throws FatalException {
+    void testPatchMatch_whenOnlyMatchNameIsProvided_thenOnlyMatchNameChanges() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
@@ -326,7 +325,7 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testPatchMatch_whenStartAndEndTimeAreProvided_thenStartAndEndTimeChange() throws FatalException {
+    void testPatchMatch_whenStartAndEndTimeAreProvided_thenStartAndEndTimeChange() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
@@ -347,7 +346,7 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testPatchMatch_whenUrlIsProvided_thenUrlChanges() throws FatalException {
+    void testPatchMatch_whenUrlIsProvided_thenUrlChanges() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
@@ -364,7 +363,7 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testPatchMatch_whenClubIsUnknown_thenThrowsValidationException() throws FatalException {
+    void testPatchMatch_whenClubIsUnknown_thenThrowsValidationException() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
@@ -377,7 +376,7 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testPatchMatch_whenMatchFirearmTypeIsUnrecognised_thenThrowsValidationException() throws FatalException {
+    void testPatchMatch_whenMatchFirearmTypeIsUnrecognised_thenThrowsValidationException() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
@@ -401,7 +400,7 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testUpdateMatch_whenMatchNameIsMissing_thenThrowsValidationException() throws FatalException {
+    void testUpdateMatch_whenMatchNameIsMissing_thenThrowsValidationException() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
@@ -413,7 +412,7 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testUpdateMatch_whenClubIsUnknown_thenThrowsValidationException() throws FatalException {
+    void testUpdateMatch_whenClubIsUnknown_thenThrowsValidationException() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
@@ -424,7 +423,7 @@ class IpscMatchServiceIntegrationTest {
     }
 
     @Test
-    void testUpdateMatch_whenRequestIsValid_thenReplacesAllFields() throws FatalException {
+    void testUpdateMatch_whenRequestIsValid_thenReplacesAllFields() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         createClub("Other Club", ClubIdentifier.SOSC);
@@ -458,8 +457,7 @@ class IpscMatchServiceIntegrationTest {
     // Without a surrounding transaction
     @Test
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    void testMatchLifecycle_whenNoTransactionIsActive_thenEachWriteIsCommittedAndReadableAfterwards()
-            throws FatalException {
+    void testMatchLifecycle_whenNoTransactionIsActive_thenEachWriteIsCommittedAndReadableAfterwards() {
         // Each service call below runs without this test's usual rolled-back transaction, so every
         // write must be committed by TransactionService and every read must work on its own.
         Long matchId = null;
