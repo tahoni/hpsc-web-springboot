@@ -124,7 +124,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         IpscMatch match = createMatch();
         MatchCompetitorRequest request = validRequest(competitor.getId(), match.getId());
         request.setFirearmType(null);
-        request.setDivision("Rifle Open Division");
+        request.setDivision("Rifle Open");
 
         // Act
         MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(request);
@@ -141,7 +141,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()));
         MatchCompetitorRequest rifle = validRequest(competitor.getId(), match.getId());
         rifle.setFirearmType("Rifle");
-        rifle.setDivision("Rifle Open Division");
+        rifle.setDivision("Rifle Open");
 
         // Act
         MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(rifle);
@@ -215,8 +215,8 @@ class IpscMatchCompetitorServiceIntegrationTest {
         IpscMatch match = createMatch();
         String csvData = String.format("""
                 CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
-                %d,%d,HPSC,Junior,Handgun,Open Division,Major
-                %d,%d,HPSC,Senior,Handgun,Production Division,Major
+                %d,%d,HPSC,Junior,Handgun,Open,Major
+                %d,%d,HPSC,Senior,Handgun,Production,Major
                 """, first.getId(), match.getId(), second.getId(), match.getId());
 
         // Act
@@ -238,9 +238,9 @@ class IpscMatchCompetitorServiceIntegrationTest {
         IpscMatch match = createMatch();
         String csvData = String.format("""
                 CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
-                %d,%d,HPSC,Junior,Handgun,Open Division,Major
-                %d,%d,SOSC,Junior,Handgun,Open Division,Major
-                %d,%d,,Junior,Handgun,Open Division,Major
+                %d,%d,HPSC,Junior,Handgun,Open,Major
+                %d,%d,SOSC,Junior,Handgun,Open,Major
+                %d,%d,,Junior,Handgun,Open,Major
                 """, competitor.getId(), match.getId(), competitor.getId(), match.getId(),
                 competitor.getId(), match.getId());
 
@@ -271,7 +271,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         IpscMatch match = createMatch();
         String csvData = String.format("""
                 CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
-                %d,%d,SOSC,Junior,Handgun,Open Division,Major
+                %d,%d,SOSC,Junior,Handgun,Open,Major
                 """, competitor.getId(), match.getId());
 
         // Act
@@ -289,7 +289,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         IpscMatch match = createMatch();
         String csvData = String.format("""
                 CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
-                999999,%d,SOSC,Junior,Handgun,Open Division,Major
+                999999,%d,SOSC,Junior,Handgun,Open,Major
                 """, match.getId());
 
         // Act
@@ -309,9 +309,9 @@ class IpscMatchCompetitorServiceIntegrationTest {
         IpscMatch match = createMatch();
         String csvData = String.format("""
                 CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
-                %d,%d,HPSC,Junior,Handgun,Open Division,Major
-                %d,%d,SOSC,Junior,Handgun,Open Division,Major
-                %d,%d,,Junior,Handgun,Open Division,Major
+                %d,%d,HPSC,Junior,Handgun,Open,Major
+                %d,%d,SOSC,Junior,Handgun,Open,Major
+                %d,%d,,Junior,Handgun,Open,Major
                 """, competitor.getId(), match.getId(), competitor.getId(), match.getId(),
                 competitor.getId(), match.getId());
 
@@ -333,7 +333,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         assertThrows(ValidationException.class,
                 () -> ipscMatchCompetitorService.createMatchCompetitors(
                         "CompetitorId,MatchId,Cats,FirearmType,Div" + System.lineSeparator()
-                                + "1,2,Junior,Handgun,Open Division",
+                                + "1,2,Junior,Handgun,Open",
                         "Not A Club"));
     }
 
@@ -345,8 +345,8 @@ class IpscMatchCompetitorServiceIntegrationTest {
         IpscMatch match = createMatch();
         String csvData = String.format("""
                 CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
-                %d,%d,HPSC,Junior,Handgun,Open Division,Major
-                %d,%d,HPSC,Junior,Handgun,Open Division,Major
+                %d,%d,HPSC,Junior,Handgun,Open,Major
+                %d,%d,HPSC,Junior,Handgun,Open,Major
                 """, competitor.getId(), match.getId(), competitor.getId() + 1000, match.getId());
 
         // Act
@@ -367,7 +367,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()));
         String csvData = String.format("""
                 CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
-                %d,%d,HPSC,Junior,Handgun,Open Division,Major
+                %d,%d,HPSC,Junior,Handgun,Open,Major
                 """, competitor.getId(), match.getId());
 
         // Act
@@ -387,7 +387,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         Long id = ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()))
                 .getMatchCompetitorId();
         MatchCompetitorRequest replacement = validRequest(competitor.getId(), match.getId());
-        replacement.setDivision("Standard Division");
+        replacement.setDivision("Standard");
         replacement.setPoints(new BigDecimal("12.5"));
 
         // Act
@@ -513,7 +513,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         request.setMatchId(matchId);
         request.setCompetitorCategory("Junior");
         request.setFirearmType("Handgun");
-        request.setDivision("Open Division");
+        request.setDivision("Open");
         request.setPowerFactor("Major");
         return request;
     }

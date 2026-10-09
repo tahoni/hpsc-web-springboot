@@ -4,7 +4,6 @@ import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 
@@ -58,9 +57,6 @@ public enum Division {
     MINI_RIFLE_OPEN("Mini Rifle Open", FirearmType.MINI_RIFLE),
     MINI_RIFLE_STANDARD("Mini Rifle Standard", FirearmType.MINI_RIFLE);
 
-    /** The " Division" suffix that division names used to carry, still accepted when looking a division up. */
-    private static final Pattern LEGACY_SUFFIX = Pattern.compile("(?i)\s+division$");
-
     private final String name;
     private final FirearmType firearmType;
 
@@ -74,8 +70,7 @@ public enum Division {
      *
      * <p>
      * The method performs a case-insensitive match to find a division with the given name.
-     * A trailing {@code " Division"} on the name is ignored, so the legacy form (e.g. {@code "Open Division"}) still
-     * matches. If no match is found or the input is null/blank, an empty {@code Optional} is returned.
+     * If no match is found or the input is null/blank, an empty {@code Optional} is returned.
      * </p>
      *
      * @param name the name of the division to search for.
@@ -89,9 +84,8 @@ public enum Division {
             return Optional.empty();
         }
 
-        String trimmedName = LEGACY_SUFFIX.matcher(name.trim()).replaceFirst("");
         return Arrays.stream(Division.values())
-                .filter(division -> division.isNameMatch(trimmedName))
+                .filter(division -> division.isNameMatch(name))
                 .findFirst();
     }
 

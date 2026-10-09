@@ -33,7 +33,7 @@ class DivisionConverterTest {
     @Test
     void testConvertToEntityAttribute_whenNameIsKnown_thenReturnsDivision() {
         // Act
-        Division entityValue = converter.convertToEntityAttribute("Open Division");
+        Division entityValue = converter.convertToEntityAttribute("Open");
 
         // Assert
         assertEquals(Division.OPEN, entityValue);
@@ -42,7 +42,7 @@ class DivisionConverterTest {
     @Test
     void testConvertToEntityAttribute_whenNameHasDifferentCase_thenReturnsDivision() {
         // Act
-        Division entityValue = converter.convertToEntityAttribute("production optics division");
+        Division entityValue = converter.convertToEntityAttribute("production optics");
 
         // Assert
         assertEquals(Division.PRODUCTION_OPTICS, entityValue);

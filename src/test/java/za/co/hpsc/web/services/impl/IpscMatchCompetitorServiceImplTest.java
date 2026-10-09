@@ -343,7 +343,7 @@ class IpscMatchCompetitorServiceImplTest {
         request.setMatchId(2L);
         request.setCompetitorCategory("Junior");
         request.setFirearmType("Handgun");
-        request.setDivision("Open Division");
+        request.setDivision("Open");
         request.setPowerFactor("Major");
 
         // Act & Assert
@@ -524,7 +524,7 @@ class IpscMatchCompetitorServiceImplTest {
         request.setMatchId(2L);
         request.setCompetitorCategory("Junior");
         request.setFirearmType("Handgun");
-        request.setDivision("Open Division");
+        request.setDivision("Open");
         request.setPowerFactor("Major");
         return request;
     }

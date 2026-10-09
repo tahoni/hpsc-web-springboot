@@ -66,7 +66,7 @@ class MatchCompetitorMapperTest {
         request.setMatchClub("HPSC");
         request.setCompetitorCategory("Lady");
         request.setFirearmType("PCC");
-        request.setDivision("PCC Iron Division");
+        request.setDivision("PCC Iron");
         request.setPowerFactor("Minor");
         request.setPoints(new BigDecimal("50"));
         request.setPercentage(new BigDecimal("98.25"));
@@ -129,7 +129,7 @@ class MatchCompetitorMapperTest {
         request.setMatchClub("HPSC");
         request.setCompetitorCategory("Lady");
         request.setFirearmType("PCC");
-        request.setDivision("PCC Iron Division");
+        request.setDivision("PCC Iron");
         request.setPowerFactor("Minor");
         request.setPoints(new BigDecimal("50"));
         request.setPercentage(new BigDecimal("98.25"));
@@ -203,7 +203,7 @@ class MatchCompetitorMapperTest {
         // Arrange
         MatchCompetitor matchCompetitor = existingMatchCompetitor();
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
-        request.setDivision("Open Division");
+        request.setDivision("Open");
         request.setIsVisitor(true);
 
         // Act
@@ -300,7 +300,7 @@ class MatchCompetitorMapperTest {
         // Arrange
         MatchCompetitor matchCompetitor = existingMatchCompetitor();
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
-        request.setDivision("Shotgun Open Division");
+        request.setDivision("Shotgun Open");
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> matchCompetitorMapper.applyPatchFields(matchCompetitor, request));
@@ -323,7 +323,7 @@ class MatchCompetitorMapperTest {
         MatchCompetitor matchCompetitor = existingMatchCompetitor();
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
         request.setFirearmType("Shotgun");
-        request.setDivision("Shotgun Open Division");
+        request.setDivision("Shotgun Open");
 
         // Act
         matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
@@ -338,7 +338,7 @@ class MatchCompetitorMapperTest {
         // Arrange
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
-        request.setDivision("Shotgun Open Division");
+        request.setDivision("Shotgun Open");
 
         // Act
         matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
@@ -402,7 +402,7 @@ class MatchCompetitorMapperTest {
         matchCompetitor.setDivision(Division.PRODUCTION);
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
         request.setFirearmType("  ");
-        request.setDivision("Rifle Open Division");
+        request.setDivision("Rifle Open");
 
         // Act
         matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
@@ -417,7 +417,7 @@ class MatchCompetitorMapperTest {
         // Arrange
         MatchCompetitor matchCompetitor = existingMatchCompetitor();
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
-        request.setDivision("Classic Division");
+        request.setDivision("Classic");
 
         // Act
         matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
@@ -441,7 +441,7 @@ class MatchCompetitorMapperTest {
         request.setMatchId(2L);
         request.setCompetitorCategory("Lady");
         request.setFirearmType("  ");
-        request.setDivision("Rifle Open Division");
+        request.setDivision("Rifle Open");
         request.setPowerFactor("Minor");
         MatchCompetitor matchCompetitor = new MatchCompetitor();
 
@@ -456,7 +456,7 @@ class MatchCompetitorMapperTest {
     void testApplyFields_whenFirearmTypeIsNull_thenInitialisesFirearmTypeFromDivision() {
         // Arrange
         stubCompetitorAndMatch();
-        MatchCompetitorRequest request = requestWith(null, "Shotgun Open Division");
+        MatchCompetitorRequest request = requestWith(null, "Shotgun Open");
         MatchCompetitor matchCompetitor = new MatchCompetitor();
 
         // Act
@@ -471,7 +471,7 @@ class MatchCompetitorMapperTest {
     void testApplyFields_whenFirearmTypeIsUnrecognised_thenInitialisesFirearmTypeFromDivision() {
         // Arrange
         stubCompetitorAndMatch();
-        MatchCompetitorRequest request = requestWith("Nope", "PCC Iron Division");
+        MatchCompetitorRequest request = requestWith("Nope", "PCC Iron");
         MatchCompetitor matchCompetitor = new MatchCompetitor();
 
         // Act
@@ -485,7 +485,7 @@ class MatchCompetitorMapperTest {
     void testApplyFields_whenFirearmTypeAndDivisionMatch_thenSetsBoth() {
         // Arrange
         stubCompetitorAndMatch();
-        MatchCompetitorRequest request = requestWith("Rifle", "Rifle Open Division");
+        MatchCompetitorRequest request = requestWith("Rifle", "Rifle Open");
         MatchCompetitor matchCompetitor = new MatchCompetitor();
 
         // Act
@@ -500,7 +500,7 @@ class MatchCompetitorMapperTest {
     void testApplyFields_whenDivisionDoesNotBelongToFirearmType_thenThrowsValidationException() {
         // Arrange
         stubCompetitorAndMatch();
-        MatchCompetitorRequest request = requestWith("Shotgun", "Rifle Open Division");
+        MatchCompetitorRequest request = requestWith("Shotgun", "Rifle Open");
 
         // Act & Assert
         assertThrows(ValidationException.class,
@@ -550,7 +550,7 @@ class MatchCompetitorMapperTest {
         MatchCompetitor matchCompetitor = existingMatchCompetitor();
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
         request.setFirearmType("Nope");
-        request.setDivision("Shotgun Open Division");
+        request.setDivision("Shotgun Open");
 
         // Act
         matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
@@ -579,7 +579,7 @@ class MatchCompetitorMapperTest {
         // Arrange
         MatchCompetitor matchCompetitor = existingMatchCompetitor();
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
-        request.setDivision("Open Division");
+        request.setDivision("Open");
 
         // Act
         matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
@@ -595,7 +595,7 @@ class MatchCompetitorMapperTest {
         MatchCompetitor matchCompetitor = existingMatchCompetitor();
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
         request.setFirearmType("Rifle");
-        request.setDivision("Shotgun Open Division");
+        request.setDivision("Shotgun Open");
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> matchCompetitorMapper.applyPatchFields(matchCompetitor, request));
@@ -708,7 +708,7 @@ class MatchCompetitorMapperTest {
     @Test
     void testResolveDivision_whenKnown_thenReturnsDivision() {
         // Act & Assert
-        assertEquals(Division.CLASSIC, matchCompetitorMapper.resolveDivision("Classic Division"));
+        assertEquals(Division.CLASSIC, matchCompetitorMapper.resolveDivision("Classic"));
     }
 
     @Test
