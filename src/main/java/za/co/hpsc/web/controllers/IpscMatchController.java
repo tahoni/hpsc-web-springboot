@@ -54,9 +54,6 @@ public class IpscMatchController {
      * @return the created {@link MatchResponse}, including its generated ID.
      * @throws ValidationException if a required field is missing, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if the named club cannot be found.
-     * @throws FatalException      if no club is named and
-     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
-     *                             is null.
      * @since 8.0.0
      */
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -76,7 +73,7 @@ public class IpscMatchController {
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
     ResponseEntity<MatchResponse> createMatch(@Valid @RequestBody MatchRequest request)
-            throws ValidationException, NonFatalException, FatalException {
+            throws ValidationException, NonFatalException {
         return ResponseEntity.status(HttpStatus.CREATED).body(ipscMatchService.createMatch(request));
     }
 
@@ -135,9 +132,6 @@ public class IpscMatchController {
      * @throws ValidationException if a required field is missing, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
-     * @throws FatalException      if no club is named and
-     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
-     *                             is null.
      */
     @PutMapping(value = "/{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Replace match", description = "Fully replace an existing IPSC match's fields.")
@@ -158,7 +152,7 @@ public class IpscMatchController {
     ResponseEntity<MatchResponse> updateMatch(
             @Parameter(description = "Identifier of the match to replace.") @PathVariable Long matchId,
             @Valid @RequestBody MatchRequest request)
-            throws ValidationException, NonFatalException, FatalException {
+            throws ValidationException, NonFatalException {
         return ResponseEntity.ok(ipscMatchService.updateMatch(matchId, request));
     }
 
@@ -172,9 +166,6 @@ public class IpscMatchController {
      * @throws ValidationException if the named club is blank, or the firearm type/category is unrecognised.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
-     * @throws FatalException      if the request's {@code club} is blank and
-     *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
-     *                             is null.
      */
     @PatchMapping(value = "/{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update match", description = "Partially update an existing IPSC match; only non-null fields are applied.")
@@ -195,7 +186,7 @@ public class IpscMatchController {
     ResponseEntity<MatchResponse> patchMatch(
             @Parameter(description = "Identifier of the match to update.") @PathVariable Long matchId,
             @Valid @RequestBody MatchPatchRequest request)
-            throws ValidationException, NonFatalException, FatalException {
+            throws ValidationException, NonFatalException {
         return ResponseEntity.ok(ipscMatchService.patchMatch(matchId, request));
     }
 

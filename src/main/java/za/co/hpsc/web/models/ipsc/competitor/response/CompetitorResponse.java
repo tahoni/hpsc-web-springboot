@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models.ipsc.competitor.response;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,13 +30,13 @@ import java.util.List;
 @NoArgsConstructor
 public class CompetitorResponse {
     /** The competitor's own identifier. */
-    @NonNull
+    @NotNull
     private Long competitorId;
     /** The competitor's first name. */
-    @NonNull
+    @NotNull
     private String firstName;
     /** The competitor's last name. */
-    @NonNull
+    @NotNull
     private String lastName;
     /** The competitor's middle name(s), if any. */
     private String middleNames;

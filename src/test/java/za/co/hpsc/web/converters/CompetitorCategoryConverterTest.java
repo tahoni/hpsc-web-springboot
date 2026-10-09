@@ -3,8 +3,7 @@ package za.co.hpsc.web.converters;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.enums.CompetitorCategory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CompetitorCategoryConverterTest {
 
@@ -27,6 +26,15 @@ class CompetitorCategoryConverterTest {
 
         // Assert
         assertNull(databaseValue);
+    }
+
+    @Test
+    void testConvertToDatabaseColumn_whenCategoryIsNone_thenReturnsEmptyString() {
+        // Act
+        String databaseValue = converter.convertToDatabaseColumn(CompetitorCategory.NONE);
+
+        // Assert
+        assertTrue(databaseValue.isEmpty());
     }
 
     // convertToEntityAttribute()

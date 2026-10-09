@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The outcome of importing a single match competitor in a bulk import: whether it succeeded, a
@@ -23,7 +23,13 @@ public class MatchCompetitorBulkResponse {
     private boolean success = true;
     /** A message describing the outcome of the import. */
     private String message = "";
-    /** The match competitor this result relates to. */
-    @NonNull
+    /** The imported match competitor; {@code null} for a row that failed, whose values are in {@link #matchCompetitorRow}. */
+    @Nullable
     private MatchCompetitorResponse matchCompetitor;
+    /**
+     * Every value the row supplied, as text with a missing value as an empty string; set only for a row that failed,
+     * and {@code null} for one that was imported.
+     */
+    @Nullable
+    private MatchCompetitorRow matchCompetitorRow;
 }

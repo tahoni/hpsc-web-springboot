@@ -61,13 +61,12 @@ class CompetitorCategoryTest {
     }
 
     @Test
-    void testFromName_withNoMatch_returnsNoneCategory() {
+    void testFromName_withNoMatch_returnsEmptyOptional() {
         // Act
         Optional<CompetitorCategory> result = CompetitorCategory.fromName("Nonexistent Category");
 
         // Assert
-        assertTrue(result.isPresent());
-        assertEquals(CompetitorCategory.NONE, result.get());
+        assertTrue(result.isEmpty());
     }
 
     @Test

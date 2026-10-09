@@ -1,9 +1,9 @@
 package za.co.hpsc.web.models.ipsc.matchcompetitor.response;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -12,7 +12,6 @@ import java.util.List;
  * one per imported row, each recording whether that row succeeded.
  *
  * @see MatchCompetitorBulkResponse
- * @see MatchCompetitorResponseHolder
  * @since 11.0.0
  */
 @Getter
@@ -20,6 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 public class MatchCompetitorBulkResponseHolder {
     /** The result of each imported match competitor, in the same order as the import. */
-    @NonNull
-    private List<MatchCompetitorBulkResponse> matchCompetitors;
+    @NotNull
+    private List<MatchCompetitorBulkResponse> matchCompetitorResults;
 }

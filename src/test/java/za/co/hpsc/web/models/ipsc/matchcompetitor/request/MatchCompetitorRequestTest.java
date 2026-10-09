@@ -18,7 +18,7 @@ class MatchCompetitorRequestTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         MatchCompetitorRequest request = new MatchCompetitorRequest(7L, 1L, "Jane Doe", "123", 2L, "HPSC", "Junior",
-                "Handgun", "Open Division", "Major", new BigDecimal("95.5"), new BigDecimal("98.25"),
+                "Handgun", "Open", "Major", new BigDecimal("95.5"), new BigDecimal("98.25"),
                 new BigDecimal("41.5"), new BigDecimal("93.75"), 30, 4, 1, 2, 1, 0, 3, 0,
                 new BigDecimal("2"), new BigDecimal("1"), false);
 
@@ -34,7 +34,7 @@ class MatchCompetitorRequestTest {
         assertEquals("HPSC", node.get("matchClub").asText());
         assertEquals("Junior", node.get("competitorCategory").asText());
         assertEquals("Handgun", node.get("firearmType").asText());
-        assertEquals("Open Division", node.get("division").asText());
+        assertEquals("Open", node.get("division").asText());
         assertEquals("Major", node.get("powerFactor").asText());
         assertEquals(0, new BigDecimal("95.5").compareTo(node.get("points").decimalValue()));
         assertEquals(0, new BigDecimal("98.25").compareTo(node.get("percentage").decimalValue()));
@@ -58,7 +58,7 @@ class MatchCompetitorRequestTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         MatchCompetitorRequest request = new MatchCompetitorRequest(null, 1L, null, null, 2L, null, "Junior", null,
-                "Open Division", null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                "Open", null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null);
 
         // Act
@@ -68,7 +68,7 @@ class MatchCompetitorRequestTest {
         assertEquals(1, node.get("competitorId").asInt());
         assertEquals(2, node.get("matchId").asInt());
         assertEquals("Junior", node.get("competitorCategory").asText());
-        assertEquals("Open Division", node.get("division").asText());
+        assertEquals("Open", node.get("division").asText());
         assertTrue(node.get("matchCompetitorId").isNull());
         assertTrue(node.get("matchClub").isNull());
         assertTrue(node.get("firearmType").isNull());
@@ -91,7 +91,7 @@ class MatchCompetitorRequestTest {
                   "matchClub": "HPSC",
                   "competitorCategory": "Junior",
                   "firearmType": "Handgun",
-                  "division": "Open Division",
+                  "division": "Open",
                   "powerFactor": "Major",
                   "points": 95.5,
                   "overallRanking": 2,
@@ -110,7 +110,7 @@ class MatchCompetitorRequestTest {
         assertEquals("HPSC", request.getMatchClub());
         assertEquals("Junior", request.getCompetitorCategory());
         assertEquals("Handgun", request.getFirearmType());
-        assertEquals("Open Division", request.getDivision());
+        assertEquals("Open", request.getDivision());
         assertEquals("Major", request.getPowerFactor());
         assertEquals(0, new BigDecimal("95.5").compareTo(request.getPoints()));
         assertEquals(0, new BigDecimal("2").compareTo(request.getOverallRanking()));
@@ -127,7 +127,7 @@ class MatchCompetitorRequestTest {
                   "matchId": 2,
                   "competitorCategory": "Junior",
                   "firearmType": "Handgun",
-                  "division": "Open Division"
+                  "division": "Open"
                 }
                 """;
 
@@ -152,7 +152,7 @@ class MatchCompetitorRequestTest {
                   "competitorId": 1,
                   "matchId": 2,
                   "competitorCategory": "Junior",
-                  "division": "Open Division"
+                  "division": "Open"
                 }
                 """;
 
@@ -171,7 +171,7 @@ class MatchCompetitorRequestTest {
                   "name": "Jane Doe",
                   "matchId": 2,
                   "competitorCategory": "Junior",
-                  "division": "Open Division"
+                  "division": "Open"
                 }
                 """;
 
@@ -190,7 +190,7 @@ class MatchCompetitorRequestTest {
                 {
                   "competitorId": 1,
                   "competitorCategory": "Junior",
-                  "division": "Open Division"
+                  "division": "Open"
                 }
                 """;
 
@@ -206,7 +206,7 @@ class MatchCompetitorRequestTest {
                 {
                   "competitorId": 1,
                   "matchId": 2,
-                  "division": "Open Division"
+                  "division": "Open"
                 }
                 """;
 
@@ -375,7 +375,7 @@ class MatchCompetitorRequestTest {
         ValidationException exception = assertThrows(ValidationException.class, request::validate);
 
         // Assert
-        assertEquals("Division Open Division is not a Shotgun division.", exception.getMessage());
+        assertEquals("Division Open is not a Shotgun division.", exception.getMessage());
     }
 
     @Test
@@ -383,7 +383,7 @@ class MatchCompetitorRequestTest {
         // Arrange
         MatchCompetitorRequest request = validRequest();
         request.setFirearmType("Shotgun");
-        request.setDivision("Shotgun Open Division");
+        request.setDivision("Shotgun Open");
 
         // Act & Assert
         assertDoesNotThrow(request::validate);
@@ -421,7 +421,7 @@ class MatchCompetitorRequestTest {
         request.setMatchId(2L);
         request.setCompetitorCategory("Junior");
         request.setFirearmType("Handgun");
-        request.setDivision("Open Division");
+        request.setDivision("Open");
         request.setPowerFactor("Major");
         return request;
     }

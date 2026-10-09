@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 13.3.0](#-1330---2026-10-07) ← Current
+- [🧾 Version 14.0.0](#-1400---2026-10-09) ← Current
+- [🧾 Version 13.3.0](#-1330---2026-10-07)
 - [🧾 Version 13.2.0](#-1320---2026-10-07)
 - [🧾 Version 13.1.0](#-1310---2026-10-07)
 - [🧾 Version 13.0.0](#-1300---2026-10-07)
@@ -30,6 +31,157 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [14.0.0] - 2026-10-09
+
+#### ➕ Added
+
+##### Database
+
+- **`V11_7_0__drop_division_suffix_from_division_names.sql`:** New migration that renames the stored `division` in
+  `match_competitor`, `shooter_log_competitor` and `shooter_log_overall` to the new `Division` names, dropping the
+  trailing " Division" and mapping `PCC Optic Division` and `PCC Iron Division` to `PCC Optics` and `PCC Irons`; without
+  it an existing row's division reads back as `null`
+
+##### Models
+
+- **`MatchCompetitorRow`:** New all-text description of a bulk import row, with every value the row supplied and a
+  missing value as an empty string; `MatchCompetitorBulkResponse` carries it as `row` for a row that failed
+
+##### Helpers
+
+- **`MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields`:** New helper that describes each required field
+  still unset on a match competitor, saying whether the request left it out or gave a value that could not be
+  resolved; a blank or generic competitor number is treated as not specified
+
+##### Services
+
+- **`IpscEntityClubService.findByCodeOrAbbreviation`:** New lookup of a club by abbreviation, name, or club identifier
+  code, abbreviation or name; `IpscEntityClubServiceImpl` now takes a `ClubRepository`. An unknown club throws
+  `ValidationException`, and a blank code throws `NonFatalException`
+- **`IpscEntityClubService.findByCodeOrAbbreviationWithDefault`:** New lookup that uses a default club identifier when
+  the club name is blank
+
+#### 🔄 Changed
+
+##### Enums
+
+- **`CompetitorCategory.fromName`:** Now returns an empty `Optional` for an unrecognised name instead of falling back
+  to `NONE`; a null or blank name resolves to `NONE`
+- **`Division`:** **Breaking:** dropped the trailing " Division" from each division's name (for example "Open" instead of
+  "Open Division"), so divisions are matched by their short names, and a value in the old form no longer resolves
+- **`Division`:** **Breaking:** `PCC_OPTICS` and `PCC_IRON` are renamed `"PCC Optics"` and `"PCC Irons"` (from
+  `"PCC Optic"` and `"PCC Iron"`), so a division given by the singular name no longer resolves
+
+##### Helpers
+
+- **`CompetitorHelpers.cleanCompetitorName`:** Now removes every leading position prefix, not only the first
+- **`MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields`:** The "Competitor not found for name"
+  message now quotes the competitor name cleaned by `CompetitorHelpers.cleanCompetitorName`
+
+##### Mappers
+
+- **`CompetitorMapper.resolveHomeClub`:** **Breaking:** now resolves a competitor's home club through
+  `IpscEntityClubService.findByCodeOrAbbreviationWithDefault`, so it can be given by club identifier code,
+  abbreviation or name as well as abbreviation or name; an unknown home club now throws `ValidationException` (400)
+  instead of `NonFatalException` (404). A blank home club is still left unset. `CompetitorMapper` no longer takes a
+  `ClubRepository`
+- **`MatchMapper.resolveClub`:** **Breaking:** now resolves a club through
+  `IpscEntityClubService.findByCodeOrAbbreviationWithDefault`, so a match's club can be given by abbreviation, name,
+  or club identifier code or abbreviation; an unknown club now throws `ValidationException` (400) instead of
+  `NonFatalException` (404). `MatchMapper` no longer takes a `ClubRepository`, and `FatalException` is dropped from
+  `resolveClub`, `applyFields`, `applyPatchFields` and the match service and controller methods that only declared it
+  for the club lookup
+- **`MatchCompetitorMapper.resolveCompetitorCategory`:** A null or blank competitor category now resolves to
+  `CompetitorCategory.NONE` instead of throwing; an unrecognised one still throws `ValidationException`. Covered
+  by new `MatchCompetitorMapperTest` cases for null, empty and whitespace-only values
+- **`MatchCompetitorMapper.populateResolvableFields`:** A blank competitor category is now kept as
+  `CompetitorCategory.NONE` instead of being cleared to `null`, so a bulk import row no longer reports it as missing; an
+  unrecognised one is still left `null`
+- **`MatchCompetitorMapper.resolveFirearmType`:** Now takes the competitor's `Division` and falls back to the
+  division's firearm type when the firearm type name is unknown, instead of throwing
+- **`MatchCompetitorMapper.resolveMatchClub`:** Now matches a club by name, abbreviation or identifier code, in that
+  order
+- **`MatchCompetitorRowMapper`:** New mapper that describes a failed bulk import row as a `MatchCompetitorRow`,
+  reporting the values already resolved onto the `MatchCompetitor` — the competitor and match identifiers, the
+  competitor's number, and the match club, category, firearm type, division and power factor — in place of the row's
+  own text; `failedRow` now takes the `MatchCompetitor` and uses it, so a row that fails as a duplicate or for a
+  missing field is reported by its resolved values. A reported match club is now the club's name, and the competitor's
+  name is always the row's own name cleaned by `CompetitorHelpers.cleanCompetitorName`, whether or not a competitor
+  was resolved
+
+##### Services
+
+- **`IpscMatchCompetitorServiceImpl.createMatchCompetitors`:** A row is now checked for every missing or
+  unresolvable required field at once, through `MatchCompetitorMapper.populateResolvableFields`, instead of failing on
+  the first one thrown, so its message lists them all; a blank category, division, firearm type or power factor is
+  reported as not specified
+- **`ClubService` and `EntityIpscCompetitorService`:** Renamed to `IpscEntityClubService` and
+  `IpscEntityCompetitorService` (and their implementations and tests) so the IPSC entity services share a naming
+  pattern; `findCompetitor` is now `findCompetitorByIdentifierAndFullName`, and dependants rename their fields to match
+- **`IpscMatchCompetitorServiceImpl.toResponse`:** Now validates the match competitor first and throws
+  `ValidationException` naming every violated constraint, instead of building a response from an incomplete entity;
+  the service now takes a `jakarta.validation.Validator`
+- **`IpscMatchCompetitorServiceImpl.failedRow`:** **Breaking:** a row that could not be imported is now reported with
+  no `MatchCompetitorResponse` (`null`) and only its values in `matchCompetitorRow`, instead of a partly filled
+  response, so a client reading `matchCompetitor` for a failed row now gets `null`; the `toFailedResponse` helper is
+  removed. `MatchCompetitorBulkResponse.matchCompetitor` is now `@Nullable`
+
+##### Models
+
+- **`MatchCompetitor`:** The competitor, match, competitor category, firearm type, division and power factor are now
+  `@NotNull`, matching their `nullable = false` columns
+- **`MatchCompetitorRequest`:** The match ID, competitor category, division and power factor are no
+  longer rejected by bean validation, and the competitor category is optional in the CSV import (`Cats`), so a bulk
+  import can report a row that is missing them instead of failing the whole request; `validate()` still requires
+  them when a match competitor is created or replaced
+- **`MatchCompetitorResponse.competitorId`:** Dropped `@NonNull`, so a response can be built for a match competitor
+  that is not linked to a competitor
+- **`MatchCompetitorBulkResponseHolder.matchCompetitors`:** **Breaking:** renamed back to `matchCompetitorResults`, so
+  a bulk match competitor import's response body carries `matchCompetitorResults` instead of `matchCompetitors`;
+  `IpscMatchCompetitorController` reads the renamed getter
+- **`CompetitorResponse`, `CompetitorResponseHolder`, `MatchResponse`, `MatchResponseHolder` and
+  `MatchCompetitorBulkResponseHolder`:** Replaced `org.jspecify.annotations.NonNull` with
+  `jakarta.validation.constraints.NotNull` on their required fields, so they can be checked by a `Validator`
+
+##### Documentation
+
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** Gaps #38 (test-only utility and enum
+  methods), #39 (`ClubIdentifier.code` and `fromCode`) and #40 (no data migration for the renamed `Division` names) are
+  recorded and closed in v14.0.0, with the Roadmap, At a Glance and Success Criteria entries updated to match
+- **`documentation/recommendations/flyway-migration-versioning.md`:** Current State table gains a row for
+  `V11_7_0__drop_division_suffix_from_division_names.sql`
+- **`ARCHITECTURE.md`:** Describes the renamed `IpscEntityClubService` and `IpscEntityCompetitorService`, the new
+  `MatchCompetitorHelpers` and `MatchCompetitorRowMapper`, and a bulk import row that fails for missing or
+  unresolvable fields; drops `DateUtil` and `NumberUtil` and `MatchCompetitorResponseHolder`
+- **`AGENTS.md`:** The final-utility-class example now names `ValueUtil` instead of the removed `NumberUtil`, and the
+  test-heading example uses `// fromName()` instead of `// fromCode()`
+
+#### 🗑️ Removed
+
+##### Utilities
+
+- **`NumberUtil` and `DateUtil`:** Removed both classes and their tests — `calculatePercentage`, `calculateSum`,
+  `formatBigDecimal`, `formatDate` and `formatDateTime` were called only by tests
+- **`StringUtil.formatStringWithNamedParameters` and `ValueUtil.nullAsZeroBigDecimal`:** Removed with their tests, as
+  nothing in production code called them
+
+##### Constants
+
+- **`SystemConstants.DEFAULT_SCALE`:** Removed, as nothing read it once `NumberUtil` took the scale as a parameter
+
+##### Models
+
+- **`MatchCompetitorResponseHolder`:** Removed the unused container class; bulk imports return
+  `MatchCompetitorBulkResponseHolder`
+
+##### Tests
+
+- **`AwardControllerTest`, `ImageControllerTest`, `IpscCompetitorControllerTest`, `IpscMatchControllerTest` and
+  `IpscMatchCompetitorControllerTest`:** Removed the tests that only checked the controller delegates to its service
+  or lets the service's exception propagate
 
 ---
 
@@ -310,8 +462,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now reject a division that does not belong to the
   firearm type, through the new `validateDivisionMatchesFirearmType`; a patch that changes either one is checked against
   the other's current value
-- **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now take a missing firearm type from the division (a
-  blank request value in `applyFields`, or an entity with none after a patch)
+- **`MatchCompetitorMapper`:** `applyFields` and `applyPatchFields` now take a missing or unrecognised firearm type from the
+  division (`applyFields`, or `applyPatchFields` when the entity has none and the request patches the division)
 
 ##### Models
 

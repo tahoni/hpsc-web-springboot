@@ -7,13 +7,13 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import java.util.Optional;
 
 /**
- * The {@code EntityIpscCompetitorService} interface looks up an already persisted IPSC
+ * The {@code IpscEntityCompetitorService} interface looks up an already persisted IPSC
  * {@link Competitor} from the loosely-specified identity found in imported data, such as a
  * member's full name and competitor number.
  *
  * @since 11.0.0
  */
-public interface EntityIpscCompetitorService {
+public interface IpscEntityCompetitorService {
     /**
      * Finds the single persisted competitor that matches the given full name and competitor number.
      *
@@ -45,6 +45,6 @@ public interface EntityIpscCompetitorService {
      * @throws NonFatalException   if no competitor matches the number, ID number or name.
      * @since 11.0.0
      */
-    Optional<Competitor> findCompetitor(String competitorNumber, String fullName)
+    Optional<Competitor> findCompetitorByIdentifierAndFullName(String competitorNumber, String fullName)
         throws ValidationException, NonFatalException;
 }

@@ -8,28 +8,37 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
+import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
-import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.repositories.ClubRepository;
+import za.co.hpsc.web.services.IpscEntityClubService;
+import za.co.hpsc.web.services.impl.IpscEntityClubServiceImpl;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
- * Unit tests for {@link MatchMapper}, with {@link ClubRepository} mocked.
+ * Unit tests for {@link MatchMapper}, with {@link IpscEntityClubService} mocked. The {@code resolveClub} tests that
+ * need the club lookup itself run against a real {@link IpscEntityClubServiceImpl} over a mocked
+ * {@link ClubRepository}.
  */
 @ExtendWith(MockitoExtension.class)
 class MatchMapperTest {
+
+    @Mock
+    private IpscEntityClubService ipscEntityClubService;
 
     @Mock
     private ClubRepository clubRepository;
@@ -45,7 +54,8 @@ class MatchMapperTest {
         club.setId(10L);
         club.setName("Test Club");
         club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
+        when(ipscEntityClubService.findByCodeOrAbbreviationWithDefault("Test Club", IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
+                .thenReturn(club);
         MatchRequest request = validRequest("Test Club");
         IpscMatch match = new IpscMatch();
 
@@ -64,21 +74,12 @@ class MatchMapperTest {
     }
 
     @Test
-    void testApplyFields_whenClubDoesNotExist_thenThrowsNonFatalException() {
-        // Arrange
-        when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
-        MatchRequest request = validRequest("No Such Club");
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchMapper.applyFields(new IpscMatch(), request));
-    }
-
-    @Test
     void testApplyFields_whenFirearmTypeIsUnrecognised_thenThrowsValidationException() {
         // Arrange
         Club club = new Club();
         club.setName("Test Club");
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
+        when(ipscEntityClubService.findByCodeOrAbbreviationWithDefault("Test Club", IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
+                .thenReturn(club);
         MatchRequest request = validRequest("Test Club");
         request.setMatchFirearmType("Not A Firearm Type");
 
@@ -91,7 +92,8 @@ class MatchMapperTest {
         // Arrange
         Club club = new Club();
         club.setName("Test Club");
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
+        when(ipscEntityClubService.findByCodeOrAbbreviationWithDefault("Test Club", IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
+                .thenReturn(club);
         MatchRequest request = validRequest("Test Club");
         request.setMatchCategory("Not A Category");
 
@@ -105,7 +107,8 @@ class MatchMapperTest {
         // Arrange
         Club club = new Club();
         club.setName("Test Club");
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
+        when(ipscEntityClubService.findByCodeOrAbbreviationWithDefault("Test Club", IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
+                .thenReturn(club);
         MatchPatchRequest request = new MatchPatchRequest();
         request.setClub("Test Club");
         request.setMatchName("Renamed Championship");
@@ -147,7 +150,7 @@ class MatchMapperTest {
         assertEquals(FirearmType.HANDGUN, match.getMatchFirearmType());
         assertEquals(MatchCategory.CLUB_SHOOT, match.getMatchCategory());
         assertEquals("https://example.com/matches/1", match.getUrl());
-        verifyNoInteractions(clubRepository);
+        verifyNoInteractions(ipscEntityClubService);
     }
 
     @Test
@@ -166,18 +169,7 @@ class MatchMapperTest {
         assertEquals("https://example.com/matches/2", match.getUrl());
         assertEquals(LocalTime.of(8, 0), match.getStartTime());
         assertEquals(FirearmType.HANDGUN, match.getMatchFirearmType());
-        verifyNoInteractions(clubRepository);
-    }
-
-    @Test
-    void testApplyPatchFields_whenClubIsUnknown_thenThrowsNonFatalException() {
-        // Arrange
-        when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
-        MatchPatchRequest request = new MatchPatchRequest();
-        request.setClub("No Such Club");
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchMapper.applyPatchFields(new IpscMatch(), request));
+        verifyNoInteractions(ipscEntityClubService);
     }
 
     @Test
@@ -202,35 +194,12 @@ class MatchMapperTest {
 
     // resolveClub()
     @Test
-    void testResolveClub_whenClubExists_thenReturnsClub() {
-        // Arrange
-        Club club = new Club();
-        club.setName("Test Club");
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
-
-        // Act
-        Club resolved = assertDoesNotThrow(() -> matchMapper.resolveClub("Test Club"));
-
-        // Assert
-        assertSame(club, resolved);
-    }
-
-    @Test
-    void testResolveClub_whenClubDoesNotExist_thenThrowsNonFatalException() {
-        // Arrange
-        when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchMapper.resolveClub("No Such Club"));
-    }
-
-    @Test
     void testResolveClub_whenClubNameIsNull_thenReturnsDefaultMatchClub() {
         // Arrange
         Club defaultClub = new Club();
         defaultClub.setIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
-        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
-                .thenReturn(Optional.of(defaultClub));
+        when(ipscEntityClubService.findByCodeOrAbbreviationWithDefault(null, IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
+                .thenReturn(defaultClub);
 
         // Act
         Club resolved = assertDoesNotThrow(() -> matchMapper.resolveClub(null));
@@ -240,54 +209,93 @@ class MatchMapperTest {
     }
 
     @Test
-    void testResolveClub_whenClubNameIsBlank_thenReturnsDefaultMatchClub() {
+    void testResolveClub_whenClubNameIsNullOrBlankAndDefaultIdentifierIsNull_thenThrowsNonFatalException() {
         // Arrange
-        Club defaultClub = new Club();
-        defaultClub.setIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
-        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
-                .thenReturn(Optional.of(defaultClub));
-
-        // Act
-        Club resolved = assertDoesNotThrow(() -> matchMapper.resolveClub("  "));
-
-        // Assert
-        assertSame(defaultClub, resolved);
-    }
-
-    @Test
-    void testResolveClub_whenClubNameIsNullAndDefaultClubDoesNotExist_thenThrowsNonFatalException() {
-        // Arrange
-        when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER))
-                .thenReturn(Optional.empty());
+        MatchMapper mapper = mapperWithRealClubService();
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> matchMapper.resolveClub(null));
+        assertThrows(NonFatalException.class, () -> mapper.resolveClub(null, null));
+        assertThrows(NonFatalException.class, () -> mapper.resolveClub("", null));
+        assertThrows(NonFatalException.class, () -> mapper.resolveClub("  ", null));
+        verifyNoInteractions(clubRepository);
     }
 
     @Test
-    void testResolveClub_whenClubNameIsNullAndDefaultIdentifierIsNull_thenThrowsFatalException() {
-        // Act & Assert
-        assertThrows(FatalException.class, () -> matchMapper.resolveClub(null, null));
-    }
-
-    @Test
-    void testResolveClub_whenClubNameIsBlankAndDefaultIdentifierIsNull_thenThrowsFatalException() {
-        // Act & Assert
-        assertThrows(FatalException.class, () -> matchMapper.resolveClub("  ", null));
-    }
-
-    @Test
-    void testResolveClub_whenClubNameIsSuppliedAndDefaultIdentifierIsNull_thenIgnoresDefaultIdentifier() {
+    void testResolveClub_whenClubNameIsNullOrBlankAndDefaultClubDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
-        Club club = new Club();
-        club.setName("Test Club");
-        when(clubRepository.findByName("Test Club")).thenReturn(Optional.of(club));
+        MatchMapper mapper = mapperWithRealClubService();
+        when(clubRepository.findByIdentifier(ClubIdentifier.SOSC)).thenReturn(Optional.empty());
 
-        // Act
-        Club resolved = assertDoesNotThrow(() -> matchMapper.resolveClub("Test Club", null));
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> mapper.resolveClub(null, ClubIdentifier.SOSC));
+        assertThrows(NonFatalException.class, () -> mapper.resolveClub("  ", ClubIdentifier.SOSC));
+    }
 
-        // Assert
-        assertSame(club, resolved);
+    @Test
+    void testResolveClub_whenClubNameIsNullOrBlankAndDefaultClubExists_thenReturnsTheDefaultClub() {
+        // Arrange
+        MatchMapper mapper = mapperWithRealClubService();
+        Club club = club(ClubIdentifier.SOSC);
+        when(clubRepository.findByIdentifier(ClubIdentifier.SOSC)).thenReturn(Optional.of(club));
+
+        // Act & Assert
+        assertSame(club, mapper.resolveClub(null, ClubIdentifier.SOSC));
+        assertSame(club, mapper.resolveClub("  ", ClubIdentifier.SOSC));
+    }
+
+    @Test
+    void testResolveClub_whenClubAbbreviationMatches_thenReturnsClubAndIgnoresTheDefault() {
+        // Arrange
+        MatchMapper mapper = mapperWithRealClubService();
+        Club club = club(ClubIdentifier.HPSC);
+        when(clubRepository.findByAbbreviation("HPSC")).thenReturn(Optional.of(club));
+
+        // Act & Assert
+        assertSame(club, mapper.resolveClub("HPSC", ClubIdentifier.SOSC));
+        verify(clubRepository, never()).findByIdentifier(ClubIdentifier.SOSC);
+    }
+
+    @Test
+    void testResolveClub_whenOnlyClubNameMatches_thenReturnsClub() {
+        // Arrange
+        MatchMapper mapper = mapperWithRealClubService();
+        Club club = club(ClubIdentifier.HPSC);
+        String name = ClubIdentifier.HPSC.getName();
+        when(clubRepository.findByName(name)).thenReturn(Optional.of(club));
+
+        // Act & Assert
+        assertSame(club, mapper.resolveClub(name));
+    }
+
+    @Test
+    void testResolveClub_whenOnlyClubIdentifierCodeMatches_thenReturnsClubWithThatIdentifier() {
+        // Arrange
+        MatchMapper mapper = mapperWithRealClubService();
+        Club club = club(ClubIdentifier.HPSC);
+        when(clubRepository.findByIdentifier(ClubIdentifier.HPSC)).thenReturn(Optional.of(club));
+
+        // Act & Assert
+        assertSame(club, mapper.resolveClub(ClubIdentifier.HPSC.getCode()));
+    }
+
+    @Test
+    void testResolveClub_whenClubIdentifierIsKnownButNoClubExists_thenThrowsNonFatalException() {
+        // Arrange
+        MatchMapper mapper = mapperWithRealClubService();
+        when(clubRepository.findByIdentifier(ClubIdentifier.HPSC)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> mapper.resolveClub(ClubIdentifier.HPSC.getCode()));
+    }
+
+    @Test
+    void testResolveClub_whenClubNameIsUnknown_thenThrowsValidationException() {
+        // Arrange
+        MatchMapper mapper = mapperWithRealClubService();
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> mapper.resolveClub("No Such Club"));
+        verify(clubRepository, never()).findByIdentifier(ClubIdentifier.HPSC);
     }
 
     // resolveFirearmType()
@@ -355,6 +363,18 @@ class MatchMapperTest {
     }
 
     // Helpers
+    private MatchMapper mapperWithRealClubService() {
+        return new MatchMapper(new IpscEntityClubServiceImpl(clubRepository));
+    }
+
+    private Club club(ClubIdentifier identifier) {
+        Club club = new Club();
+        club.setName(identifier.getName());
+        club.setAbbreviation(identifier.getAbbreviation());
+        club.setIdentifier(identifier);
+        return club;
+    }
+
     private MatchRequest validRequest(String club) {
         MatchRequest request = new MatchRequest();
         request.setMatchName("Club Championship");

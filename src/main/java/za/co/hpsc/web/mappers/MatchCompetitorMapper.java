@@ -8,13 +8,15 @@ import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.*;
 import za.co.hpsc.web.exceptions.NonFatalException;
-import za.co.hpsc.web.helpers.CompetitorHelpers;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.helpers.CompetitorHelpers;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
-import za.co.hpsc.web.services.EntityIpscCompetitorService;
+import za.co.hpsc.web.services.IpscEntityCompetitorService;
+
+import java.util.Optional;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 
@@ -31,14 +33,14 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
 public class MatchCompetitorMapper {
     private final CompetitorRepository competitorRepository;
     private final IpscMatchRepository ipscMatchRepository;
-    private final EntityIpscCompetitorService entityIpscCompetitorService;
+    private final IpscEntityCompetitorService ipscEntityCompetitorService;
 
     public MatchCompetitorMapper(CompetitorRepository competitorRepository,
                                  IpscMatchRepository ipscMatchRepository,
-                                 EntityIpscCompetitorService entityIpscCompetitorService) {
+                                 IpscEntityCompetitorService ipscEntityCompetitorService) {
         this.competitorRepository = competitorRepository;
         this.ipscMatchRepository = ipscMatchRepository;
-        this.entityIpscCompetitorService = entityIpscCompetitorService;
+        this.ipscEntityCompetitorService = ipscEntityCompetitorService;
     }
 
     /**
@@ -48,7 +50,8 @@ public class MatchCompetitorMapper {
      * @param matchCompetitor the entity to populate; must not be null.
      * @param request         the request carrying the field values; must not be null.
      * @throws ValidationException if an enumerated value doesn't match a known one, or the division doesn't
-     *                             belong to the firearm type. A blank firearm type is taken from the division.
+     *                             belong to the firearm type. A null, blank or unrecognised firearm type is taken
+     *                             from the division, see {@link #resolveFirearmType(String, Division)}.
      * @throws NonFatalException   if the competitor or match cannot be found.
      */
     public void applyFields(@NonNull MatchCompetitor matchCompetitor, @NonNull MatchCompetitorRequest request) {
@@ -58,10 +61,8 @@ public class MatchCompetitorMapper {
         matchCompetitor.setMatch(findMatchOrThrow(request.getMatchId()));
         matchCompetitor.setMatchClub(resolveMatchClub(request.getMatchClub()));
         matchCompetitor.setCompetitorCategory(resolveCompetitorCategory(request.getCompetitorCategory()));
-        matchCompetitor.setFirearmType(hasText(request.getFirearmType())
-                ? resolveFirearmType(request.getFirearmType()) : null);
         matchCompetitor.setDivision(resolveDivision(request.getDivision()));
-        initialiseFirearmTypeFromDivision(matchCompetitor);
+        matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType(), matchCompetitor.getDivision()));
         validateDivisionMatchesFirearmType(matchCompetitor.getDivision(), matchCompetitor.getFirearmType());
         matchCompetitor.setPowerFactor(resolvePowerFactor(request.getPowerFactor()));
         matchCompetitor.setPoints(request.getPoints());
@@ -82,23 +83,89 @@ public class MatchCompetitorMapper {
     }
 
     /**
+     * Copies the fields of a {@link MatchCompetitorRequest} onto a {@link MatchCompetitor} as far as they can be
+     * resolved, leaving anything missing or unresolvable {@code null} rather than throwing, so the caller can report
+     * every such field at once, for example with
+     * {@link za.co.hpsc.web.helpers.MatchCompetitorHelpers#getErrorMessagesForMissingRequiredFields}.
+     *
+     * <p>
+     * The firearm type is taken from the division when it is not recognised, as in
+     * {@link #applyFields(MatchCompetitor, MatchCompetitorRequest)}. The division is not checked against the firearm
+     * type here.
+     * </p>
+     *
+     * @param matchCompetitor the entity to populate; must not be null.
+     * @param request         the request carrying the field values; must not be null.
+     */
+    public void populateResolvableFields(@NonNull MatchCompetitor matchCompetitor,
+                                         @NonNull MatchCompetitorRequest request) {
+        matchCompetitor.setCompetitor(findCompetitor(request).orElse(null));
+        matchCompetitor.setMatch((request.getMatchId() == null) ? null
+                : ipscMatchRepository.findById(request.getMatchId()).orElse(null));
+        matchCompetitor.setMatchClub(hasText(request.getMatchClub())
+                ? ClubIdentifier.fromName(request.getMatchClub())
+                .or(() -> ClubIdentifier.fromAbbreviation(request.getMatchClub()))
+                .or(() -> ClubIdentifier.fromCode(request.getMatchClub()))
+                .orElse(null) : null);
+        matchCompetitor.setCompetitorCategory(CompetitorCategory.fromName(request.getCompetitorCategory())
+                .orElse(null));
+        matchCompetitor.setDivision(Division.fromName(request.getDivision()).orElse(null));
+        matchCompetitor.setFirearmType(FirearmType.fromName(request.getFirearmType())
+                .or(() -> Optional.ofNullable(matchCompetitor.getDivision()).map(Division::getFirearmType))
+                .orElse(null));
+        matchCompetitor.setPowerFactor(PowerFactor.fromName(request.getPowerFactor()).orElse(null));
+    }
+
+    /**
+     * Finds the competitor a request refers to without throwing: by ID when one is given, otherwise by competitor
+     * number and cleaned name. A request that names no competitor, or whose number and name match none or several,
+     * has none.
+     */
+    private Optional<Competitor> findCompetitor(MatchCompetitorRequest request) {
+        if (request.getCompetitorId() != null) {
+            return competitorRepository.findById(request.getCompetitorId());
+        }
+        if (!hasText(request.getCompetitorNumber()) && !hasText(request.getCompetitorName())) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(resolveCompetitor(null, request.getCompetitorNumber(),
+                    CompetitorHelpers.cleanCompetitorName(request.getCompetitorName())));
+        } catch (ValidationException | NonFatalException e) {
+            // The competitor service reports "none" and "several" by throwing
+            return Optional.empty();
+        }
+    }
+
+    /**
      * Copies only the supplied fields of a {@link MatchCompetitorPatchRequest} onto a {@link MatchCompetitor},
      * resolving the competitor, match and enumerated values in the process. Fields that are null in the request
      * (or blank, for the competitor and enumerated values) are left unchanged.
      *
+     * <p>
+     * The firearm type is resolved with {@link #resolveFirearmType(String, Division)}, against the division after
+     * any patch to it, so an unrecognised firearm type is taken from the division. When the request patches the
+     * division but not the firearm type, and the entity has no firearm type yet, the firearm type is taken from the
+     * new division; otherwise an existing firearm type is left as it is. The division and firearm type are then
+     * checked against each other whenever either is patched.
+     * </p>
+     *
      * @param matchCompetitor the entity to patch; must not be null.
      * @param request         the request carrying the field values; must not be null.
      * @throws ValidationException if an enumerated value doesn't match a known one, the division doesn't belong
-     *                             to the firearm type, or the competitor number and name match more than one
+     *                             to the firearm type, the request's firearm type is unrecognised and the entity has
+     *                             no division to take it from, or the competitor number and name match more than one
      *                             competitor.
      * @throws NonFatalException   if the competitor or match cannot be found.
      */
     public void applyPatchFields(@NonNull MatchCompetitor matchCompetitor,
                                  @NonNull MatchCompetitorPatchRequest request) {
-        if ((request.getCompetitorId() != null) || hasText(request.getCompetitorNumber()) || hasText(request.getCompetitorName())) {
+        if ((request.getCompetitorId() != null) || hasText(request.getCompetitorNumber()) ||
+                hasText(request.getCompetitorName())) {
             matchCompetitor.setCompetitor(resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
                     CompetitorHelpers.cleanCompetitorName(request.getCompetitorName())));
         }
+
         if (request.getMatchId() != null) {
             matchCompetitor.setMatch(findMatchOrThrow(request.getMatchId()));
         }
@@ -108,14 +175,15 @@ public class MatchCompetitorMapper {
         if (hasText(request.getCompetitorCategory())) {
             matchCompetitor.setCompetitorCategory(resolveCompetitorCategory(request.getCompetitorCategory()));
         }
-        if (hasText(request.getFirearmType())) {
-            matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType()));
-        }
         if (hasText(request.getDivision())) {
             matchCompetitor.setDivision(resolveDivision(request.getDivision()));
         }
-        initialiseFirearmTypeFromDivision(matchCompetitor);
-        if (hasText(request.getFirearmType()) || hasText(request.getDivision())) {
+        if (hasText(request.getFirearmType())) {
+            matchCompetitor.setFirearmType(resolveFirearmType(request.getFirearmType(), matchCompetitor.getDivision()));
+        } else if ((matchCompetitor.getFirearmType() == null) && (hasText(request.getDivision()))) {
+            matchCompetitor.setFirearmType(resolveFirearmType(null, matchCompetitor.getDivision()));
+        }
+        if ((hasText(request.getFirearmType())) || (hasText(request.getDivision()))) {
             validateDivisionMatchesFirearmType(matchCompetitor.getDivision(), matchCompetitor.getFirearmType());
         }
         if (hasText(request.getPowerFactor())) {
@@ -185,8 +253,8 @@ public class MatchCompetitorMapper {
      * there is none.
      *
      * <p>
-     * The lookup is delegated to {@link EntityIpscCompetitorService#findCompetitor(String, String)}, which tries the
-     * competitor number first, then the ID number, then the full name and itself throws when it does not find
+     * The lookup is delegated to {@link IpscEntityCompetitorService#findCompetitorByIdentifierAndFullName(String, String)},
+     * which tries the competitor number first, then the ID number, then the full name and itself throws when it does not find
      * exactly one competitor. The {@link NonFatalException} thrown here is therefore a safeguard for an empty result.
      * </p>
      *
@@ -201,7 +269,7 @@ public class MatchCompetitorMapper {
      */
     public Competitor findCompetitorOrThrow(String competitorNumber, String competitorName) {
         String trimmedCompetitorNumber = (competitorNumber == null) ? null : competitorNumber.trim();
-        return entityIpscCompetitorService.findCompetitor(trimmedCompetitorNumber, competitorName)
+        return ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName(trimmedCompetitorNumber, competitorName)
                 .orElseThrow(() -> new NonFatalException(
                         String.format("No competitor found with competitor number of %s or name %s ",
                                 competitorNumber, competitorName)));
@@ -244,10 +312,10 @@ public class MatchCompetitorMapper {
     }
 
     /**
-     * Resolves the club a competitor represented at a match, by name or abbreviation.
+     * Resolves the club a competitor represented at a match, by name, abbreviation or code.
      *
-     * @param matchClub the club name or abbreviation to look up; may be null or blank, in which case no club is
-     *                  set.
+     * @param matchClub the club name, abbreviation or code to look up, tried in that order; may be null or blank,
+     *                  in which case no club is set.
      * @return the matching {@link ClubIdentifier}, or {@code null} if {@code matchClub} wasn't supplied.
      * @throws ValidationException if {@code matchClub} was supplied but doesn't match a known club.
      */
@@ -256,45 +324,62 @@ public class MatchCompetitorMapper {
             return null;
         }
 
-        return ClubIdentifier.fromName(matchClub).or(() -> ClubIdentifier.fromAbbreviation(matchClub))
+        return ClubIdentifier.fromName(matchClub)
+                .or(() -> ClubIdentifier.fromAbbreviation(matchClub))
+                .or(() -> ClubIdentifier.fromCode(matchClub))
                 .orElseThrow(() -> new ValidationException("Unknown match club: " + matchClub));
     }
 
     /**
      * Resolves a competitor category by name.
      *
-     * @param competitorCategory the category name to look up.
-     * @return the matching {@link CompetitorCategory}.
-     * @throws ValidationException if no category matches {@code competitorCategory}. {@link CompetitorCategory#NONE},
-     *                             which {@link CompetitorCategory#fromName(String)} falls back to for an unknown
-     *                             or blank name, is treated as no match.
+     * <p>
+     * A null or blank name resolves to {@link CompetitorCategory#NONE}, as per
+     * {@link CompetitorCategory#fromName(String)}.
+     * </p>
+     *
+     * @param competitorCategory the category name to look up; may be null or blank.
+     * @return the matching {@link CompetitorCategory}, or {@link CompetitorCategory#NONE} if the name is null or blank.
+     * @throws ValidationException if {@code competitorCategory} is non-blank and matches no category.
      */
     public CompetitorCategory resolveCompetitorCategory(String competitorCategory) {
         return CompetitorCategory.fromName(competitorCategory)
-                .filter(category -> category != CompetitorCategory.NONE)
                 .orElseThrow(() -> new ValidationException("Unknown competitor category: " + competitorCategory));
     }
 
     /**
-     * Resolves a firearm type by name.
+     * Resolves a firearm type by name, falling back to the firearm type of the division.
      *
-     * @param firearmType the firearm type name to look up.
-     * @return the matching {@link FirearmType}.
-     * @throws ValidationException if no firearm type matches {@code firearmType}.
-     */
-    public FirearmType resolveFirearmType(String firearmType) {
-        return FirearmType.fromName(firearmType)
-                .orElseThrow(() -> new ValidationException("Unknown firearm type: " + firearmType));
-    }
-
-    /**
-     * Sets the firearm type from the division when the match competitor has a division but no firearm type.
+     * <p>
+     * If the name matches a known firearm type, that type is returned, even when it differs from the division's;
+     * use {@link #validateDivisionMatchesFirearmType(Division, FirearmType)} to reject such a mismatch. Otherwise,
+     * including when the name is null or blank, the firearm type belonging to the division is used instead.
+     * </p>
      *
-     * @param matchCompetitor the match competitor to initialise.
+     * @param firearmType the firearm type name to look up; may be null or blank when {@code division} is given.
+     * @param division    the division to take the firearm type from when the name is not recognised; may be
+     *                    {@code null}, in which case the name must match a known firearm type.
+     * @return the matching {@link FirearmType}, or the division's firearm type when the name is not recognised.
+     * @throws ValidationException if the name matches no firearm type and the division is {@code null} or has no
+     *                             firearm type.
      */
-    private void initialiseFirearmTypeFromDivision(MatchCompetitor matchCompetitor) {
-        if ((matchCompetitor.getFirearmType() == null) && (matchCompetitor.getDivision() != null)) {
-            matchCompetitor.setFirearmType(matchCompetitor.getDivision().getFirearmType());
+    public FirearmType resolveFirearmType(String firearmType, Division division) {
+        Optional<FirearmType> optionalFirearmType = FirearmType.fromName(firearmType);
+        if (optionalFirearmType.isPresent()) {
+            // If the firearm type is provided, return it
+            return optionalFirearmType.get();
+        } else if (division != null) {
+            // If the firearm type is not provided, return the firearm type from the division if it exists,
+            // otherwise throw an exception
+            FirearmType divisionFirearmType = division.getFirearmType();
+            if (divisionFirearmType != null) {
+                return divisionFirearmType;
+            } else {
+                throw new ValidationException("Division " + division + " has no default firearm type " +
+                        "and unknown firearm type" + firearmType);
+            }
+        } else {
+            throw new ValidationException("Unknown firearm type: " + firearmType);
         }
     }
 

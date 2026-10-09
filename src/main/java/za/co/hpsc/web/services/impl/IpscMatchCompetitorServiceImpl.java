@@ -20,8 +20,9 @@ import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.helpers.CompetitorHelpers;
+import za.co.hpsc.web.helpers.MatchCompetitorHelpers;
 import za.co.hpsc.web.mappers.MatchCompetitorMapper;
+import za.co.hpsc.web.mappers.MatchCompetitorRowMapper;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequestCsvMixIn;
@@ -29,7 +30,7 @@ import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkRe
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
-import za.co.hpsc.web.services.ClubService;
+import za.co.hpsc.web.services.IpscEntityClubService;
 import za.co.hpsc.web.services.IpscMatchCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
 
@@ -45,17 +46,20 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     private final MatchCompetitorRepository matchCompetitorRepository;
 
     private final MatchCompetitorMapper matchCompetitorMapper;
+    private final MatchCompetitorRowMapper matchCompetitorRowMapper;
 
-    private final ClubService clubService;
+    private final IpscEntityClubService ipscEntityClubService;
     private final TransactionService transactionService;
 
     public IpscMatchCompetitorServiceImpl(MatchCompetitorRepository matchCompetitorRepository,
                                           MatchCompetitorMapper matchCompetitorMapper,
-                                          ClubService clubService,
+                                          MatchCompetitorRowMapper matchCompetitorRowMapper,
+                                          IpscEntityClubService ipscEntityClubService,
                                           TransactionService transactionService) {
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.matchCompetitorMapper = matchCompetitorMapper;
-        this.clubService = clubService;
+        this.matchCompetitorRowMapper = matchCompetitorRowMapper;
+        this.ipscEntityClubService = ipscEntityClubService;
         this.transactionService = transactionService;
     }
 
@@ -84,23 +88,35 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         // others. save() also refuses a row that duplicates one saved earlier in this import.
         List<MatchCompetitorBulkResponse> matchCompetitorBulkResponses = new ArrayList<>();
         for (MatchCompetitorRequest request : requests) {
+            // Set once the row's fields are applied, so a row that then fails to save, as a duplicate does, is
+            // reported by its resolved values
+            MatchCompetitor matchCompetitor = null;
             try {
                 if (!isForClub(request, targetClub)) {
                     String targetClubName = (targetClub != null) ? targetClub.getName() : "";
-                    matchCompetitorBulkResponses.add(new MatchCompetitorBulkResponse(false,
-                            "Skipped: match club is not " + targetClubName, toFailedResponse(request)));
+                    matchCompetitorBulkResponses.add(
+                            failedRow("Skipped: match club is not " + targetClubName, request, null));
                     continue;
                 }
-                validateForCreate(request);
 
-                MatchCompetitor matchCompetitor = new MatchCompetitor();
+                // Report every missing or unresolvable required field of the row together, not just the first
+                MatchCompetitor resolvable = new MatchCompetitor();
+                matchCompetitorMapper.populateResolvableFields(resolvable, request);
+                String missingFields = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(
+                        resolvable, request);
+                if (hasText(missingFields)) {
+                    log.warn("Match competitor skipped due to missing or unresolvable required fields: {}", missingFields);
+                    matchCompetitorBulkResponses.add(failedRow(missingFields, request, resolvable));
+                    continue;
+                }
+
+                matchCompetitor = new MatchCompetitor();
                 matchCompetitorMapper.applyFields(matchCompetitor, request);
                 matchCompetitorBulkResponses.add(
-                        new MatchCompetitorBulkResponse(true, "", toResponse(save(matchCompetitor))));
+                        new MatchCompetitorBulkResponse(true, "", toResponse(save(matchCompetitor)), null));
             } catch (ValidationException | NonFatalException e) {
-                log.warn("Match competitor skipped: {}", e.getMessage());
-                matchCompetitorBulkResponses.add(
-                        new MatchCompetitorBulkResponse(false, e.getMessage(), toFailedResponse(request)));
+                log.warn("Match competitor skipped due to error: {}", e.getMessage());
+                matchCompetitorBulkResponses.add(failedRow(e.getMessage(), request, matchCompetitor));
             }
         }
 
@@ -227,26 +243,27 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
     }
 
     /**
-     * Builds the response reported for a row that could not be imported, identifying it by what the request said
-     * about the competitor and match. Nothing is resolved or looked up, so this never throws for an unknown
-     * competitor, match or enumerated value — the reason the row failed is in the bulk response's message.
+     * Builds the outcome reported for a row that could not be imported: the message and every value the row supplied,
+     * with missing ones as empty strings.
      *
-     * @param request the request for the row that failed; may be null, as for an empty row.
-     * @return a {@link MatchCompetitorResponse} carrying the requested competitor ID, name, competitor number and
-     * match ID, with every other field unset — or with every field unset if {@code request} is null.
+     * <p>
+     * The outcome carries no {@link MatchCompetitorResponse}, because a response is only built for a match
+     * competitor that has every required field, which a failed row by definition lacks. The row's values are in
+     * {@link MatchCompetitorBulkResponse#getMatchCompetitorRow()} instead. Nothing is resolved or looked up, so this never throws,
+     * whatever is missing or unknown in the row.
+     * </p>
+     *
+     * @param message         the reason the row was not imported.
+     * @param request         the request for the row; may be null, as for an empty row, in which case every value is empty.
+     * @param matchCompetitor the match competitor populated as far as the row could be resolved, whose resolved
+     *                        values are reported in place of the row's text; may be null, as when nothing was resolved.
+     * @return an unsuccessful {@link MatchCompetitorBulkResponse} with the message, a {@code null} match competitor
+     * and the row's values.
      */
-    protected MatchCompetitorResponse toFailedResponse(MatchCompetitorRequest request) {
-        MatchCompetitorResponse response = new MatchCompetitorResponse();
-        if (request == null) {
-            return response;
-        }
-        response.setCompetitorId(request.getCompetitorId());
-        if (request.getCompetitorName() != null) {
-            response.setCompetitorNames(List.of(request.getCompetitorName()));
-        }
-        response.setCompetitorNumber(CompetitorHelpers.getCompetitorNumberAsInteger(request.getCompetitorNumber()));
-        response.setMatchId(request.getMatchId());
-        return response;
+    protected MatchCompetitorBulkResponse failedRow(String message, MatchCompetitorRequest request,
+                                                    MatchCompetitor matchCompetitor) {
+        return new MatchCompetitorBulkResponse(false, message, null,
+                matchCompetitorRowMapper.toRow(request, matchCompetitor));
     }
 
     /**
@@ -295,13 +312,13 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         }
 
         // Test the competitor in the match's club against the target club
-        if (clubService.isSameClub(matchCompetitorMapper.resolveMatchClub(request.getMatchClub()), targetClub)) {
+        if (ipscEntityClubService.isSameClub(matchCompetitorMapper.resolveMatchClub(request.getMatchClub()), targetClub)) {
             return true;
         }
 
         // Test the competitor's home club against the target club
         try {
-            return clubService.isSameClub(resolveCompetitorHomeClub(request), targetClub);
+            return ipscEntityClubService.isSameClub(resolveCompetitorHomeClub(request), targetClub);
         } catch (ValidationException | NonFatalException e) {
             return false;
         }
@@ -348,6 +365,8 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      *
      * @param matchCompetitor the match competitor to map, with its competitor and match loaded.
      * @return the mapped {@link MatchCompetitorResponse}.
+     * @throws ValidationException if the match competitor violates a constraint, such as a missing required field;
+     *                             every violation is named in the message.
      */
     protected MatchCompetitorResponse toResponse(MatchCompetitor matchCompetitor) {
         return new MatchCompetitorResponse(matchCompetitor);

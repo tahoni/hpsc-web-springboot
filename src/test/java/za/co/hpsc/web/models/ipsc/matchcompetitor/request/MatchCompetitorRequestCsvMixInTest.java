@@ -21,7 +21,7 @@ class MatchCompetitorRequestCsvMixInTest {
         // Arrange
         String csvData = """
                 MatchCompetitorId,CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF,Pts,OverallRanking,ClubRanking,IsVisitor
-                7,1,2,HPSC,Junior,Handgun,Open Division,Major,95.5,2,1,false
+                7,1,2,HPSC,Junior,Handgun,Open,Major,95.5,2,1,false
                 """;
 
         // Act
@@ -36,7 +36,7 @@ class MatchCompetitorRequestCsvMixInTest {
         assertEquals("HPSC", row.getMatchClub());
         assertEquals("Junior", row.getCompetitorCategory());
         assertEquals("Handgun", row.getFirearmType());
-        assertEquals("Open Division", row.getDivision());
+        assertEquals("Open", row.getDivision());
         assertEquals("Major", row.getPowerFactor());
         assertEquals(0, new BigDecimal("95.5").compareTo(row.getPoints()));
         assertEquals(0, new BigDecimal("2").compareTo(row.getOverallRanking()));
@@ -49,7 +49,7 @@ class MatchCompetitorRequestCsvMixInTest {
         // Arrange
         String csvData = """
                 Name,Mem #,MatchId,Cats,Div
-                Jane Doe,123,2,Junior,Open Division
+                Jane Doe,123,2,Junior,Open
                 """;
 
         // Act
@@ -66,7 +66,7 @@ class MatchCompetitorRequestCsvMixInTest {
         // Arrange
         String csvData = """
                 CompetitorId,MatchId,Cats,Div
-                1,2,Junior,Open Division
+                1,2,Junior,Open
                 """;
 
         // Act
@@ -78,7 +78,7 @@ class MatchCompetitorRequestCsvMixInTest {
         assertEquals(1L, row.getCompetitorId());
         assertEquals(2L, row.getMatchId());
         assertEquals("Junior", row.getCompetitorCategory());
-        assertEquals("Open Division", row.getDivision());
+        assertEquals("Open", row.getDivision());
         assertNull(row.getMatchCompetitorId());
         assertNull(row.getMatchClub());
         assertNull(row.getFirearmType());
@@ -94,7 +94,7 @@ class MatchCompetitorRequestCsvMixInTest {
         // Arrange - a row doesn't have to supply a value for every column in the header
         String csvData = """
                 CompetitorId,MatchId,Cats,Div,Class,FirearmType,PF,Pts
-                1,2,Junior,Open Division
+                1,2,Junior,Open
                 """;
 
         // Act
@@ -102,7 +102,7 @@ class MatchCompetitorRequestCsvMixInTest {
 
         // Assert
         assertEquals(1, rows.size());
-        assertEquals("Open Division", rows.getFirst().getDivision());
+        assertEquals("Open", rows.getFirst().getDivision());
         assertNull(rows.getFirst().getMatchClub());
         assertNull(rows.getFirst().getFirearmType());
         assertNull(rows.getFirst().getPoints());
@@ -113,7 +113,7 @@ class MatchCompetitorRequestCsvMixInTest {
         // Arrange
         String csvData = """
                 Div,Cats,MatchId,CompetitorId,FirearmType
-                Open Division,Junior,2,1,Handgun
+                Open,Junior,2,1,Handgun
                 """;
 
         // Act
@@ -124,7 +124,7 @@ class MatchCompetitorRequestCsvMixInTest {
         assertEquals(1L, rows.getFirst().getCompetitorId());
         assertEquals(2L, rows.getFirst().getMatchId());
         assertEquals("Junior", rows.getFirst().getCompetitorCategory());
-        assertEquals("Open Division", rows.getFirst().getDivision());
+        assertEquals("Open", rows.getFirst().getDivision());
         assertEquals("Handgun", rows.getFirst().getFirearmType());
     }
 
@@ -133,7 +133,7 @@ class MatchCompetitorRequestCsvMixInTest {
         // Arrange
         String csvData = """
                 CompetitorId,MatchId,Cats,Div,Colour
-                1,2,Junior,Open Division,Blue
+                1,2,Junior,Open,Blue
                 """;
 
         // Act
@@ -162,7 +162,7 @@ class MatchCompetitorRequestCsvMixInTest {
         // Arrange
         String csvData = """
                 CompetitorId,Cats,Div
-                1,Junior,Open Division
+                1,Junior,Open
                 """;
 
         // Act & Assert

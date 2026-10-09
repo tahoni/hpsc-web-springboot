@@ -1,6 +1,5 @@
 package za.co.hpsc.web.utils;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +24,6 @@ import java.util.UUID;
  * }</pre>
  *
  * @see java.util.UUID
- * @see java.math.BigDecimal
  *
  * @since 1.1.0
  */
@@ -99,31 +97,6 @@ public final class ValueUtil {
             return (value != null ? Long.parseLong(value) : 0L);
         } catch (NumberFormatException e) {
             return 0L;
-        }
-    }
-
-    /**
-     * Converts a string representation of a number to {@code BigDecimal}, returning
-     * {@link BigDecimal#ZERO} if the input is {@code null} or unparseable.
-     * <p>
-     * If the string cannot be parsed as a number (e.g. contains invalid decimal syntax),
-     * the method catches the {@link NumberFormatException} and returns {@code BigDecimal.ZERO}.
-     * </p>
-     *
-     * @param value the string representation of a decimal number; may be {@code null}
-     * @return a {@code BigDecimal} representing the parsed value, or {@code BigDecimal.ZERO}
-     * if the input is null or cannot be parsed
-     * @since 2.0.0
-     */
-    public static BigDecimal nullAsZeroBigDecimal(String value) {
-        if (value == null) {
-            return BigDecimal.ZERO;
-        }
-
-        try {
-            return new BigDecimal(value);
-        } catch (NumberFormatException e) {
-            return BigDecimal.ZERO;
         }
     }
 

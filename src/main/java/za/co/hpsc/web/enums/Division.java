@@ -22,40 +22,40 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
 @Getter
 public enum Division {
     // Handgun Divisions
-    OPEN("Open Division", FirearmType.HANDGUN),
-    STANDARD("Standard Division", FirearmType.HANDGUN),
-    MODIFIED("Modified Division", FirearmType.HANDGUN),
-    CLASSIC("Classic Division", FirearmType.HANDGUN),
-    PRODUCTION("Production Division", FirearmType.HANDGUN),
-    PRODUCTION_OPTICS("Production Optics Division", FirearmType.HANDGUN),
-    PRODUCTION_OPTICS_LIGHT("Production Optics Light Division", FirearmType.HANDGUN),
-    OPTICS("Optics Division", FirearmType.HANDGUN),
-    REVOLVER("Revolver Division", FirearmType.HANDGUN),
+    OPEN("Open", FirearmType.HANDGUN),
+    STANDARD("Standard", FirearmType.HANDGUN),
+    MODIFIED("Modified", FirearmType.HANDGUN),
+    CLASSIC("Classic", FirearmType.HANDGUN),
+    PRODUCTION("Production", FirearmType.HANDGUN),
+    PRODUCTION_OPTICS("Production Optics", FirearmType.HANDGUN),
+    PRODUCTION_OPTICS_LIGHT("Production Optics Light", FirearmType.HANDGUN),
+    OPTICS("Optics", FirearmType.HANDGUN),
+    REVOLVER("Revolver", FirearmType.HANDGUN),
 
     // Rifle Divisions
-    RIFLE_SEMI_AUTO_OPEN("Rifle Open Division", FirearmType.RIFLE),
-    RIFLE_SEMI_AUTO_STANDARD("Rifle Standard Division", FirearmType.RIFLE),
-    RIFLE_STANDARD_MANUAL("Rifle Standard Manual Division", FirearmType.RIFLE),
+    RIFLE_SEMI_AUTO_OPEN("Rifle Open", FirearmType.RIFLE),
+    RIFLE_SEMI_AUTO_STANDARD("Rifle Standard", FirearmType.RIFLE),
+    RIFLE_STANDARD_MANUAL("Rifle Standard Manual", FirearmType.RIFLE),
 
     // Shotgun Divisions
-    SHOTGUN_OPEN("Shotgun Open Division", FirearmType.SHOTGUN),
-    SHOTGUN_MODIFIED("Shotgun Modified Division", FirearmType.SHOTGUN),
-    SHOTGUN_STANDARD("Shotgun Semi Division", FirearmType.SHOTGUN),
-    SHOTGUN_STANDARD_MANUAL("Shotgun Standard Manual Division", FirearmType.SHOTGUN),
+    SHOTGUN_OPEN("Shotgun Open", FirearmType.SHOTGUN),
+    SHOTGUN_MODIFIED("Shotgun Modified", FirearmType.SHOTGUN),
+    SHOTGUN_STANDARD("Shotgun Semi", FirearmType.SHOTGUN),
+    SHOTGUN_STANDARD_MANUAL("Shotgun Standard Manual", FirearmType.SHOTGUN),
 
     // PCC Divisions
-    PCC_OPTICS("PCC Optic Division", FirearmType.PCC),
-    PCC_IRON("PCC Iron Division", FirearmType.PCC),
+    PCC_OPTICS("PCC Optics", FirearmType.PCC),
+    PCC_IRON("PCC Irons", FirearmType.PCC),
 
     // .22 Divisions
-    OPEN_22(".22 Open Division", FirearmType.HANDGUN_22),
-    STANDARD_22(".22 Standard Division", FirearmType.HANDGUN_22),
-    CLASSIC_22(".22 Classic Division", FirearmType.HANDGUN_22),
-    OPTICS_22(".22 Optics Division", FirearmType.HANDGUN_22),
+    OPEN_22(".22 Open", FirearmType.HANDGUN_22),
+    STANDARD_22(".22 Standard", FirearmType.HANDGUN_22),
+    CLASSIC_22(".22 Classic", FirearmType.HANDGUN_22),
+    OPTICS_22(".22 Optics", FirearmType.HANDGUN_22),
 
     // Mini Rifle Divisions
-    MINI_RIFLE_OPEN("Mini Rifle Open Division", FirearmType.MINI_RIFLE),
-    MINI_RIFLE_STANDARD("Mini Rifle Standard Division", FirearmType.MINI_RIFLE);
+    MINI_RIFLE_OPEN("Mini Rifle Open", FirearmType.MINI_RIFLE),
+    MINI_RIFLE_STANDARD("Mini Rifle Standard", FirearmType.MINI_RIFLE);
 
     private final String name;
     private final FirearmType firearmType;

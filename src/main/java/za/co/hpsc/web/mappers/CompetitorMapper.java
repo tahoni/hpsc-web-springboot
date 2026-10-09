@@ -13,10 +13,9 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.repositories.ClubRepository;
-import za.co.hpsc.web.services.ClubService;
+import za.co.hpsc.web.services.IpscEntityClubService;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 
@@ -31,12 +30,10 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
  */
 @Component
 public class CompetitorMapper {
-    private final ClubRepository clubRepository;
-    private final ClubService clubService;
+    private final IpscEntityClubService ipscEntityClubService;
 
-    public CompetitorMapper(ClubRepository clubRepository, ClubService clubService) {
-        this.clubRepository = clubRepository;
-        this.clubService = clubService;
+    public CompetitorMapper(IpscEntityClubService ipscEntityClubService) {
+        this.ipscEntityClubService = ipscEntityClubService;
     }
 
     /**
@@ -194,7 +191,7 @@ public class CompetitorMapper {
      *
      * <p>
      * The club is compared with {@code homeClubIdentifier} through
-     * {@link ClubService#isSameClub(Club, ClubIdentifier)}, so a {@code null} club, a club with no identifier or a
+     * {@link IpscEntityClubService#isSameClub(Club, ClubIdentifier)}, so a {@code null} club, a club with no identifier or a
      * {@code null} {@code homeClubIdentifier} is simply not a member.
      * </p>
      *
@@ -206,7 +203,7 @@ public class CompetitorMapper {
      * otherwise.
      */
     public boolean isMemberOfHomeClub(Club club, ClubIdentifier homeClubIdentifier) {
-        return clubService.isSameClub(club, homeClubIdentifier);
+        return ipscEntityClubService.isSameClub(club, homeClubIdentifier);
     }
 
     /**
@@ -227,20 +224,28 @@ public class CompetitorMapper {
     }
 
     /**
-     * Resolves a competitor's home club by name or abbreviation.
+     * Resolves a competitor's home club by abbreviation, name, or club identifier code or abbreviation.
      *
-     * @param clubName the club name/abbreviation to look up; may be null or blank, in which case
-     *                 no home club is set.
-     * @return the matching {@link Club}, or {@code null} if {@code clubName} wasn't supplied.
-     * @throws NonFatalException if {@code clubName} was supplied but doesn't match an existing club.
+     * <p>
+     * The lookup is delegated to
+     * {@link IpscEntityClubService#findByCodeOrAbbreviationWithDefault(String, ClubIdentifier)}, defaulting to
+     * {@link IpscConstants#HOME_CLUB_IDENTIFIER} when no club is supplied.
+     * </p>
+     *
+     * @param clubName the club abbreviation, name, or identifier code or abbreviation to look up; may be null or
+     *                 blank, in which case the home club is resolved instead.
+     * @return the matching {@link Club}.
+     * @throws ValidationException if {@code clubName} was supplied but matches no persisted club and is not a known
+     *                             club identifier code, abbreviation or name.
+     * @throws NonFatalException   if {@code clubName} is a known club identifier, or is blank, but no club is
+     *                             persisted with the identifier looked up.
      */
     public @Nullable Club resolveHomeClub(String clubName) {
         if (!hasText(clubName)) {
             return null;
         }
 
-        Optional<Club> optionalClub = clubRepository.findByName(clubName).or(() -> clubRepository.findByAbbreviation(clubName));
-        return optionalClub.orElseThrow(() -> new NonFatalException("No club found with name " + clubName));
+        return ipscEntityClubService.findByCodeOrAbbreviationWithDefault(clubName, null);
     }
 
     /**

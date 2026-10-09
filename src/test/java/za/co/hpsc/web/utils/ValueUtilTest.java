@@ -2,7 +2,6 @@ package za.co.hpsc.web.utils;
 
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -693,111 +692,5 @@ class ValueUtilTest {
 
         // Assert
         assertEquals(0L, result);
-    }
-
-    // nullAsZeroBigDecimal(String)
-    @Test
-    void testNullAsZeroBigDecimal_whenValidDecimalString_thenReturnsBigDecimalValue() {
-        // Arrange
-        String input = "123.45";
-
-        // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
-
-        // Assert
-        assertEquals(new BigDecimal("123.45"), result);
-    }
-
-    @Test
-    void testNullAsZeroBigDecimal_whenScientificNotationString_thenReturnsBigDecimalValue() {
-        // Arrange
-        String input = "1E+3";
-
-        // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
-
-        // Assert
-        assertEquals(new BigDecimal("1E+3"), result);
-    }
-
-    @Test
-    void testNullAsZeroBigDecimal_whenNullString_thenReturnsZero() {
-        // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(null);
-
-        // Assert
-        assertEquals(BigDecimal.ZERO, result);
-    }
-
-    @Test
-    void testNullAsZeroBigDecimal_whenInvalidString_thenReturnsZero() {
-        // Arrange
-        String input = "abc123";
-
-        // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
-
-        // Assert
-        assertEquals(BigDecimal.ZERO, result);
-    }
-
-    @Test
-    void testNullAsZeroBigDecimal_whenBlankString_thenReturnsZero() {
-        // Arrange
-        String input = "   ";
-
-        // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
-
-        // Assert
-        assertEquals(BigDecimal.ZERO, result);
-    }
-
-    @Test
-    void testNullAsZeroBigDecimal_whenLargeDecimal_thenReturnsBigDecimalValue() {
-        // Arrange
-        String input = "999999999999999.123456789";
-
-        // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
-
-        // Assert
-        assertEquals(new BigDecimal("999999999999999.123456789"), result);
-    }
-
-    @Test
-    void testNullAsZeroBigDecimal_whenNegativeDecimal_thenReturnsBigDecimalValue() {
-        // Arrange
-        String input = "-42.5";
-
-        // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
-
-        // Assert
-        assertEquals(new BigDecimal("-42.5"), result);
-    }
-
-    @Test
-    void testNullAsZeroBigDecimal_whenZeroString_thenReturnsZero() {
-        // Arrange
-        String input = "0";
-
-        // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
-
-        // Assert
-        assertEquals(BigDecimal.ZERO, result);
-    }
-
-    @Test
-    void testNullAsZeroBigDecimal_whenSpecialCharacters_thenReturnsZero() {
-        // Arrange
-        String input = "12@34.56";
-
-        // Act
-        BigDecimal result = ValueUtil.nullAsZeroBigDecimal(input);
-
-        // Assert
-        assertEquals(BigDecimal.ZERO, result);
     }
 }
