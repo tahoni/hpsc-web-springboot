@@ -79,6 +79,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   division's firearm type when the firearm type name is unknown, instead of throwing
 - **`MatchCompetitorMapper.resolveMatchClub`:** Now matches a club by name, abbreviation or identifier code, in that
   order
+- **`MatchCompetitorRowMapper`:** New mapper that describes a failed bulk import row as a `MatchCompetitorRow`,
+  reporting the values already resolved onto the `MatchCompetitor` — the competitor and match identifiers, the
+  competitor's name and number, and the match club, category, firearm type, division and power factor — in place of
+  the row's own text; `failedRow` now takes the `MatchCompetitor` and uses it, so a row that fails as a duplicate or
+  for a missing field is reported by its resolved values. A reported match club is now the club's name
 
 ##### Services
 
@@ -89,9 +94,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ClubService` and `EntityIpscCompetitorService`:** Renamed to `IpscEntityClubService` and
   `IpscEntityCompetitorService` (and their implementations and tests) so the IPSC entity services share a naming
   pattern; `findCompetitor` is now `findCompetitorByIdentifierAndFullName`, and dependants rename their fields to match
+- **`IpscMatchCompetitorServiceImpl.toResponse`:** Now validates the match competitor first and throws
+  `ValidationException` naming every violated constraint, instead of building a response from an incomplete entity;
+  the service now takes a `jakarta.validation.Validator`
+- **`IpscMatchCompetitorServiceImpl.failedRow`:** A row that could not be imported is now reported with no
+  `MatchCompetitorResponse` (`null`) and only its values in `matchCompetitorRow`, instead of a partly filled response; the
+  `toFailedResponse` helper is removed. `MatchCompetitorBulkResponse.matchCompetitor` is now `@Nullable`
 
 ##### Models
 
+- **`MatchCompetitor`:** The competitor, match, competitor category, firearm type, division and power factor are now
+  `@NotNull`, matching their `nullable = false` columns
 - **`MatchCompetitorRequest`:** **Breaking:** the match ID, competitor category, division and power factor are no
   longer rejected by bean validation, and the competitor category is optional in the CSV import (`Cats`), so a bulk
   import can report a row that is missing them instead of failing the whole request; `validate()` still requires

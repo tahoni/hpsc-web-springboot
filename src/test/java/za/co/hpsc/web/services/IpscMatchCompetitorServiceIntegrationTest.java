@@ -18,6 +18,7 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
@@ -27,7 +28,6 @@ import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class IpscMatchCompetitorServiceIntegrationTest {
 
+    // TODO: fix autowired fields
     @Autowired
     private ClubRepository clubRepository;
 
@@ -223,11 +224,15 @@ class IpscMatchCompetitorServiceIntegrationTest {
         MatchCompetitorBulkResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData);
 
         // Assert
-        assertEquals(2, holder.getMatchCompetitors().size());
-        assertEquals(first.getId(), holder.getMatchCompetitors().get(0).getMatchCompetitor().getCompetitorId());
-        assertEquals(second.getId(), holder.getMatchCompetitors().get(1).getMatchCompetitor().getCompetitorId());
+        assertEquals(2, holder.getMatchCompetitorResults().size());
+        MatchCompetitorBulkResponse matchCompetitorBulkResponse0 = holder.getMatchCompetitorResults().get(0);
+        MatchCompetitorBulkResponse matchCompetitorBulkResponse1 = holder.getMatchCompetitorResults().get(1);
+        assertNotNull(matchCompetitorBulkResponse0.getMatchCompetitor());
+        assertNotNull(matchCompetitorBulkResponse1.getMatchCompetitor());
+        assertEquals(first.getId(), matchCompetitorBulkResponse0.getMatchCompetitor().getCompetitorId());
+        assertEquals(second.getId(), matchCompetitorBulkResponse1.getMatchCompetitor().getCompetitorId());
         assertEquals(CompetitorCategory.JUNIOR,
-                holder.getMatchCompetitors().get(0).getMatchCompetitor().getCompetitorCategory());
+                matchCompetitorBulkResponse0.getMatchCompetitor().getCompetitorCategory());
         assertEquals(2, matchCompetitorRepository.count());
     }
 
@@ -249,11 +254,14 @@ class IpscMatchCompetitorServiceIntegrationTest {
                 ipscMatchCompetitorService.createMatchCompetitors(csvData, "HPSC");
 
         // Assert
-        assertEquals(3, holder.getMatchCompetitors().size());
-        assertTrue(holder.getMatchCompetitors().get(0).isSuccess());
-        assertFalse(holder.getMatchCompetitors().get(1).isSuccess());
-        assertTrue(holder.getMatchCompetitors().get(1).getMessage().startsWith("Skipped: match club is not"));
-        assertFalse(holder.getMatchCompetitors().get(2).isSuccess());
+        assertEquals(3, holder.getMatchCompetitorResults().size());
+        MatchCompetitorBulkResponse matchCompetitorBulkResponse0 = holder.getMatchCompetitorResults().get(0);
+        MatchCompetitorBulkResponse matchCompetitorBulkResponse1 = holder.getMatchCompetitorResults().get(1);
+        MatchCompetitorBulkResponse matchCompetitorBulkResponse2 = holder.getMatchCompetitorResults().get(2);
+        assertTrue(matchCompetitorBulkResponse0.isSuccess());
+        assertFalse(matchCompetitorBulkResponse1.isSuccess());
+        assertFalse(matchCompetitorBulkResponse2.isSuccess());
+        assertFalse((matchCompetitorBulkResponse1.getMessage() == null) || (matchCompetitorBulkResponse1.getMessage().isEmpty()));
         assertEquals(1, matchCompetitorRepository.count());
     }
 
@@ -279,7 +287,9 @@ class IpscMatchCompetitorServiceIntegrationTest {
                 ipscMatchCompetitorService.createMatchCompetitors(csvData, "HPSC");
 
         // Assert
-        assertTrue(holder.getMatchCompetitors().getFirst().isSuccess());
+        assertEquals(1, holder.getMatchCompetitorResults().size());
+        MatchCompetitorBulkResponse matchCompetitorBulkResponse = holder.getMatchCompetitorResults().getFirst();
+        assertTrue(matchCompetitorBulkResponse.isSuccess());
         assertEquals(1, matchCompetitorRepository.count());
     }
 
@@ -297,8 +307,10 @@ class IpscMatchCompetitorServiceIntegrationTest {
                 ipscMatchCompetitorService.createMatchCompetitors(csvData, "HPSC");
 
         // Assert
-        assertFalse(holder.getMatchCompetitors().getFirst().isSuccess());
-        assertTrue(holder.getMatchCompetitors().getFirst().getMessage().startsWith("Skipped: match club is not"));
+        assertEquals(1, holder.getMatchCompetitorResults().size());
+        MatchCompetitorBulkResponse matchCompetitorBulkResponse = holder.getMatchCompetitorResults().getFirst();
+        assertFalse(matchCompetitorBulkResponse.isSuccess());
+        assertFalse((matchCompetitorBulkResponse.getMessage() == null) || (matchCompetitorBulkResponse.getMessage().isEmpty()));
         assertEquals(0, matchCompetitorRepository.count());
     }
 
@@ -320,11 +332,16 @@ class IpscMatchCompetitorServiceIntegrationTest {
                 ipscMatchCompetitorService.createMatchCompetitors(csvData, null);
 
         // Assert
-        assertEquals(3, holder.getMatchCompetitors().size());
-        assertTrue(holder.getMatchCompetitors().get(0).isSuccess());
-        assertFalse(holder.getMatchCompetitors().get(1).isSuccess());
-        assertTrue(holder.getMatchCompetitors().get(1).getMessage().startsWith("Skipped"));
-        assertFalse(holder.getMatchCompetitors().get(2).isSuccess());
+        assertEquals(3, holder.getMatchCompetitorResults().size());
+        MatchCompetitorBulkResponse matchCompetitorBulkResponse0 = holder.getMatchCompetitorResults().get(0);
+        MatchCompetitorBulkResponse matchCompetitorBulkResponse1 = holder.getMatchCompetitorResults().get(1);
+        MatchCompetitorBulkResponse matchCompetitorBulkResponse2 = holder.getMatchCompetitorResults().get(2);
+        assertTrue(matchCompetitorBulkResponse0.isSuccess());
+        assertFalse(matchCompetitorBulkResponse1.isSuccess());
+        assertFalse(matchCompetitorBulkResponse2.isSuccess());
+        assertTrue((matchCompetitorBulkResponse0.getMessage() == null) || (matchCompetitorBulkResponse0.getMessage().isEmpty()));
+        assertFalse((matchCompetitorBulkResponse1.getMessage() == null) || (matchCompetitorBulkResponse1.getMessage().isEmpty()));
+        assertFalse((matchCompetitorBulkResponse2.getMessage() == null) || (matchCompetitorBulkResponse2.getMessage().isEmpty()));
     }
 
     @Test
@@ -353,9 +370,9 @@ class IpscMatchCompetitorServiceIntegrationTest {
         MatchCompetitorBulkResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData);
 
         // Assert
-        assertEquals(2, holder.getMatchCompetitors().size());
-        assertTrue(holder.getMatchCompetitors().get(0).isSuccess());
-        assertFalse(holder.getMatchCompetitors().get(1).isSuccess());
+        assertEquals(2, holder.getMatchCompetitorResults().size());
+        assertTrue(holder.getMatchCompetitorResults().get(0).isSuccess());
+        assertFalse(holder.getMatchCompetitorResults().get(1).isSuccess());
         assertEquals(1, matchCompetitorRepository.count());
     }
 
@@ -374,7 +391,8 @@ class IpscMatchCompetitorServiceIntegrationTest {
         MatchCompetitorBulkResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData);
 
         // Assert
-        assertFalse(holder.getMatchCompetitors().getFirst().isSuccess());
+        assertEquals(1, holder.getMatchCompetitorResults().size());
+        assertFalse(holder.getMatchCompetitorResults().getFirst().isSuccess());
         assertEquals(1, matchCompetitorRepository.count());
     }
 

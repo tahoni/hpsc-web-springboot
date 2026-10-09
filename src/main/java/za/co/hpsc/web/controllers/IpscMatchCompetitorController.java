@@ -133,7 +133,7 @@ public class IpscMatchCompetitorController {
             throws ValidationException, NonFatalException, FatalException {
         MatchCompetitorBulkResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData, club);
 
-        List<MatchCompetitorBulkResponse> results = holder.getMatchCompetitors();
+        List<MatchCompetitorBulkResponse> results = holder.getMatchCompetitorResults();
         boolean allFailed = !results.isEmpty() && results.stream().noneMatch(MatchCompetitorBulkResponse::isSuccess);
         return ResponseEntity.status(allFailed ? HttpStatus.UNPROCESSABLE_CONTENT : HttpStatus.CREATED).body(holder);
     }

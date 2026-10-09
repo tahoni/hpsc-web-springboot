@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models.ipsc.match.response;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,13 +31,13 @@ import java.time.LocalTime;
 @NoArgsConstructor
 public class MatchResponse {
     /** The match's own identifier. */
-    @NonNull
+    @NotNull
     private Long matchId;
     /** The match's name. */
-    @NonNull
+    @NotNull
     private String matchName;
     /** Date the match was/will be shot. */
-    @NonNull
+    @NotNull
     private LocalDate matchDate;
     /** Time the match started; may be null. */
     private LocalTime startTime;

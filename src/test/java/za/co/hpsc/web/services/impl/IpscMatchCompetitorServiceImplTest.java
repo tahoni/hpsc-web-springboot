@@ -18,7 +18,9 @@ import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.mappers.MatchCompetitorMapper;
+import za.co.hpsc.web.mappers.MatchCompetitorRowMapper;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
@@ -41,7 +43,7 @@ import static org.mockito.Mockito.when;
 /**
  * Unit tests for {@link IpscMatchCompetitorServiceImpl}'s impl-only protected helper methods
  * ({@code findMatchCompetitorOrThrow}, {@code isForClub}, {@code resolveCompetitorHomeClub},
- * {@code toFailedResponse}, {@code toResponse}, {@code validateForCreate}) - not declared on
+ * {@code toResponse}, {@code validateForCreate}) - not declared on
  * {@link IpscMatchCompetitorService}. The field-copying and lookup helpers are covered by
  * {@code za.co.hpsc.web.mappers.MatchCompetitorMapperTest}.
  * The interface's create/update/patch/get/delete contract is covered by
@@ -71,6 +73,7 @@ class IpscMatchCompetitorServiceImplTest {
     void setUp() {
         matchCompetitorServiceImpl = new IpscMatchCompetitorServiceImpl(matchCompetitorRepository,
                 new MatchCompetitorMapper(competitorRepository, ipscMatchRepository, ipscEntityCompetitorService),
+                new MatchCompetitorRowMapper(),
                 ipscEntityClubService, null);
     }
 
@@ -171,17 +174,6 @@ class IpscMatchCompetitorServiceImplTest {
 
     // isForClub()
     @Test
-    void testIsForClub_whenTargetClubIsNull_thenReturnsTrue() {
-        // Arrange
-        MatchCompetitorRequest request = new MatchCompetitorRequest();
-        request.setMatchClub("SOSC");
-
-        // Act & Assert
-        assertTrue(matchCompetitorServiceImpl.isForClub(request, null));
-        assertTrue(matchCompetitorServiceImpl.isForClub(new MatchCompetitorRequest(), null));
-    }
-
-    @Test
     void testIsForClub_whenRowClubMatchesByCodeOrAbbreviation_thenReturnsTrue() {
         // Arrange
         MatchCompetitorRequest byAbbreviation = new MatchCompetitorRequest();
@@ -192,6 +184,7 @@ class IpscMatchCompetitorServiceImplTest {
         // Act & Assert
         assertTrue(matchCompetitorServiceImpl.isForClub(byAbbreviation, ClubIdentifier.HPSC));
         assertTrue(matchCompetitorServiceImpl.isForClub(byCode, ClubIdentifier.HPSC));
+        verifyNoInteractions(ipscEntityCompetitorService);
     }
 
     @Test
@@ -288,6 +281,7 @@ class IpscMatchCompetitorServiceImplTest {
 
         // Assert
         assertTrue(result);
+        assertTrue(matchCompetitorServiceImpl.isForClub(new MatchCompetitorRequest(), null));
         verifyNoInteractions(ipscEntityCompetitorService, competitorRepository);
     }
 
@@ -302,20 +296,6 @@ class IpscMatchCompetitorServiceImplTest {
 
         // Act & Assert
         assertTrue(matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC));
-    }
-
-    @Test
-    void testIsForClub_whenRowClubMatches_thenDoesNotLookUpTheCompetitor() {
-        // Arrange
-        MatchCompetitorRequest request = new MatchCompetitorRequest();
-        request.setMatchClub("HPSC");
-
-        // Act
-        boolean result = matchCompetitorServiceImpl.isForClub(request, ClubIdentifier.HPSC);
-
-        // Assert
-        assertTrue(result);
-        verifyNoInteractions(ipscEntityCompetitorService);
     }
 
     @Test
@@ -375,42 +355,105 @@ class IpscMatchCompetitorServiceImplTest {
         assertThrows(ValidationException.class, () -> matchCompetitorServiceImpl.validateForCreate(blankPowerFactor));
     }
 
-    // toFailedResponse()
+    // failedRow()
     @Test
-    void testToFailedResponse_whenRequestPresent_thenCopiesOnlyTheIdentifyingFields() {
+    void testFailedRow_whenRequestPresent_thenReportsMessageAndEveryValueWithNoMatchCompetitor() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorId(1L);
-        request.setCompetitorName("Jane Doe");
-        request.setCompetitorNumber(" 123 ");
         request.setMatchId(2L);
         request.setFirearmType("Not a firearm type");
         request.setPoints(new BigDecimal("10"));
 
         // Act
-        MatchCompetitorResponse response = matchCompetitorServiceImpl.toFailedResponse(request);
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("Division not specified", request, null);
 
         // Assert
-        assertEquals(1L, response.getCompetitorId());
-        assertEquals(List.of("Jane Doe"), response.getCompetitorNames());
-        assertEquals(123, response.getCompetitorNumber());
-        assertEquals(2L, response.getMatchId());
-        assertNull(response.getMatchCompetitorId());
-        assertNull(response.getFirearmType());
-        assertNull(response.getPoints());
+        assertFalse(result.isSuccess());
+        assertEquals("Division not specified", result.getMessage());
+        assertNull(result.getMatchCompetitor());
+        assertEquals("1", result.getMatchCompetitorRow().getCompetitorId());
+        assertEquals("2", result.getMatchCompetitorRow().getMatchId());
+        assertEquals("Not a firearm type", result.getMatchCompetitorRow().getFirearmType());
+        assertEquals("10", result.getMatchCompetitorRow().getPoints());
+        assertEquals("", result.getMatchCompetitorRow().getDivision());
     }
 
     @Test
-    void testToFailedResponse_whenRequestIsNull_thenReturnsEmptyResponse() {
+    void testFailedRow_whenRowCannotBeIdentified_thenDoesNotThrowAndReportsEmptyValues() {
         // Act
-        MatchCompetitorResponse response = matchCompetitorServiceImpl.toFailedResponse(null);
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("bad", new MatchCompetitorRequest(), null);
 
         // Assert
-        assertNotNull(response);
-        assertNull(response.getCompetitorId());
-        assertNull(response.getMatchId());
-        assertTrue(response.getCompetitorNames().isEmpty());
-        assertNull(response.getCompetitorNumber());
+        assertFalse(result.isSuccess());
+        assertNull(result.getMatchCompetitor());
+        assertEquals("", result.getMatchCompetitorRow().getCompetitorId());
+        assertEquals("", result.getMatchCompetitorRow().getMatchId());
+    }
+
+    @Test
+    void testFailedRow_whenRequestIsNull_thenReportsEveryValueAsEmpty() {
+        // Act
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("empty row", null, null);
+
+        // Assert
+        assertFalse(result.isSuccess());
+        assertEquals("empty row", result.getMessage());
+        assertNull(result.getMatchCompetitor());
+        assertEquals("", result.getMatchCompetitorRow().getCompetitorId());
+        assertEquals("", result.getMatchCompetitorRow().getPoints());
+    }
+
+    @Test
+    void testFailedRow_whenMatchCompetitorHasResolvedValues_thenTheyTakePrecedenceOverTheRequest() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorId(99L);
+        request.setMatchId(98L);
+        request.setMatchClub("SOSC");
+        request.setDivision("open division");
+        request.setPowerFactor("minor");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.setCompetitor(competitorWithHomeClub(ClubIdentifier.HPSC));
+        matchCompetitor.getCompetitor().setId(1L);
+        IpscMatch match = new IpscMatch();
+        match.setId(2L);
+        matchCompetitor.setMatch(match);
+        matchCompetitor.setMatchClub(ClubIdentifier.HPSC);
+        matchCompetitor.setDivision(Division.OPEN);
+        matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
+
+        // Act
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("bad", request, matchCompetitor);
+
+        // Assert
+        assertEquals("1", result.getMatchCompetitorRow().getCompetitorId());
+        assertEquals("2", result.getMatchCompetitorRow().getMatchId());
+        assertEquals(ClubIdentifier.HPSC.getName(), result.getMatchCompetitorRow().getMatchClub());
+        assertEquals(Division.OPEN.getName(), result.getMatchCompetitorRow().getDivision());
+        assertEquals(PowerFactor.MAJOR.getName(), result.getMatchCompetitorRow().getPowerFactor());
+    }
+
+    @Test
+    void testFailedRow_whenMatchCompetitorLacksValues_thenTheRequestsValuesAreReported() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorId(99L);
+        request.setMatchId(98L);
+        request.setDivision("Not a division");
+        request.setPoints(new BigDecimal("10"));
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
+
+        // Act
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("bad", request, matchCompetitor);
+
+        // Assert
+        assertEquals("99", result.getMatchCompetitorRow().getCompetitorId());
+        assertEquals("98", result.getMatchCompetitorRow().getMatchId());
+        assertEquals("Not a division", result.getMatchCompetitorRow().getDivision());
+        assertEquals("10", result.getMatchCompetitorRow().getPoints());
+        assertEquals(PowerFactor.MAJOR.getName(), result.getMatchCompetitorRow().getPowerFactor());
     }
 
     // toResponse()
@@ -515,6 +558,10 @@ class IpscMatchCompetitorServiceImplTest {
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setCompetitor(competitor);
         matchCompetitor.setMatch(match);
+        matchCompetitor.setCompetitorCategory(CompetitorCategory.JUNIOR);
+        matchCompetitor.setFirearmType(FirearmType.RIFLE);
+        matchCompetitor.setDivision(Division.OPEN);
+        matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
         return matchCompetitor;
     }
 

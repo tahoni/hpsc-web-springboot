@@ -1,6 +1,7 @@
 package za.co.hpsc.web.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -24,10 +25,12 @@ public class MatchCompetitor {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "competitor_id", nullable = false)
+    @NotNull
     private Competitor competitor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "match_id", nullable = false)
+    @NotNull
     private IpscMatch match;
 
     @Convert(converter = ClubIdentifierConverter.class)
@@ -36,18 +39,22 @@ public class MatchCompetitor {
 
     @Convert(converter = CompetitorCategoryConverter.class)
     @Column(name = "competitor_category", nullable = false)
+    @NotNull
     private CompetitorCategory competitorCategory;
 
     @Convert(converter = FirearmTypeConverter.class)
     @Column(name = "firearm_type", nullable = false)
+    @NotNull
     private FirearmType firearmType;
 
     @Convert(converter = DivisionConverter.class)
     @Column(name = "division", nullable = false)
+    @NotNull
     private Division division;
 
     @Convert(converter = PowerFactorConverter.class)
     @Column(name = "power_factor", nullable = false)
+    @NotNull
     private PowerFactor powerFactor;
 
     @Column(name = "points", precision = 19, scale = 6)
