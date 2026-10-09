@@ -63,6 +63,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch`:** New query that fetch-joins the competitor
   and match for one match's entries, ordered by percentage with missing percentages last
 
+##### Utilities
+
+- **`NumberUtil`:** Reinstated, with its tests, after its removal in 14.0.0 — `calculatePercentage`, `calculateSum`
+  and `formatBigDecimal` each take the `scale` to round to (`RoundingMode.HALF_UP`), with a null or zero whole giving
+  a zero percentage and a null value or list giving zero
+
+##### Constants
+
+- **`IpscConstants`:** New `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE` and `PERCENTAGE_SCALE` decimal-place
+  constants for scores; none is referenced by code yet
+- **`SystemConstants.DEFAULT_SCALE`:** Reinstated, with a value of 5, as the default scale for `NumberUtil`
+  calculations
+
 #### 🗑️ Removed
 
 ##### Models

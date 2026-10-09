@@ -1,0 +1,94 @@
+package za.co.hpsc.web.utils;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+
+/**
+ * Utility class providing methods for numeric calculations and operations.
+ *
+ * <p>
+ * The {@code NumberUtil} class offers static methods for common numerical tasks. These methods
+ * are designed to handle various use cases where numerical computations are required.
+ * </p>
+ *
+ * @since 1.1.3
+ */
+public final class NumberUtil {
+    private NumberUtil() {
+        // Utility class, not to be instantiated
+    }
+
+    /**
+     * Calculates the percentage of a portion relative to a total.
+     *
+     * <p>
+     * If the whole is null or zero, the method returns a value of zero,
+     * rounded to the given scale.
+     * </p>
+     *
+     * @param part  the portion or subset of the whole to calculate percentage for.
+     *              Must not be null.
+     * @param whole the whole or total value.
+     *              Can be null or zero.
+     * @param scale the number of decimal places of the result, using {@code RoundingMode.HALF_UP}.
+     * @return the percentage of {@code part} relative to {@code whole}, scaled to {@code scale}.
+     * If {@code whole} is null or zero, returns zero.
+     * @since 1.1.3
+     */
+    public static BigDecimal calculatePercentage(BigDecimal part, BigDecimal whole, int scale) {
+        BigDecimal result = BigDecimal.ZERO;
+        // Divides to two digits beyond the scale (the factor of 100), then multiplies by 100
+        if ((whole != null) && (whole.compareTo(BigDecimal.ZERO) != 0)) {
+            result = part.divide(whole, scale + 2, RoundingMode.HALF_UP)
+                    .multiply(BigDecimal.valueOf(100));
+        }
+        // Scales the result to the given scale
+        return result.setScale(scale, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * Calculates the sum of a list of {@code BigDecimal} values and scales the result
+     * to the given scale.
+     *
+     * <p>
+     * If the input list is null, the method returns a value of {@code BigDecimal.ZERO}.
+     * Each value in the list is added together, and the result is scaled using
+     * {@code RoundingMode.HALF_UP}.
+     * </p>
+     *
+     * @param values the list of {@code BigDecimal} values to sum.
+     *               Can be null.
+     * @param scale  the number of decimal places of the result, using {@code RoundingMode.HALF_UP}.
+     * @return the sum of the list's values, scaled to {@code scale}.
+     * @since 5.0.0
+     */
+    public static BigDecimal calculateSum(List<BigDecimal> values, int scale) {
+        BigDecimal sum = BigDecimal.ZERO;
+        // Calculates the sum of the values in the list
+        if (values != null) {
+            for (BigDecimal value : values) {
+                sum = sum.add(value);
+            }
+        }
+
+        // Scales the result to the given scale
+        return sum.setScale(scale, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * Formats a {@code BigDecimal} value to a specified scale using {@code RoundingMode.HALF_UP}.
+     * If the input value is null, the method uses {@code BigDecimal.ZERO} as the default value.
+     *
+     * @param value the {@code BigDecimal} value to format.
+     *              Can be null.
+     * @param scale the scale to which the value should be formatted.
+     * @return the formatted {@code BigDecimal} value as a String, scaled to the specified scale.
+     * @since 4.1.0
+     */
+    public static String formatBigDecimal(BigDecimal value, int scale) {
+        BigDecimal result = ValueUtil.nullAsDefault(value, BigDecimal.ZERO);
+        // Scales the result to the given scale
+        return result.setScale(scale, RoundingMode.HALF_UP).toString();
+    }
+}

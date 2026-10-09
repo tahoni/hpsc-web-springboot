@@ -52,6 +52,18 @@ public final class IpscConstants {
      */
     public static final String REPLACE_IN_NAMES_REGEX = "(\\(RO\\)|\\bRO\\b)";
 
+    /**
+     * Number of decimal places for match points. Not currently referenced by any code, along with the other score
+     * scales below.
+     */
+    public static final int MATCH_POINTS_SCALE = 4;
+    /** Number of decimal places for a hit factor (points per second). */
+    public static final int HIT_FACTOR_SCALE = 4;
+    /** Number of decimal places for a time, in seconds. */
+    public static final int TIME_SCALE = 2;
+    /** Number of decimal places for a percentage. */
+    public static final int PERCENTAGE_SCALE = 2;
+
     /** Match category a match defaults to when none is given, by {@code IpscMatchServiceImpl.resolveMatchCategory}. */
     public static final MatchCategory DEFAULT_MATCH_CATEGORY = MatchCategory.CLUB_SHOOT;
     /**

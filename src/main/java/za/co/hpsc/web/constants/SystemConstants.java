@@ -1,8 +1,10 @@
 package za.co.hpsc.web.constants;
 
+import za.co.hpsc.web.utils.NumberUtil;
+
 /**
  * Provides system-wide constants for various commonly used configurations,
- * including date formatting patterns.
+ * including default scale values and date formatting patterns.
  *
  * <p>
  * This class serves as a centralised repository for constants that are shared
@@ -16,6 +18,9 @@ public final class SystemConstants {
     private SystemConstants() {
         // Prevent instantiation of this utility class
     }
+
+    /** Decimal scale {@link NumberUtil}'s calculations round/format to by default. */
+    public static final int DEFAULT_SCALE = 5;
 
     /** Bare time-of-day pattern (e.g. {@code "14:30"}), composed into {@link #ISO_DATE_TIME_FORMAT}. */
     public static final String TIME_FORMAT = "HH:mm";
