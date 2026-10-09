@@ -56,10 +56,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Enums
 
-- **`Division`:** **Breaking:** dropped the trailing " Division" from each division's name (for example "Open" instead of
-  "Open Division"), so divisions are matched by their short names, and a value in the old form no longer resolves
 - **`CompetitorCategory.fromName`:** Now returns an empty `Optional` for a null or unrecognised name instead of
   falling back to `NONE`; a blank name still resolves to `NONE`
+- **`Division`:** **Breaking:** dropped the trailing " Division" from each division's name (for example "Open" instead of
+  "Open Division"), so divisions are matched by their short names, and a value in the old form no longer resolves
 - **`Division`:** **Breaking:** `PCC_OPTICS` and `PCC_IRON` are renamed `"PCC Optics"` and `"PCC Irons"` (from
   `"PCC Optic"` and `"PCC Iron"`), so a division given by the singular name no longer resolves
 
@@ -115,12 +115,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`MatchCompetitor`:** The competitor, match, competitor category, firearm type, division and power factor are now
   `@NotNull`, matching their `nullable = false` columns
-- **`MatchCompetitorRequest`:** **Breaking:** the match ID, competitor category, division and power factor are no
+- **`MatchCompetitorRequest`:** The match ID, competitor category, division and power factor are no
   longer rejected by bean validation, and the competitor category is optional in the CSV import (`Cats`), so a bulk
   import can report a row that is missing them instead of failing the whole request; `validate()` still requires
   them when a match competitor is created or replaced
 - **`MatchCompetitorResponse.competitorId`:** Dropped `@NonNull`, so a response can be built for a match competitor
   that is not linked to a competitor
+- **`MatchCompetitorBulkResponseHolder.matchCompetitors`:** **Breaking:** renamed back to `matchCompetitorResults`, so
+  a bulk match competitor import's response body carries `matchCompetitorResults` instead of `matchCompetitors`;
+  `IpscMatchCompetitorController` reads the renamed getter
+- **`CompetitorResponse`, `CompetitorResponseHolder`, `MatchResponse`, `MatchResponseHolder` and
+  `MatchCompetitorBulkResponseHolder`:** Replaced `org.jspecify.annotations.NonNull` with
+  `jakarta.validation.constraints.NotNull` on their required fields, so they can be checked by a `Validator`
 
 #### 🗑️ Removed
 
