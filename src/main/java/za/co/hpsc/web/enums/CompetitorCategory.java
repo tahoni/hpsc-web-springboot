@@ -48,23 +48,18 @@ public enum CompetitorCategory {
      *
      * <p>
      * The method performs a case-insensitive match to find a category with the given name.
-     * A {@code null} name yields an empty {@code Optional}, and a blank name yields
-     * {@link CompetitorCategory#NONE}. A non-blank name that matches no category also yields
-     * an empty {@code Optional}.
+     * A {@code null} or blank name yields {@link CompetitorCategory#NONE}. A non-blank name that
+     * matches no category yields an empty {@code Optional}.
      * </p>
      *
      * @param name the name of the category to search for.
      *             Can be null or blank.
      * @return an {@code Optional} containing the matching {@code CompetitorCategory} if found,
-     * an {@code Optional} containing {@link CompetitorCategory#NONE} if the name is blank,
-     * or an empty {@code Optional} if the name is {@code null} or matches no category.
+     * an {@code Optional} containing {@link CompetitorCategory#NONE} if the name is {@code null} or blank,
+     * or an empty {@code Optional} if the name is non-blank and matches no category.
      * @since 1.1.3
      */
     public static Optional<CompetitorCategory> fromName(String name) {
-        if (name == null) {
-            return Optional.empty();
-        }
-
         if (!hasText(name)) {
             return Optional.of(NONE);
         }

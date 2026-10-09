@@ -698,10 +698,46 @@ class MatchCompetitorMapperTest {
     }
 
     @Test
-    void testResolveCompetitorCategory_whenUnknownOrNull_thenThrowsValidationException() {
+    void testResolveCompetitorCategory_whenBlankOrNull_thenReturnsNone() {
+        // Act & Assert
+        assertEquals(CompetitorCategory.NONE, matchCompetitorMapper.resolveCompetitorCategory(""));
+        assertEquals(CompetitorCategory.NONE, matchCompetitorMapper.resolveCompetitorCategory("   "));
+        assertEquals(CompetitorCategory.NONE, matchCompetitorMapper.resolveCompetitorCategory(null));
+    }
+
+    @Test
+    void testResolveCompetitorCategory_whenUnknown_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> matchCompetitorMapper.resolveCompetitorCategory("Nope"));
-        assertThrows(ValidationException.class, () -> matchCompetitorMapper.resolveCompetitorCategory(null));
+    }
+
+    // populateResolvableFields()
+    @Test
+    void testPopulateResolvableFields_whenCompetitorCategoryBlank_thenSetsNone() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorCategory("  ");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.populateResolvableFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(CompetitorCategory.NONE, matchCompetitor.getCompetitorCategory());
+    }
+
+    @Test
+    void testPopulateResolvableFields_whenCompetitorCategoryUnknown_thenLeavesNull() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorCategory("Nope");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.populateResolvableFields(matchCompetitor, request);
+
+        // Assert
+        assertNull(matchCompetitor.getCompetitorCategory());
     }
 
     // resolveDivision()

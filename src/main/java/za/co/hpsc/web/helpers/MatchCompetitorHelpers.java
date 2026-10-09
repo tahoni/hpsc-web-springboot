@@ -135,18 +135,15 @@ public final class MatchCompetitorHelpers {
     }
 
     /**
-     * Builds the message for a match competitor with no competitor category.
+     * Builds the message for a competitor category that was given but could not be resolved. A blank category
+     * resolves to {@code CompetitorCategory.NONE}, so it is never reported here.
      *
      * @param request the request the match competitor was built from.
      * @return the competitor category error message.
      * @since 14.0.0
      */
     private static String getErrorMessageForMissingCompetitorCategory(MatchCompetitorRequest request) {
-        if ((request.getCompetitorCategory() == null) || request.getCompetitorCategory().isBlank()) {
-            return "Competitor category not specified";
-        } else {
-            return "Competitor category not found for " + request.getCompetitorCategory();
-        }
+        return "Competitor category not found for " + request.getCompetitorCategory();
     }
 
     /**

@@ -108,7 +108,7 @@ public class MatchCompetitorMapper {
                 .or(() -> ClubIdentifier.fromCode(request.getMatchClub()))
                 .orElse(null) : null);
         matchCompetitor.setCompetitorCategory(CompetitorCategory.fromName(request.getCompetitorCategory())
-                .filter(category -> category != CompetitorCategory.NONE).orElse(null));
+                .orElse(null));
         matchCompetitor.setDivision(Division.fromName(request.getDivision()).orElse(null));
         matchCompetitor.setFirearmType(FirearmType.fromName(request.getFirearmType())
                 .or(() -> Optional.ofNullable(matchCompetitor.getDivision()).map(Division::getFirearmType))
@@ -334,13 +334,13 @@ public class MatchCompetitorMapper {
      * Resolves a competitor category by name.
      *
      * <p>
-     * A blank name resolves to {@link CompetitorCategory#NONE}, as per
+     * A null or blank name resolves to {@link CompetitorCategory#NONE}, as per
      * {@link CompetitorCategory#fromName(String)}.
      * </p>
      *
-     * @param competitorCategory the category name to look up; may be blank.
-     * @return the matching {@link CompetitorCategory}, or {@link CompetitorCategory#NONE} if the name is blank.
-     * @throws ValidationException if {@code competitorCategory} is null or non-blank and matches no category.
+     * @param competitorCategory the category name to look up; may be null or blank.
+     * @return the matching {@link CompetitorCategory}, or {@link CompetitorCategory#NONE} if the name is null or blank.
+     * @throws ValidationException if {@code competitorCategory} is non-blank and matches no category.
      */
     public CompetitorCategory resolveCompetitorCategory(String competitorCategory) {
         return CompetitorCategory.fromName(competitorCategory)

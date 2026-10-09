@@ -348,23 +348,18 @@ public class MatchCompetitorHelpersTest {
     }
 
     @Test
-    void testGetErrorMessagesForMissingRequiredFields_whenCompetitorCategoryMissing_thenReportsNotSpecifiedOrNotFound() {
+    void testGetErrorMessagesForMissingRequiredFields_whenCompetitorCategoryMissing_thenReportsNotFound() {
         // Arrange
         MatchCompetitor matchCompetitor = completeMatchCompetitor();
         matchCompetitor.setCompetitorCategory(null);
-        MatchCompetitorRequest unspecifiedRequest = new MatchCompetitorRequest();
-        MatchCompetitorRequest specifiedRequest = new MatchCompetitorRequest();
-        specifiedRequest.setCompetitorCategory("Unknown");
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorCategory("Unknown");
 
         // Act
-        String unspecifiedMessage = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(
-                matchCompetitor, unspecifiedRequest);
-        String specifiedMessage = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(
-                matchCompetitor, specifiedRequest);
+        String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertTrue(unspecifiedMessage.contains("not specified"));
-        assertTrue(specifiedMessage.contains("not found for"));
+        assertTrue(message.contains("Competitor category not found for Unknown"));
     }
 
     @Test
