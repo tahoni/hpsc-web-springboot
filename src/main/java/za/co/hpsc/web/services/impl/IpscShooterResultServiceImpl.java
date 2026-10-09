@@ -22,6 +22,7 @@ import java.util.Map;
  *
  * @since 15.0.0
  */
+// TODO: sort match competitors
 @Service
 public class IpscShooterResultServiceImpl implements IpscShooterResultService {
     private final MatchCompetitorRepository matchCompetitorRepository;
