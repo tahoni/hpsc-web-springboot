@@ -58,6 +58,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`Division`:** **Breaking:** dropped the trailing " Division" from each division's name (for example "Open" instead of
   "Open Division"), so divisions are matched by their short names, and a value in the old form no longer resolves
+- **`Division`:** **Breaking:** `PCC_OPTICS` and `PCC_IRON` are renamed `"PCC Optics"` and `"PCC Irons"` (from
+  `"PCC Optic"` and `"PCC Iron"`), so a division given by the singular name no longer resolves
 
 ##### Helpers
 

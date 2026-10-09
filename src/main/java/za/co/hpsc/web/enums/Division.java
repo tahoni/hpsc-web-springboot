@@ -44,8 +44,8 @@ public enum Division {
     SHOTGUN_STANDARD_MANUAL("Shotgun Standard Manual", FirearmType.SHOTGUN),
 
     // PCC Divisions
-    PCC_OPTICS("PCC Optic", FirearmType.PCC),
-    PCC_IRON("PCC Iron", FirearmType.PCC),
+    PCC_OPTICS("PCC Optics", FirearmType.PCC),
+    PCC_IRON("PCC Irons", FirearmType.PCC),
 
     // .22 Divisions
     OPEN_22(".22 Open", FirearmType.HANDGUN_22),

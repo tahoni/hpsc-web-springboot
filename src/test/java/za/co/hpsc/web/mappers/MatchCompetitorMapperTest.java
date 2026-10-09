@@ -66,7 +66,7 @@ class MatchCompetitorMapperTest {
         request.setMatchClub("HPSC");
         request.setCompetitorCategory("Lady");
         request.setFirearmType("PCC");
-        request.setDivision("PCC Iron");
+        request.setDivision("PCC Irons");
         request.setPowerFactor("Minor");
         request.setPoints(new BigDecimal("50"));
         request.setPercentage(new BigDecimal("98.25"));
@@ -129,7 +129,7 @@ class MatchCompetitorMapperTest {
         request.setMatchClub("HPSC");
         request.setCompetitorCategory("Lady");
         request.setFirearmType("PCC");
-        request.setDivision("PCC Iron");
+        request.setDivision("PCC Irons");
         request.setPowerFactor("Minor");
         request.setPoints(new BigDecimal("50"));
         request.setPercentage(new BigDecimal("98.25"));
@@ -471,7 +471,7 @@ class MatchCompetitorMapperTest {
     void testApplyFields_whenFirearmTypeIsUnrecognised_thenInitialisesFirearmTypeFromDivision() {
         // Arrange
         stubCompetitorAndMatch();
-        MatchCompetitorRequest request = requestWith("Nope", "PCC Iron");
+        MatchCompetitorRequest request = requestWith("Nope", "PCC Irons");
         MatchCompetitor matchCompetitor = new MatchCompetitor();
 
         // Act
