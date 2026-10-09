@@ -6,8 +6,9 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 
 /**
- * The {@code ClubService} interface provides null-safe comparisons of clubs, either as persisted {@link Club}
- * entities or as {@link ClubIdentifier}s, so callers don't each repeat the null and identifier checks.
+ * The {@code IpscEntityClubService} interface resolves clubs by code, abbreviation or name, and provides null-safe
+ * comparisons of clubs, either as persisted {@link Club} entities or as {@link ClubIdentifier}s, so callers don't each
+ * repeat the null and identifier checks.
  *
  * @since 12.0.0
  */

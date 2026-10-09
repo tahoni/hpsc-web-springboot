@@ -38,7 +38,7 @@ public final class IpscConstants {
      * Competitor numbers that are shared aliases (placeholders in the scoring system's export) rather than a real
      * competitor's number, so they never identify one. A competitor number in this list is treated as no number, as
      * by {@code CompetitorHelpers.getCompetitorNumberAsInteger} and the number stage of
-     * {@code EntityIpscCompetitorService.findCompetitor}.
+     * {@code IpscEntityCompetitorService.findCompetitorByIdentifierAndFullName}.
      */
     public static final List<Integer> EXCLUDE_ICS_ALIAS = List.of(15000, 16000);
 

@@ -7,7 +7,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import java.util.Optional;
 
 /**
- * The {@code EntityIpscCompetitorService} interface looks up an already persisted IPSC
+ * The {@code IpscEntityCompetitorService} interface looks up an already persisted IPSC
  * {@link Competitor} from the loosely-specified identity found in imported data, such as a
  * member's full name and competitor number.
  *
