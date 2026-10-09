@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (35):**
+- **✅ Completed (36):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -116,7 +116,9 @@ number or a newly met precondition on an existing gap — see the `update-improv
     v12.0.0 (wired into `IpscMatchCompetitorServiceImpl`; the bulk import returns
     `MatchCompetitorBulkResponseHolder` per row)
   - #37 `IpscConstants`' four score-scale constants are declared but never used — closed v12.0.0 (constants removed)
-- **🟡 Partially Completed (3):**
+  - #40 Renaming every `Division` name left stored divisions with no data migration — closed v14.0.0 (`V11_7_0`
+    renames the stored divisions)
+- **🟡 Partially Completed (4):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v10.0.0 (the
     match competitor service and `/ipsc/match-competitors` controller are built, extended in v10.0.0 with
     competitor lookup by number or name and overall-score fields; the shooter-log layer is not)
@@ -124,8 +126,10 @@ number or a newly met precondition on an existing gap — see the `update-improv
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
   - #38 Eight utility and enum methods and `SystemConstants.DEFAULT_SCALE` are used only by tests — progressed
     v13.0.0 (`Division.fromAbbreviationOrName` removed; seven methods and `DEFAULT_SCALE` remain)
-- **⚪ Open (1):**
-  - #39 `ClubIdentifier.code` and `ClubIdentifier.fromCode` are used only by tests
+  - #39 `ClubIdentifier.code` and `ClubIdentifier.fromCode` are used only by tests — progressed v14.0.0
+    (`fromCode` now has production callers; `AGENTS.md`'s `// fromCode()` example heading is unchanged)
+- **⚪ Open (0):**
+  - *No gaps are currently open.*
 
 ### ✅ Completed
 
@@ -1132,6 +1136,39 @@ If the scoring layer (Gap #6) needs rounding scales it can introduce its own, to
 them. The `IpscConstants` Javadoc no longer lists them.
 
 
+#### 40. Renaming every `Division` name left stored divisions with no data migration — ✅ Closed in v14.0.0
+
+**Evidence:** The `feature/match-competitor` branch drops the trailing " Division" from every `Division` name
+(`enums/Division.java`: `"Open Division"` becomes `"Open"`, `"Shotgun Semi Division"` becomes `"Shotgun Semi"`, and so
+on) and renames `PCC_OPTICS` and `PCC_IRON` to `"PCC Optics"` and `"PCC Irons"`. `DivisionConverter` stores that name
+in the `division` column of `match_competitor`, `shooter_log_competitor` and `shooter_log_overall` (all `nullable = false`) and reads it back with `Division.fromName(dbData).orElse(null)`, so a row still holding
+the old name reads back as `null`. No file under `db/migration/` is added or changed on the branch, although the two earlier renames each
+shipped with one: `V11_4_0__make_non_handgun_division_names_unique.sql` rewrote the stored division names, and
+`V11_5_0__rename_lady_senior_competitor_category.sql` rewrote the `Lady, Senior` category in the same three tables.
+`CHANGELOG.md`'s `[Unreleased]` section flags the `Division` renames as breaking for callers but says nothing about
+stored rows, and v13.3.0's Known Issues already records the same symptom for the `Manual Action Contemporary Division`
+and `Manual Action Bolt Division` values ("not migrated and read back as `null`").
+
+**Why it matters:** Every existing match competitor, shooter-log competitor and overall row would carry an unreadable
+division after the upgrade. Because `MatchCompetitor.division` is now `@NotNull`,
+`IpscMatchCompetitorServiceImpl.toResponse` rejects such a row with a `ValidationException`, so reading, patching or
+listing existing entries fails rather than degrading quietly. The earlier renames show the project treats this as a
+migration it ships with the rename, not a manual clean-up.
+
+**Proposed improvement:** Add a Flyway migration (the next `V14_x_0` version, per
+`documentation/recommendations/flyway-migration-versioning.md`) that strips the trailing " Division" from the stored
+`division` in the three tables and maps `PCC Optic Division` and `PCC Iron Division` to `PCC Optics` and `PCC Irons`;
+`Shotgun Semi Division` becomes `Shotgun Semi`. Add the row to that document's Current State table and a
+`CHANGELOG.md` `Database` entry. If the rename is deliberately shipped without one, record that in the Known Issues
+instead of leaving it implicit.
+
+**Outcome:** Done as proposed in v14.0.0. `V11_7_0__drop_division_suffix_from_division_names.sql` rewrites the stored
+`division` in `match_competitor`, `shooter_log_competitor` and `shooter_log_overall`: `PCC Optic Division` and
+`PCC Iron Division` become `PCC Optics` and `PCC Irons`, and any other value ending in " Division" loses the suffix
+(so `Shotgun Semi Division` becomes `Shotgun Semi`). A value starting with `Manual Action`, a division that no longer
+exists, is left as it was. The migration is listed in `flyway-migration-versioning.md`'s Current State table and in
+`CHANGELOG.md`'s `[Unreleased]` `Database` entries. It has not been run against a copy of production data.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -1237,9 +1274,7 @@ description is unchanged. The gap closes once each remaining method is either gi
 with its tests, the `DEFAULT_SCALE` Javadoc is corrected (or the constant removed) and the `NumberUtil` description
 matches the class.
 
-### ⚪ Open
-
-#### 39. `ClubIdentifier.code` and `ClubIdentifier.fromCode` are used only by tests
+#### 39. `ClubIdentifier.code` and `ClubIdentifier.fromCode` are used only by tests — 🟡 Partially completed in v14.0.0
 
 **Evidence:** Grepping `src/main` for `fromCode` and `getCode` finds `ClubIdentifier.fromCode` only at its own
 declaration (`ClubIdentifier.java:111`), and its only caller is `ClubIdentifierTest` (nine tests). The `code` field it
@@ -1258,16 +1293,29 @@ changed on this branch, so someone is evidently maintaining values that nothing 
 `fromCode` together with their tests, and change `AGENTS.md`'s example heading to one that still exists (for example
 `// fromName()`); if so, record the planned caller here.
 
+**Progress:** `ClubIdentifier.fromCode` now has production callers, so the first half of the Proposed improvement —
+recording a planned caller — is met by keeping it. The `feature/match-competitor` branch resolves a club by its
+identifier code in three places: `IpscEntityClubServiceImpl.findByCodeOrAbbreviation` (and so `MatchMapper.resolveClub`
+and `CompetitorMapper.resolveHomeClub`, through `findByCodeOrAbbreviationWithDefault`) and
+`MatchCompetitorMapper.resolveMatchClub`/`populateResolvableFields`. `AGENTS.md`'s Test Conventions example heading is
+still `// fromCode()`, "matching the style already used in `FirearmTypeTest`", and `FirearmTypeTest` still has no such
+group (`ClubIdentifierTest` does). The gap closes once that example names a heading that exists in the cited test
+classes.
+
+### ⚪ Open
+
+*No gaps are currently open.*
+
 ---
 
 ## 🛤️ Roadmap
 
-| Phase       | Focus                                                                                                                                                                                                                                              |
-|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0, the shooter-log service and controller remain                                                                                  |
-| **Next**    | Decide which remaining test-only utility methods and `SystemConstants.DEFAULT_SCALE` to keep or remove (#38, #39, `Division.fromAbbreviationOrName` removed in v13.0.0); #36 and #37 closed in v12.0.0                                             |
-| **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
-| **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
+| Phase       | Focus                                                                                                                                                                                                                                                                                   |
+|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0, the shooter-log service and controller remain                                                                                                                       |
+| **Next**    | Decide which remaining test-only utility methods and `SystemConstants.DEFAULT_SCALE` to keep or remove (#38; #39's `ClubIdentifier.fromCode` kept for its club lookups in v14.0.0, `Division.fromAbbreviationOrName` removed in v13.0.0); #36 and #37 closed in v12.0.0, #40 in v14.0.0 |
+| **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                               |
+| **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist                                      |
 
 ---
 
@@ -1360,8 +1408,12 @@ changed on this branch, so someone is evidently maintaining values that nothing 
   that only tests call is either given a production caller or removed with its tests, `SystemConstants.DEFAULT_SCALE`'s
   Javadoc matches how the constant is used, and `ARCHITECTURE.md`'s `NumberUtil` description matches the class,
   closing Gap #38.
-- ⚪ Open: `ClubIdentifier.code` and `fromCode` are either given a production caller or removed with their tests, and
-  `AGENTS.md`'s `// fromCode()` example heading names a test group that exists, closing Gap #39.
+- 🟡 Partly met in v14.0.0 (`ClubIdentifier.fromCode` now has production callers): `ClubIdentifier.code` and `fromCode`
+  are either given a production caller or removed with their tests, and `AGENTS.md`'s `// fromCode()` example heading
+  names a test group that exists, closing Gap #39.
+- ✅ Met in v14.0.0: `V11_7_0__drop_division_suffix_from_division_names.sql` rewrites the stored `division` values in
+  `match_competitor`, `shooter_log_competitor` and `shooter_log_overall` to the renamed `Division` names, so existing
+  rows read back as a division, closing Gap #40.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.
