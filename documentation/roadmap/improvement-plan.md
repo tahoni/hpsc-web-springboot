@@ -123,9 +123,10 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #40 Renaming every `Division` name left stored divisions with no data migration — closed v14.0.0 (`V11_7_0`
     renames the stored divisions)
 - **🟡 Partially Completed (2):**
-  - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v10.0.0 (the
+  - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v15.0.0 (the
     match competitor service and `/ipsc/match-competitors` controller are built, extended in v10.0.0 with
-    competitor lookup by number or name and overall-score fields; the shooter-log layer is not)
+    competitor lookup by number or name and overall-score fields, and in v15.0.0 with read-only
+    `/ipsc/shooter-results` endpoints; the shooter-log layer is not)
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
 - **⚪ Open (0):**
@@ -1247,7 +1248,7 @@ A gap moves here when it has at least one **Progress** paragraph (per
 `update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
 but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
 
-#### 6. Match scoring / shooter-log service and controller layer are not yet built — 🟡 Partially completed in v10.0.0
+#### 6. Match scoring / shooter-log service and controller layer are not yet built — 🟡 Partially completed in v15.0.0
 
 **Evidence:** `ARCHITECTURE.md`'s Feature Support table states, "JPA entities and repositories exist for
 match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being
@@ -1283,7 +1284,12 @@ without finishing the gap: a request can identify its competitor by number or na
 `CompetitorRepository` finders), `MatchCompetitor` carries the PractiScore-style overall-score columns
 (`V10_1_0__add_match_competitor_overall_scores.sql`) and its CSV headers follow a PractiScore export, and the unused
 `MatchOverallScoresRequest`/`MatchStageScoresRequest` DTOs quoted in the Evidence above are deleted, so the overall
-scores now live on `MatchCompetitor` itself. The gap closes once a shooter-log service and
+scores now live on `MatchCompetitor` itself. v15.0.0 adds a read side to the match-competitor half: the read-only
+`IpscShooterResultService` (interface + `impl/` split) and `IpscShooterResultController` expose
+`GET /ipsc/shooter-results/matches/{matchId}` and `GET /ipsc/shooter-results`, returning each match with its
+competitors' results (points, percentage, time and rankings) sorted by percentage then points, highest first, over
+`MatchCompetitorRepository` and `IpscMatchRepository`, with Mockito controller and service tests and `@SpringBootTest`
+integration tests. It still does not touch the shooter-log half. The gap closes once a shooter-log service and
 controller exist, and the docs drop their "still being built" language.
 
 #### 26. The `tomcat.version` override is an untracked standing manual constraint — 🟡 Partially completed in v8.10.0
@@ -1324,7 +1330,7 @@ pin).
 
 | Phase       | Focus                                                                                                                                                                                                                                              |
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0, the shooter-log service and controller remain                                                                                  |
+| **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0, the shooter-log service and controller remain                                                                                  |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0                                                                                                                                                             |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |

@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.models.ipsc.shared.IpscMatchScore;
 
-import java.math.BigDecimal;
 
 /**
  * Request to partially update an existing IPSC match competitor.
@@ -53,10 +52,6 @@ public class MatchCompetitorPatchRequest extends IpscMatchScore {
     private String division;
     /** The competitor's power factor; resolved against {@link za.co.hpsc.web.enums.PowerFactor} by name. May be null. */
     private String powerFactor;
-    /** The competitor's overall ranking in the match; may be null. */
-    private BigDecimal overallRanking;
-    /** The competitor's ranking among their club's competitors in the match; may be null. */
-    private BigDecimal clubRanking;
     /** Whether the competitor was a visitor at the match; may be null. */
     private Boolean isVisitor;
 }

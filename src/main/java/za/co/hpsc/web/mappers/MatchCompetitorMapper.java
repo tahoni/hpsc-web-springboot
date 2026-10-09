@@ -77,8 +77,6 @@ public class MatchCompetitorMapper {
         matchCompetitor.setNoShoots(request.getNoShoots());
         matchCompetitor.setProceduralErrors(request.getProceduralErrors());
         matchCompetitor.setAdditionalPenalties(request.getAdditionalPenalties());
-        matchCompetitor.setOverallRanking(request.getOverallRanking());
-        matchCompetitor.setClubRanking(request.getClubRanking());
         matchCompetitor.setIsVisitor(request.getIsVisitor());
     }
 
@@ -224,12 +222,6 @@ public class MatchCompetitorMapper {
         }
         if (request.getAdditionalPenalties() != null) {
             matchCompetitor.setAdditionalPenalties(request.getAdditionalPenalties());
-        }
-        if (request.getOverallRanking() != null) {
-            matchCompetitor.setOverallRanking(request.getOverallRanking());
-        }
-        if (request.getClubRanking() != null) {
-            matchCompetitor.setClubRanking(request.getClubRanking());
         }
         if (request.getIsVisitor() != null) {
             matchCompetitor.setIsVisitor(request.getIsVisitor());
