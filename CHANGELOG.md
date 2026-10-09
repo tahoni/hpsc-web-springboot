@@ -32,6 +32,37 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Controllers
+
+- **`IpscShooterResultController`:** New read-only endpoints `GET /ipsc/shooter-results/matches/{matchId}` and
+  `GET /ipsc/shooter-results`, returning a match linked to its shooter results, or one such holder per match, including matches without results; an
+  unknown match ID returns a 404
+
+##### Services
+
+- **`IpscShooterResultService`:** New service with `getShooterResults`, which returns a match linked to its
+  results with the best percentage first and those without a percentage last, and `getAllShooterResults`, which
+  returns one such holder per match, oldest match date first, with no results for a match nobody has a result
+  in; `IpscShooterResultServiceImpl` throws `NonFatalException` for a
+  match that does not exist
+
+##### Models
+
+- **`ShooterResultResponse`:** New response describing one shooter's result in a match — the competitor, their
+  category, firearm type, division and power factor, and their points, percentage, time, overall and club ranking and
+  visitor flag
+- **`ShooterMatchResultResponse`:** New response describing the match a set of shooter results were shot in — its ID,
+  name and date
+- **`ShooterResponseHolder`:** New container linking one `ShooterMatchResultResponse` with the
+  `ShooterResultResponse`s of all the competitors who shot that match
+
+##### Repositories
+
+- **`MatchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch`:** New query that fetch-joins the competitor
+  and match for one match's entries, ordered by percentage with missing percentages last
+
 #### 🗑️ Removed
 
 ##### Models
