@@ -514,9 +514,35 @@ public class IpscMatchCompetitorServiceTest {
         // Assert
         MatchCompetitorBulkResponse result = holder.getMatchCompetitors().getFirst();
         assertFalse(result.isSuccess());
-        assertEquals("No competitor found with ID 1", result.getMessage());
+        assertEquals("Competitor not found for ID 1; Match not found for ID 2", result.getMessage());
         assertEquals(1L, result.getMatchCompetitor().getCompetitorId());
         assertEquals(2L, result.getMatchCompetitor().getMatchId());
+        verify(matchCompetitorRepository, never()).save(any());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenRowIsMissingSeveralRequiredFields_thenReportsAllOfThemAndEveryValue() throws Exception {
+        // Arrange - the division and power factor are blank
+        String csvData = """
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                1,2,HPSC,Junior,,,
+                """;
+
+        // Act
+        MatchCompetitorBulkResponseHolder holder = ipscMatchCompetitorService.createMatchCompetitors(csvData);
+
+        // Assert
+        MatchCompetitorBulkResponse result = holder.getMatchCompetitors().getFirst();
+        assertFalse(result.isSuccess());
+        assertTrue(result.getMessage().contains("Division not specified"));
+        assertTrue(result.getMessage().contains("Firearm type not specified"));
+        assertTrue(result.getMessage().contains("Power factor not specified"));
+        assertEquals("1", result.getRow().getCompetitorId());
+        assertEquals("2", result.getRow().getMatchId());
+        assertEquals("HPSC", result.getRow().getMatchClub());
+        assertEquals("", result.getRow().getDivision());
+        assertEquals("", result.getRow().getPowerFactor());
+        assertEquals("", result.getRow().getCompetitorName());
         verify(matchCompetitorRepository, never()).save(any());
     }
 

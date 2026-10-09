@@ -41,12 +41,10 @@ import java.util.Set;
 @NoArgsConstructor
 public class MatchCompetitorResponse {
     /** The match competitor's own identifier. */
-    @NonNull
     private Long matchCompetitorId;
     /** The identifier of the competitor who shot the match. */
     private Long competitorId;
     /** The identifier of the match the competitor shot. */
-    @NonNull
     private Long matchId;
 
     /**
@@ -58,21 +56,16 @@ public class MatchCompetitorResponse {
     private Integer competitorNumber;
 
     /** The club the competitor represented at the match, which is distinct from their home club. */
-    @NonNull
     private ClubIdentifier matchClub;
     /** The competitor's category at the match. */
-    @NonNull
     private CompetitorCategory competitorCategory;
     /**
      * The firearm type the competitor shot.
      */
-    @NonNull
     private FirearmType firearmType;
     /** The division the competitor shot. */
-    @NonNull
     private Division division;
     /** The competitor's power factor. */
-    @NonNull
     private PowerFactor powerFactor;
 
     /** The competitor's match points, if any. */

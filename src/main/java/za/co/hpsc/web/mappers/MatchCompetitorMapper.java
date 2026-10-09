@@ -83,6 +83,61 @@ public class MatchCompetitorMapper {
     }
 
     /**
+     * Copies the fields of a {@link MatchCompetitorRequest} onto a {@link MatchCompetitor} as far as they can be
+     * resolved, leaving anything missing or unresolvable {@code null} rather than throwing, so the caller can report
+     * every such field at once, for example with
+     * {@link za.co.hpsc.web.helpers.MatchCompetitorHelpers#getErrorMessagesForMissingRequiredFields}.
+     *
+     * <p>
+     * The firearm type is taken from the division when it is not recognised, as in
+     * {@link #applyFields(MatchCompetitor, MatchCompetitorRequest)}. The division is not checked against the firearm
+     * type here.
+     * </p>
+     *
+     * @param matchCompetitor the entity to populate; must not be null.
+     * @param request         the request carrying the field values; must not be null.
+     */
+    public void populateResolvableFields(@NonNull MatchCompetitor matchCompetitor,
+                                         @NonNull MatchCompetitorRequest request) {
+        matchCompetitor.setCompetitor(findCompetitor(request).orElse(null));
+        matchCompetitor.setMatch((request.getMatchId() == null) ? null
+                : ipscMatchRepository.findById(request.getMatchId()).orElse(null));
+        matchCompetitor.setMatchClub(hasText(request.getMatchClub())
+                ? ClubIdentifier.fromName(request.getMatchClub())
+                .or(() -> ClubIdentifier.fromAbbreviation(request.getMatchClub()))
+                .or(() -> ClubIdentifier.fromCode(request.getMatchClub()))
+                .orElse(null) : null);
+        matchCompetitor.setCompetitorCategory(CompetitorCategory.fromName(request.getCompetitorCategory())
+                .filter(category -> category != CompetitorCategory.NONE).orElse(null));
+        matchCompetitor.setDivision(Division.fromName(request.getDivision()).orElse(null));
+        matchCompetitor.setFirearmType(FirearmType.fromName(request.getFirearmType())
+                .or(() -> Optional.ofNullable(matchCompetitor.getDivision()).map(Division::getFirearmType))
+                .orElse(null));
+        matchCompetitor.setPowerFactor(PowerFactor.fromName(request.getPowerFactor()).orElse(null));
+    }
+
+    /**
+     * Finds the competitor a request refers to without throwing: by ID when one is given, otherwise by competitor
+     * number and cleaned name. A request that names no competitor, or whose number and name match none or several,
+     * has none.
+     */
+    private Optional<Competitor> findCompetitor(MatchCompetitorRequest request) {
+        if (request.getCompetitorId() != null) {
+            return competitorRepository.findById(request.getCompetitorId());
+        }
+        if (!hasText(request.getCompetitorNumber()) && !hasText(request.getCompetitorName())) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(resolveCompetitor(null, request.getCompetitorNumber(),
+                    CompetitorHelpers.cleanCompetitorName(request.getCompetitorName())));
+        } catch (ValidationException | NonFatalException e) {
+            // The competitor service reports "none" and "several" by throwing
+            return Optional.empty();
+        }
+    }
+
+    /**
      * Copies only the supplied fields of a {@link MatchCompetitorPatchRequest} onto a {@link MatchCompetitor},
      * resolving the competitor, match and enumerated values in the process. Fields that are null in the request
      * (or blank, for the competitor and enumerated values) are left unchanged.

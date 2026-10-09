@@ -26,4 +26,20 @@ public class MatchCompetitorBulkResponse {
     /** The match competitor this result relates to. */
     @NonNull
     private MatchCompetitorResponse matchCompetitor;
+    /**
+     * Every value the row supplied, as text with a missing value as an empty string; set only for a row that failed,
+     * and {@code null} for one that was imported.
+     */
+    private MatchCompetitorRow row;
+
+    /**
+     * Creates the outcome for a row, without the values it supplied.
+     *
+     * @param success         whether the match competitor was imported successfully.
+     * @param message         a message describing the outcome of the import.
+     * @param matchCompetitor the match competitor this result relates to.
+     */
+    public MatchCompetitorBulkResponse(boolean success, String message, @NonNull MatchCompetitorResponse matchCompetitor) {
+        this(success, message, matchCompetitor, null);
+    }
 }

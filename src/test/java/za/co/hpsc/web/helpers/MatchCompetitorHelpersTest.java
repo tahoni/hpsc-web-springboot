@@ -284,7 +284,7 @@ public class MatchCompetitorHelpersTest {
     }
 
     @Test
-    void testGetErrorMessagesForMissingRequiredFields_whenMatchClubMissingAndRequestClubNullOrBlank_thenReportsNotSpecified() {
+    void testGetErrorMessagesForMissingRequiredFields_whenMatchClubMissingAndRequestClubNullOrBlank_thenReportsNothing() {
         // Arrange
         MatchCompetitor matchCompetitor = completeMatchCompetitor();
         matchCompetitor.setMatchClub(null);
@@ -299,7 +299,8 @@ public class MatchCompetitorHelpersTest {
                 matchCompetitor, blankClubRequest);
 
         // Assert
-        assertTrue(nullClubMessage.contains("not specified"));
+        assertEquals("", nullClubMessage);
+        assertEquals("", blankClubMessage);
     }
 
     @Test

@@ -25,7 +25,8 @@ public final class MatchCompetitorHelpers {
      *
      * <p>
      * The competitor, match, match club, competitor category, division, firearm type and power factor are checked in
-     * that order. For each one that is {@code null}, a message is added saying whether the request did not specify the
+     * that order. The match club is optional, so it is only reported when the request gave one that could not be
+     * resolved. For each other one that is {@code null}, a message is added saying whether the request did not specify the
      * value or specified a value that could not be resolved.
      * </p>
      *
@@ -45,7 +46,9 @@ public final class MatchCompetitorHelpers {
         if (matchCompetitor.getMatch() == null) {
             errorMessages.add(getErrorMessageForMissingMatch(request));
         }
-        if (matchCompetitor.getMatchClub() == null) {
+        // The match club is optional, so it is only reported when one was given but could not be resolved
+        if ((matchCompetitor.getMatchClub() == null) && (request.getMatchClub() != null)
+                && !request.getMatchClub().isBlank()) {
             errorMessages.add(getErrorMessageForMissingMatchClub(request));
         }
         if (matchCompetitor.getCompetitorCategory() == null) {
@@ -120,18 +123,14 @@ public final class MatchCompetitorHelpers {
     }
 
     /**
-     * Builds the message for a match competitor with no match club.
+     * Builds the message for a match club that was given but could not be resolved.
      *
      * @param request the request the match competitor was built from.
      * @return the club error message.
      * @since 14.0.0
      */
     private static String getErrorMessageForMissingMatchClub(MatchCompetitorRequest request) {
-        if ((request.getMatchClub() == null) || request.getMatchClub().isBlank()) {
-            return "Club not specified";
-        } else {
-            return "Club not found for " + request.getMatchClub();
-        }
+        return "Club not found for " + request.getMatchClub();
     }
 
     /**
@@ -142,7 +141,7 @@ public final class MatchCompetitorHelpers {
      * @since 14.0.0
      */
     private static String getErrorMessageForMissingCompetitorCategory(MatchCompetitorRequest request) {
-        if (request.getCompetitorCategory() == null) {
+        if ((request.getCompetitorCategory() == null) || request.getCompetitorCategory().isBlank()) {
             return "Competitor category not specified";
         } else {
             return "Competitor category not found for " + request.getCompetitorCategory();
@@ -157,7 +156,7 @@ public final class MatchCompetitorHelpers {
      * @since 14.0.0
      */
     private static String getErrorMessageForMissingDivision(MatchCompetitorRequest request) {
-        if (request.getDivision() == null) {
+        if ((request.getDivision() == null) || request.getDivision().isBlank()) {
             return "Division not specified";
         } else {
             return "Division not found for " + request.getDivision();
@@ -172,7 +171,7 @@ public final class MatchCompetitorHelpers {
      * @since 14.0.0
      */
     private static String getErrorMessageForMissingFirearmType(MatchCompetitorRequest request) {
-        if (request.getFirearmType() == null) {
+        if ((request.getFirearmType() == null) || request.getFirearmType().isBlank()) {
             return "Firearm type not specified";
         } else {
             return "Firearm type not found for " + request.getFirearmType();
@@ -187,7 +186,7 @@ public final class MatchCompetitorHelpers {
      * @since 14.0.0
      */
     private static String getErrorMessageForMissingPowerFactor(MatchCompetitorRequest request) {
-        if (request.getPowerFactor() == null) {
+        if ((request.getPowerFactor() == null) || request.getPowerFactor().isBlank()) {
             return "Power factor not specified";
         } else {
             return "Power factor not found for " + request.getPowerFactor();

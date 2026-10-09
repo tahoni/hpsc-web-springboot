@@ -21,6 +21,7 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.helpers.CompetitorHelpers;
+import za.co.hpsc.web.helpers.MatchCompetitorHelpers;
 import za.co.hpsc.web.mappers.MatchCompetitorMapper;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
@@ -28,6 +29,7 @@ import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponse;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorResponse;
+import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorRow;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.services.IpscEntityClubService;
 import za.co.hpsc.web.services.IpscMatchCompetitorService;
@@ -87,11 +89,21 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
             try {
                 if (!isForClub(request, targetClub)) {
                     String targetClubName = (targetClub != null) ? targetClub.getName() : "";
-                    matchCompetitorBulkResponses.add(new MatchCompetitorBulkResponse(false,
-                            "Skipped: match club is not " + targetClubName, toFailedResponse(request)));
+                    matchCompetitorBulkResponses.add(
+                            failedRow("Skipped: match club is not " + targetClubName, request));
                     continue;
                 }
-                validateForCreate(request);
+
+                // Report every missing or unresolvable required field of the row together, not just the first
+                MatchCompetitor resolvable = new MatchCompetitor();
+                matchCompetitorMapper.populateResolvableFields(resolvable, request);
+                String missingFields = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(
+                        resolvable, request);
+                if (hasText(missingFields)) {
+                    log.warn("Match competitor skipped: {}", missingFields);
+                    matchCompetitorBulkResponses.add(failedRow(missingFields, request));
+                    continue;
+                }
 
                 MatchCompetitor matchCompetitor = new MatchCompetitor();
                 matchCompetitorMapper.applyFields(matchCompetitor, request);
@@ -99,8 +111,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                         new MatchCompetitorBulkResponse(true, "", toResponse(save(matchCompetitor))));
             } catch (ValidationException | NonFatalException e) {
                 log.warn("Match competitor skipped: {}", e.getMessage());
-                matchCompetitorBulkResponses.add(
-                        new MatchCompetitorBulkResponse(false, e.getMessage(), toFailedResponse(request)));
+                matchCompetitorBulkResponses.add(failedRow(e.getMessage(), request));
             }
         }
 
@@ -224,6 +235,20 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                 matchCompetitor.getCompetitor().getId(), matchCompetitor.getFirearmType(),
                 matchCompetitor.getMatch().getId());
         return (cause != null) ? new ValidationException(message, cause) : new ValidationException(message);
+    }
+
+    /**
+     * Builds the outcome reported for a row that could not be imported: the message, the identifying response from
+     * {@link #toFailedResponse(MatchCompetitorRequest)} and every value the row supplied, with missing ones as empty
+     * strings.
+     *
+     * @param message the reason the row was not imported.
+     * @param request the request for the row; may be null, as for an empty row.
+     * @return the unsuccessful {@link MatchCompetitorBulkResponse}.
+     */
+    protected MatchCompetitorBulkResponse failedRow(String message, MatchCompetitorRequest request) {
+        return new MatchCompetitorBulkResponse(false, message, toFailedResponse(request),
+                new MatchCompetitorRow(request));
     }
 
     /**

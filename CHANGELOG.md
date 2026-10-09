@@ -33,6 +33,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ➕ Added
 
+##### Models
+
+- **`MatchCompetitorRow`:** New all-text description of a bulk import row, with every value the row supplied and a
+  missing value as an empty string; `MatchCompetitorBulkResponse` carries it as `row` for a row that failed
+
 ##### Helpers
 
 - **`MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields`:** New helper that describes each required field
@@ -77,6 +82,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Services
 
+- **`IpscMatchCompetitorServiceImpl.createMatchCompetitors`:** A row is now checked for every missing or
+  unresolvable required field at once, through `MatchCompetitorMapper.populateResolvableFields`, instead of failing on
+  the first one thrown, so its message lists them all; a blank category, division, firearm type or power factor is
+  reported as not specified
 - **`ClubService` and `EntityIpscCompetitorService`:** Renamed to `IpscEntityClubService` and
   `IpscEntityCompetitorService` (and their implementations and tests) so the IPSC entity services share a naming
   pattern; `findCompetitor` is now `findCompetitorByIdentifierAndFullName`, and dependants rename their fields to match
