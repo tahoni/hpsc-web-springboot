@@ -104,7 +104,7 @@ action. Callers must change what they send and read:
 
 ## 📊 Statistics
 
-- **Files Changed:** 82 against `main` before this release's documentation and version bump; 3,556 insertions and 2,774
+- **Files Changed:** 82 against `main` before this release's documentation and version bump; 3,580 insertions and 2,810
   deletions
 - **New Source Files:** 6 (5 classes and 1 migration)
 - **Renamed Source Files:** 2
