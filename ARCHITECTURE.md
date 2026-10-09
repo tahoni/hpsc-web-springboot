@@ -292,8 +292,6 @@ shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchS
 
 | Class        | Responsibility                                              |
 |--------------|-------------------------------------------------------------|
-| `DateUtil`   | Date formatting and parsing helpers                         |
-| `NumberUtil` | Numeric parsing and formatting helpers                      |
 | `StringUtil` | String normalisation helpers                                |
 | `ValueUtil`  | Null-safe default-value helpers (`nullAsEmptyString`, etc.) |
 

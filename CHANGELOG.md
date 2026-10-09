@@ -137,6 +137,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🗑️ Removed
 
+##### Utilities
+
+- **`NumberUtil` and `DateUtil`:** Removed both classes and their tests — `calculatePercentage`, `calculateSum`,
+  `formatBigDecimal`, `formatDate` and `formatDateTime` were called only by tests
+- **`StringUtil.formatStringWithNamedParameters` and `ValueUtil.nullAsZeroBigDecimal`:** Removed with their tests, as
+  nothing in production code called them
+
+##### Constants
+
+- **`SystemConstants.DEFAULT_SCALE`:** Removed, as nothing read it once `NumberUtil` took the scale as a parameter
+
 ##### Models
 
 - **`MatchCompetitorResponseHolder`:** Removed the unused container class; bulk imports return
