@@ -58,6 +58,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`Division`:** **Breaking:** dropped the trailing " Division" from each division's name (for example "Open" instead of
   "Open Division"), so divisions are matched by their short names, and a value in the old form no longer resolves
+- **`CompetitorCategory.fromName`:** Now returns an empty `Optional` for a null or unrecognised name instead of
+  falling back to `NONE`; a blank name still resolves to `NONE`
 - **`Division`:** **Breaking:** `PCC_OPTICS` and `PCC_IRON` are renamed `"PCC Optics"` and `"PCC Irons"` (from
   `"PCC Optic"` and `"PCC Iron"`), so a division given by the singular name no longer resolves
 
@@ -79,6 +81,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `NonFatalException` (404). `MatchMapper` no longer takes a `ClubRepository`, and `FatalException` is dropped from
   `resolveClub`, `applyFields`, `applyPatchFields` and the match service and controller methods that only declared it
   for the club lookup
+- **`MatchCompetitorMapper.resolveCompetitorCategory`:** A blank competitor category now resolves to
+  `CompetitorCategory.NONE` instead of throwing; a null or unrecognised one still throws `ValidationException`
 - **`MatchCompetitorMapper.resolveFirearmType`:** Now takes the competitor's `Division` and falls back to the
   division's firearm type when the firearm type name is unknown, instead of throwing
 - **`MatchCompetitorMapper.resolveMatchClub`:** Now matches a club by name, abbreviation or identifier code, in that

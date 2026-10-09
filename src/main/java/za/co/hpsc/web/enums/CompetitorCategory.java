@@ -48,24 +48,30 @@ public enum CompetitorCategory {
      *
      * <p>
      * The method performs a case-insensitive match to find a category with the given name.
-     * If no match is found or the input is null/blank, {@link CompetitorCategory#NONE} is returned.
+     * A {@code null} name yields an empty {@code Optional}, and a blank name yields
+     * {@link CompetitorCategory#NONE}. A non-blank name that matches no category also yields
+     * an empty {@code Optional}.
      * </p>
      *
      * @param name the name of the category to search for.
-     *             Can be null or empty.
+     *             Can be null or blank.
      * @return an {@code Optional} containing the matching {@code CompetitorCategory} if found,
-     * or {@link CompetitorCategory#NONE} otherwise.
+     * an {@code Optional} containing {@link CompetitorCategory#NONE} if the name is blank,
+     * or an empty {@code Optional} if the name is {@code null} or matches no category.
      * @since 1.1.3
      */
     public static Optional<CompetitorCategory> fromName(String name) {
+        if (name == null) {
+            return Optional.empty();
+        }
+
         if (!hasText(name)) {
             return Optional.of(NONE);
         }
 
-        Optional<CompetitorCategory> optionalCompetitorCategory = Arrays.stream(CompetitorCategory.values())
+        return Arrays.stream(CompetitorCategory.values())
                 .filter(competitorCategory -> competitorCategory.isNameMatch(name))
                 .findFirst();
-        return optionalCompetitorCategory.isPresent() ? optionalCompetitorCategory : Optional.of(NONE);
     }
 
     @Override

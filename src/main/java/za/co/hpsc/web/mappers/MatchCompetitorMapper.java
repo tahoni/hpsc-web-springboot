@@ -333,15 +333,17 @@ public class MatchCompetitorMapper {
     /**
      * Resolves a competitor category by name.
      *
-     * @param competitorCategory the category name to look up.
-     * @return the matching {@link CompetitorCategory}.
-     * @throws ValidationException if no category matches {@code competitorCategory}. {@link CompetitorCategory#NONE},
-     *                             which {@link CompetitorCategory#fromName(String)} falls back to for an unknown
-     *                             or blank name, is treated as no match.
+     * <p>
+     * A blank name resolves to {@link CompetitorCategory#NONE}, as per
+     * {@link CompetitorCategory#fromName(String)}.
+     * </p>
+     *
+     * @param competitorCategory the category name to look up; may be blank.
+     * @return the matching {@link CompetitorCategory}, or {@link CompetitorCategory#NONE} if the name is blank.
+     * @throws ValidationException if {@code competitorCategory} is null or non-blank and matches no category.
      */
     public CompetitorCategory resolveCompetitorCategory(String competitorCategory) {
         return CompetitorCategory.fromName(competitorCategory)
-                .filter(category -> category != CompetitorCategory.NONE)
                 .orElseThrow(() -> new ValidationException("Unknown competitor category: " + competitorCategory));
     }
 

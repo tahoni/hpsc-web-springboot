@@ -43,7 +43,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class IpscMatchCompetitorServiceIntegrationTest {
 
-    // TODO: fix autowired fields
     @Autowired
     private ClubRepository clubRepository;
 

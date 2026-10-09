@@ -41,13 +41,12 @@ class CompetitorCategoryTest {
     }
 
     @Test
-    void testFromName_withNullInput_thenReturnsNoneCategory() {
+    void testFromName_withNullInput_thenReturnsEmptyOptional() {
         // Act
         Optional<CompetitorCategory> result = CompetitorCategory.fromName(null);
 
         // Assert
-        assertTrue(result.isPresent());
-        assertEquals(CompetitorCategory.NONE, result.get());
+        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -61,13 +60,12 @@ class CompetitorCategoryTest {
     }
 
     @Test
-    void testFromName_withNoMatch_returnsNoneCategory() {
+    void testFromName_withNoMatch_returnsEmptyOptional() {
         // Act
         Optional<CompetitorCategory> result = CompetitorCategory.fromName("Nonexistent Category");
 
         // Assert
-        assertTrue(result.isPresent());
-        assertEquals(CompetitorCategory.NONE, result.get());
+        assertTrue(result.isEmpty());
     }
 
     @Test
