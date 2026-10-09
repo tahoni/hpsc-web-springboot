@@ -167,7 +167,7 @@ action. Callers must change what they send and read:
 ## 📝 Notes
 
 Version 14.0.0 reports every problem of a failed bulk match competitor row with the values it supplied, resolves clubs
-through one service, and shortens the division names. It improves the improvement plan to 38 closed gaps, with only #6
+through one service and shortens the division names. It improves the improvement plan to 38 closed gaps, with only #6
 and #26 partially completed.
 
 ---
