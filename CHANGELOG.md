@@ -33,6 +33,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ➕ Added
 
+##### Database
+
+- **`V11_7_0__drop_division_suffix_from_division_names.sql`:** New migration that renames the stored `division` in
+  `match_competitor`, `shooter_log_competitor` and `shooter_log_overall` to the new `Division` names, dropping the
+  trailing " Division" and mapping `PCC Optic Division` and `PCC Iron Division` to `PCC Optics` and `PCC Irons`; without
+  it an existing row's division reads back as `null`
+
 ##### Models
 
 - **`MatchCompetitorRow`:** New all-text description of a bulk import row, with every value the row supplied and a
