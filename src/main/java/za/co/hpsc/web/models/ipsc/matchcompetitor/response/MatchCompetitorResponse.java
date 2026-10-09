@@ -89,10 +89,6 @@ public class MatchCompetitorResponse {
     private Integer proceduralErrors;
     /** The competitor's total additional penalties applied across the match, if any. */
     private Integer additionalPenalties;
-    /** The competitor's overall ranking in the match, if any. */
-    private BigDecimal overallRanking;
-    /** The competitor's ranking among their club's competitors in the match, if any. */
-    private BigDecimal clubRanking;
     /** Whether the competitor was a visitor at the match, if recorded. */
     private Boolean isVisitor;
 
@@ -145,9 +141,6 @@ public class MatchCompetitorResponse {
         this.noShoots = matchCompetitor.getNoShoots();
         this.proceduralErrors = matchCompetitor.getProceduralErrors();
         this.additionalPenalties = matchCompetitor.getAdditionalPenalties();
-
-        this.overallRanking = matchCompetitor.getOverallRanking();
-        this.clubRanking = matchCompetitor.getClubRanking();
 
         this.isVisitor = matchCompetitor.getIsVisitor();
     }

@@ -43,8 +43,6 @@ public abstract class MatchCompetitorRequestCsvMixIn {
                                    @JsonProperty("NS") Integer noShoots,
                                    @JsonProperty("Proc") Integer proceduralErrors,
                                    @JsonProperty("Apen") Integer additionalPenalties,
-                                   @JsonProperty("OverallRanking") BigDecimal overallRanking,
-                                   @JsonProperty("ClubRanking") BigDecimal clubRanking,
                                    @JsonProperty("IsVisitor") Boolean isVisitor) {
     }
 }

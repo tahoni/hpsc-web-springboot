@@ -249,8 +249,6 @@ public class IpscMatchCompetitorServiceTest {
         assertEquals(Division.OPEN, response.getDivision());
         assertEquals(PowerFactor.MAJOR, response.getPowerFactor());
         assertEquals(new BigDecimal("95.5"), response.getPoints());
-        assertEquals(new BigDecimal("2"), response.getOverallRanking());
-        assertEquals(new BigDecimal("1"), response.getClubRanking());
         assertEquals(Boolean.FALSE, response.getIsVisitor());
     }
 
@@ -274,8 +272,6 @@ public class IpscMatchCompetitorServiceTest {
         assertNull(response.getMatchClub());
         assertEquals(PowerFactor.MAJOR, response.getPowerFactor());
         assertNull(response.getPoints());
-        assertNull(response.getOverallRanking());
-        assertNull(response.getClubRanking());
         assertNull(response.getIsVisitor());
     }
 
@@ -845,8 +841,6 @@ public class IpscMatchCompetitorServiceTest {
         patch.setDivision("Standard");
         patch.setPowerFactor("Minor");
         patch.setPoints(new BigDecimal("70"));
-        patch.setOverallRanking(new BigDecimal("4"));
-        patch.setClubRanking(new BigDecimal("3"));
         patch.setIsVisitor(true);
 
         // Act
@@ -858,8 +852,6 @@ public class IpscMatchCompetitorServiceTest {
         assertEquals(Division.STANDARD, response.getDivision());
         assertEquals(PowerFactor.MINOR, response.getPowerFactor());
         assertEquals(new BigDecimal("70"), response.getPoints());
-        assertEquals(new BigDecimal("4"), response.getOverallRanking());
-        assertEquals(new BigDecimal("3"), response.getClubRanking());
         assertEquals(Boolean.TRUE, response.getIsVisitor());
         assertEquals(FirearmType.HANDGUN, response.getFirearmType());
     }
@@ -1085,8 +1077,6 @@ public class IpscMatchCompetitorServiceTest {
         request.setDivision("Open");
         request.setPowerFactor("Major");
         request.setPoints(new BigDecimal("95.5"));
-        request.setOverallRanking(new BigDecimal("2"));
-        request.setClubRanking(new BigDecimal("1"));
         request.setIsVisitor(false);
         return request;
     }

@@ -80,8 +80,6 @@ class MatchCompetitorMapperTest {
         request.setNoShoots(0);
         request.setProceduralErrors(3);
         request.setAdditionalPenalties(5);
-        request.setOverallRanking(new BigDecimal("3"));
-        request.setClubRanking(new BigDecimal("2"));
         request.setIsVisitor(true);
         MatchCompetitor matchCompetitor = new MatchCompetitor();
 
@@ -108,8 +106,6 @@ class MatchCompetitorMapperTest {
         assertEquals(0, matchCompetitor.getNoShoots());
         assertEquals(3, matchCompetitor.getProceduralErrors());
         assertEquals(5, matchCompetitor.getAdditionalPenalties());
-        assertEquals(new BigDecimal("3"), matchCompetitor.getOverallRanking());
-        assertEquals(new BigDecimal("2"), matchCompetitor.getClubRanking());
         assertEquals(Boolean.TRUE, matchCompetitor.getIsVisitor());
     }
 
@@ -143,8 +139,6 @@ class MatchCompetitorMapperTest {
         request.setNoShoots(0);
         request.setProceduralErrors(3);
         request.setAdditionalPenalties(5);
-        request.setOverallRanking(new BigDecimal("3"));
-        request.setClubRanking(new BigDecimal("2"));
         request.setIsVisitor(true);
         MatchCompetitor matchCompetitor = new MatchCompetitor();
 
@@ -171,8 +165,6 @@ class MatchCompetitorMapperTest {
         assertEquals(0, matchCompetitor.getNoShoots());
         assertEquals(3, matchCompetitor.getProceduralErrors());
         assertEquals(5, matchCompetitor.getAdditionalPenalties());
-        assertEquals(new BigDecimal("3"), matchCompetitor.getOverallRanking());
-        assertEquals(new BigDecimal("2"), matchCompetitor.getClubRanking());
         assertEquals(Boolean.TRUE, matchCompetitor.getIsVisitor());
     }
 

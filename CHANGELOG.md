@@ -32,6 +32,32 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🗑️ Removed
+
+##### Models
+
+- **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`:** **Breaking:** removed the optional `overallRanking` and
+  `clubRanking` from the create, replace and patch request bodies and from the constructor, so rankings can no longer
+  be set through the API
+- **`MatchCompetitorRequestCsvMixIn`:** **Breaking:** removed the optional `OverallRanking` and `ClubRanking` columns
+  from the bulk match competitor CSV import
+- **`MatchCompetitorResponse`:** **Breaking:** removed `overallRanking` and `clubRanking` from the response body; the
+  `MatchCompetitor` entity and its table still hold them
+- **`MatchCompetitorRow`:** Removed `overallRanking` and `clubRanking` from the all-text import row, so a failed bulk
+  row no longer reports them
+
+#### 🔄 Changed
+
+##### Mappers
+
+- **`MatchCompetitorMapper`:** No longer copies `overallRanking` or `clubRanking` from a request onto the entity,
+  on create or patch, so these stay as they were
+
+##### Controllers
+
+- **`IpscMatchCompetitorController`:** Updated the bulk CSV example to drop the `OverallRanking` and `ClubRanking`
+  columns
+
 ---
 
 ### 🧾 [14.0.0] - 2026-10-09

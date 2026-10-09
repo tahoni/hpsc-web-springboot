@@ -68,10 +68,6 @@ public class MatchCompetitorRequest extends IpscMatchScore {
     /** The competitor's power factor; resolved against {@link za.co.hpsc.web.enums.PowerFactor} by name. */
     @JsonProperty(required = true)
     private String powerFactor;
-    /** The competitor's overall ranking in the match. */
-    private BigDecimal overallRanking;
-    /** The competitor's ranking among their club's competitors in the match. */
-    private BigDecimal clubRanking;
     /** Whether the competitor was a visitor at the match; stored as {@code null} when omitted. */
     private Boolean isVisitor;
 
@@ -114,8 +110,6 @@ public class MatchCompetitorRequest extends IpscMatchScore {
      * @param noShoots                    the competitor's total no-shoot penalty hits across the match.
      * @param proceduralErrors            the competitor's total procedural penalties applied across the match.
      * @param additionalPenalties         the competitor's total additional penalties applied across the match.
-     * @param overallRanking     the competitor's overall ranking in the match.
-     * @param clubRanking        the competitor's ranking among their club's competitors in the match.
      * @param isVisitor          whether the competitor was a visitor at the match; stored as {@code null} when
      *                           omitted.
      */
@@ -142,8 +136,6 @@ public class MatchCompetitorRequest extends IpscMatchScore {
                                   @JsonProperty("noShoots") Integer noShoots,
                                   @JsonProperty("proceduralErrors") Integer proceduralErrors,
                                   @JsonProperty("additionalPenalties") Integer additionalPenalties,
-                                  @JsonProperty("overallRanking") BigDecimal overallRanking,
-                                  @JsonProperty("clubRanking") BigDecimal clubRanking,
                                   @JsonProperty("isVisitor") Boolean isVisitor) {
         this.matchCompetitorId = matchCompetitorId;
         this.competitorId = competitorId;
@@ -167,8 +159,6 @@ public class MatchCompetitorRequest extends IpscMatchScore {
         this.noShoots = noShoots;
         this.proceduralErrors = proceduralErrors;
         this.additionalPenalties = additionalPenalties;
-        this.overallRanking = overallRanking;
-        this.clubRanking = clubRanking;
         this.isVisitor = isVisitor;
     }
 

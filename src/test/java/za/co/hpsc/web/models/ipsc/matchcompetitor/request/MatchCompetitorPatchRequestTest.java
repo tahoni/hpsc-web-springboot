@@ -23,8 +23,6 @@ class MatchCompetitorPatchRequestTest {
         assertNull(request.getDivision());
         assertNull(request.getPowerFactor());
         assertNull(request.getPoints());
-        assertNull(request.getOverallRanking());
-        assertNull(request.getClubRanking());
         assertNull(request.getIsVisitor());
     }
 
@@ -52,8 +50,6 @@ class MatchCompetitorPatchRequestTest {
                   "division": "Open",
                   "powerFactor": "Major",
                   "points": 95.5,
-                  "overallRanking": 2,
-                  "clubRanking": 1,
                   "isVisitor": true
                 }
                 """;
@@ -70,8 +66,6 @@ class MatchCompetitorPatchRequestTest {
         assertEquals("Open", request.getDivision());
         assertEquals("Major", request.getPowerFactor());
         assertEquals(0, new BigDecimal("95.5").compareTo(request.getPoints()));
-        assertEquals(0, new BigDecimal("2").compareTo(request.getOverallRanking()));
-        assertEquals(0, new BigDecimal("1").compareTo(request.getClubRanking()));
         assertEquals(Boolean.TRUE, request.getIsVisitor());
     }
 }

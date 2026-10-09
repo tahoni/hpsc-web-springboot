@@ -437,14 +437,12 @@ class IpscMatchCompetitorServiceIntegrationTest {
                 .getMatchCompetitorId();
         MatchCompetitorPatchRequest patch = new MatchCompetitorPatchRequest();
         patch.setIsVisitor(true);
-        patch.setOverallRanking(new BigDecimal("7"));
 
         // Act
         MatchCompetitorResponse response = ipscMatchCompetitorService.patchMatchCompetitor(id, patch);
 
         // Assert
         assertEquals(Boolean.TRUE, response.getIsVisitor());
-        assertEquals(0, new BigDecimal("7").compareTo(response.getOverallRanking()));
         assertEquals(Division.OPEN, response.getDivision());
         assertEquals(FirearmType.HANDGUN, response.getFirearmType());
     }

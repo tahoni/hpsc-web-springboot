@@ -20,8 +20,8 @@ class MatchCompetitorRequestCsvMixInTest {
     void testCsvDeserialization_whenValidRow_thenMapsAllFields() throws Exception {
         // Arrange
         String csvData = """
-                MatchCompetitorId,CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF,Pts,OverallRanking,ClubRanking,IsVisitor
-                7,1,2,HPSC,Junior,Handgun,Open,Major,95.5,2,1,false
+                MatchCompetitorId,CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF,Pts,IsVisitor
+                7,1,2,HPSC,Junior,Handgun,Open,Major,95.5,false
                 """;
 
         // Act
@@ -39,8 +39,6 @@ class MatchCompetitorRequestCsvMixInTest {
         assertEquals("Open", row.getDivision());
         assertEquals("Major", row.getPowerFactor());
         assertEquals(0, new BigDecimal("95.5").compareTo(row.getPoints()));
-        assertEquals(0, new BigDecimal("2").compareTo(row.getOverallRanking()));
-        assertEquals(0, new BigDecimal("1").compareTo(row.getClubRanking()));
         assertEquals(Boolean.FALSE, row.getIsVisitor());
     }
 
@@ -84,8 +82,6 @@ class MatchCompetitorRequestCsvMixInTest {
         assertNull(row.getFirearmType());
         assertNull(row.getPowerFactor());
         assertNull(row.getPoints());
-        assertNull(row.getOverallRanking());
-        assertNull(row.getClubRanking());
         assertNull(row.getIsVisitor());
     }
 

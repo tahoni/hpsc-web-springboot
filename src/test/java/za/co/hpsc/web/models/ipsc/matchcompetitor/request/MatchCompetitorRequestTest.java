@@ -20,7 +20,7 @@ class MatchCompetitorRequestTest {
         MatchCompetitorRequest request = new MatchCompetitorRequest(7L, 1L, "Jane Doe", "123", 2L, "HPSC", "Junior",
                 "Handgun", "Open", "Major", new BigDecimal("95.5"), new BigDecimal("98.25"),
                 new BigDecimal("41.5"), new BigDecimal("93.75"), 30, 4, 1, 2, 1, 0, 3, 0,
-                new BigDecimal("2"), new BigDecimal("1"), false);
+                false);
 
         // Act
         JsonNode node = mapper.readTree(mapper.writeValueAsString(request));
@@ -48,8 +48,6 @@ class MatchCompetitorRequestTest {
         assertEquals(0, node.get("noShoots").asInt());
         assertEquals(3, node.get("proceduralErrors").asInt());
         assertEquals(0, node.get("additionalPenalties").asInt());
-        assertEquals(2, node.get("overallRanking").asInt());
-        assertEquals(1, node.get("clubRanking").asInt());
         assertFalse(node.get("isVisitor").asBoolean());
     }
 
@@ -58,8 +56,8 @@ class MatchCompetitorRequestTest {
         // Arrange
         ObjectMapper mapper = new ObjectMapper();
         MatchCompetitorRequest request = new MatchCompetitorRequest(null, 1L, null, null, 2L, null, "Junior", null,
-                "Open", null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                null, null);
+                "Open", null, null, null, null, null, null, null, null, null, null, null, null, null,
+                null);
 
         // Act
         JsonNode node = mapper.readTree(mapper.writeValueAsString(request));
@@ -74,8 +72,6 @@ class MatchCompetitorRequestTest {
         assertTrue(node.get("firearmType").isNull());
         assertTrue(node.get("powerFactor").isNull());
         assertTrue(node.get("points").isNull());
-        assertTrue(node.get("overallRanking").isNull());
-        assertTrue(node.get("clubRanking").isNull());
         assertTrue(node.get("isVisitor").isNull());
     }
 
@@ -94,8 +90,6 @@ class MatchCompetitorRequestTest {
                   "division": "Open",
                   "powerFactor": "Major",
                   "points": 95.5,
-                  "overallRanking": 2,
-                  "clubRanking": 1,
                   "isVisitor": false
                 }
                 """;
@@ -113,8 +107,6 @@ class MatchCompetitorRequestTest {
         assertEquals("Open", request.getDivision());
         assertEquals("Major", request.getPowerFactor());
         assertEquals(0, new BigDecimal("95.5").compareTo(request.getPoints()));
-        assertEquals(0, new BigDecimal("2").compareTo(request.getOverallRanking()));
-        assertEquals(0, new BigDecimal("1").compareTo(request.getClubRanking()));
         assertEquals(Boolean.FALSE, request.getIsVisitor());
     }
 
@@ -139,8 +131,6 @@ class MatchCompetitorRequestTest {
         assertNull(request.getMatchClub());
         assertNull(request.getPowerFactor());
         assertNull(request.getPoints());
-        assertNull(request.getOverallRanking());
-        assertNull(request.getClubRanking());
         assertNull(request.getIsVisitor());
     }
 

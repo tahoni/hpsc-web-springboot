@@ -41,8 +41,6 @@ public class MatchCompetitorRow {
     private String noShoots = "";
     private String proceduralErrors = "";
     private String additionalPenalties = "";
-    private String overallRanking = "";
-    private String clubRanking = "";
     private String isVisitor = "";
 
     /**
@@ -76,8 +74,6 @@ public class MatchCompetitorRow {
         noShoots = text(request.getNoShoots());
         proceduralErrors = text(request.getProceduralErrors());
         additionalPenalties = text(request.getAdditionalPenalties());
-        overallRanking = text(request.getOverallRanking());
-        clubRanking = text(request.getClubRanking());
         isVisitor = text(request.getIsVisitor());
     }
 

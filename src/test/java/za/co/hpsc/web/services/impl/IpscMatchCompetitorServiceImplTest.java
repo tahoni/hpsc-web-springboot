@@ -517,8 +517,6 @@ class IpscMatchCompetitorServiceImplTest {
         assertEquals(0, response.getNoShoots());
         assertEquals(3, response.getProceduralErrors());
         assertEquals(5, response.getAdditionalPenalties());
-        assertEquals(new BigDecimal("2"), response.getOverallRanking());
-        assertEquals(new BigDecimal("1"), response.getClubRanking());
         assertEquals(Boolean.FALSE, response.getIsVisitor());
     }
 
