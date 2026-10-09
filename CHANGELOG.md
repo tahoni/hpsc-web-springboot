@@ -64,6 +64,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Helpers
 
 - **`CompetitorHelpers.cleanCompetitorName`:** Now removes every leading position prefix, not only the first
+- **`MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields`:** The "Competitor not found for name"
+  message now quotes the competitor name cleaned by `CompetitorHelpers.cleanCompetitorName`
 
 ##### Mappers
 
@@ -83,9 +85,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   order
 - **`MatchCompetitorRowMapper`:** New mapper that describes a failed bulk import row as a `MatchCompetitorRow`,
   reporting the values already resolved onto the `MatchCompetitor` — the competitor and match identifiers, the
-  competitor's name and number, and the match club, category, firearm type, division and power factor — in place of
-  the row's own text; `failedRow` now takes the `MatchCompetitor` and uses it, so a row that fails as a duplicate or
-  for a missing field is reported by its resolved values. A reported match club is now the club's name
+  competitor's number, and the match club, category, firearm type, division and power factor — in place of the row's
+  own text; `failedRow` now takes the `MatchCompetitor` and uses it, so a row that fails as a duplicate or for a
+  missing field is reported by its resolved values. A reported match club is now the club's name, and the competitor's
+  name is always the row's own name cleaned by `CompetitorHelpers.cleanCompetitorName`, whether or not a competitor
+  was resolved
 
 ##### Services
 

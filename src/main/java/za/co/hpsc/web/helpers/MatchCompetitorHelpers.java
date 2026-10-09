@@ -99,7 +99,8 @@ public final class MatchCompetitorHelpers {
             errorMessages.add("Competitor not found for ID " + request.getCompetitorId());
         }
         if (isCompetitorNameSupplied) {
-            errorMessages.add("Competitor not found for name " + request.getCompetitorName());
+            String normalisedCompetitorName = CompetitorHelpers.cleanCompetitorName(request.getCompetitorName());
+            errorMessages.add("Competitor not found for name " + normalisedCompetitorName);
         }
         if (isCompetitorNumberSpecified) {
             errorMessages.add("Competitor not found for competitor number " + request.getCompetitorNumber());

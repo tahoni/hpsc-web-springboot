@@ -51,7 +51,7 @@ class MatchCompetitorRowMapperTest {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
-        request.setCompetitorName("jane");
+        request.setCompetitorName("Jane Doe");
         request.setDivision("open division");
         request.setPoints(new BigDecimal("10"));
         Competitor competitor = new Competitor();
@@ -81,6 +81,75 @@ class MatchCompetitorRowMapperTest {
         assertEquals(Division.OPEN.getName(), row.getDivision());
         assertEquals(PowerFactor.MAJOR.getName(), row.getPowerFactor());
         assertEquals("10", row.getPoints());
+    }
+
+    @Test
+    void testToRow_whenCompetitorResolved_thenCompetitorNameIsTheNormalisedName() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorName("1 - John   Smith (RO)");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.setCompetitor(new Competitor());
+
+        // Act
+        MatchCompetitorRow row = mapper.toRow(request, matchCompetitor);
+
+        // Assert
+        assertEquals("John Smith", row.getCompetitorName());
+    }
+
+    @Test
+    void testToRow_whenCompetitorResolvedAndNameKeepsHyphens_thenOnlyThePositionPrefixIsRemoved() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorName("2 - Jane Smith-Jones");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.setCompetitor(new Competitor());
+
+        // Act
+        MatchCompetitorRow row = mapper.toRow(request, matchCompetitor);
+
+        // Assert
+        assertEquals("Jane Smith-Jones", row.getCompetitorName());
+    }
+
+    @Test
+    void testToRow_whenCompetitorResolvedAndRequestHasNoName_thenCompetitorNameIsEmpty() {
+        // Arrange
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.setCompetitor(new Competitor());
+
+        // Act
+        MatchCompetitorRow row = mapper.toRow(new MatchCompetitorRequest(), matchCompetitor);
+
+        // Assert
+        assertEquals("", row.getCompetitorName());
+    }
+
+    @Test
+    void testToRow_whenCompetitorNotResolved_thenCompetitorNameIsTheNormalisedName() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorName("1 - John   Smith (RO)");
+
+        // Act
+        MatchCompetitorRow row = mapper.toRow(request, new MatchCompetitor());
+
+        // Assert
+        assertEquals("John Smith", row.getCompetitorName());
+    }
+
+    @Test
+    void testToRow_whenNoMatchCompetitor_thenCompetitorNameIsTheNormalisedName() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorName("1 - John   Smith (RO)");
+
+        // Act
+        MatchCompetitorRow row = mapper.toRow(request, null);
+
+        // Assert
+        assertEquals("John Smith", row.getCompetitorName());
     }
 
     @Test

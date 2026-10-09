@@ -4,6 +4,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.helpers.CompetitorHelpers;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.request.MatchCompetitorRequest;
 import za.co.hpsc.web.models.ipsc.matchcompetitor.response.MatchCompetitorRow;
 
@@ -36,6 +37,7 @@ public class MatchCompetitorRowMapper {
     public MatchCompetitorRow toRow(@Nullable MatchCompetitorRequest request,
                                     @Nullable MatchCompetitor matchCompetitor) {
         MatchCompetitorRow row = new MatchCompetitorRow(request);
+        row.setCompetitorName(CompetitorHelpers.cleanCompetitorName(row.getCompetitorName()));
         if (matchCompetitor == null) {
             return row;
         }
@@ -44,7 +46,6 @@ public class MatchCompetitorRowMapper {
         if (competitor != null) {
             row.setCompetitorId(text(competitor.getId(), row.getCompetitorId()));
             row.setCompetitorNumber(text(competitor.getCompetitorNumber(), row.getCompetitorNumber()));
-            row.setCompetitorName(competitorName(competitor, row.getCompetitorName()));
         }
         if (matchCompetitor.getMatch() != null) {
             row.setMatchId(text(matchCompetitor.getMatch().getId(), row.getMatchId()));
@@ -60,13 +61,6 @@ public class MatchCompetitorRowMapper {
         row.setPowerFactor(text(matchCompetitor.getPowerFactor() == null ? null
                 : matchCompetitor.getPowerFactor().getName(), row.getPowerFactor()));
         return row;
-    }
-
-    private static String competitorName(Competitor competitor, String fallback) {
-        if (competitor.getFirstName() == null || competitor.getLastName() == null) {
-            return fallback;
-        }
-        return competitor.getFirstName() + " " + competitor.getLastName();
     }
 
     private static String text(@Nullable Object resolved, String fallback) {

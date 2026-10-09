@@ -106,6 +106,35 @@ public class MatchCompetitorHelpersTest {
         assertTrue(message.contains("not found for"));
     }
 
+    @Test
+    void testGetErrorMessagesForMissingRequiredFields_whenCompetitorMissingWithUncleanName_thenReportsTheNormalisedName() {
+        // Arrange
+        MatchCompetitor matchCompetitor = completeMatchCompetitor();
+        matchCompetitor.setCompetitor(null);
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorName("1 - John   Smith (RO)");
+
+        // Act
+        String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals("Competitor not found for name John Smith", message);
+    }
+
+    @Test
+    void testGetErrorMessagesForMissingRequiredFields_whenCompetitorMissingWithHyphenatedName_thenKeepsTheHyphen() {
+        // Arrange
+        MatchCompetitor matchCompetitor = completeMatchCompetitor();
+        matchCompetitor.setCompetitor(null);
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorName("2 - Jane Smith-Jones");
+
+        // Act
+        String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals("Competitor not found for name Jane Smith-Jones", message);
+    }
 
     @Test
     void testGetErrorMessagesForMissingRequiredFields_whenCompetitorMissingWithOnlyNumber_thenReportsNotFoundForNumber() {
