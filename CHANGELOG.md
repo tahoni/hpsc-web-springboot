@@ -118,9 +118,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchCompetitorServiceImpl.toResponse`:** Now validates the match competitor first and throws
   `ValidationException` naming every violated constraint, instead of building a response from an incomplete entity;
   the service now takes a `jakarta.validation.Validator`
-- **`IpscMatchCompetitorServiceImpl.failedRow`:** A row that could not be imported is now reported with no
-  `MatchCompetitorResponse` (`null`) and only its values in `matchCompetitorRow`, instead of a partly filled response; the
-  `toFailedResponse` helper is removed. `MatchCompetitorBulkResponse.matchCompetitor` is now `@Nullable`
+- **`IpscMatchCompetitorServiceImpl.failedRow`:** **Breaking:** a row that could not be imported is now reported with
+  no `MatchCompetitorResponse` (`null`) and only its values in `matchCompetitorRow`, instead of a partly filled
+  response, so a client reading `matchCompetitor` for a failed row now gets `null`; the `toFailedResponse` helper is
+  removed. `MatchCompetitorBulkResponse.matchCompetitor` is now `@Nullable`
 
 ##### Models
 
@@ -139,6 +140,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `MatchCompetitorBulkResponseHolder`:** Replaced `org.jspecify.annotations.NonNull` with
   `jakarta.validation.constraints.NotNull` on their required fields, so they can be checked by a `Validator`
 
+##### Documentation
+
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** Gaps #38 (test-only utility and enum
+  methods), #39 (`ClubIdentifier.code` and `fromCode`) and #40 (no data migration for the renamed `Division` names) are
+  recorded and closed in v14.0.0, with the Roadmap, At a Glance and Success Criteria entries updated to match
+- **`documentation/recommendations/flyway-migration-versioning.md`:** Current State table gains a row for
+  `V11_7_0__drop_division_suffix_from_division_names.sql`
+- **`ARCHITECTURE.md`:** Describes the renamed `IpscEntityClubService` and `IpscEntityCompetitorService`, the new
+  `MatchCompetitorHelpers` and `MatchCompetitorRowMapper`, and a bulk import row that fails for missing or
+  unresolvable fields; drops `DateUtil` and `NumberUtil` and `MatchCompetitorResponseHolder`
+- **`AGENTS.md`:** The final-utility-class example now names `ValueUtil` instead of the removed `NumberUtil`, and the
+  test-heading example uses `// fromName()` instead of `// fromCode()`
+
 #### 🗑️ Removed
 
 ##### Utilities
@@ -156,6 +170,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`MatchCompetitorResponseHolder`:** Removed the unused container class; bulk imports return
   `MatchCompetitorBulkResponseHolder`
+
+##### Tests
+
+- **`AwardControllerTest`, `ImageControllerTest`, `IpscCompetitorControllerTest`, `IpscMatchControllerTest` and
+  `IpscMatchCompetitorControllerTest`:** Removed the tests that only checked the controller delegates to its service
+  or lets the service's exception propagate
 
 ---
 
