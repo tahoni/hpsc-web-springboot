@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Spring-context integration test for {@link IpscEntityCompetitorService} - exercised through
- * the interface type, with a real Spring-wired {@code EntityIpscCompetitorServiceImpl} bean
+ * the interface type, with a real Spring-wired {@code IpscEntityCompetitorServiceImpl} bean
  * backed by the H2 {@code test} profile database.
  */
 @Slf4j
