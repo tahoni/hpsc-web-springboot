@@ -135,7 +135,7 @@ Within a class, order members: constructors first, then public methods, then —
 every protected method, regardless of where they were originally declared; a class with no private helpers simply
 ends after its last protected method. Within each visibility group, keep the existing relative order rather than
 alphabetising — that stricter, alphabetised ordering is specific to test classes, per the Test Conventions below. A
-`final` utility class (e.g. `NumberUtil`, `IpscConstants`) can't be subclassed, so it has no protected members to
+`final` utility class (e.g. `ValueUtil`, `IpscConstants`) can't be subclassed, so it has no protected members to
 place; its private helpers, if any, still go after every public method.
 
 ---
@@ -454,7 +454,7 @@ updating if `.claude/`'s own layout changes, not for individual skill additions.
   business-logic outcomes is fine — only test constructors, `toString()`, `equals()`/`hashCode()`, etc. when they are
   handwritten or contain custom logic.
 - **Group and order tests by the method under test.** Precede each group of tests for a given method with a one-line
-  comment naming it (e.g. `// fromCode()`), matching the style already used in `FirearmTypeTest`/
+  comment naming it (e.g. `// fromName()`), matching the style already used in `FirearmTypeTest`/
   `ControllerAdviceTest`. Order the groups: constructors first; then public methods before protected methods; within
   each visibility, alphabetically by method name — for overloads of the same name, order by parameter count, then by
   parameter type; `toString()` always comes last, regardless of visibility.

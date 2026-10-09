@@ -21,6 +21,37 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 14.0.0 (October 9, 2026)
+
+**Theme:** Complete Failure Reporting for Bulk Imports, Club Resolution & Shorter Division Names
+
+**Key Focus:**
+
+- New `MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields` and
+  `MatchCompetitorMapper.populateResolvableFields` let `IpscMatchCompetitorServiceImpl.createMatchCompetitors` check a
+  bulk import row once and list every missing or unresolvable required field, instead of failing on the first
+- A failed row is reported with no `MatchCompetitorResponse` and its values in the new `MatchCompetitorRow`, built by
+  the new `MatchCompetitorRowMapper`; `MatchCompetitorBulkResponseHolder.matchCompetitors` is renamed back to
+  `matchCompetitorResults`
+- New `IpscEntityClubService.findByCodeOrAbbreviation` and `findByCodeOrAbbreviationWithDefault` resolve a club by code,
+  abbreviation or name, and `CompetitorMapper.resolveHomeClub`, `MatchMapper.resolveClub` and
+  `MatchCompetitorMapper.resolveMatchClub` use them, so an unknown club answers `400` and `FatalException` is dropped
+  from the match service and controller methods that only declared it
+- `ClubService` and `EntityIpscCompetitorService` are renamed `IpscEntityClubService` and
+  `IpscEntityCompetitorService`, and `findCompetitor` becomes `findCompetitorByIdentifierAndFullName`
+- Each `Division` drops its trailing " Division" and `PCC_OPTICS` and `PCC_IRON` become `PCC Optics` and `PCC Irons`;
+  `V11_7_0__drop_division_suffix_from_division_names.sql` renames the stored values
+- `CompetitorCategory.fromName` returns `NONE` for a null or blank name and an empty `Optional` for an unrecognised one;
+  a missing firearm type is taken from the division
+- `MatchCompetitor` fields are `@NotNull` and `IpscMatchCompetitorServiceImpl.toResponse` validates the entity first
+- `NumberUtil`, `DateUtil`, `SystemConstants.DEFAULT_SCALE`, two unused `StringUtil` and `ValueUtil` methods and
+  `MatchCompetitorResponseHolder` are removed, together with controller tests that only checked delegation
+- Scoped as `v14.0.0` **MAJOR**: the division renames, the `400` for an unknown club, the renamed response field and the
+  `null` failed-row response are backward-incompatible, each flagged in `CHANGELOG.md`
+- Improvement plan: Gaps #38, #39 and #40 are closed, leaving 38 gaps closed and only #6 and #26 partially completed
+- The suite stands at 1,263 passing tests
+- Project version bumped to 14.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 13.3.0 (October 7, 2026)
 
 **Theme:** NGPSA Membership Flag & Club Number Normalisation
@@ -341,6 +372,14 @@ stored values to match.
 - A competitor records whether their NGPSA membership is paid up, through the request, patch, response and CSV import
 - A club number loses its spaces and surrounding whitespace before it is stored
 - `V11_6_0__add_competitor_paid_up_ngpsa.sql` adds the nullable column
+
+### Milestone 51: Complete Failure Reporting for Bulk Imports, Club Resolution & Shorter Division Names (v14.0.0)
+
+- A failed bulk match competitor row lists every missing or unresolvable field and the values it supplied
+- A club is resolved by code, abbreviation or name through `IpscEntityClubService`
+- A division is matched by its short name, and `V11_7_0__drop_division_suffix_from_division_names.sql` renames the
+  stored values
+- Improvement plan Gaps #38, #39 and #40 are closed
 
 ---
 
@@ -670,6 +709,12 @@ MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
   value, and the name-cleaning patterns no longer backtrack — as a second backward-compatible MINOR. v13.3.0 then
   records whether a competitor's NGPSA membership is paid up and stores a club number without spaces — a third
   backward-compatible MINOR.
+- **Version 14.x (v14.0.0):** Make a failed bulk import useful and the lookups uniform — a bulk match competitor row is
+  checked once and reports every missing or unresolvable field with the values it supplied, a club is resolved by code,
+  abbreviation or name through one service, and a division is matched by its short name. Because that changes the
+  division names a request may use, the status an unknown club answers, the name of a response field and the shape of a
+  failed row, v14.0.0 is the project's sixth consecutive MAJOR release, with each breaking change flagged in
+  `CHANGELOG.md` as it landed.
 
 ### Initial Phase (v1.0.0)
 
@@ -968,7 +1013,7 @@ MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v13.3.0, the following areas are identified for future enhancement:
+Based on the evolution to v14.0.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -976,7 +1021,19 @@ The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived,
 The completed-work logs for versions 8.0.0 to 9.1.0 are archived, unchanged, in
 [`documentation/archive/v8-v9/HISTORY_v8-v9.md`](/documentation/archive/v8-v9/HISTORY_v8-v9.md).
 
-### Recently Completed (v13.3.0)
+### Recently Completed (v14.0.0)
+
+- A bulk match competitor row reports every missing or unresolvable field with its values, through
+  `MatchCompetitorHelpers`, `MatchCompetitorMapper.populateResolvableFields`, `MatchCompetitorRow` and
+  `MatchCompetitorRowMapper`
+- `IpscEntityClubService` resolves a club by code, abbreviation or name for home clubs, matches and match competitors;
+  `ClubService` and `EntityIpscCompetitorService` are renamed to match
+- `Division` names drop the " Division" suffix, with `V11_7_0__drop_division_suffix_from_division_names.sql`
+- Test-only utilities are removed: `NumberUtil`, `DateUtil` and `SystemConstants.DEFAULT_SCALE`
+- Improvement plan: Gaps #38, #39 and #40 closed, leaving 38 closed and #6 and #26 partially completed
+- Project version bumped to 14.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v13.3.0)
 
 - New `Competitor.paidUpNgpsa` with the `V11_6_0__add_competitor_paid_up_ngpsa.sql` migration, carried through
   `CompetitorRequest`, `CompetitorPatchRequest`, `CompetitorResponse`, the competitor CSV import and `CompetitorMapper`
@@ -1206,3 +1263,8 @@ nothing is backward-incompatible.
 Version 13.3.0 adds an optional `paidUpNgpsa` flag to a competitor, through a nullable `paid_up_ngpsa` column and the
 request, patch, response and CSV import, and stores a club number without spaces. It is a MINOR release, because the
 flag is an addition, nothing is backward-incompatible and the migration adds a nullable column.
+
+Version 14.0.0 makes a failed bulk match competitor import report every missing or unresolvable field together with the
+values the row supplied, resolves clubs by code, abbreviation or name through `IpscEntityClubService`, and drops the
+trailing " Division" from every division name. It is a MAJOR release, because the division names, the `400` for an
+unknown club, the renamed `matchCompetitorResults` field and the `null` failed-row response are backward-incompatible.

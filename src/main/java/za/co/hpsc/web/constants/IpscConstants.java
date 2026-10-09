@@ -38,7 +38,7 @@ public final class IpscConstants {
      * Competitor numbers that are shared aliases (placeholders in the scoring system's export) rather than a real
      * competitor's number, so they never identify one. A competitor number in this list is treated as no number, as
      * by {@code CompetitorHelpers.getCompetitorNumberAsInteger} and the number stage of
-     * {@code EntityIpscCompetitorService.findCompetitor}.
+     * {@code IpscEntityCompetitorService.findCompetitorByIdentifierAndFullName}.
      */
     public static final List<Integer> EXCLUDE_ICS_ALIAS = List.of(15000, 16000);
 
@@ -67,9 +67,8 @@ public final class IpscConstants {
     public static final String HOME_CLUB_ABBREVIATION = "HPSC";
     /**
      * {@link ClubIdentifier} resolved from {@link #HOME_CLUB_ABBREVIATION}, the default home club; null only if that
-     * abbreviation ever
-     * stopped matching a known identifier — tolerated rather than asserted, so a resolution failure degrades
-     * gracefully instead of crashing the app at class-load time.
+     * abbreviation ever stopped matching a known identifier — tolerated rather than asserted, so a resolution
+     * failure degrades gracefully instead of crashing the app at class-load time.
      */
     public static final ClubIdentifier HOME_CLUB_IDENTIFIER =
             ClubIdentifier.fromAbbreviation(HOME_CLUB_ABBREVIATION).orElse(null);

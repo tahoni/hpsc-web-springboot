@@ -1,10 +1,10 @@
 package za.co.hpsc.web.models.ipsc.matchcompetitor.response;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jspecify.annotations.NonNull;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.enums.*;
@@ -24,13 +24,8 @@ import java.util.Set;
  * </p>
  *
  * <p>
- * The same shape also reports a bulk import row that failed, which {@code IpscMatchCompetitorServiceImpl}'s
- * {@code toFailedResponse} builds when a row is skipped because its match club is not the target club, or when
- * processing it throws. Only the fields the request supplied are then set: {@code competitorId},
- * {@code competitorNames} (the requested name as a single entry, or empty if none was given),
- * {@code competitorNumber} and {@code matchId}.
- * Every other field, including {@code matchCompetitorId} and those marked {@code @NonNull}, is left unset, and for an
- * empty row nothing is set at all. Check the enclosing bulk response's success flag before relying on any field.
+ * A bulk import row that failed has no response: {@link MatchCompetitorBulkResponse#getMatchCompetitor()} is
+ * {@code null} for it, and the row's values are in {@link MatchCompetitorBulkResponse#getMatchCompetitorRow()} instead.
  * </p>
  *
  * @since 9.1.0
@@ -41,13 +36,12 @@ import java.util.Set;
 @NoArgsConstructor
 public class MatchCompetitorResponse {
     /** The match competitor's own identifier. */
-    @NonNull
     private Long matchCompetitorId;
     /** The identifier of the competitor who shot the match. */
-    @NonNull
+    @NotNull
     private Long competitorId;
     /** The identifier of the match the competitor shot. */
-    @NonNull
+    @NotNull
     private Long matchId;
 
     /**
@@ -59,21 +53,16 @@ public class MatchCompetitorResponse {
     private Integer competitorNumber;
 
     /** The club the competitor represented at the match, which is distinct from their home club. */
-    @NonNull
     private ClubIdentifier matchClub;
     /** The competitor's category at the match. */
-    @NonNull
     private CompetitorCategory competitorCategory;
     /**
      * The firearm type the competitor shot.
      */
-    @NonNull
     private FirearmType firearmType;
     /** The division the competitor shot. */
-    @NonNull
     private Division division;
     /** The competitor's power factor. */
-    @NonNull
     private PowerFactor powerFactor;
 
     /** The competitor's match points, if any. */

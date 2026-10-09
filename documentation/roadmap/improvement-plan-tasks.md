@@ -310,7 +310,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 
 **Docker image build in CI** *(improvement-plan.md → Gap #31)* — ✅ Closed in v8.11.1
 
-- [x] Add a workflow building the `Dockerfile` on every push/PR to `main`/`develop` — build only, never pushed, and
+- [x] Add a workflow building the `Dockerfile` on every push/PR to `main`/`develop` — build only, never pushed and
   without repeating the tests `build.yml` already runs
 - [x] List it in `ARCHITECTURE.md`'s CI/CD & Quality Gates table and `CONTRIBUTING.md`'s summary of it
 
@@ -370,6 +370,42 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   as the second option, removed
 - [x] Remove the "Not currently referenced by any code" wording from their Javadoc — gone with the constants
 
+**Stored `Division` names** *(improvement-plan.md → Gap #40)* — ✅ Closed in v14.0.0
+
+- [x] Confirm that existing `match_competitor`, `shooter_log_competitor` and `shooter_log_overall` rows still hold the
+  old names (for example `Open Division` and `PCC Optic Division`) and read back as `null` through `DivisionConverter`
+  — taken from the code (`DivisionConverter` returns `null` for an unrecognised name); no database was inspected
+- [x] Add a Flyway migration that strips the trailing " Division" from the stored `division` in the three tables and
+  maps `PCC Optic Division` and `PCC Iron Division` to `PCC Optics` and `PCC Irons`, or record the missing migration
+  as a known issue — shipped as `V11_7_0__drop_division_suffix_from_division_names.sql`
+- [x] Add the migration to `flyway-migration-versioning.md`'s Current State table and `CHANGELOG.md`'s `Database`
+  entries — done, as the `V11_7_0` row and an `[Unreleased]` entry
+
+**`ClubIdentifier.code` and `fromCode`** *(improvement-plan.md → Gap #39)* — ✅ Closed in v14.0.0
+
+- [x] Confirm with the IDE's find-usages that `ClubIdentifier.fromCode` and the `code` field have no production
+  caller — done differently: a name-based scan of `src/main` found production callers instead, in
+  `IpscEntityClubServiceImpl.findByCodeOrAbbreviation` and `MatchCompetitorMapper`; confirm with find-usages
+- [x] Either keep them because a planned caller exists, or remove them together with the `fromCode` tests in
+  `ClubIdentifierTest` — kept: the club lookups by identifier code are the caller
+- [x] Change `AGENTS.md`'s Test Conventions example heading `// fromCode()` to one that still exists in the cited test
+  classes (for example `// fromName()`) — changed to `// fromName()`
+
+**Test-only utility methods and `DEFAULT_SCALE`** *(improvement-plan.md → Gap #38)* —
+✅ Closed in v14.0.0
+
+- [x] Confirm with the IDE's find-usages that `NumberUtil.calculatePercentage`, `calculateSum` and `formatBigDecimal`,
+  `DateUtil.formatDate` and `formatDateTime`, `StringUtil.formatStringWithNamedParameters`,
+  `ValueUtil.nullAsZeroBigDecimal` and `Division.fromAbbreviationOrName` have no production caller — confirmed by a
+  name-based scan of `src/main`; find-usages was not run
+- [x] For each, either keep it because a planned caller exists (e.g. the scoring layer, Gap #6) or remove it together
+  with its unit tests — `Division.fromAbbreviationOrName` was removed with its tests in v13.0.0 and the other seven in
+  v14.0.0 (`NumberUtil` and `DateUtil` are deleted outright)
+- [x] Correct `SystemConstants.DEFAULT_SCALE`'s Javadoc, which still describes it as `NumberUtil`'s default scale, or
+  remove the constant if nothing is going to use it — removed
+- [x] Correct `ARCHITECTURE.md`'s `utils/` table, which calls `NumberUtil` "Numeric parsing and formatting helpers" —
+  done differently: the `NumberUtil` row is removed with the class
+
 ---
 
 ## 🟡 Partially Completed
@@ -406,30 +442,11 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
   `tomcat.version` override and its comment from `pom.xml` in the same pass as the parent
   bump, and update this plan's Ongoing roadmap row and Goals & Constraints table
 
-**Test-only utility methods and `DEFAULT_SCALE`** *(improvement-plan.md → Gap #38)* —
-🟡 Partially completed in v13.0.0
-
-- [ ] Confirm with the IDE's find-usages that `NumberUtil.calculatePercentage`, `calculateSum` and `formatBigDecimal`,
-  `DateUtil.formatDate` and `formatDateTime`, `StringUtil.formatStringWithNamedParameters`,
-  `ValueUtil.nullAsZeroBigDecimal` and `Division.fromAbbreviationOrName` have no production caller
-- [ ] For each, either keep it because a planned caller exists (e.g. the scoring layer, Gap #6) or remove it together
-  with its unit tests — partly done: `Division.fromAbbreviationOrName` was removed with its tests in v13.0.0; the
-  other seven remain
-- [ ] Correct `SystemConstants.DEFAULT_SCALE`'s Javadoc, which still describes it as `NumberUtil`'s default scale, or
-  remove the constant if nothing is going to use it
-- [ ] Correct `ARCHITECTURE.md`'s `utils/` table, which calls `NumberUtil` "Numeric parsing and formatting helpers"
-
 ---
 
 ## ⚪ Open
 
-**`ClubIdentifier.code` and `fromCode`** *(improvement-plan.md → Gap #39)*
-
-- [ ] Confirm with the IDE's find-usages that `ClubIdentifier.fromCode` and the `code` field have no production caller
-- [ ] Either keep them because a planned caller exists, or remove them together with the `fromCode` tests in
-  `ClubIdentifierTest`
-- [ ] Change `AGENTS.md`'s Test Conventions example heading `// fromCode()` to one that still exists in the cited test
-  classes (for example `// fromName()`)
+*No gaps are currently open.*
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

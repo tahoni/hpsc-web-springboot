@@ -12,7 +12,7 @@ class DivisionTest {
     @Test
     void testFromName_withExactName_thenReturnsCorrectDiscipline() {
         // Arrange & Act
-        Optional<Division> result = Division.fromName("Open Division");
+        Optional<Division> result = Division.fromName("Open");
 
         // Assert
         assertTrue(result.isPresent());
@@ -22,7 +22,7 @@ class DivisionTest {
     @Test
     void testFromName_withCaseInsensitiveMatch_thenReturnsCorrectDivision() {
         // Arrange
-        String searchName = "open division";
+        String searchName = "open";
 
         // Act
         Optional<Division> result = Division.fromName(searchName);
@@ -101,8 +101,8 @@ class DivisionTest {
     @Test
     void testFromName_withNonHandgunName_thenReturnsThatDivision() {
         // Act & Assert
-        assertEquals(Division.SHOTGUN_OPEN, Division.fromName("Shotgun Open Division").orElseThrow());
-        assertEquals(Division.OPEN_22, Division.fromName(".22 Open Division").orElseThrow());
-        assertEquals(Division.MINI_RIFLE_STANDARD, Division.fromName("Mini Rifle Standard Division").orElseThrow());
+        assertEquals(Division.SHOTGUN_OPEN, Division.fromName("Shotgun Open").orElseThrow());
+        assertEquals(Division.OPEN_22, Division.fromName(".22 Open").orElseThrow());
+        assertEquals(Division.MINI_RIFLE_STANDARD, Division.fromName("Mini Rifle Standard").orElseThrow());
     }
 }

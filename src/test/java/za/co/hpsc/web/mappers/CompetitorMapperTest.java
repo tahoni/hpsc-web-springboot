@@ -1,49 +1,43 @@
 package za.co.hpsc.web.mappers;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.Gender;
-import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.repositories.ClubRepository;
-import za.co.hpsc.web.services.ClubService;
-import za.co.hpsc.web.services.impl.ClubServiceImpl;
+import za.co.hpsc.web.services.impl.IpscEntityClubServiceImpl;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link CompetitorMapper}, with {@link ClubRepository} mocked.
  */
 @ExtendWith(MockitoExtension.class)
-class CompetitorMapperTest {
+public class CompetitorMapperTest {
 
     @Mock
     private ClubRepository clubRepository;
 
-    @Spy
-    private ClubService clubService = new ClubServiceImpl();
-
-    @InjectMocks
     private CompetitorMapper competitorMapper;
+
+    @BeforeEach
+    void setUp() {
+        competitorMapper = new CompetitorMapper(new IpscEntityClubServiceImpl(clubRepository));
+    }
 
     // applyFields()
     @Test
@@ -509,7 +503,7 @@ class CompetitorMapperTest {
     }
 
     @Test
-    void testApplyPatchFields_whenHomeClubIsUnknown_thenThrowsNonFatalException() {
+    void testApplyPatchFields_whenHomeClubIsUnknown_thenThrowsValidationException() {
         // Arrange
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
         when(clubRepository.findByAbbreviation("No Such Club")).thenReturn(Optional.empty());
@@ -517,7 +511,7 @@ class CompetitorMapperTest {
         request.setHomeClub("No Such Club");
 
         // Act & Assert
-        assertThrows(NonFatalException.class,
+        assertThrows(ValidationException.class,
                 () -> competitorMapper.applyPatchFields(new Competitor(), request));
     }
 
@@ -751,13 +745,13 @@ class CompetitorMapperTest {
     }
 
     @Test
-    void testResolveHomeClub_whenClubNameMatchesNeitherNameNorAbbreviation_thenThrowsNonFatalException() {
+    void testResolveHomeClub_whenClubNameMatchesNeitherNameNorAbbreviation_thenThrowsValidationException() {
         // Arrange
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
         when(clubRepository.findByAbbreviation("No Such Club")).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> competitorMapper.resolveHomeClub("No Such Club"));
+        assertThrows(ValidationException.class, () -> competitorMapper.resolveHomeClub("No Such Club"));
     }
 
     @Test
@@ -773,7 +767,6 @@ class CompetitorMapperTest {
 
         // Assert
         assertSame(club, resolved);
-        verify(clubRepository, never()).findByAbbreviation(anyString());
     }
 
     @Test
@@ -782,7 +775,6 @@ class CompetitorMapperTest {
         Club club = new Club();
         club.setId(10L);
         club.setName("Test Club");
-        when(clubRepository.findByName("TC")).thenReturn(Optional.empty());
         when(clubRepository.findByAbbreviation("TC")).thenReturn(Optional.of(club));
 
         // Act
@@ -790,6 +782,7 @@ class CompetitorMapperTest {
 
         // Assert
         assertSame(club, resolved);
+        verify(clubRepository, never()).findByName("TC");
     }
 
     // Helpers

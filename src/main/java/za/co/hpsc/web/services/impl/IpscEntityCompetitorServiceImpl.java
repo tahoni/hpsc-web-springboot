@@ -9,7 +9,7 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.helpers.CompetitorHelpers;
 import za.co.hpsc.web.repositories.CompetitorRepository;
-import za.co.hpsc.web.services.EntityIpscCompetitorService;
+import za.co.hpsc.web.services.IpscEntityCompetitorService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +18,10 @@ import java.util.Optional;
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 
 @Service
-public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorService {
+public class IpscEntityCompetitorServiceImpl implements IpscEntityCompetitorService {
     private final CompetitorRepository competitorRepository;
 
-    public EntityIpscCompetitorServiceImpl(CompetitorRepository competitorRepository) {
+    public IpscEntityCompetitorServiceImpl(CompetitorRepository competitorRepository) {
         this.competitorRepository = competitorRepository;
     }
 
@@ -62,7 +62,7 @@ public class EntityIpscCompetitorServiceImpl implements EntityIpscCompetitorServ
      * if the name matched none of the competitors that share the number.</p>
      */
     @Override
-    public Optional<Competitor> findCompetitor(String competitorNumber, String fullName)
+    public Optional<Competitor> findCompetitorByIdentifierAndFullName(String competitorNumber, String fullName)
             throws ValidationException, NonFatalException {
         // Either the competitor number or full name must be supplied
         if (!hasText(fullName) && !hasText(competitorNumber)) {
