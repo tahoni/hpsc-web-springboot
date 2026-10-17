@@ -213,7 +213,7 @@ This project's documentation is spread across a few files, each with a distinct 
 | [`HELP.md`](HELP.md)                             | Spring Initializr reference links (Maven, Spring Boot docs, guides)                             |
 
 [`documentation/history/`](documentation/history) holds one of each of the following files per released version from
-v10.0.0 onward, so past releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to
+v14.0.0 onward, so past releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to
 the next version, grouped into one subdirectory per major version (e.g. `documentation/history/vN/`):
 
 | File                       | Purpose                                                    |
@@ -222,8 +222,8 @@ the next version, grouped into one subdirectory per major version (e.g. `documen
 | `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version |
 
 [`documentation/archive/`](documentation/archive) holds the frozen archives of the earlier releases, one subdirectory
-per range — [`v1-v4/`](documentation/archive/v1-v4), [`v5-v7/`](documentation/archive/v5-v7) and
-[`v8-v9/`](documentation/archive/v8-v9) — each with that range's per-version release notes and pull request
+per range — [`v1-v4/`](documentation/archive/v1-v4), [`v5-v7/`](documentation/archive/v5-v7),
+[`v8-v9/`](documentation/archive/v8-v9) and [`v10-v13/`](documentation/archive/v10-v13) — each with that range's per-version release notes and pull request
 descriptions plus three single files named for the range (e.g. `CHANGELOG_v5-v7.md`):
 
 | File                          | Purpose                                                                                                |
