@@ -309,11 +309,11 @@ manageable size, since that narrative alone had grown to roughly half of it. See
 
 ## 🎯 Major Milestones
 
-Milestones 8 to 18 (versions 5.0.0 to 7.4.1) are archived, unchanged, in
-[`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
-
 Milestones 1 to 7 (versions 1.0.0 to 4.1.0) are archived, unchanged, in
 [`documentation/archive/v1-v4/HISTORY_v1-v4.md`](/documentation/archive/v1-v4/HISTORY_v1-v4.md).
+
+Milestones 8 to 18 (versions 5.0.0 to 7.4.1) are archived, unchanged, in
+[`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
 
 Milestones 19 to 43 (versions 8.0.0 to 9.1.0) are archived, unchanged, in
 [`documentation/archive/v8-v9/HISTORY_v8-v9.md`](/documentation/archive/v8-v9/HISTORY_v8-v9.md).

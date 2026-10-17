@@ -13,11 +13,11 @@ release's headline achievement.
 The HPSC Website Backend project has evolved through distinct phases, each addressing specific architectural and feature
 requirements:
 
-Phases 8 to 18 (versions 5.0.0 to 7.4.1) are archived, unchanged, in
-[`documentation/archive/v5-v7/EVOLUTION_OVERVIEW_v5-v7.md`](/documentation/archive/v5-v7/EVOLUTION_OVERVIEW_v5-v7.md).
-
 Phases 1 to 7 (versions 1.0.0 to 4.1.0) are archived, unchanged, in
 [`documentation/archive/v1-v4/EVOLUTION_OVERVIEW_v1-v4.md`](/documentation/archive/v1-v4/EVOLUTION_OVERVIEW_v1-v4.md).
+
+Phases 8 to 18 (versions 5.0.0 to 7.4.1) are archived, unchanged, in
+[`documentation/archive/v5-v7/EVOLUTION_OVERVIEW_v5-v7.md`](/documentation/archive/v5-v7/EVOLUTION_OVERVIEW_v5-v7.md).
 
 Phases 19 to 43 (versions 8.0.0 to 9.1.0) are archived, unchanged, in
 [`documentation/archive/v8-v9/EVOLUTION_OVERVIEW_v8-v9.md`](/documentation/archive/v8-v9/EVOLUTION_OVERVIEW_v8-v9.md).
