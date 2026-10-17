@@ -34,32 +34,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ➕ Added
 
-##### Controllers
+##### Database
 
-- **`IpscShooterResultController`:** New read-only endpoints `GET /ipsc/shooter-results/matches/{matchId}` and
-  `GET /ipsc/shooter-results`, returning a match linked to its shooter results, or one such holder per match, including matches without results; an
-  unknown match ID returns a 404
+- **`V11_10_0__create_shooter_result.sql`:** New migration creating `shooter_result`, linked to `ipsc_match`,
+  `competitor` and `match_competitor`, unique per match and match competitor
 
-##### Services
+##### Domain
 
-- **`IpscShooterResultService`:** New service with `getShooterResults`, which returns a match linked to its
-  results, and `getAllShooterResults`, which returns one such holder per match, oldest match date first (then by
-  ID), with no results for a match nobody has a result in; in both, the results are sorted by percentage, highest
-  first, then by points, highest first, with those without a percentage or points last;
-  `IpscShooterResultServiceImpl` throws `NonFatalException` for a match that does not exist
-
-##### Models
-
-- **`ShooterResultResponse`:** New response describing one shooter's result in a match — the competitor, their
-  category, firearm type, division and power factor, and their points, percentage, time, overall and club ranking and
-  visitor flag
-- **`ShooterMatchResultResponse`:** New response describing the match a set of shooter results were shot in — its ID,
-  name and date
-- **`ShooterResponseHolder`:** New container linking one `ShooterMatchResultResponse` with the
-  `ShooterResultResponse`s of all the competitors who shot that match
+- **`ShooterResult`:** New entity mirroring `ShooterLogCompetitor`, with a `match` in place of the `shooterLog`
 
 ##### Repositories
 
+- **`ShooterResultRepository`:** New repository that fetch-joins the match, competitor and match competitor for
+  one match's results, or every match's
 - **`MatchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch`:** New query that fetch-joins the competitor
   and match for one match's entries
 
@@ -89,8 +76,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Models
 
-- **`ShooterResultRequest`, `ShooterResultResponse`:** Removed `overallRanking` and `clubRanking`, and no longer copy
-  them from the match competitor
 - **`MatchCompetitorRequest`, `MatchCompetitorPatchRequest`:** **Breaking:** removed the optional `overallRanking` and
   `clubRanking` from the create, replace and patch request bodies and from the constructor, so rankings can no longer
   be set through the API
@@ -101,6 +86,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   row no longer reports them
 
 #### 🔄 Changed
+
+##### Database
+
+- **`V11_9_0__rename_shooter_log_points_to_percentage_in_log.sql`:** New migration that renames `points` to
+  `percentage_in_log` in `shooter_log_competitor` and `shooter_log_overall`
+
+##### Domain
+
+- **`ShooterLogCompetitor`, `ShooterLogOverall`:** **Breaking:** renamed `points` to `percentageInLog`, and its
+  column to `percentage_in_log`
 
 ##### Mappers
 
