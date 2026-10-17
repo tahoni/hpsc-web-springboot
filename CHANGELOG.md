@@ -45,10 +45,33 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Repositories
 
-- **`ShooterResultRepository`:** New repository that fetch-joins the match, competitor and match competitor for
-  one match's results, or every match's
+- **`ShooterResultRepository`:** New repository with `findAllByMatchIdWithDetails` and `findAllWithDetails`, which
+  fetch-join the match, competitor and match competitor of one match's results, or of every result
 - **`MatchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch`:** New query that fetch-joins the competitor
   and match for one match's entries
+
+##### Models
+
+- **`ShooterResultResponse`:** New response describing a shooter result — its ID, the match, competitor and match
+  competitor IDs, the competitor's names and number, their category and division, and their rank and percentage in
+  the log with the date they were calculated
+- **`ShooterMatchResultResponse`:** New response describing the match a set of shooter results were shot in — its ID,
+  name and date
+- **`ShooterResponseHolder`:** New container linking one `ShooterMatchResultResponse` with the
+  `ShooterResultResponse`s of the competitors who shot that match
+
+##### Services
+
+- **`IpscShooterResultService`:** New read-only service with `getShooterResults`, which returns a match linked to
+  its results, and `getAllShooterResults`, which returns one such holder per match, oldest match date first (then by
+  ID), with no results for a match nobody has a result in; `IpscShooterResultServiceImpl` throws `NonFatalException`
+  for a match that does not exist
+
+##### Controllers
+
+- **`IpscShooterResultController`:** New read-only endpoints `GET /ipsc/shooter-results/matches/{matchId}` and
+  `GET /ipsc/shooter-results`, returning a match linked to its shooter results, or one such holder per match,
+  including matches without results; an unknown match ID returns a 404
 
 ##### Utilities
 

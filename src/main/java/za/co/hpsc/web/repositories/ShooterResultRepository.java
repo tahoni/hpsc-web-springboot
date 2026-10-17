@@ -11,10 +11,10 @@ public interface ShooterResultRepository extends JpaRepository<ShooterResult, Lo
     // Fetch-joins the lazy match, competitor and match competitor read when mapping a result to its
     // response, so they're usable outside a transaction (open-in-view is disabled).
     @Query("select sr from ShooterResult sr join fetch sr.match join fetch sr.competitor "
-            + "join fetch sr.matchCompetitor where sr.match.id = :matchId")
+            + "join fetch sr.matchCompetitor where sr.match.id = :matchId order by sr.id")
     List<ShooterResult> findAllByMatchIdWithDetails(@Param("matchId") Long matchId);
 
     @Query("select sr from ShooterResult sr join fetch sr.match join fetch sr.competitor "
-            + "join fetch sr.matchCompetitor")
+            + "join fetch sr.matchCompetitor order by sr.id")
     List<ShooterResult> findAllWithDetails();
 }
