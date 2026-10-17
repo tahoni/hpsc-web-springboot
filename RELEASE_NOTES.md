@@ -72,6 +72,8 @@ renamed. Several of these change what an existing caller sends or receives, so e
   `percentage_in_log` (`V11_9_0__rename_shooter_log_points_to_percentage_in_log.sql`)
 - `MatchCompetitorMapper` no longer copies `overallRanking` or `clubRanking`
 - `IpscMatchCompetitorController`'s bulk CSV example drops the `OverallRanking` and `ClubRanking` columns
+- The v10.0.0 – v13.3.0 `CHANGELOG`, `HISTORY` and `EVOLUTION_OVERVIEW` entries, release notes and pull request
+  descriptions move to `documentation/archive/v10-v13/`, and the links that pointed at them follow
 
 ### Removed
 
