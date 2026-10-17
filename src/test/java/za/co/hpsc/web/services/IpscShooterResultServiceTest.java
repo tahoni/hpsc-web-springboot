@@ -245,6 +245,35 @@ class IpscShooterResultServiceTest {
     }
 
     @Test
+    void testCalculateMatchShooterResult_whenSeveralCompetitorCategories_thenRanksEachCategorySeparately()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor junior = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "50");
+        MatchCompetitor lady = matchCompetitor(2L, FirearmType.HANDGUN, Division.OPEN, "40");
+        MatchCompetitor none = matchCompetitor(3L, FirearmType.HANDGUN, Division.OPEN, "30");
+        MatchCompetitor otherNone = matchCompetitor(4L, FirearmType.HANDGUN, Division.OPEN, "15");
+        lady.setCompetitorCategory(CompetitorCategory.LADY);
+        none.setCompetitorCategory(CompetitorCategory.NONE);
+        otherNone.setCompetitorCategory(CompetitorCategory.NONE);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(junior, lady, none, otherNone));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of());
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        List<ShooterResult> saved = savedShooterResults();
+        assertEquals(1, rankOf(saved, junior));
+        assertEquals(1, rankOf(saved, lady));
+        assertEquals(1, rankOf(saved, none));
+        assertEquals(2, rankOf(saved, otherNone));
+        assertEquals(new BigDecimal("50.00"), percentageOf(saved, otherNone));
+    }
+
+    @Test
     void testCalculateMatchShooterResult_whenSeveralFirearmTypesAndDivisions_thenRanksEachGroupSeparately()
             throws NonFatalException {
         // Arrange

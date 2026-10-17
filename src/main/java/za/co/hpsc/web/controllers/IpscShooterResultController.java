@@ -52,8 +52,9 @@ public class IpscShooterResultController {
      */
     @PostMapping(value = "/matches/{matchId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Calculate shooter results for match", description = "Calculate every competitor's result "
-            + "in a match: each is ranked by match points within their firearm type and division, with their "
-            + "percentage set relative to the group winner. Calculating again updates the existing results.")
+            + "in a match: each is ranked by match points within their firearm type, division and competitor "
+            + "category (no category is a group of its own), with their percentage set relative to the group "
+            + "winner. Calculating again updates the existing results.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Shooter results calculated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,

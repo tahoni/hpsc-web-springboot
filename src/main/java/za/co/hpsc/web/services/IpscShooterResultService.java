@@ -17,8 +17,9 @@ public interface IpscShooterResultService {
      * for each of the match's competitors.
      *
      * <p>
-     * A match's competitors are ranked within their firearm type and division by match points, highest first, with
-     * competitors on equal points sharing a rank and the next rank skipped. Each competitor's percentage is their
+     * A match's competitors are ranked within their firearm type, division and competitor category by match points,
+     * highest first, with competitors without a category (NONE) a group of their own, and competitors on equal points
+     * sharing a rank and the next rank skipped. Each competitor's percentage is their
      * points as a percentage of the group winner's points, to {@code IpscConstants.PERCENTAGE_SCALE} decimal places.
      * A competitor without match points gets neither a rank nor a percentage. Every result is stamped with the date
      * and time it was calculated.

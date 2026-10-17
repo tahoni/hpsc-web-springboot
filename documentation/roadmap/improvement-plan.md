@@ -1293,7 +1293,7 @@ results (competitor, category, division and rank and percentage in the log, the 
 string), over the new `ShooterResultRepository` and `IpscMatchRepository`, with Mockito controller and service tests
 and `@SpringBootTest` integration tests. `POST /ipsc/shooter-results/matches/{matchId}`
 calculates a match's `ShooterResult` rows through `calculateMatchShooterResult`, ranking its competitors by match
-points within their firearm type and division and setting each percentage relative to the group winner, and saves
+points within their firearm type, division and competitor category (none being a group of its own) and setting each percentage relative to the group winner, and saves
 them in one transaction through the new `TransactionService.saveShooterResults`. It recalculates only when the
 results are out of date — a competitor has no result yet, or the match or a competitor was updated at least five
 minutes after the oldest result was calculated — and otherwise returns the current results. v15.0.0 also drops
