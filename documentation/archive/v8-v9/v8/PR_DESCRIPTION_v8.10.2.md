@@ -36,7 +36,7 @@
 ## 🔗 Related Documentation
 
 - [RELEASE_NOTES.md](/RELEASE_NOTES.md)
-- [CHANGELOG.md](/CHANGELOG.md#-8102---2026-09-26)
+- [CHANGELOG.md](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md#-8102---2026-09-26)
 - [HISTORY.md](/HISTORY.md)
 - #141 (the first v8.10.2 release PR)
 

@@ -93,12 +93,6 @@ public class MatchCompetitor {
     @Column(name = "additional_penalties")
     private Integer additionalPenalties;
 
-    @Column(name = "overall_ranking", precision = 19, scale = 6)
-    private BigDecimal overallRanking;
-
-    @Column(name = "club_ranking", precision = 19, scale = 6)
-    private BigDecimal clubRanking;
-
     @Column(name = "is_visitor")
     private Boolean isVisitor;
 

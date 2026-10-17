@@ -84,8 +84,8 @@ Steps:
    reverse chronological order, plus a matching Phase entry at the end of
    `EVOLUTION_OVERVIEW.md` in the repository root (that file is `HISTORY.md`'s Evolution Overview section, split out
    once it grew to roughly half of `HISTORY.md`'s size — one paired Phase/Milestone entry still lands per release,
-   just in two files now; the v1.0.0 – v9.1.0 entries live in the frozen archives
-   under `documentation/archive/v1-v4/`, `v5-v7/` and `v8-v9/`, which a release never edits). If the
+   just in two files now; the v1.0.0 – v13.3.0 entries live in the frozen archives
+   under `documentation/archive/v1-v4/`, `v5-v7/`, `v8-v9/` and `v10-v13/`, which a release never edits). If the
    release is significant enough to have shifted the project's trajectory, also
    thread it through the other version-by-version sections (Architectural Evolution, Feature Timeline, Key Learnings,
    Conclusion/footer), using the immediately preceding version's treatment as the template. Regardless of

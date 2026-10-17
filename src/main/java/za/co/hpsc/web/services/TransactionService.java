@@ -3,6 +3,7 @@ package za.co.hpsc.web.services;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.domain.ShooterResult;
 
 import java.util.List;
 
@@ -120,4 +121,18 @@ public interface TransactionService {
      * @since 8.9.0
      */
     void deleteMatchCompetitor(MatchCompetitor matchCompetitor);
+
+    /**
+     * Creates or updates a batch of shooter results in a single transaction, so either every one is saved or none
+     * is.
+     *
+     * @param shooterResults the shooter results to save; a new one is created when its ID is {@code null}. Must
+     *                       not be null.
+     * @return the saved shooter results, in the order given.
+     * @throws org.springframework.dao.DataIntegrityViolationException if a unique constraint is violated, such as
+     *                                                                  a second result for the same match and match
+     *                                                                  competitor.
+     * @since 15.0.0
+     */
+    List<ShooterResult> saveShooterResults(List<ShooterResult> shooterResults);
 }
