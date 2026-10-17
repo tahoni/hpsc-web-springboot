@@ -475,3 +475,49 @@ supplied, a club is resolved by code, abbreviation or name through one service, 
 
 - The suite stands at 1,263 passing tests, with new tests for the helper, the row mapper, the club service and the new
   division names
+
+### Phase 52: Shooter Result Calculation & Reading (v15.0.0)
+
+**Duration:** October 17, 2026
+
+A major release: a match's shooter results are calculated and read through new endpoints, ranked by match points
+within each competitor's firearm type, division and competitor category. The removed overall and club rankings and the
+renamed shooter log `points` are backward-incompatible, so it is MAJOR under the Semantic Versioning rules.
+
+**Key Accomplishments:**
+
+**Database**
+
+- `V11_8_0__remove_match_competitor_rankings.sql` drops `overall_ranking` and `club_ranking` from `match_competitor`
+- `V11_9_0__rename_shooter_log_points_to_percentage_in_log.sql` renames `points` to `percentage_in_log` in
+  `shooter_log_competitor` and `shooter_log_overall`
+- `V11_10_0__create_shooter_result.sql` creates `shooter_result`, unique per match and match competitor
+
+**Services & Controllers**
+
+- `IpscShooterResultService.calculateMatchShooterResult` ranks a match's competitors within their firearm type,
+  division and competitor category, with ties sharing a rank and each percentage relative to the group winner, and
+  recalculates only when the results are out of date
+- `IpscShooterResultController` exposes `POST /ipsc/shooter-results/matches/{matchId}` and the read endpoints
+  `GET /ipsc/shooter-results/matches/{matchId}` and `GET /ipsc/shooter-results`
+- `TransactionService.saveShooterResults` saves a batch of results in one transaction
+
+**Models & Utilities**
+
+- `ShooterResultResponse`, `ShooterMatchResultResponse` and `ShooterResponseHolder` describe a match linked to its
+  results, with the percentage shown as a display string
+- `NumberUtil`, the score scale constants and `SystemConstants.DEFAULT_SCALE` are reinstated
+
+**Build & Metadata**
+
+- `org.ow2.asm:asm` is pinned to 9.11
+- Improvement plan: Gap #6 progresses, leaving 38 closed and #6 and #26 partially completed
+- Project version bumped to 15.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Ranking a match's competitors fairly within their group and keeping the stored results current
+
+**Test Coverage:**
+
+- The suite stands at 1,320 passing tests, with new tests for the shooter result service, controller and `NumberUtil`

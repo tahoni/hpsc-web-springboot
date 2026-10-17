@@ -21,6 +21,35 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 15.0.0 (October 17, 2026)
+
+**Theme:** Shooter Result Calculation & Reading
+
+**Key Focus:**
+
+- New `ShooterResult` entity, `ShooterResultRepository` and `V11_10_0__create_shooter_result.sql` store a match
+  competitor's rank and percentage in a match, mirroring `ShooterLogCompetitor` but linked to a match
+- New `IpscShooterResultService` and `IpscShooterResultController` expose
+  `POST /ipsc/shooter-results/matches/{matchId}`, which calculates a match's results, and
+  `GET /ipsc/shooter-results/matches/{matchId}` and `GET /ipsc/shooter-results`, which read them as a match linked to
+  its results
+- `calculateMatchShooterResult` ranks a match's competitors by match points within their firearm type, division and
+  competitor category (those with none a group of their own), with ties sharing a rank, and sets each percentage
+  relative to the group winner; it recalculates only when the results are out of date, and saves them in one
+  transaction through the new `TransactionService.saveShooterResults`
+- `MatchCompetitor` drops `overallRanking` and `clubRanking` (`V11_8_0__remove_match_competitor_rankings.sql`), and
+  they leave the request, patch, CSV import and response models
+- The shooter log `points` are renamed `percentageInLog`
+  (`V11_9_0__rename_shooter_log_points_to_percentage_in_log.sql`), shown by `ShooterResultResponse` as a display string
+- `NumberUtil` is reinstated, with `IpscConstants`' score scales and `SystemConstants.DEFAULT_SCALE`
+- `org.ow2.asm:asm` is pinned to 9.11 to replace the vulnerable 9.7.1 that `json-smart` brings in
+- Scoped as `v15.0.0` **MAJOR**: the removed ranking fields and CSV columns and the renamed `points` property are
+  backward-incompatible, each flagged in `CHANGELOG.md`
+- Improvement plan: Gap #6 progresses with the shooter result endpoints, leaving 38 gaps closed and #6 and #26
+  partially completed
+- The suite stands at 1,320 passing tests
+- Project version bumped to 15.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 14.0.0 (October 9, 2026)
 
 **Theme:** Complete Failure Reporting for Bulk Imports, Club Resolution & Shorter Division Names
@@ -381,6 +410,14 @@ stored values to match.
   stored values
 - Improvement plan Gaps #38, #39 and #40 are closed
 
+### Milestone 52: Shooter Result Calculation & Reading (v15.0.0)
+
+- A match's shooter results are calculated, ranked by firearm type, division and competitor category, and read through
+  `IpscShooterResultController`
+- Results are stored in the new `ShooterResult` entity and recalculated only when they are out of date
+- `MatchCompetitor` drops its overall and club rankings, which the results now supersede
+- Improvement plan Gap #6 progresses
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -715,6 +752,11 @@ MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
   division names a request may use, the status an unknown club answers, the name of a response field and the shape of a
   failed row, v14.0.0 is the project's sixth consecutive MAJOR release, with each breaking change flagged in
   `CHANGELOG.md` as it landed.
+- **Version 15.x (v15.0.0):** Turn a match's scores into ranked results — a match's competitors are ranked by match
+  points within their firearm type, division and competitor category, each with a percentage of the group winner's
+  points, stored in a new `ShooterResult` entity and served by one controller. Because that retires the overall and
+  club rankings on a match competitor and renames the shooter log `points`, v15.0.0 is the project's seventh
+  consecutive MAJOR release, with each breaking change flagged in `CHANGELOG.md` as it landed.
 
 ### Initial Phase (v1.0.0)
 
@@ -1013,7 +1055,7 @@ MatchCompetitorBulkResponseHolder (201, or 422 if every row failed)
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v14.0.0, the following areas are identified for future enhancement:
+Based on the evolution to v15.0.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -1021,7 +1063,18 @@ The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived,
 The completed-work logs for versions 8.0.0 to 9.1.0 are archived, unchanged, in
 [`documentation/archive/v8-v9/HISTORY_v8-v9.md`](/documentation/archive/v8-v9/HISTORY_v8-v9.md).
 
-### Recently Completed (v14.0.0)
+### Recently Completed (v15.0.0)
+
+- `ShooterResult`, `ShooterResultRepository` and `V11_10_0__create_shooter_result.sql` store a match's calculated
+  results; `IpscShooterResultService` and `IpscShooterResultController` calculate and read them
+- Results are ranked within firearm type, division and competitor category, and recalculated only when out of date
+- `MatchCompetitor` drops `overallRanking` and `clubRanking`, and the shooter log `points` become `percentageInLog`
+- `NumberUtil` is reinstated with the score scale constants
+- `org.ow2.asm:asm` is pinned to 9.11 in `pom.xml`
+- Improvement plan: Gap #6 progresses, leaving 38 closed and #6 and #26 partially completed
+- Project version bumped to 15.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v14.0.0)
 
 - A bulk match competitor row reports every missing or unresolvable field with its values, through
   `MatchCompetitorHelpers`, `MatchCompetitorMapper.populateResolvableFields`, `MatchCompetitorRow` and
@@ -1268,3 +1321,8 @@ Version 14.0.0 makes a failed bulk match competitor import report every missing 
 values the row supplied, resolves clubs by code, abbreviation or name through `IpscEntityClubService`, and drops the
 trailing " Division" from every division name. It is a MAJOR release, because the division names, the `400` for an
 unknown club, the renamed `matchCompetitorResults` field and the `null` failed-row response are backward-incompatible.
+
+Version 15.0.0 calculates a match's shooter results — each competitor's rank and percentage within their firearm type,
+division and competitor category — stores them in a new `ShooterResult` entity and serves them through
+`IpscShooterResultController`. It is a MAJOR release, because the removed `overallRanking` and `clubRanking` fields and
+CSV columns and the renamed shooter log `points` property are backward-incompatible.
