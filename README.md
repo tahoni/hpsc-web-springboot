@@ -33,6 +33,8 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
 - **IPSC Matches**: Match CRUD, including firearm type and match category resolution, plus bulk CSV import
 - **IPSC Match Competitors**: CRUD for a competitor's entry in a match, including competitor, match, division and
   category resolution, plus bulk CSV import
+- **IPSC Shooter Results**: Calculation of each competitor's rank and percentage within their firearm type, division
+  and competitor category in a match, and reading the results
 
 JPA entities and repositories also exist for shooter logs. Request DTOs exist for competitor scores submission,
 laying the groundwork for match result processing and ranking calculations — the service and controller layer
