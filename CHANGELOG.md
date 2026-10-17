@@ -93,9 +93,32 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Constants
 
 - **`IpscConstants`:** New `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE` and `PERCENTAGE_SCALE` decimal-place
-  constants for scores; none is referenced by code yet
+  constants for scores; only `PERCENTAGE_SCALE` is referenced by code so far, by the shooter result calculation and
+  `ShooterResultResponse`
 - **`SystemConstants.DEFAULT_SCALE`:** Reinstated, with a value of 5, as the default scale for `NumberUtil`
   calculations
+
+#### 🔄 Changed
+
+##### Database
+
+- **`V11_9_0__rename_shooter_log_points_to_percentage_in_log.sql`:** New migration that renames `points` to
+  `percentage_in_log` in `shooter_log_competitor` and `shooter_log_overall`
+
+##### Domain
+
+- **`ShooterLogCompetitor`, `ShooterLogOverall`:** **Breaking:** renamed `points` to `percentageInLog`, and its
+  column to `percentage_in_log`
+
+##### Mappers
+
+- **`MatchCompetitorMapper`:** No longer copies `overallRanking` or `clubRanking` from a request onto the entity,
+  on create or patch, since the entity no longer has them
+
+##### Controllers
+
+- **`IpscMatchCompetitorController`:** Updated the bulk CSV example to drop the `OverallRanking` and `ClubRanking`
+  columns
 
 #### 🗑️ Removed
 
@@ -126,28 +149,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`org.ow2.asm:asm`:** Pinned to 9.11 through `dependencyManagement` and a new `asm.version` property, replacing
   the vulnerable 9.7.1 that `json-smart`'s `accessors-smart` brings in transitively through
   `spring-boot-starter-test`
-
-#### 🔄 Changed
-
-##### Database
-
-- **`V11_9_0__rename_shooter_log_points_to_percentage_in_log.sql`:** New migration that renames `points` to
-  `percentage_in_log` in `shooter_log_competitor` and `shooter_log_overall`
-
-##### Domain
-
-- **`ShooterLogCompetitor`, `ShooterLogOverall`:** **Breaking:** renamed `points` to `percentageInLog`, and its
-  column to `percentage_in_log`
-
-##### Mappers
-
-- **`MatchCompetitorMapper`:** No longer copies `overallRanking` or `clubRanking` from a request onto the entity,
-  on create or patch, since the entity no longer has them
-
-##### Controllers
-
-- **`IpscMatchCompetitorController`:** Updated the bulk CSV example to drop the `OverallRanking` and `ClubRanking`
-  columns
 
 ---
 

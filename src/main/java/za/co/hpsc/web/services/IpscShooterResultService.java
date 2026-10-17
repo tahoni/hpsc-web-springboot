@@ -27,7 +27,7 @@ public interface IpscShooterResultService {
      * <p>
      * Calculating again updates the existing results rather than adding duplicates, but only when they are out of
      * date: that is, when the match, or any of its competitors, was updated at least five minutes after the results
-     * were calculated, or a competitor has no result yet. Otherwise nothing is recalculated and the current results
+     * were calculated, or a competitor has no result yet. Otherwise, nothing is recalculated and the current results
      * are returned as they are.
      * </p>
      *

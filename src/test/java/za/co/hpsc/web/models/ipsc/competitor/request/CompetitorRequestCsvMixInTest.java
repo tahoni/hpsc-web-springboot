@@ -63,9 +63,9 @@ class CompetitorRequestCsvMixInTest {
 
         // Assert
         assertEquals(2, rows.size());
-        assertEquals(Boolean.FALSE, rows.get(0).getPaidUpSapsa());
-        assertEquals(Boolean.TRUE, rows.get(0).getPaidUpNgpsa());
-        assertEquals(Boolean.FALSE, rows.get(0).getPaidUpClub());
+        assertEquals(Boolean.FALSE, rows.getFirst().getPaidUpSapsa());
+        assertEquals(Boolean.TRUE, rows.getFirst().getPaidUpNgpsa());
+        assertEquals(Boolean.FALSE, rows.getFirst().getPaidUpClub());
         assertEquals(Boolean.TRUE, rows.get(1).getPaidUpSapsa());
         assertEquals(Boolean.FALSE, rows.get(1).getPaidUpNgpsa());
         assertEquals(Boolean.TRUE, rows.get(1).getPaidUpClub());

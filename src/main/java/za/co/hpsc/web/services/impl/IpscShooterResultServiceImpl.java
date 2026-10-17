@@ -22,12 +22,7 @@ import za.co.hpsc.web.utils.NumberUtil;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Default {@link IpscShooterResultService}, reading shooter results from the persisted {@link ShooterResult}s.
@@ -87,7 +82,7 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
             Map<Long, Integer> ranks = rank(group);
             BigDecimal winnerPoints = group.stream()
                     .map(MatchCompetitor::getPoints)
-                    .filter(points -> points != null)
+                    .filter(Objects::nonNull)
                     .max(Comparator.naturalOrder())
                     .orElse(null);
 
