@@ -52,10 +52,19 @@
              Jackson POM, whose parent chain would also re-pin junit-bom. -->
         <jackson-2-bom.version>2.22.3</jackson-2-bom.version>
         <jackson-bom.version>3.2.3</jackson-bom.version>
+        <!-- Override the asm 9.7.1 that json-smart's accessors-smart pulls in transitively through
+             spring-boot-starter-test; Spring Boot doesn't manage asm, so it is pinned in dependencyManagement
+             below. -->
+        <asm.version>9.11</asm.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>${asm.version}</version>
+            </dependency>
             <!-- Spring Boot doesn't manage springdoc's version, so import its BOM instead -->
             <dependency>
                 <groupId>org.springdoc</groupId>

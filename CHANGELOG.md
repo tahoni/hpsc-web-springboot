@@ -119,6 +119,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchCompetitorRow`:** Removed `overallRanking` and `clubRanking` from the all-text import row, so a failed bulk
   row no longer reports them
 
+#### 🔐 Security
+
+##### Dependencies
+
+- **`org.ow2.asm:asm`:** Pinned to 9.11 through `dependencyManagement` and a new `asm.version` property, replacing
+  the vulnerable 9.7.1 that `json-smart`'s `accessors-smart` brings in transitively through
+  `spring-boot-starter-test`
+
 #### 🔄 Changed
 
 ##### Database
