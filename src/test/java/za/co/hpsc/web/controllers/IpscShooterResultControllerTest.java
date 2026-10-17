@@ -25,6 +25,30 @@ class IpscShooterResultControllerTest {
     @InjectMocks
     private IpscShooterResultController ipscShooterResultController;
 
+    // createShooterResults()
+    @Test
+    void testCreateShooterResults_whenServiceSucceeds_thenReturns200WithServiceBody() throws NonFatalException {
+        // Arrange
+        ShooterResponseHolder response = new ShooterResponseHolder();
+        when(ipscShooterResultService.calculateMatchShooterResult(1L)).thenReturn(response);
+
+        // Act
+        ResponseEntity<ShooterResponseHolder> result = ipscShooterResultController.createShooterResults(1L);
+
+        // Assert
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertSame(response, result.getBody());
+    }
+
+    @Test
+    void testCreateShooterResults_whenServiceThrows_thenPropagatesNonFatalException() throws NonFatalException {
+        // Arrange
+        when(ipscShooterResultService.calculateMatchShooterResult(99L)).thenThrow(new NonFatalException("not found"));
+
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscShooterResultController.createShooterResults(99L));
+    }
+
     // getAllShooterResults()
     @Test
     void testGetAllShooterResults_whenNoMatches_thenReturnsEmptyList() {

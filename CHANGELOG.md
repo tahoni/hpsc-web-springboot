@@ -54,7 +54,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`ShooterResultResponse`:** New response describing a shooter result — its ID, the match, competitor and match
   competitor IDs, the competitor's names and number, their category and division, and their rank and percentage in
-  the log with the date they were calculated
+  the log, the percentage as a `String` formatted to `IpscConstants.PERCENTAGE_SCALE` for display, with the date they
+  were calculated
 - **`ShooterMatchResultResponse`:** New response describing the match a set of shooter results were shot in — its ID,
   name and date
 - **`ShooterResponseHolder`:** New container linking one `ShooterMatchResultResponse` with the
@@ -62,16 +63,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Services
 
-- **`IpscShooterResultService`:** New read-only service with `getShooterResults`, which returns a match linked to
-  its results, and `getAllShooterResults`, which returns one such holder per match, oldest match date first (then by
-  ID), with no results for a match nobody has a result in; `IpscShooterResultServiceImpl` throws `NonFatalException`
-  for a match that does not exist
+- **`IpscShooterResultService`:** New service with `calculateMatchShooterResult`, which creates or updates a
+  `ShooterResult` for each of a match's competitors — ranking them within their firearm type and division by match
+  points, highest first, with ties sharing a rank, and setting each one's percentage to their points as a percentage
+  of the group winner's, and the date calculated — then returns the match with its results. It only recalculates
+  when the results are out of date, that is when a competitor has no result yet or the match or a competitor was
+  updated at least five minutes after the oldest result was calculated, and otherwise returns the current results as
+  they are. The service
+  also has `getShooterResults`, which returns a match linked to its results, and `getAllShooterResults`, which
+  returns one such holder per match, oldest match date first (then by ID), with no results for a match nobody has a
+  result in; `IpscShooterResultServiceImpl` throws `NonFatalException` for a match that does not exist
+- **`TransactionService.saveShooterResults`:** New method that saves a batch of shooter results in one transaction,
+  flushing so a unique constraint violation surfaces as a `DataIntegrityViolationException`
 
 ##### Controllers
 
-- **`IpscShooterResultController`:** New read-only endpoints `GET /ipsc/shooter-results/matches/{matchId}` and
-  `GET /ipsc/shooter-results`, returning a match linked to its shooter results, or one such holder per match,
-  including matches without results; an unknown match ID returns a 404
+- **`IpscShooterResultController`:** New endpoint `POST /ipsc/shooter-results/matches/{matchId}`, which calculates
+  a match's shooter results and returns the match linked to them, and read-only endpoints
+  `GET /ipsc/shooter-results/matches/{matchId}` and `GET /ipsc/shooter-results`, returning a match linked to its
+  shooter results, or one such holder per match, including matches without results; an unknown match ID returns a
+  404
 
 ##### Utilities
 

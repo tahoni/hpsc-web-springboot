@@ -53,6 +53,55 @@ class IpscShooterResultServiceIntegrationTest {
     @Autowired
     private ShooterResultRepository shooterResultRepository;
 
+    // calculateMatchShooterResult()
+    @Test
+    void testCalculateMatchShooterResult_whenCalledTwice_thenUpdatesTheSameResults() throws NonFatalException {
+        // Arrange
+        IpscMatch match = createMatch("Match A", LocalDate.of(2026, 9, 12));
+        createMatchCompetitor(createCompetitor("HPSC-SR-006"), match, "100");
+        createMatchCompetitor(createCompetitor("HPSC-SR-007"), match, "50");
+        ipscShooterResultService.calculateMatchShooterResult(match.getId());
+
+        // Act
+        ShooterResponseHolder holder = ipscShooterResultService.calculateMatchShooterResult(match.getId());
+
+        // Assert
+        assertEquals(2, holder.getShooterResults().size());
+        assertEquals(2, shooterResultRepository.findAllByMatchIdWithDetails(match.getId()).size());
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenMatchDoesNotExist_thenThrowsNonFatalException() {
+        // Act & Assert
+        assertThrows(NonFatalException.class, () -> ipscShooterResultService.calculateMatchShooterResult(999_999L));
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenMatchHasCompetitors_thenPersistsRanksAndPercentages()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = createMatch("Match A", LocalDate.of(2026, 9, 12));
+        Competitor winner = createCompetitor("HPSC-SR-008");
+        Competitor runnerUp = createCompetitor("HPSC-SR-009");
+        createMatchCompetitor(winner, match, "200");
+        createMatchCompetitor(runnerUp, match, "150");
+
+        // Act
+        ShooterResponseHolder holder = ipscShooterResultService.calculateMatchShooterResult(match.getId());
+
+        // Assert
+        assertEquals(2, holder.getShooterResults().size());
+        ShooterResultResponse first = holder.getShooterResults().stream()
+                .filter(result -> winner.getId().equals(result.getCompetitorId())).findFirst().orElseThrow();
+        ShooterResultResponse second = holder.getShooterResults().stream()
+                .filter(result -> runnerUp.getId().equals(result.getCompetitorId())).findFirst().orElseThrow();
+        assertEquals(1, first.getRankInLog());
+        assertEquals("100.00", first.getPercentageInLog());
+        assertEquals(2, second.getRankInLog());
+        assertEquals("75.00", second.getPercentageInLog());
+        assertNotNull(second.getDateCalculated());
+    }
+
     // getAllShooterResults()
     @Test
     void testGetAllShooterResults_whenMatchesHaveDifferentDates_thenOrdersThemByDate() {
@@ -145,6 +194,18 @@ class IpscShooterResultServiceIntegrationTest {
         match.setName(name);
         match.setScheduledDate(date.atStartOfDay());
         return ipscMatchRepository.save(match);
+    }
+
+    private MatchCompetitor createMatchCompetitor(Competitor competitor, IpscMatch match, String points) {
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.setCompetitor(competitor);
+        matchCompetitor.setMatch(match);
+        matchCompetitor.setCompetitorCategory(CompetitorCategory.JUNIOR);
+        matchCompetitor.setFirearmType(FirearmType.HANDGUN);
+        matchCompetitor.setDivision(Division.OPEN);
+        matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
+        matchCompetitor.setPoints(new BigDecimal(points));
+        return matchCompetitorRepository.saveAndFlush(matchCompetitor);
     }
 
     private ShooterResult createShooterResult(Competitor competitor, IpscMatch match, String percentageInLog) {

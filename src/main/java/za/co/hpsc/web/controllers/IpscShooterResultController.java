@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.models.ControllerResponse;
@@ -25,7 +26,8 @@ import java.util.List;
  * Controller responsible for handling IPSC shooter result API endpoints.
  *
  * <p>
- * Provides read-only endpoints for retrieving each competitor's result in a match, or in every match.
+ * Provides endpoints for calculating each competitor's result in a match, and for retrieving them for a match, or
+ * for every match.
  * </p>
  *
  * @since 15.0.0
@@ -38,6 +40,32 @@ public class IpscShooterResultController {
 
     public IpscShooterResultController(IpscShooterResultService ipscShooterResultService) {
         this.ipscShooterResultService = ipscShooterResultService;
+    }
+
+    /**
+     * Calculates the shooter results for one match, creating or updating one for each of its competitors.
+     *
+     * @param matchId the identifier of the match to calculate results for.
+     * @return the {@link ShooterResponseHolder} linking the match to its freshly calculated shooter results.
+     * @throws NonFatalException if no match with {@code matchId} exists.
+     * @since 15.0.0
+     */
+    @PostMapping(value = "/matches/{matchId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Calculate shooter results for match", description = "Calculate every competitor's result "
+            + "in a match: each is ranked by match points within their firearm type and division, with their "
+            + "percentage set relative to the group winner. Calculating again updates the existing results.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Shooter results calculated.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ShooterResponseHolder.class))),
+            @ApiResponse(responseCode = "404", description = "No match with this ID could be found.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class)))
+    })
+    ResponseEntity<ShooterResponseHolder> createShooterResults(
+            @Parameter(description = "Identifier of the match to calculate results for.")
+            @PathVariable Long matchId) throws NonFatalException {
+        return ResponseEntity.ok(ipscShooterResultService.calculateMatchShooterResult(matchId));
     }
 
     /**

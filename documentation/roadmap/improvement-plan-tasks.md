@@ -424,8 +424,9 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 - [ ] Introduce `ShooterLogService`/`ShooterLogServiceImpl` over the existing `ShooterLog*` repositories
 - [ ] Add controller endpoints for both, backed by `@SpringBootTest` integration tests per the
   `scaffold-integration-tests` conventions — `IpscMatchCompetitorController` and its integration tests shipped in
-  v9.1.0 and extended in v10.0.0 (competitor lookup by number or name, overall-score fields) and v15.0.0 (read-only
-  `IpscShooterResultController` `/ipsc/shooter-results` endpoints over the new `ShooterResult` entity); the
+  v9.1.0 and extended in v10.0.0 (competitor lookup by number or name, overall-score fields) and v15.0.0
+  (`IpscShooterResultController` `/ipsc/shooter-results` endpoints that calculate and read results over the new
+  `ShooterResult` entity); the
   shooter-log endpoints remain
 - [ ] Add Mockito-based controller unit tests per the `scaffold-unit-tests` conventions — done for
   `IpscMatchCompetitorController` in v9.1.0; the shooter-log controller remains

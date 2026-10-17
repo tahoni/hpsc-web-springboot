@@ -8,9 +8,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.domain.ShooterResult;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterResultRepository;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.util.List;
@@ -20,14 +22,17 @@ public class TransactionServiceImpl implements TransactionService {
     private final CompetitorRepository competitorRepository;
     private final IpscMatchRepository ipscMatchRepository;
     private final MatchCompetitorRepository matchCompetitorRepository;
+    private final ShooterResultRepository shooterResultRepository;
     private final TransactionTemplate transactionTemplate;
 
     public TransactionServiceImpl(CompetitorRepository competitorRepository, IpscMatchRepository ipscMatchRepository,
                                   MatchCompetitorRepository matchCompetitorRepository,
+                                  ShooterResultRepository shooterResultRepository,
                                   PlatformTransactionManager transactionManager) {
         this.competitorRepository = competitorRepository;
         this.ipscMatchRepository = ipscMatchRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
+        this.shooterResultRepository = shooterResultRepository;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
 
@@ -100,6 +105,19 @@ public class TransactionServiceImpl implements TransactionService {
         transactionTemplate.executeWithoutResult(status -> {
             matchCompetitorRepository.delete(matchCompetitor);
             matchCompetitorRepository.flush();
+        });
+    }
+
+    @Override
+    public List<ShooterResult> saveShooterResults(List<ShooterResult> shooterResults) {
+        // Flushed inside the transaction rather than at commit, so a unique constraint violation
+        // surfaces from this call as a DataIntegrityViolationException the caller can handle.
+        return transactionTemplate.execute(status -> {
+            List<ShooterResult> saved = shooterResults.stream()
+                    .map(shooterResultRepository::save)
+                    .toList();
+            shooterResultRepository.flush();
+            return saved;
         });
     }
 

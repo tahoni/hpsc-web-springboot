@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.ShooterResult;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.utils.NumberUtil;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -55,8 +56,11 @@ public class ShooterResultResponse {
 
     /** The competitor's rank in the log, if calculated. */
     private Integer rankInLog;
-    /** The competitor's percentage in the log, if calculated. */
-    private BigDecimal percentageInLog;
+    /**
+     * The competitor's percentage in the log, if calculated, formatted to
+     * {@link IpscConstants#PERCENTAGE_SCALE} decimal places for display.
+     */
+    private String percentageInLog;
     /** When the rank and percentage in the log were calculated, if they were. */
     private LocalDateTime dateCalculated;
 
@@ -87,7 +91,9 @@ public class ShooterResultResponse {
         this.division = shooterResult.getDivision();
 
         this.rankInLog = shooterResult.getRankInLog();
-        this.percentageInLog = shooterResult.getPercentageInLog();
+        // Formatted for display only; a result with no percentage yet stays null rather than reading 0.00
+        this.percentageInLog = (shooterResult.getPercentageInLog() == null) ? null
+                : NumberUtil.formatBigDecimal(shooterResult.getPercentageInLog(), IpscConstants.PERCENTAGE_SCALE);
         this.dateCalculated = shooterResult.getDateCalculated();
     }
 }

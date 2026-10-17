@@ -125,8 +125,9 @@ number or a newly met precondition on an existing gap — see the `update-improv
 - **🟡 Partially Completed (2):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v15.0.0 (the
     match competitor service and `/ipsc/match-competitors` controller are built, extended in v10.0.0 with
-    competitor lookup by number or name and overall-score fields, and in v15.0.0 with read-only
-    `/ipsc/shooter-results` endpoints over the new `ShooterResult` entity; the shooter-log layer is not)
+    competitor lookup by number or name and overall-score fields, and in v15.0.0 with
+    `/ipsc/shooter-results` endpoints that calculate and read results over the new `ShooterResult` entity; the
+    shooter-log layer is not)
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
 - **⚪ Open (0):**
@@ -1284,17 +1285,21 @@ without finishing the gap: a request can identify its competitor by number or na
 `CompetitorRepository` finders), `MatchCompetitor` carries the PractiScore-style overall-score columns
 (`V10_1_0__add_match_competitor_overall_scores.sql`) and its CSV headers follow a PractiScore export, and the unused
 `MatchOverallScoresRequest`/`MatchStageScoresRequest` DTOs quoted in the Evidence above are deleted, so the overall
-scores now live on `MatchCompetitor` itself. v15.0.0 adds a read side over a new `ShooterResult` entity
-(`V11_10_0__create_shooter_result.sql`, mirroring `ShooterLogCompetitor` but linked to a match): the read-only
+scores now live on `MatchCompetitor` itself. v15.0.0 adds a calculate-and-read side over a new `ShooterResult`
+entity (`V11_10_0__create_shooter_result.sql`, mirroring `ShooterLogCompetitor` but linked to a match):
 `IpscShooterResultService` (interface + `impl/` split) and `IpscShooterResultController` expose
 `GET /ipsc/shooter-results/matches/{matchId}` and `GET /ipsc/shooter-results`, returning each match with its
-results (competitor, category, division and rank and percentage in the log), over the new
-`ShooterResultRepository` and `IpscMatchRepository`, with Mockito controller and service tests and
-`@SpringBootTest` integration tests. Nothing creates `ShooterResult` rows
-yet, so those endpoints return nothing until a calculation step is built. v15.0.0 also drops `overallRanking` and
-`clubRanking` from `MatchCompetitor` (`V11_8_0`) and renames the shooter-log `points` to `percentageInLog`
-(`V11_9_0`). It still does not add a shooter-log service or controller. The gap closes once a shooter-log service
-and controller exist, and the docs drop their "still being built" language.
+results (competitor, category, division and rank and percentage in the log, the percentage formatted as a display
+string), over the new `ShooterResultRepository` and `IpscMatchRepository`, with Mockito controller and service tests
+and `@SpringBootTest` integration tests. `POST /ipsc/shooter-results/matches/{matchId}`
+calculates a match's `ShooterResult` rows through `calculateMatchShooterResult`, ranking its competitors by match
+points within their firearm type and division and setting each percentage relative to the group winner, and saves
+them in one transaction through the new `TransactionService.saveShooterResults`. It recalculates only when the
+results are out of date — a competitor has no result yet, or the match or a competitor was updated at least five
+minutes after the oldest result was calculated — and otherwise returns the current results. v15.0.0 also drops
+`overallRanking` and `clubRanking` from `MatchCompetitor` (`V11_8_0`) and renames the shooter-log `points` to
+`percentageInLog` (`V11_9_0`). It still does not add a shooter-log service or controller. The gap closes once a
+shooter-log service and controller exist, and the docs drop their "still being built" language.
 
 #### 26. The `tomcat.version` override is an untracked standing manual constraint — 🟡 Partially completed in v8.10.0
 

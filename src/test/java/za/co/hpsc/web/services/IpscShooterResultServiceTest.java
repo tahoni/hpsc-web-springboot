@@ -2,6 +2,7 @@ package za.co.hpsc.web.services;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -12,15 +13,18 @@ import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.domain.ShooterResult;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.models.ipsc.shooterresult.response.ShooterResponseHolder;
 import za.co.hpsc.web.models.ipsc.shooterresult.response.ShooterResultResponse;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
+import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterResultRepository;
 import za.co.hpsc.web.services.impl.IpscShooterResultServiceImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,8 +42,258 @@ class IpscShooterResultServiceTest {
     @Mock
     private IpscMatchRepository ipscMatchRepository;
 
+    @Mock
+    private MatchCompetitorRepository matchCompetitorRepository;
+
+    @Mock
+    private TransactionService transactionService;
+
     @InjectMocks
     private IpscShooterResultServiceImpl ipscShooterResultService;
+
+    // calculateMatchShooterResult()
+    @Test
+    void testCalculateMatchShooterResult_whenCompetitorsHaveNoPoints_thenLeavesRankAndPercentageNull()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor unscored = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, null);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L)).thenReturn(List.of(unscored));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of());
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        ShooterResult saved = savedShooterResults().getFirst();
+        assertNull(saved.getRankInLog());
+        assertNull(saved.getPercentageInLog());
+        assertNotNull(saved.getDateCalculated());
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenMatchCompetitorsExist_thenPopulatesEachShooterResult()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor matchCompetitor = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "80");
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(matchCompetitor));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of());
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        ShooterResult saved = savedShooterResults().getFirst();
+        assertSame(match, saved.getMatch());
+        assertSame(matchCompetitor.getCompetitor(), saved.getCompetitor());
+        assertSame(matchCompetitor, saved.getMatchCompetitor());
+        assertEquals(CompetitorCategory.JUNIOR, saved.getCompetitorCategory());
+        assertEquals(Division.OPEN, saved.getDivision());
+        assertEquals(1, saved.getRankInLog());
+        assertEquals(new BigDecimal("100.00"), saved.getPercentageInLog());
+        assertNotNull(saved.getDateCalculated());
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenMatchDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
+        when(ipscMatchRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        NonFatalException exception = assertThrows(NonFatalException.class,
+                () -> ipscShooterResultService.calculateMatchShooterResult(99L));
+        assertEquals("No IPSC match found with ID 99", exception.getMessage());
+        verifyNoInteractions(matchCompetitorRepository, transactionService);
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenResultAlreadyExists_thenUpdatesItInsteadOfAddingOne()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor matchCompetitor = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "80");
+        matchCompetitor.setDateUpdated(LocalDateTime.of(2026, 10, 2, 8, 0));
+        ShooterResult existing = shooterResult(10L, 2L);
+        existing.setMatchCompetitor(matchCompetitor);
+        existing.setRankInLog(9);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(matchCompetitor));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of(existing));
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        List<ShooterResult> saved = savedShooterResults();
+        assertEquals(1, saved.size());
+        assertSame(existing, saved.getFirst());
+        assertEquals(1, existing.getRankInLog());
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenResultsAreUpToDate_thenReturnsThemWithoutRecalculating()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        match.setDateUpdated(LocalDateTime.of(2026, 9, 30, 8, 0));
+        MatchCompetitor matchCompetitor = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "80");
+        matchCompetitor.setDateUpdated(LocalDateTime.of(2026, 10, 1, 8, 0));
+        ShooterResult existing = shooterResult(10L, 2L);
+        existing.setMatch(match);
+        existing.setMatchCompetitor(matchCompetitor);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(matchCompetitor));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of(existing));
+
+        // Act
+        ShooterResponseHolder holder = ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        assertEquals(1, holder.getShooterResults().size());
+        assertEquals(10L, holder.getShooterResults().getFirst().getShooterResultId());
+        verifyNoInteractions(transactionService);
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenMatchWasUpdatedAfterCalculation_thenRecalculates()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        match.setDateUpdated(LocalDateTime.of(2026, 10, 2, 8, 0));
+        MatchCompetitor matchCompetitor = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "80");
+        ShooterResult existing = shooterResult(10L, 2L);
+        existing.setMatchCompetitor(matchCompetitor);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(matchCompetitor));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of(existing));
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        assertEquals(1, savedShooterResults().size());
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenMatchWasUpdatedLessThanFiveMinutesAfterCalculation_thenDoesNotRecalculate()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        match.setDateUpdated(LocalDateTime.of(2026, 10, 1, 8, 4, 59));
+        MatchCompetitor matchCompetitor = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "80");
+        ShooterResult existing = shooterResult(10L, 2L);
+        existing.setMatchCompetitor(matchCompetitor);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(matchCompetitor));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of(existing));
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        verifyNoInteractions(transactionService);
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenMatchWasUpdatedFiveMinutesAfterCalculation_thenRecalculates()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        match.setDateUpdated(LocalDateTime.of(2026, 10, 1, 8, 5));
+        MatchCompetitor matchCompetitor = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "80");
+        ShooterResult existing = shooterResult(10L, 2L);
+        existing.setMatchCompetitor(matchCompetitor);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(matchCompetitor));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of(existing));
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        assertEquals(1, savedShooterResults().size());
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenMatchCompetitorHasNoResultYet_thenRecalculates()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor withResult = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "80");
+        MatchCompetitor withoutResult = matchCompetitor(2L, FirearmType.HANDGUN, Division.OPEN, "40");
+        ShooterResult existing = shooterResult(10L, 2L);
+        existing.setMatchCompetitor(withResult);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(withResult, withoutResult));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of(existing));
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        assertEquals(2, savedShooterResults().size());
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenSeveralFirearmTypesAndDivisions_thenRanksEachGroupSeparately()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor handgunOpen = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "50");
+        MatchCompetitor rifleOpen = matchCompetitor(2L, FirearmType.RIFLE, Division.OPEN, "40");
+        MatchCompetitor handgunProduction = matchCompetitor(3L, FirearmType.HANDGUN, Division.PRODUCTION, "30");
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(handgunOpen, rifleOpen, handgunProduction));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of());
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        List<ShooterResult> saved = savedShooterResults();
+        assertEquals(3, saved.size());
+        for (ShooterResult shooterResult : saved) {
+            assertEquals(1, shooterResult.getRankInLog());
+            assertEquals(new BigDecimal("100.00"), shooterResult.getPercentageInLog());
+        }
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenSharedGroupHasTies_thenRanksTiedCompetitorsEquallyAndSkipsARank()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor first = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "90");
+        MatchCompetitor tied = matchCompetitor(2L, FirearmType.HANDGUN, Division.OPEN, "90");
+        MatchCompetitor third = matchCompetitor(3L, FirearmType.HANDGUN, Division.OPEN, "45");
+        MatchCompetitor unscored = matchCompetitor(4L, FirearmType.HANDGUN, Division.OPEN, null);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(third, first, unscored, tied));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of());
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        List<ShooterResult> saved = savedShooterResults();
+        assertEquals(1, rankOf(saved, first));
+        assertEquals(1, rankOf(saved, tied));
+        assertEquals(3, rankOf(saved, third));
+        assertEquals(new BigDecimal("50.00"), percentageOf(saved, third));
+        assertNull(rankOf(saved, unscored));
+    }
 
     // getAllShooterResults()
     @Test
@@ -148,7 +402,7 @@ class IpscShooterResultServiceTest {
         assertEquals(CompetitorCategory.JUNIOR, result.getCompetitorCategory());
         assertEquals(Division.OPEN, result.getDivision());
         assertEquals(3, result.getRankInLog());
-        assertEquals(new BigDecimal("87.5"), result.getPercentageInLog());
+        assertEquals("87.50", result.getPercentageInLog());
         assertEquals(LocalDateTime.of(2026, 10, 1, 8, 0), result.getDateCalculated());
     }
 
@@ -182,6 +436,44 @@ class IpscShooterResultServiceTest {
     }
 
     // Helpers
+    private MatchCompetitor matchCompetitor(Long id, FirearmType firearmType, Division division, String points) {
+        Competitor competitor = new Competitor();
+        competitor.setId(id);
+        competitor.setFirstName("Jane");
+        competitor.setLastName("Doe");
+
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+        matchCompetitor.setId(id);
+        matchCompetitor.setCompetitor(competitor);
+        matchCompetitor.setCompetitorCategory(CompetitorCategory.JUNIOR);
+        matchCompetitor.setFirearmType(firearmType);
+        matchCompetitor.setDivision(division);
+        matchCompetitor.setPoints(points == null ? null : new BigDecimal(points));
+        return matchCompetitor;
+    }
+
+    private Integer rankOf(List<ShooterResult> shooterResults, MatchCompetitor matchCompetitor) {
+        return resultOf(shooterResults, matchCompetitor).getRankInLog();
+    }
+
+    private BigDecimal percentageOf(List<ShooterResult> shooterResults, MatchCompetitor matchCompetitor) {
+        return resultOf(shooterResults, matchCompetitor).getPercentageInLog();
+    }
+
+    private ShooterResult resultOf(List<ShooterResult> shooterResults, MatchCompetitor matchCompetitor) {
+        return shooterResults.stream()
+                .filter(shooterResult -> shooterResult.getMatchCompetitor() == matchCompetitor)
+                .findFirst()
+                .orElseThrow();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<ShooterResult> savedShooterResults() {
+        ArgumentCaptor<List<ShooterResult>> captor = ArgumentCaptor.forClass(List.class);
+        verify(transactionService).saveShooterResults(captor.capture());
+        return new ArrayList<>(captor.getValue());
+    }
+
     private IpscMatch match(Long id, String name) {
         IpscMatch match = new IpscMatch();
         match.setId(id);
