@@ -330,8 +330,8 @@ points back to it rather than restating it, so it's the one to update first when
 
 Five documentation-only folders supplement these:
 
-- **`documentation/history/`** holds one of each of the following files per released version from v10.0.0 onward,
-  grouped into `v10/` – `v13/` subdirectories by major version (e.g. `documentation/history/v13/`):
+- **`documentation/history/`** holds one of each of the following files per released version from v14.0.0 onward,
+  grouped into `v14/` and later subdirectories by major version (e.g. `documentation/history/v14/`):
 
   | File                       | Purpose                                                    |
   |----------------------------|------------------------------------------------------------|
@@ -339,7 +339,8 @@ Five documentation-only folders supplement these:
   | `PR_DESCRIPTION_vX.Y.Z.md` | The release pull request's body, archived for that version |
 
 - **`documentation/archive/`** holds the frozen archives of the earlier releases, one subdirectory per range —
-  `v1-v4/` (versions 1.0.0 – 4.1.0), `v5-v7/` (versions 5.0.0 – 7.4.1) and `v8-v9/` (versions 8.0.0 – 9.1.0). Each holds
+  `v1-v4/` (versions 1.0.0 – 4.1.0), `v5-v7/` (versions 5.0.0 – 7.4.1), `v8-v9/` (versions 8.0.0 – 9.1.0) and
+  `v10-v13/` (versions 10.0.0 – 13.3.0). Each holds
   that range's per-version release notes and pull request descriptions in `vN/` subdirectories, plus three single
   files named for the range (e.g. `CHANGELOG_v5-v7.md`), moved unchanged and never edited by a release:
 
@@ -616,7 +617,7 @@ anything downstream references them:
    goal into that entry's narrative, or adding a new `Version N.x` entry for a new major version. Then check whether
    `documentation/roadmap/improvement-plan.md`'s "⚙️ Goals & Constraints" table needs a matching update — it's
    synthesised partly from `HISTORY.md`'s Future Roadmap Implications sections, so a change here can leave that table
-   stale. Versions 1.0.0 – 9.1.0 are archived in `documentation/archive/v1-v4/`, `v5-v7/` and `v8-v9/`
+   stale. Versions 1.0.0 – 13.3.0 are archived in `documentation/archive/v1-v4/`, `v5-v7/`, `v8-v9/` and `v10-v13/`
    (`CHANGELOG_*` and `HISTORY_*`); a release never edits those files.
 7. **Update or create `RELEASE_NOTES.md`.** Follow the established section order: Theme → Key Highlights → What's New
    (Added/Changed/Fixed/Removed) → Migration Guide → Statistics → Design Notes → Testing → Known Issues → Future

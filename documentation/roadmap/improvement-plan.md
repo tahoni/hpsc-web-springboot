@@ -46,7 +46,7 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 | `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` and Dependabot security PRs direct to `main`), strict Semantic Versioning (classified from `[Unreleased]`, validated at release time) and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs                                                                                                                                                                                                                                       |
 | `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                                                                                                                                                                                                                                                                                                                                                      |
 | `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                                                                                                                                                                                                                                                                                                                                                         |
-| `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.1) — this currency itself creates a maintenance constraint, including a standing `tomcat.version` security override (see Gap #26 and [Gaps](#-gaps--improvement-opportunities))                                                                                                                                                                                                                                                                                                                                                           |
+| `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.1) — this currency itself creates a maintenance constraint, including a standing `tomcat.version` security override and, since v15.0.0, an `asm.version` pin (see Gap #26 and [Gaps](#-gaps--improvement-opportunities))                                                                                                                                                                                                                                                                                                                  |
 | `application.properties` (prod/dev/test)            | Flyway is the schema source of truth for MySQL (prod/dev), run at startup since v8.11.0 (Gap #30); the `test` profile bypasses it entirely via Hibernate `create-drop` against H2 — the two schema paths can silently diverge                                                                                                                                                                                                                                                                                                                                                                                         |
 | `CONTRIBUTING.md`, `application.properties`         | Five runtime profiles (none, `prod`, `dev`, special-purpose `local`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors (documented as configured since Gap #27)                                                                                                                                                                                                                                                                                                                                                                         |
 
@@ -123,9 +123,11 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #40 Renaming every `Division` name left stored divisions with no data migration — closed v14.0.0 (`V11_7_0`
     renames the stored divisions)
 - **🟡 Partially Completed (2):**
-  - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v10.0.0 (the
+  - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v15.0.0 (the
     match competitor service and `/ipsc/match-competitors` controller are built, extended in v10.0.0 with
-    competitor lookup by number or name and overall-score fields; the shooter-log layer is not)
+    competitor lookup by number or name and overall-score fields, and in v15.0.0 with
+    `/ipsc/shooter-results` endpoints that calculate and read results over the new `ShooterResult` entity; the
+    shooter-log layer is not)
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
 - **⚪ Open (0):**
@@ -1247,7 +1249,7 @@ A gap moves here when it has at least one **Progress** paragraph (per
 `update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
 but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
 
-#### 6. Match scoring / shooter-log service and controller layer are not yet built — 🟡 Partially completed in v10.0.0
+#### 6. Match scoring / shooter-log service and controller layer are not yet built — 🟡 Partially completed in v15.0.0
 
 **Evidence:** `ARCHITECTURE.md`'s Feature Support table states, "JPA entities and repositories exist for
 match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being
@@ -1283,8 +1285,21 @@ without finishing the gap: a request can identify its competitor by number or na
 `CompetitorRepository` finders), `MatchCompetitor` carries the PractiScore-style overall-score columns
 (`V10_1_0__add_match_competitor_overall_scores.sql`) and its CSV headers follow a PractiScore export, and the unused
 `MatchOverallScoresRequest`/`MatchStageScoresRequest` DTOs quoted in the Evidence above are deleted, so the overall
-scores now live on `MatchCompetitor` itself. The gap closes once a shooter-log service and
-controller exist, and the docs drop their "still being built" language.
+scores now live on `MatchCompetitor` itself. v15.0.0 adds a calculate-and-read side over a new `ShooterResult`
+entity (`V11_10_0__create_shooter_result.sql`, mirroring `ShooterLogCompetitor` but linked to a match):
+`IpscShooterResultService` (interface + `impl/` split) and `IpscShooterResultController` expose
+`GET /ipsc/shooter-results/matches/{matchId}` and `GET /ipsc/shooter-results`, returning each match with its
+results (competitor, category, division and rank and percentage in the log, the percentage formatted as a display
+string), over the new `ShooterResultRepository` and `IpscMatchRepository`, with Mockito controller and service tests
+and `@SpringBootTest` integration tests. `POST /ipsc/shooter-results/matches/{matchId}`
+calculates a match's `ShooterResult` rows through `calculateMatchShooterResult`, ranking its competitors by match
+points within their firearm type, division and competitor category (none being a group of its own) and setting each percentage relative to the group winner, and saves
+them in one transaction through the new `TransactionService.saveShooterResults`. It recalculates only when the
+results are out of date — a competitor has no result yet, or the match or a competitor was updated at least five
+minutes after the oldest result was calculated — and otherwise returns the current results. v15.0.0 also drops
+`overallRanking` and `clubRanking` from `MatchCompetitor` (`V11_8_0`) and renames the shooter-log `points` to
+`percentageInLog` (`V11_9_0`). It still does not add a shooter-log service or controller. The gap closes once a
+shooter-log service and controller exist, and the docs drop their "still being built" language.
 
 #### 26. The `tomcat.version` override is an untracked standing manual constraint — 🟡 Partially completed in v8.10.0
 
@@ -1312,7 +1327,8 @@ The override itself has to stay for now: Spring Boot 4.1.1 is still the latest G
 milestone) and still manages Tomcat `11.0.24`; v9.0.0 raised it to `11.0.26` and added matching pins for Logback,
 Jackson and Flyway, which the same release-time check should also revisit. The gap closes once a Spring Boot GA
 release manages `11.0.26` or later and the override is dropped (the threshold was `11.0.25` until v9.0.0 raised the
-pin).
+pin). v15.0.0 adds an `asm.version` pin (9.11) in `pom.xml`, which the same release-time check should also
+revisit: Spring Boot does not manage `asm`, so it only goes once `json-smart` stops resolving a vulnerable version.
 
 ### ⚪ Open
 
@@ -1322,12 +1338,12 @@ pin).
 
 ## 🛤️ Roadmap
 
-| Phase       | Focus                                                                                                                                                                                                                                              |
-|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0, the shooter-log service and controller remain                                                                                  |
-| **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0                                                                                                                                                             |
-| **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                          |
-| **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
+| Phase       | Focus                                                                                                                                                                                                                                                                                                                                                                               |
+|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0, the shooter-log service and controller remain                                                                                                                                                                                                       |
+| **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0                                                                                                                                                                                                                                                                                              |
+| **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                                           |
+| **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26), and `asm.version` since v15.0.0 (Spring Boot does not manage `asm`, so the pin overrides the 9.7.1 that `json-smart` brings in); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
 ---
 

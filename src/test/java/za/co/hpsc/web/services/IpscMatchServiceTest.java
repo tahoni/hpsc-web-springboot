@@ -24,6 +24,7 @@ import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterResultRepository;
 import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.services.impl.IpscEntityClubServiceImpl;
@@ -74,7 +75,8 @@ public class IpscMatchServiceTest {
     @BeforeEach
     void setUp() {
         TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
-                ipscMatchRepository, matchCompetitorRepository, transactionManager);
+                ipscMatchRepository, matchCompetitorRepository, mock(ShooterResultRepository.class),
+                transactionManager);
         ipscMatchService = new IpscMatchServiceImpl(ipscMatchRepository,
                 matchCompetitorRepository, shooterLogRepository, shooterLogCompetitorRepository,
                 new MatchMapper(new IpscEntityClubServiceImpl(clubRepository)), transactionService);

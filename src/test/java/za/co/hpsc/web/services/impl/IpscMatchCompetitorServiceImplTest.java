@@ -488,8 +488,6 @@ class IpscMatchCompetitorServiceImplTest {
         matchCompetitor.setNoShoots(0);
         matchCompetitor.setProceduralErrors(3);
         matchCompetitor.setAdditionalPenalties(5);
-        matchCompetitor.setOverallRanking(new BigDecimal("2"));
-        matchCompetitor.setClubRanking(new BigDecimal("1"));
         matchCompetitor.setIsVisitor(false);
 
         // Act
@@ -517,8 +515,6 @@ class IpscMatchCompetitorServiceImplTest {
         assertEquals(0, response.getNoShoots());
         assertEquals(3, response.getProceduralErrors());
         assertEquals(5, response.getAdditionalPenalties());
-        assertEquals(new BigDecimal("2"), response.getOverallRanking());
-        assertEquals(new BigDecimal("1"), response.getClubRanking());
         assertEquals(Boolean.FALSE, response.getIsVisitor());
     }
 

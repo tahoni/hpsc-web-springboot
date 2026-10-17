@@ -99,6 +99,9 @@ current at the time it's authored. Treat any resemblance between the two as coin
 | `V11_5_0__rename_lady_senior_competitor_category.sql`                       | v13.0.0                | Renames the stored competitor category `Lady, Senior` to `Lady Senior` in `match_competitor`, `shooter_log_competitor` and `shooter_log_overall`                                      |
 | `V11_6_0__add_competitor_paid_up_ngpsa.sql`                                 | v13.3.0                | Adds the optional `competitor.paid_up_ngpsa` boolean column, placed after `paid_up_sapsa`                                                                                             |
 | `V11_7_0__drop_division_suffix_from_division_names.sql`                     | v14.0.0                | Renames the stored `division` in the three division tables to the new `Division` names (no " Division" suffix)                                                                        |
+| `V11_8_0__remove_match_competitor_rankings.sql`                             | v15.0.0                | Drops the `overall_ranking` and `club_ranking` columns from `match_competitor`                                                                                                        |
+| `V11_9_0__rename_shooter_log_points_to_percentage_in_log.sql`               | v15.0.0                | Renames `points` to `percentage_in_log` in `shooter_log_competitor` and `shooter_log_overall`                                                                                         |
+| `V11_10_0__create_shooter_result.sql`                                       | v15.0.0                | Creates `shooter_result`, linked to `ipsc_match`, `competitor` and `match_competitor`, unique per match and match competitor                                                          |
 
 ---
 

@@ -11,9 +11,11 @@ import org.springframework.transaction.TransactionStatus;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.domain.ShooterResult;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterResultRepository;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
 import java.util.List;
@@ -41,6 +43,9 @@ public class TransactionServiceTest {
     private MatchCompetitorRepository matchCompetitorRepository;
 
     @Mock
+    private ShooterResultRepository shooterResultRepository;
+
+    @Mock
     private PlatformTransactionManager transactionManager;
 
     @Mock
@@ -51,7 +56,7 @@ public class TransactionServiceTest {
     @BeforeEach
     void setUp() {
         transactionService = new TransactionServiceImpl(competitorRepository, ipscMatchRepository,
-                matchCompetitorRepository, transactionManager);
+                matchCompetitorRepository, shooterResultRepository, transactionManager);
     }
 
     // saveCompetitor()
@@ -253,6 +258,41 @@ public class TransactionServiceTest {
         // Act & Assert
         assertThrows(DataIntegrityViolationException.class,
                 () -> transactionService.saveMatchCompetitors(List.of(new MatchCompetitor())));
+        verify(transactionManager).rollback(transactionStatus);
+        verify(transactionManager, never()).commit(any());
+    }
+
+    // saveShooterResults()
+    @Test
+    void testSaveShooterResults_whenCalled_thenSavesEachFlushesAndCommitsInOneTransaction() {
+        // Arrange
+        stubTransaction();
+        ShooterResult first = new ShooterResult();
+        ShooterResult second = new ShooterResult();
+        when(shooterResultRepository.save(any(ShooterResult.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        List<ShooterResult> result = transactionService.saveShooterResults(List.of(first, second));
+
+        // Assert
+        assertEquals(List.of(first, second), result);
+        verify(shooterResultRepository).flush();
+        verify(transactionManager, times(1)).getTransaction(any());
+        verify(transactionManager).commit(transactionStatus);
+    }
+
+    @Test
+    void testSaveShooterResults_whenFlushFails_thenRollsBackAndPropagates() {
+        // Arrange
+        stubTransaction();
+        when(shooterResultRepository.save(any(ShooterResult.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        doThrow(new DataIntegrityViolationException("duplicate")).when(shooterResultRepository).flush();
+
+        // Act & Assert
+        assertThrows(DataIntegrityViolationException.class,
+                () -> transactionService.saveShooterResults(List.of(new ShooterResult())));
         verify(transactionManager).rollback(transactionStatus);
         verify(transactionManager, never()).commit(any());
     }

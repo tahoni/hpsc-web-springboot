@@ -12,6 +12,7 @@ import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterResultRepository;
 
 import java.util.List;
 
@@ -36,6 +37,9 @@ class TransactionServiceImplTest {
     private MatchCompetitorRepository matchCompetitorRepository;
 
     @Mock
+    private ShooterResultRepository shooterResultRepository;
+
+    @Mock
     private PlatformTransactionManager transactionManager;
 
     private TransactionServiceImpl transactionServiceImpl;
@@ -43,7 +47,7 @@ class TransactionServiceImplTest {
     @BeforeEach
     void setUp() {
         transactionServiceImpl = new TransactionServiceImpl(competitorRepository, ipscMatchRepository,
-                matchCompetitorRepository, transactionManager);
+                matchCompetitorRepository, shooterResultRepository, transactionManager);
     }
 
     // loadAssociations(Competitor)

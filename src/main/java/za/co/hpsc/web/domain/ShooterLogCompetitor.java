@@ -47,8 +47,8 @@ public class ShooterLogCompetitor {
     @Column(name = "rank_in_log")
     private Integer rankInLog;
 
-    @Column(name = "points", precision = 19, scale = 6)
-    private BigDecimal points;
+    @Column(name = "percentage_in_log", precision = 19, scale = 6)
+    private BigDecimal percentageInLog;
 
     @Column(name = "date_calculated")
     private LocalDateTime dateCalculated;

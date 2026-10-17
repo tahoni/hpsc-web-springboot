@@ -36,7 +36,7 @@
 ## 🔗 Related Documentation
 
 - [RELEASE_NOTES.md](/RELEASE_NOTES.md)
-- [CHANGELOG.md](/CHANGELOG.md#-8111---2026-09-27)
+- [CHANGELOG.md](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md#-8111---2026-09-27)
 - [HISTORY.md](/HISTORY.md)
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

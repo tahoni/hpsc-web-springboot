@@ -27,6 +27,11 @@ public interface MatchCompetitorRepository extends JpaRepository<MatchCompetitor
     @Query("select mc from MatchCompetitor mc join fetch mc.competitor join fetch mc.match")
     List<MatchCompetitor> findAllWithCompetitorAndMatch();
 
+    // Fetch-joins the competitor and match for one match's shooter results.
+    @Query("select mc from MatchCompetitor mc join fetch mc.competitor join fetch mc.match "
+            + "where mc.match.id = :matchId")
+    List<MatchCompetitor> findAllByMatchIdWithCompetitorAndMatch(@Param("matchId") Long matchId);
+
     boolean existsByCompetitorId(Long competitorId);
 
     boolean existsByMatchId(Long matchId);
