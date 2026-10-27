@@ -33,6 +33,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`Division.RIFLE_PCC`:** New "Rifle PCC" rifle division
 
+##### Tests
+
+- **`CompetitorHelpersTest`:** New `cleanCompetitorName` tests for removing a one-, two- or three-digit trailing
+  suffix, alone and after a position prefix, and for keeping digits that are not at the end of the name
+
 #### 🔄 Changed
 
 ##### Utilities
