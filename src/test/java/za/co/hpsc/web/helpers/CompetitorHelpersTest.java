@@ -209,6 +209,13 @@ public class CompetitorHelpersTest {
     }
 
     @Test
+    void testCleanCompetitorName_whenTrailingDigitsFollowedByWhitespace_thenRemovesThem() {
+        // Act & Assert
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith 12 "));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith 2  \t"));
+    }
+
+    @Test
     void testCleanCompetitorName_whenPositionAndTrailingDigits_thenRemovesBoth() {
         // Act & Assert
         assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("1 - John Smith 12"));
