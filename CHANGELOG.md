@@ -33,6 +33,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`Division.RIFLE_PCC`:** New "Rifle PCC" rifle division
 
+#### 🔄 Changed
+
+##### Utilities
+
+- **`CompetitorHelpers`:** Competitor names now have a trailing modified-entry digit stripped, via
+  `MODIFIED_SUFFIX`, when they are normalised
+
 ---
 
 ### 🧾 [15.0.0] - 2026-10-17
