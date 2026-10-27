@@ -44,6 +44,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`CompetitorHelpers`:** Competitor names now have a trailing modified-entry digit stripped, via
   `MODIFIED_SUFFIX`, when they are normalised
+- **`IpscConstants.REPLACE_IN_NAMES_REGEX`:** Now also removes a "TRO" (or "(TRO)") role marker from competitor
+  names before they are matched by full name
 
 ##### Services
 
