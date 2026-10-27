@@ -33,8 +33,8 @@ public enum Division {
     REVOLVER("Revolver", FirearmType.HANDGUN),
 
     // Rifle Divisions
-    RIFLE_SEMI_AUTO_OPEN("Rifle Open", FirearmType.RIFLE),
-    RIFLE_SEMI_AUTO_STANDARD("Rifle Standard", FirearmType.RIFLE),
+    RIFLE_SEMI_AUTO_OPEN("Rifle Semi Auto Open", FirearmType.RIFLE),
+    RIFLE_SEMI_AUTO_STANDARD("Rifle Semi Auto Standard", FirearmType.RIFLE),
     RIFLE_STANDARD_MANUAL("Rifle Standard Manual", FirearmType.RIFLE),
     RIFLE_PCC("Rifle PCC", FirearmType.RIFLE),
 

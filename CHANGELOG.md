@@ -47,6 +47,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscConstants.REPLACE_IN_NAMES_REGEX`:** Now also removes a "TRO" (or "(TRO)") role marker from competitor
   names before they are matched by full name
 
+##### Domain
+
+- **`Division`:** `RIFLE_SEMI_AUTO_OPEN` and `RIFLE_SEMI_AUTO_STANDARD` display names are now "Rifle Semi Auto Open"
+  and "Rifle Semi Auto Standard" (were "Rifle Open" and "Rifle Standard")
+
 ##### Services
 
 - **`IpscMatchCompetitorServiceImpl.createMatchCompetitors`:** Now `@Transactional`, so a bulk import is saved or
