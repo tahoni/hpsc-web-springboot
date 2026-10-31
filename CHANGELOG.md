@@ -100,6 +100,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`spring-boot-starter-webmvc-test`:** Excludes `net.minidev:json-smart` and `com.jayway.jsonpath:json-path`, since
   `json-smart` 2.6.0, the latest release, is vulnerable to CVE-2026-113602 and nothing in the tests uses JsonPath
+- **`spring-boot-starter-webmvc-test`:** Also excludes `org.skyscreamer:jsonassert`, whose `android-json`
+  0.0.20131108.vaadin1 is vulnerable to CVE-2026-110974 with no fixed release, and nothing in the tests uses JSONAssert
 
 ---
 

@@ -68,6 +68,8 @@ import is saved or rolled back as one unit.
 
 - `net.minidev:json-smart` (CVE-2026-113602, no fixed release) and `com.jayway.jsonpath:json-path` are excluded from
   `spring-boot-starter-webmvc-test`; nothing in the tests uses JsonPath, and the runtime classpath never held them
+- `org.skyscreamer:jsonassert` is excluded too, since its `android-json` (CVE-2026-110974) has no fixed release and
+  nothing in the tests uses JSONAssert
 
 ---
 

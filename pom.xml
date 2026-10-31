@@ -88,6 +88,12 @@
                     <groupId>net.minidev</groupId>
                     <artifactId>json-smart</artifactId>
                 </exclusion>
+                <!-- jsonassert's android-json 0.0.20131108.vaadin1 is vulnerable to CVE-2026-110974, has no fixed
+                     release and nothing here uses JSONAssert -->
+                <exclusion>
+                    <groupId>org.skyscreamer</groupId>
+                    <artifactId>jsonassert</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <!-- Health checks -->
