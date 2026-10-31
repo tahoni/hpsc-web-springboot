@@ -55,13 +55,21 @@ import is saved or rolled back as one unit.
 - `CompetitorHelpers` strips trailing modified-entry digits when it normalises a competitor name
 - `IpscConstants.REPLACE_IN_NAMES_REGEX` also removes a "TRO" or "(TRO)" role marker
 - `IpscMatchCompetitorServiceImpl.createMatchCompetitors` is `@Transactional`
-- Spring Boot is bumped to 4.1.2, `asm.version` to 9.11.1 and `mysql-connector-j` to 26.10.0
+- Spring Boot is bumped to 4.1.2, `mysql-connector-j` to 26.10.0 and the Jackson BOMs to 2.22.4 and 3.2.4
 - `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add Gap #41 and close Gap #26
 - `documentation/recommendations/flyway-migration-versioning.md` gains a row for `V11_11_0`
 
 ### Removed
 
 - The `tomcat.version` override in `pom.xml`, since Spring Boot 4.1.2 manages Tomcat `11.0.27`
+- The `asm.version` pin, since `asm` is no longer on the classpath
+
+### Security
+
+- `net.minidev:json-smart` (CVE-2026-113602, no fixed release) and `com.jayway.jsonpath:json-path` are excluded from
+  `spring-boot-starter-webmvc-test`; nothing in the tests uses JsonPath, and the runtime classpath never held them
+- `org.skyscreamer:jsonassert` is excluded too, since its `android-json` (CVE-2026-110974) has no fixed release and
+  nothing in the tests uses JSONAssert
 
 ---
 
@@ -117,7 +125,7 @@ send:
 - `IpscConstants`' `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`, `SystemConstants.DEFAULT_SCALE` and
   `NumberUtil.calculateSum` have no production caller (Gap #41).
 - `pom.xml` still overrides `logback.version`, the Jackson BOM properties and `flyway-mysql`, set above Spring Boot's
-  managed versions, and pins `asm.version`, since Spring Boot does not manage `asm`.
+  managed versions.
 
 ---
 

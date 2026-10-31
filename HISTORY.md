@@ -39,6 +39,8 @@ evolution of architecture, features and design philosophy across all versions.
 - Scoped as `v16.0.0` **MAJOR**: a division given by the old "Rifle Open" or "Rifle Standard" names no longer
   resolves, flagged in `CHANGELOG.md`
 - Spring Boot is bumped to 4.1.2, which manages Tomcat `11.0.27`, so the `tomcat.version` override is removed
+- `json-smart`, `json-path` and `jsonassert` are excluded from the test classpath (CVE-2026-113602 and
+  CVE-2026-110974, no fixed releases), and the `asm` pin that existed for them is removed
 - Improvement plan: Gap #41 is added for the score-scale constants and `NumberUtil.calculateSum` that v15.0.0
   reinstated without a production caller, and Gap #26 is closed, leaving 39 gaps closed, #6 partially completed and #41
   open
@@ -759,6 +761,7 @@ The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, i
   marker
 - `IpscMatchCompetitorServiceImpl.createMatchCompetitors` runs in one transaction
 - Spring Boot is bumped to 4.1.2 and the `tomcat.version` override is removed
+- `json-smart` and `jsonassert` are excluded from the test classpath and the `asm` pin is removed
 - Improvement plan: Gap #41 is added and Gap #26 closed, leaving 39 closed, #6 partially completed and #41 open
 - Project version bumped to 16.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 

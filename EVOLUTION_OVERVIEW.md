@@ -153,6 +153,8 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 **Build & Metadata**
 
 - Spring Boot is bumped to 4.1.2, which manages Tomcat `11.0.27`, so the `tomcat.version` override is removed
+- `json-smart`, `json-path` and `jsonassert` are excluded from the test classpath (CVE-2026-113602 and
+  CVE-2026-110974, no fixed releases), and the `asm` pin that existed for them is removed
 - Improvement plan: Gap #41 is added and Gap #26 closed, leaving 39 closed, #6 partially completed and #41 open
 - Project version bumped to 16.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
