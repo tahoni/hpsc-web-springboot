@@ -46,21 +46,12 @@
         <logback.version>1.6.5</logback.version>
         <!-- Spring Boot imports the Jackson BOMs through these properties; override them rather than importing a
              Jackson POM, whose parent chain would also re-pin junit-bom. -->
-        <jackson-2-bom.version>2.22.3</jackson-2-bom.version>
-        <jackson-bom.version>3.2.3</jackson-bom.version>
-        <!-- Override the asm 9.7.1 that json-smart's accessors-smart pulls in transitively through
-             spring-boot-starter-test; Spring Boot doesn't manage asm, so it is pinned in dependencyManagement
-             below. -->
-        <asm.version>9.11.1</asm.version>
+        <jackson-2-bom.version>2.22.4</jackson-2-bom.version>
+        <jackson-bom.version>3.2.4</jackson-bom.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>${asm.version}</version>
-            </dependency>
             <!-- Spring Boot doesn't manage springdoc's version, so import its BOM instead -->
             <dependency>
                 <groupId>org.springdoc</groupId>
@@ -86,6 +77,16 @@
                 <exclusion>
                     <groupId>org.assertj</groupId>
                     <artifactId>assertj-core</artifactId>
+                </exclusion>
+                <!-- json-smart 2.6.0 (the latest release) is vulnerable to CVE-2026-113602 and nothing here uses
+                     JsonPath, so keep both out of the test classpath -->
+                <exclusion>
+                    <groupId>com.jayway.jsonpath</groupId>
+                    <artifactId>json-path</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.minidev</groupId>
+                    <artifactId>json-smart</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

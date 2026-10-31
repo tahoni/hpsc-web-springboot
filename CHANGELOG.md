@@ -28,6 +28,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Dependencies
+
+- **`jackson-2-bom.version`, `jackson-bom.version`:** Bumped from 2.22.3 to 2.22.4 and from 3.2.3 to 3.2.4
+
+#### 🗑️ Removed
+
+##### Dependencies
+
+- **`asm.version`:** Removed the `org.ow2.asm:asm` pin and its `dependencyManagement` entry, since `asm` is no longer on
+  the classpath once `json-smart` is excluded
+
+#### 🔐 Security
+
+##### Dependencies
+
+- **`spring-boot-starter-webmvc-test`:** Excludes `net.minidev:json-smart` and `com.jayway.jsonpath:json-path`, since
+  `json-smart` 2.6.0, the latest release, is vulnerable to CVE-2026-113602 and nothing in the tests uses JsonPath
+
 ---
 
 ### 🧾 [16.0.0] - 2026-10-31
