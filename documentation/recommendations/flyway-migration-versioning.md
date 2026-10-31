@@ -102,6 +102,7 @@ current at the time it's authored. Treat any resemblance between the two as coin
 | `V11_8_0__remove_match_competitor_rankings.sql`                             | v15.0.0                | Drops the `overall_ranking` and `club_ranking` columns from `match_competitor`                                                                                                        |
 | `V11_9_0__rename_shooter_log_points_to_percentage_in_log.sql`               | v15.0.0                | Renames `points` to `percentage_in_log` in `shooter_log_competitor` and `shooter_log_overall`                                                                                         |
 | `V11_10_0__create_shooter_result.sql`                                       | v15.0.0                | Creates `shooter_result`, linked to `ipsc_match`, `competitor` and `match_competitor`, unique per match and match competitor                                                          |
+| `V11_11_0__rename_semi_auto_rifle_division_names.sql`                       | v16.0.0                | Renames the stored `division` "Rifle Open" and "Rifle Standard" in the three division tables to "Rifle Semi Auto Open" and "Rifle Semi Auto Standard"                                 |
 
 ---
 

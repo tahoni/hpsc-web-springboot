@@ -1,56 +1,41 @@
-# Release Notes – Version 15.0.0
+# Release Notes – Version 16.0.0
 
-**Release Date:** October 17, 2026 **Status:** ✨ Stable
+**Release Date:** October 31, 2026 **Status:** ✨ Stable
 
 ---
 
 ## 🎯 Theme
 
-**Shooter Result Calculation & Reading**
+**Rifle PCC Division, Clearer Semi-Auto Division Names & Cleaner Competitor Name Matching**
 
-Version 15.0.0 is a major release. A match's shooter results — each competitor's rank and percentage within their
-firearm type, division and competitor category — are now calculated, stored in a new `ShooterResult` entity and read
-through new endpoints. The overall and club rankings on a match competitor are removed, and the shooter log `points` are
-renamed. Several of these change what an existing caller sends or receives, so each is flagged **Breaking** in
-`CHANGELOG.md`.
+Version 16.0.0 is a major release. The Rifle PCC division is added, and the semi-auto rifle divisions are renamed so
+their names say what they are. A division given by the old "Rifle Open" or "Rifle Standard" names no longer resolves,
+which is flagged **Breaking** in `CHANGELOG.md`. Competitor names also match more reliably, and a bulk match competitor
+import is saved or rolled back as one unit.
 
 ---
 
 ## ⭐ Key Highlights
 
-### 🏆 Shooter Result Calculation
+### 🔫 Divisions
 
-- `IpscShooterResultService.calculateMatchShooterResult` creates or updates a `ShooterResult` for each of a match's
-  competitors, ranking them by match points within their firearm type, division and competitor category, with
-  competitors in no category (`NONE`) a group of their own
-- Competitors on equal points share a rank and the next rank is skipped; a competitor without points gets neither a
-  rank nor a percentage
-- Each percentage is the competitor's points as a percentage of their group winner's, to
-  `IpscConstants.PERCENTAGE_SCALE` decimal places
-- Results are recalculated only when they are out of date: a competitor has no result yet, or the match or a competitor
-  was updated at least five minutes after the oldest result was calculated. Otherwise, the current results are returned
-- `TransactionService.saveShooterResults` saves a batch in one transaction, so a unique constraint violation surfaces as
-  a `DataIntegrityViolationException`
+- New `Division.RIFLE_PCC`, shown as "Rifle PCC"
+- `RIFLE_SEMI_AUTO_OPEN` and `RIFLE_SEMI_AUTO_STANDARD` are now "Rifle Semi Auto Open" and "Rifle Semi Auto Standard"
+  (they were "Rifle Open" and "Rifle Standard")
+- `V11_11_0__rename_semi_auto_rifle_division_names.sql` renames the stored `division` in `match_competitor`,
+  `shooter_log_competitor` and `shooter_log_overall`; without it an existing row would read back as `null`
 
-### 🌐 Shooter Result Endpoints
+### 🧹 Competitor Name Matching
 
-- `POST /ipsc/shooter-results/matches/{matchId}` calculates a match's results and returns the match linked to them
-- `GET /ipsc/shooter-results/matches/{matchId}` and `GET /ipsc/shooter-results` return a match linked to its results, or
-  one such holder per match, oldest match date first, including matches without results
-- An unknown match ID answers `404`
-- `ShooterResultResponse` shows the percentage as a display string
+- `CompetitorHelpers.cleanCompetitorName` strips trailing modified-entry digits of any length, such as `Jane Doe 12`,
+  with or without whitespace around them, and keeps digits that are not at the end of the name
+- `IpscConstants.REPLACE_IN_NAMES_REGEX` also removes a "TRO" or "(TRO)" role marker, so `Jane Doe (TRO)` matches
+  `Jane Doe`
 
-### 🗑️ Rankings Removed
+### 🔄 Bulk Import Transaction
 
-- `MatchCompetitor` drops `overallRanking` and `clubRanking`, and `V11_8_0__remove_match_competitor_rankings.sql` drops
-  their columns
-- They leave `MatchCompetitorRequest`, `MatchCompetitorPatchRequest`, `MatchCompetitorResponse`,
-  `MatchCompetitorRow` and the bulk CSV import
-
-### 🔐 Dependency Security
-
-- `org.ow2.asm:asm` is pinned to 9.11 through `dependencyManagement`, replacing the vulnerable 9.7.1 that
-  `json-smart`'s `accessors-smart` brings in through `spring-boot-starter-test`
+- `IpscMatchCompetitorServiceImpl.createMatchCompetitors` is `@Transactional`, so a bulk match competitor import is
+  saved or rolled back as one unit
 
 ---
 
@@ -58,53 +43,52 @@ renamed. Several of these change what an existing caller sends or receives, so e
 
 ### Added
 
-- `ShooterResult`, `ShooterResultRepository` and `V11_10_0__create_shooter_result.sql`
-- `IpscShooterResultService`, `IpscShooterResultServiceImpl` and `IpscShooterResultController`
-- `ShooterResultResponse`, `ShooterMatchResultResponse` and `ShooterResponseHolder`
-- `MatchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch`
-- `TransactionService.saveShooterResults`
-- `NumberUtil`, reinstated with its tests, and `IpscConstants`' `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`,
-  `TIME_SCALE` and `PERCENTAGE_SCALE`, with `SystemConstants.DEFAULT_SCALE`
+- `Division.RIFLE_PCC`
+- `V11_11_0__rename_semi_auto_rifle_division_names.sql`
+- New `cleanCompetitorName` tests for trailing digits of one or more digits, alone, after a position prefix and
+  alongside a range officer marker
 
 ### Changed
 
-- **Breaking:** `ShooterLogCompetitor` and `ShooterLogOverall` rename `points` to `percentageInLog`, and its column to
-  `percentage_in_log` (`V11_9_0__rename_shooter_log_points_to_percentage_in_log.sql`)
-- `MatchCompetitorMapper` no longer copies `overallRanking` or `clubRanking`
-- `IpscMatchCompetitorController`'s bulk CSV example drops the `OverallRanking` and `ClubRanking` columns
-- The v10.0.0 – v13.3.0 `CHANGELOG`, `HISTORY` and `EVOLUTION_OVERVIEW` entries, release notes and pull request
-  descriptions move to `documentation/archive/v10-v13/`, and the links that pointed at them follow
+- **Breaking:** `Division.RIFLE_SEMI_AUTO_OPEN` and `RIFLE_SEMI_AUTO_STANDARD` display names are now "Rifle Semi Auto
+  Open" and "Rifle Semi Auto Standard", so a division given by the old names no longer resolves
+- `CompetitorHelpers` strips trailing modified-entry digits when it normalises a competitor name
+- `IpscConstants.REPLACE_IN_NAMES_REGEX` also removes a "TRO" or "(TRO)" role marker
+- `IpscMatchCompetitorServiceImpl.createMatchCompetitors` is `@Transactional`
+- Spring Boot is bumped to 4.1.2, `mysql-connector-j` to 26.10.0 and the Jackson BOMs to 2.22.4 and 3.2.4
+- `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add Gap #41 and close Gap #26
+- `documentation/recommendations/flyway-migration-versioning.md` gains a row for `V11_11_0`
 
 ### Removed
 
-- **Breaking:** `MatchCompetitor.overallRanking` and `clubRanking`, and their columns
-- **Breaking:** the optional `overallRanking` and `clubRanking` from the create, replace and patch request bodies, and
-  from the response body
-- **Breaking:** the optional `OverallRanking` and `ClubRanking` columns from the bulk match competitor CSV import
+- The `tomcat.version` override in `pom.xml`, since Spring Boot 4.1.2 manages Tomcat `11.0.27`
+- The `asm.version` pin, since `asm` is no longer on the classpath
 
 ### Security
 
-- `org.ow2.asm:asm` pinned to 9.11 through the new `asm.version` property
+- `net.minidev:json-smart` (CVE-2026-113602, no fixed release) and `com.jayway.jsonpath:json-path` are excluded from
+  `spring-boot-starter-webmvc-test`; nothing in the tests uses JsonPath, and the runtime classpath never held them
+- `org.skyscreamer:jsonassert` is excluded too, since its `android-json` (CVE-2026-110974) has no fixed release and
+  nothing in the tests uses JSONAssert
 
 ---
 
 ## 🚀 Migration Guide
 
-Flyway runs `V11_8_0`, `V11_9_0` and `V11_10_0` on startup, so the schema changes with no action. The data in the
-dropped ranking columns is not kept. Callers must change what they send and read:
+Flyway runs `V11_11_0` on startup, so the stored division names change with no action. Callers must change what they
+send:
 
-- Stop sending `overallRanking` and `clubRanking` in match competitor request bodies and drop the `OverallRanking` and
-  `ClubRanking` columns from the bulk match competitor CSV import. Do not read them from a response.
-- Code that reads `points` on `ShooterLogCompetitor` or `ShooterLogOverall` uses `percentageInLog`.
-- Call `POST /ipsc/shooter-results/matches/{matchId}` to calculate a match's results before reading them.
+- Send "Rifle Semi Auto Open" and "Rifle Semi Auto Standard" instead of "Rifle Open" and "Rifle Standard" in match
+  competitor request bodies and in the bulk match competitor CSV import. A division given by the old names no longer
+  resolves.
+- Expect the new names in responses.
 
 ---
 
 ## 📊 Statistics
 
-- **Files Changed:** 49 against `main` before this release's documentation and version bump; 2,253 insertions and 120
-  deletions
-- **New Source Files:** 12 (9 classes and 3 migrations)
+- **Files Changed:** 15 against `main` before this release's documentation; 172 insertions and 16 deletions
+- **New Source Files:** 1 (a migration)
 - **Renamed Source Files:** 0
 - **Deleted Source Files:** 0
 - **New Dependencies:** 0
@@ -113,22 +97,22 @@ dropped ranking columns is not kept. Callers must change what they send and read
 
 ## 🧭 Design Notes
 
-- **Rank within a like-for-like group.** A competitor is ranked against others who shot the same firearm type, division
-  and competitor category, and competitors in no category are a group of their own rather than being mixed into another.
-- **Recalculate only when stale.** A five-minute threshold treats updates made around the time of the calculation, or
-  lost to a database's timestamp rounding, as no change, so reading results does not repeat the work.
-- **Rankings belong to the results.** `ShooterResult` holds the rank and percentage, so the overall and club rankings on
-  `MatchCompetitor` are removed rather than kept in two places.
-- **A MAJOR.** The removed ranking fields and CSV columns and the renamed `points` property are backward-incompatible,
-  which `AGENTS.md`'s Semantic Versioning rules classify as MAJOR.
+- **Migrate the stored names with the enum.** A division is read back by its display name, so renaming one without
+  rewriting the stored values would leave existing rows reading back as `null`. The migration ships with the rename.
+- **Normalise names at the edge.** Trailing digits and role markers are removed where a name is cleaned, so every
+  lookup by name benefits, rather than each caller handling them.
+- **One unit of work for an import.** Running the bulk import in a single transaction means a failure part-way leaves
+  no half-imported match.
+- **A MAJOR.** A division given by the old names no longer resolves, which `AGENTS.md`'s Semantic Versioning rules
+  classify as backward-incompatible.
 
 ---
 
 ## 🧪 Testing
 
-- `./mvnw verify -Pcoverage` passes: 1,320 tests with no failures, errors or skips.
-- New unit tests cover `IpscShooterResultService` (including the category grouping and the recalculation rule),
-  `IpscShooterResultController` and `NumberUtil`, with a `@SpringBootTest` integration test for the service.
+- `./mvnw verify -Pcoverage` passes: 1,327 tests with no failures, errors or skips.
+- New unit tests cover `cleanCompetitorName` for trailing digits and role markers, and the existing division
+  assertions use the new names.
 
 ---
 
@@ -138,12 +122,10 @@ dropped ranking columns is not kept. Callers must change what they send and read
   is read but never used as the row's own ID, since the imports only create records.
 - No service or controller operates on `ShooterLog`, `ShooterLogCompetitor` or `ShooterLogOverall` yet (Gap #6,
   partially completed).
-- `pom.xml` still overrides `tomcat.version` (to `11.0.26`) for three critical CVEs, since Spring Boot 4.1.1 manages
-  `11.0.24` (Gap #26). `logback.version`, the Jackson BOM properties and `flyway-mysql` are likewise set above
-  Spring Boot's managed versions, `mysql-connector-j` is pinned to `26.7.0` against the `9.7.0` it manages, and
-  `asm.version` is pinned because Spring Boot does not manage `asm`.
-- Stored `Manual Action Contemporary Division` and `Manual Action Bolt Division` values are not migrated and read back
-  as `null`.
+- `IpscConstants`' `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`, `SystemConstants.DEFAULT_SCALE` and
+  `NumberUtil.calculateSum` have no production caller (Gap #41).
+- `pom.xml` still overrides `logback.version`, the Jackson BOM properties and `flyway-mysql`, set above Spring Boot's
+  managed versions.
 
 ---
 
@@ -151,22 +133,23 @@ dropped ranking columns is not kept. Callers must change what they send and read
 
 - Build a `ShooterLogService` and controller over the existing repositories, committing through `TransactionService`,
   following the same phased pattern that closed Gap #1 (Gap #6).
-- Drop the `tomcat.version` override once a Spring Boot release manages Tomcat `11.0.26` or later (Gap #26), and the
-  other dependency pins once Spring Boot manages versions at least as new.
+- Give the reinstated score-scale constants and `NumberUtil.calculateSum` a caller, or remove them (Gap #41).
+- Drop the remaining dependency pins once Spring Boot manages versions at least as new.
 
 ---
 
 ## 👥 Contributors
 
 - Leoni Lubbinge
+- dependabot[bot]
 - Claude Code (Claude Sonnet 5.5) — co-author of the release's commits
 
 ---
 
 ## 📝 Notes
 
-Version 15.0.0 calculates and reads a match's shooter results, ranked within firearm type, division and competitor
-category, and removes the overall and club rankings from a match competitor. It leaves the improvement plan at 38 closed
-gaps, with #6 progressed and only #6 and #26 partially completed.
+Version 16.0.0 adds the Rifle PCC division, renames the semi-auto rifle divisions and migrates their stored values, and
+makes competitor name matching ignore trailing modified-entry digits and a "TRO" role marker. It leaves the improvement
+plan at 39 closed gaps, with #6 partially completed and #41 open.
 
 ---

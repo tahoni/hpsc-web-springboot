@@ -124,7 +124,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         IpscMatch match = createMatch();
         MatchCompetitorRequest request = validRequest(competitor.getId(), match.getId());
         request.setFirearmType(null);
-        request.setDivision("Rifle Open");
+        request.setDivision("Rifle Semi Auto Open");
 
         // Act
         MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(request);
@@ -141,7 +141,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()));
         MatchCompetitorRequest rifle = validRequest(competitor.getId(), match.getId());
         rifle.setFirearmType("Rifle");
-        rifle.setDivision("Rifle Open");
+        rifle.setDivision("Rifle Semi Auto Open");
 
         // Act
         MatchCompetitorResponse response = ipscMatchCompetitorService.createMatchCompetitor(rifle);

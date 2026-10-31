@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 15.0.0](#-1500---2026-10-17) ← Current
+- [🧾 Version 16.0.0](#-1600---2026-10-31) ← Current
+- [🧾 Version 15.0.0](#-1500---2026-10-17)
 - [🧾 Version 14.0.0](#-1400---2026-10-09)
 - [🗄️ Archived Versions 10.0.0 – 13.3.0](/documentation/archive/v10-v13/CHANGELOG_v10-v13.md)
 - [🗄️ Archived Versions 8.0.0 – 9.1.0](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md)
@@ -26,6 +27,81 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [16.0.0] - 2026-10-31
+
+#### ➕ Added
+
+##### Database
+
+- **`V11_11_0__rename_semi_auto_rifle_division_names.sql`:** New migration that renames the stored `division` "Rifle
+  Open" and "Rifle Standard" in `match_competitor`, `shooter_log_competitor` and `shooter_log_overall` to "Rifle Semi
+  Auto Open" and "Rifle Semi Auto Standard"; without it an existing row's division reads back as `null`
+
+##### Domain
+
+- **`Division.RIFLE_PCC`:** New "Rifle PCC" rifle division
+
+##### Tests
+
+- **`CompetitorHelpersTest`:** New `cleanCompetitorName` tests for removing a trailing suffix of one, two, three
+  or more digits, alone, after a position prefix and alongside a range officer marker, and for keeping digits that
+  are not at the end of the name
+
+#### 🔄 Changed
+
+##### Utilities
+
+- **`CompetitorHelpers`:** Competitor names now have trailing modified-entry digits stripped, via
+  `MODIFIED_SUFFIX`, when they are normalised
+- **`IpscConstants.REPLACE_IN_NAMES_REGEX`:** Now also removes a "TRO" (or "(TRO)") role marker from competitor
+  names before they are matched by full name
+
+##### Domain
+
+- **`Division`:** **Breaking:** `RIFLE_SEMI_AUTO_OPEN` and `RIFLE_SEMI_AUTO_STANDARD` display names are now "Rifle Semi
+  Auto Open" and "Rifle Semi Auto Standard" (were "Rifle Open" and "Rifle Standard"), so a division given by the old
+  names no longer resolves
+
+##### Dependencies
+
+- **`spring-boot-starter-parent`:** Bumped from 4.1.1 to 4.1.2, with `asm.version` from 9.11 to 9.11.1 and
+  `mysql-connector-j` from 26.7.0 to 26.10.0
+- **`jackson-2-bom.version`, `jackson-bom.version`:** Bumped from 2.22.3 to 2.22.4 and from 3.2.3 to 3.2.4
+
+##### Services
+
+- **`IpscMatchCompetitorServiceImpl.createMatchCompetitors`:** Now `@Transactional`, so a bulk import is saved or
+  rolled back as one unit
+
+##### Documentation
+
+- **`documentation/recommendations/flyway-migration-versioning.md`:** Current State table gains a row for
+  `V11_11_0__rename_semi_auto_rifle_division_names.sql`
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #41 (the score-scale
+  constants and `NumberUtil.calculateSum` reinstated in 15.0.0 with no production caller), added under ⚪ Open and
+  to the Roadmap's Next row
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #26 (the `tomcat.version`
+  override) moves to ✅ Completed, since Spring Boot 4.1.2 manages Tomcat `11.0.27`
+
+#### 🗑️ Removed
+
+##### Dependencies
+
+- **`tomcat.version`:** Removed the `pom.xml` override of Tomcat `11.0.26`, because Spring Boot 4.1.2 manages `11.0.27`
+- **`asm.version`:** Removed the `org.ow2.asm:asm` pin and its `dependencyManagement` entry, since `asm` is no longer on
+  the classpath once `json-smart` is excluded
+
+#### 🔐 Security
+
+##### Dependencies
+
+- **`spring-boot-starter-webmvc-test`:** Excludes `net.minidev:json-smart` and `com.jayway.jsonpath:json-path`, since
+  `json-smart` 2.6.0, the latest release, is vulnerable to CVE-2026-113602 and nothing in the tests uses JsonPath
+- **`spring-boot-starter-webmvc-test`:** Also excludes `org.skyscreamer:jsonassert`, whose `android-json`
+  0.0.20131108.vaadin1 is vulnerable to CVE-2026-110974 with no fixed release, and nothing in the tests uses JSONAssert
 
 ---
 

@@ -394,7 +394,7 @@ class MatchCompetitorMapperTest {
         matchCompetitor.setDivision(Division.PRODUCTION);
         MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
         request.setFirearmType("  ");
-        request.setDivision("Rifle Open");
+        request.setDivision("Rifle Semi Auto Open");
 
         // Act
         matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
@@ -433,7 +433,7 @@ class MatchCompetitorMapperTest {
         request.setMatchId(2L);
         request.setCompetitorCategory("Lady");
         request.setFirearmType("  ");
-        request.setDivision("Rifle Open");
+        request.setDivision("Rifle Semi Auto Open");
         request.setPowerFactor("Minor");
         MatchCompetitor matchCompetitor = new MatchCompetitor();
 
@@ -477,7 +477,7 @@ class MatchCompetitorMapperTest {
     void testApplyFields_whenFirearmTypeAndDivisionMatch_thenSetsBoth() {
         // Arrange
         stubCompetitorAndMatch();
-        MatchCompetitorRequest request = requestWith("Rifle", "Rifle Open");
+        MatchCompetitorRequest request = requestWith("Rifle", "Rifle Semi Auto Open");
         MatchCompetitor matchCompetitor = new MatchCompetitor();
 
         // Act

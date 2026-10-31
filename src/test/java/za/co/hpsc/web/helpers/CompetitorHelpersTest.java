@@ -200,6 +200,56 @@ public class CompetitorHelpersTest {
     }
 
     @Test
+    void testCleanCompetitorName_whenTrailingDigits_thenRemovesAllOfThem() {
+        // Act & Assert
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith 2"));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith 12"));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith 123"));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith12"));
+    }
+
+    @Test
+    void testCleanCompetitorName_whenFourOrMoreTrailingDigits_thenRemovesAllOfThem() {
+        // Act & Assert
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith 1234"));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith 1234567890"));
+    }
+
+    @Test
+    void testCleanCompetitorName_whenRangeOfficerMarkerAndTrailingDigits_thenRemovesBoth() {
+        // Act & Assert
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith (RO) 12"));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("RO John Smith 123"));
+    }
+
+    @Test
+    void testCleanCompetitorName_whenTrailingDigitsFollowedByWhitespace_thenRemovesThem() {
+        // Act & Assert
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith 12 "));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith 2  \t"));
+    }
+
+    @Test
+    void testCleanCompetitorName_whenWhitespaceBeforeTrailingDigits_thenRemovesAllOfIt() {
+        // Act & Assert
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith   12"));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith \t 2 \t "));
+    }
+
+    @Test
+    void testCleanCompetitorName_whenPositionAndTrailingDigits_thenRemovesBoth() {
+        // Act & Assert
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("1 - John Smith 12"));
+    }
+
+    @Test
+    void testCleanCompetitorName_whenDigitsNotAtTheEnd_thenKeepsThem() {
+        // Act & Assert
+        assertEquals("John 2 Smith", CompetitorHelpers.cleanCompetitorName("John 2 Smith"));
+        assertEquals("John 12 Smith", CompetitorHelpers.cleanCompetitorName("John 12 Smith"));
+    }
+
+    @Test
     void testCleanCompetitorName_whenNothingToClean_thenReturnsUnchanged() {
         // Act & Assert
         assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith"));
