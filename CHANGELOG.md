@@ -41,8 +41,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Tests
 
-- **`CompetitorHelpersTest`:** New `cleanCompetitorName` tests for removing a one-, two- or three-digit trailing
-  suffix, alone and after a position prefix, and for keeping digits that are not at the end of the name
+- **`CompetitorHelpersTest`:** New `cleanCompetitorName` tests for removing a trailing suffix of one, two, three
+  or more digits, alone, after a position prefix and alongside a range officer marker, and for keeping digits that are not at the end of the name
 
 #### 🔄 Changed
 

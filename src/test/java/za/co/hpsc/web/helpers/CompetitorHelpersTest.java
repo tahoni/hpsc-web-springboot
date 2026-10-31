@@ -209,6 +209,20 @@ public class CompetitorHelpersTest {
     }
 
     @Test
+    void testCleanCompetitorName_whenFourOrMoreTrailingDigits_thenRemovesAllOfThem() {
+        // Act & Assert
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith 1234"));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith 1234567890"));
+    }
+
+    @Test
+    void testCleanCompetitorName_whenRangeOfficerMarkerAndTrailingDigits_thenRemovesBoth() {
+        // Act & Assert
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith (RO) 12"));
+        assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("RO John Smith 123"));
+    }
+
+    @Test
     void testCleanCompetitorName_whenTrailingDigitsFollowedByWhitespace_thenRemovesThem() {
         // Act & Assert
         assertEquals("John Smith", CompetitorHelpers.cleanCompetitorName("John Smith 12 "));
