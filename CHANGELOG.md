@@ -65,6 +65,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   Auto Open" and "Rifle Semi Auto Standard" (were "Rifle Open" and "Rifle Standard"), so a division given by the old
   names no longer resolves
 
+##### Dependencies
+
+- **`spring-boot-starter-parent`:** Bumped from 4.1.1 to 4.1.2, with `asm.version` from 9.11 to 9.11.1 and
+  `mysql-connector-j` from 26.7.0 to 26.10.0
+
 ##### Services
 
 - **`IpscMatchCompetitorServiceImpl.createMatchCompetitors`:** Now `@Transactional`, so a bulk import is saved or
@@ -77,6 +82,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #41 (the score-scale
   constants and `NumberUtil.calculateSum` reinstated in 15.0.0 with no production caller), added under ⚪ Open and
   to the Roadmap's Next row
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** Gap #26 (the `tomcat.version`
+  override) moves to ✅ Completed, since Spring Boot 4.1.2 manages Tomcat `11.0.27`
+
+#### 🗑️ Removed
+
+##### Dependencies
+
+- **`tomcat.version`:** Removed the `pom.xml` override of Tomcat `11.0.26`, because Spring Boot 4.1.2 manages `11.0.27`
 
 ---
 

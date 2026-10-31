@@ -55,8 +55,13 @@ import is saved or rolled back as one unit.
 - `CompetitorHelpers` strips trailing modified-entry digits when it normalises a competitor name
 - `IpscConstants.REPLACE_IN_NAMES_REGEX` also removes a "TRO" or "(TRO)" role marker
 - `IpscMatchCompetitorServiceImpl.createMatchCompetitors` is `@Transactional`
-- `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add Gap #41
+- Spring Boot is bumped to 4.1.2, `asm.version` to 9.11.1 and `mysql-connector-j` to 26.10.0
+- `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add Gap #41 and close Gap #26
 - `documentation/recommendations/flyway-migration-versioning.md` gains a row for `V11_11_0`
+
+### Removed
+
+- The `tomcat.version` override in `pom.xml`, since Spring Boot 4.1.2 manages Tomcat `11.0.27`
 
 ---
 
@@ -111,10 +116,8 @@ send:
   partially completed).
 - `IpscConstants`' `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`, `SystemConstants.DEFAULT_SCALE` and
   `NumberUtil.calculateSum` have no production caller (Gap #41).
-- `pom.xml` still overrides `tomcat.version` (to `11.0.26`) for three critical CVEs, since Spring Boot 4.1.1 manages
-  `11.0.24` (Gap #26). `logback.version`, the Jackson BOM properties and `flyway-mysql` are likewise set above
-  Spring Boot's managed versions, `mysql-connector-j` is pinned to `26.7.0` against the `9.7.0` it manages, and
-  `asm.version` is pinned because Spring Boot does not manage `asm`.
+- `pom.xml` still overrides `logback.version`, the Jackson BOM properties and `flyway-mysql`, set above Spring Boot's
+  managed versions, and pins `asm.version`, since Spring Boot does not manage `asm`.
 
 ---
 
@@ -123,14 +126,14 @@ send:
 - Build a `ShooterLogService` and controller over the existing repositories, committing through `TransactionService`,
   following the same phased pattern that closed Gap #1 (Gap #6).
 - Give the reinstated score-scale constants and `NumberUtil.calculateSum` a caller, or remove them (Gap #41).
-- Drop the `tomcat.version` override once a Spring Boot release manages Tomcat `11.0.26` or later (Gap #26), and the
-  other dependency pins once Spring Boot manages versions at least as new.
+- Drop the remaining dependency pins once Spring Boot manages versions at least as new.
 
 ---
 
 ## 👥 Contributors
 
 - Leoni Lubbinge
+- dependabot[bot]
 - Claude Code (Claude Sonnet 5.5) — co-author of the release's commits
 
 ---
@@ -139,6 +142,6 @@ send:
 
 Version 16.0.0 adds the Rifle PCC division, renames the semi-auto rifle divisions and migrates their stored values, and
 makes competitor name matching ignore trailing modified-entry digits and a "TRO" role marker. It leaves the improvement
-plan at 38 closed gaps, with #6 and #26 partially completed and #41 open.
+plan at 39 closed gaps, with #6 partially completed and #41 open.
 
 ---

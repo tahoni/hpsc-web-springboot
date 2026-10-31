@@ -152,7 +152,8 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 
 **Build & Metadata**
 
-- Improvement plan: Gap #41 is added, leaving 38 closed, #6 and #26 partially completed and #41 open
+- Spring Boot is bumped to 4.1.2, which manages Tomcat `11.0.27`, so the `tomcat.version` override is removed
+- Improvement plan: Gap #41 is added and Gap #26 closed, leaving 39 closed, #6 partially completed and #41 open
 - Project version bumped to 16.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 **Technical Focus:**

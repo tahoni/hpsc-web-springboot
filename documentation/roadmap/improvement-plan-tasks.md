@@ -274,6 +274,16 @@ evidence and reasoning there; within each section, gaps stay in ascending number
   the bullet from `HISTORY.md`'s Short-term list and the item from the next release's Known Issues/Future Enhancements
   — did both halves: added `IpscMatchTest` and dropped the `HISTORY.md` bullet
 
+**`tomcat.version` override** *(improvement-plan.md → Gap #26)* — ✅ Closed in v16.0.0
+
+- [x] Each release, check whether the Spring Boot parent's managed `tomcat.version` has reached `11.0.25` or later —
+  made a standing step instead: `AGENTS.md`'s Release Checklist step 2 and `prep-version-release` now re-check every
+  manual `pom.xml` override against the parent's own `spring-boot-dependencies` POM
+- [x] Once it has — the target is now `11.0.26` or later, since v9.0.0 raised the pin from `11.0.25` — drop the
+  `tomcat.version` override and its comment from `pom.xml` in the same pass as the parent
+  bump, and update this plan's Ongoing roadmap row and Goals & Constraints table — done in v16.0.0, when Spring Boot
+  4.1.2 came to manage Tomcat `11.0.27`
+
 **Database-profile docs** *(improvement-plan.md → Gap #27)* — ✅ Closed in v8.10.0
 
 - [x] Document that the no-profile (production) run needs its datasource URL supplied externally (e.g.
@@ -434,15 +444,6 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
   reappears, per the same discipline that closed Gap #1
 - [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
   to drop the "still being built" language
-
-**`tomcat.version` override** *(improvement-plan.md → Gap #26)* — 🟡 Partially completed in v8.10.0
-
-- [x] Each release, check whether the Spring Boot parent's managed `tomcat.version` has reached `11.0.25` or later —
-  made a standing step instead: `AGENTS.md`'s Release Checklist step 2 and `prep-version-release` now re-check every
-  manual `pom.xml` override against the parent's own `spring-boot-dependencies` POM
-- [ ] Once it has — the target is now `11.0.26` or later, since v9.0.0 raised the pin from `11.0.25` — drop the
-  `tomcat.version` override and its comment from `pom.xml` in the same pass as the parent
-  bump, and update this plan's Ongoing roadmap row and Goals & Constraints table
 
 ---
 

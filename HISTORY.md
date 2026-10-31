@@ -38,8 +38,10 @@ evolution of architecture, features and design philosophy across all versions.
   as one unit
 - Scoped as `v16.0.0` **MAJOR**: a division given by the old "Rifle Open" or "Rifle Standard" names no longer
   resolves, flagged in `CHANGELOG.md`
+- Spring Boot is bumped to 4.1.2, which manages Tomcat `11.0.27`, so the `tomcat.version` override is removed
 - Improvement plan: Gap #41 is added for the score-scale constants and `NumberUtil.calculateSum` that v15.0.0
-  reinstated without a production caller, leaving 38 gaps closed, #6 and #26 partially completed and #41 open
+  reinstated without a production caller, and Gap #26 is closed, leaving 39 gaps closed, #6 partially completed and #41
+  open
 - The suite stands at 1,327 passing tests
 - Project version bumped to 16.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
@@ -756,7 +758,8 @@ The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, i
 - `CompetitorHelpers` strips trailing modified-entry digits and `IpscConstants.REPLACE_IN_NAMES_REGEX` removes a "TRO"
   marker
 - `IpscMatchCompetitorServiceImpl.createMatchCompetitors` runs in one transaction
-- Improvement plan: Gap #41 is added, leaving 38 closed, #6 and #26 partially completed and #41 open
+- Spring Boot is bumped to 4.1.2 and the `tomcat.version` override is removed
+- Improvement plan: Gap #41 is added and Gap #26 closed, leaving 39 closed, #6 partially completed and #41 open
 - Project version bumped to 16.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Previously Completed (v15.0.0)

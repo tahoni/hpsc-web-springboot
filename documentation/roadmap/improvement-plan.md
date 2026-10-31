@@ -46,7 +46,7 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 | `AGENTS.md` (Git Workflow, Release Checklist)       | GitFlow branching (`develop` → `release/vX.Y.Z` → `main`, `hotfix/*` and Dependabot security PRs direct to `main`), strict Semantic Versioning (classified from `[Unreleased]`, validated at release time) and a fixed, ordered release checklist covering `pom.xml`, `HpscWebApplication.java`, `CHANGELOG.md`, `HISTORY.md`, `RELEASE_NOTES.md` and archived per-version docs                                                                                                                                                                                                                                       |
 | `AGENTS.md` (Documentation Conventions)             | British English spelling throughout prose and Javadoc; every heading carries a reused or deliberately new emoji; `README.md`/`ARCHITECTURE.md` stay version-agnostic (reverse-synced from release docs, not the other way round)                                                                                                                                                                                                                                                                                                                                                                                      |
 | `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                                                                                                                                                                                                                                                                                                                                                         |
-| `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.1) — this currency itself creates a maintenance constraint, including a standing `tomcat.version` security override and, since v15.0.0, an `asm.version` pin (see Gap #26 and [Gaps](#-gaps--improvement-opportunities))                                                                                                                                                                                                                                                                                                                  |
+| `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.2) — this currency itself creates a maintenance constraint, including, since v15.0.0, an `asm.version` pin (see Gap #26 and [Gaps](#-gaps--improvement-opportunities))                                                                                                                                                                                                                                                                                                                  |
 | `application.properties` (prod/dev/test)            | Flyway is the schema source of truth for MySQL (prod/dev), run at startup since v8.11.0 (Gap #30); the `test` profile bypasses it entirely via Hibernate `create-drop` against H2 — the two schema paths can silently diverge                                                                                                                                                                                                                                                                                                                                                                                         |
 | `CONTRIBUTING.md`, `application.properties`         | Five runtime profiles (none, `prod`, `dev`, special-purpose `local`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors (documented as configured since Gap #27)                                                                                                                                                                                                                                                                                                                                                                         |
 
@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (38):**
+- **✅ Completed (39):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -94,6 +94,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
     applicable)
   - #24 Entity and repository test coverage is claimed but doesn't exist — closed v8.9.0
   - #25 Entity-level unit tests are a stated goal with no gap tracking it — closed v8.10.0 (`IpscMatchTest` only)
+  - #26 The `tomcat.version` override is an untracked standing manual constraint — closed v16.0.0 (dropped; Spring
+    Boot 4.1.2 manages Tomcat `11.0.27`)
   - #27 Database-profile docs promise a setup the properties files don't provide — closed v8.10.0 (docs plus a
     new `prod` profile)
   - #28 `logback-spring.xml` configures a `staging` profile that exists nowhere else — closed v8.10.0 (block
@@ -122,14 +124,12 @@ number or a newly met precondition on an existing gap — see the `update-improv
     lookups by code; the `AGENTS.md` example heading corrected)
   - #40 Renaming every `Division` name left stored divisions with no data migration — closed v14.0.0 (`V11_7_0`
     renames the stored divisions)
-- **🟡 Partially Completed (2):**
+- **🟡 Partially Completed (1):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v15.0.0 (the
     match competitor service and `/ipsc/match-competitors` controller are built, extended in v10.0.0 with
     competitor lookup by number or name and overall-score fields, and in v15.0.0 with
     `/ipsc/shooter-results` endpoints that calculate and read results over the new `ShooterResult` entity; the
     shooter-log layer is not)
-  - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
-    re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
 - **⚪ Open (1):**
   - #41 v15.0.0 reinstated four score-scale constants and `NumberUtil.calculateSum` with no production caller
 
@@ -841,6 +841,42 @@ seven entities have no hand-written behaviour and are left to the repository int
 bullet was dropped from `HISTORY.md`'s Short-term list, `ARCHITECTURE.md`'s test tree gained a `domain/` entry
 and `README.md`'s unit-test categories now include entities.
 
+#### 26. The `tomcat.version` override is an untracked standing manual constraint — ✅ Closed in v16.0.0
+
+**Evidence:** `pom.xml` (lines 46–48) pins `tomcat.version` to `11.0.25` with the comment "Override
+spring-boot-starter-parent 4.1.1's pinned 11.0.24, which carries three critical CVEs (GHSA-h3x4-894j-xpx5,
+GHSA-9xv2-5v5q-p794, GHSA-gcx9-497g-6cp6), all fixed in 11.0.25" — added in v8.3.1 (commit `28af4d1`). Boot 4.1.1 is
+still the latest 4.1.x release on Maven Central, and its `spring-boot-dependencies` POM still manages `tomcat.version`
+at `11.0.24`, so the override is still needed. Yet this plan's "🛤️ Roadmap" Ongoing row says "#5's overrides are
+gone as of v8.1.1", and the "⚙️ Goals & Constraints" `pom.xml` row mentions no override at all.
+
+**Why it matters:** This is exactly the shape of Gap #5 — a manually tracked, easy-to-forget pin that nothing flags
+once the upstream BOM catches up — but the plan currently reads as though no such override remains, so the Ongoing
+check has nothing concrete pointing it at this one.
+
+**Proposed improvement:** No code change needed now. Record the override in the Ongoing roadmap row and the
+Goals & Constraints table, and at each release check whether the parent's managed `tomcat.version` has reached
+`11.0.25` or later; drop the override in the same pass the parent is bumped, as Gap #5 did for `jackson-databind`.
+
+**Progress:** The tracking half is done. The plan now records the override in its Ongoing roadmap row and
+Goals & Constraints table, and the root cause behind it being missed is fixed: the Ongoing row said overrides were
+re-checked "per the Release Checklist", but no checklist step actually did so. `AGENTS.md`'s Release Checklist
+step 2 and the `prep-version-release` skill's matching step now re-check every manual `pom.xml` override against
+the version the parent's own `spring-boot-dependencies` POM manages, and drop any the parent has caught up with.
+The override itself has to stay for now: Spring Boot 4.1.1 is still the latest GA release (4.2.0-M2 is only a
+milestone) and still manages Tomcat `11.0.24`; v9.0.0 raised it to `11.0.26` and added matching pins for Logback,
+Jackson and Flyway, which the same release-time check should also revisit. The gap closes once a Spring Boot GA
+release manages `11.0.26` or later and the override is dropped (the threshold was `11.0.25` until v9.0.0 raised the
+pin). v15.0.0 adds an `asm.version` pin (9.11) in `pom.xml`, which the same release-time check should also
+revisit: Spring Boot does not manage `asm`, so it only goes once `json-smart` stops resolving a vulnerable version.
+
+**Outcome:** Closed in v16.0.0. Dependabot bumped the `spring-boot-starter-parent` to `4.1.2`, whose
+`spring-boot-dependencies` POM manages Tomcat `11.0.27`, above the `11.0.26` the override pinned, so the
+`tomcat.version` property and its comment are removed from `pom.xml` and the parent's managed version applies. The
+other pins stay: `logback.version`, `jackson-2-bom.version` and `jackson-bom.version` are still above what 4.1.2 manages
+(`1.5.38`, `2.21.7` and `3.1.7`), and `asm.version` is pinned because Spring Boot does not manage `asm`; the Release
+Checklist's override check covers them.
+
 #### 27. Database-profile docs promise a setup the properties files don't provide — ✅ Closed in v8.10.0
 
 **Evidence:** `AGENTS.md:72`'s Build & Run Commands say the no-profile run "uses application.properties; requires
@@ -1301,35 +1337,6 @@ minutes after the oldest result was calculated — and otherwise returns the cur
 `percentageInLog` (`V11_9_0`). It still does not add a shooter-log service or controller. The gap closes once a
 shooter-log service and controller exist, and the docs drop their "still being built" language.
 
-#### 26. The `tomcat.version` override is an untracked standing manual constraint — 🟡 Partially completed in v8.10.0
-
-**Evidence:** `pom.xml` (lines 46–48) pins `tomcat.version` to `11.0.25` with the comment "Override
-spring-boot-starter-parent 4.1.1's pinned 11.0.24, which carries three critical CVEs (GHSA-h3x4-894j-xpx5,
-GHSA-9xv2-5v5q-p794, GHSA-gcx9-497g-6cp6), all fixed in 11.0.25" — added in v8.3.1 (commit `28af4d1`). Boot 4.1.1 is
-still the latest 4.1.x release on Maven Central, and its `spring-boot-dependencies` POM still manages `tomcat.version`
-at `11.0.24`, so the override is still needed. Yet this plan's "🛤️ Roadmap" Ongoing row says "#5's overrides are
-gone as of v8.1.1", and the "⚙️ Goals & Constraints" `pom.xml` row mentions no override at all.
-
-**Why it matters:** This is exactly the shape of Gap #5 — a manually tracked, easy-to-forget pin that nothing flags
-once the upstream BOM catches up — but the plan currently reads as though no such override remains, so the Ongoing
-check has nothing concrete pointing it at this one.
-
-**Proposed improvement:** No code change needed now. Record the override in the Ongoing roadmap row and the
-Goals & Constraints table, and at each release check whether the parent's managed `tomcat.version` has reached
-`11.0.25` or later; drop the override in the same pass the parent is bumped, as Gap #5 did for `jackson-databind`.
-
-**Progress:** The tracking half is done. The plan now records the override in its Ongoing roadmap row and
-Goals & Constraints table, and the root cause behind it being missed is fixed: the Ongoing row said overrides were
-re-checked "per the Release Checklist", but no checklist step actually did so. `AGENTS.md`'s Release Checklist
-step 2 and the `prep-version-release` skill's matching step now re-check every manual `pom.xml` override against
-the version the parent's own `spring-boot-dependencies` POM manages, and drop any the parent has caught up with.
-The override itself has to stay for now: Spring Boot 4.1.1 is still the latest GA release (4.2.0-M2 is only a
-milestone) and still manages Tomcat `11.0.24`; v9.0.0 raised it to `11.0.26` and added matching pins for Logback,
-Jackson and Flyway, which the same release-time check should also revisit. The gap closes once a Spring Boot GA
-release manages `11.0.26` or later and the override is dropped (the threshold was `11.0.25` until v9.0.0 raised the
-pin). v15.0.0 adds an `asm.version` pin (9.11) in `pom.xml`, which the same release-time check should also
-revisit: Spring Boot does not manage `asm`, so it only goes once `json-smart` stops resolving a vulnerable version.
-
 ### ⚪ Open
 
 #### 41. v15.0.0 reinstated four score-scale constants and `NumberUtil.calculateSum` with no production caller
@@ -1360,7 +1367,7 @@ way.
 | **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0, the shooter-log service and controller remain                                                                                                                                                                                                       |
 | **Next**    | Remove or apply the reinstated score-scale constants and `NumberUtil.calculateSum` (#41); #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0                                                                                                                                                                                                                                |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                                           |
-| **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26), and `asm.version` since v15.0.0 (Spring Boot does not manage `asm`, so the pin overrides the 9.7.1 that `json-smart` brings in); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
+| **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` since v15.0.0 (Spring Boot does not manage `asm`, so the pin overrides the 9.7.1 that `json-smart` brings in); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
 ---
 
@@ -1436,8 +1443,8 @@ way.
 - ✅ Met in v8.12.0: `.github/workflows/code_quality.yml` runs Qodana on every GitFlow branch and on PRs into
   `main`/`develop` with a provisioned `QODANA_TOKEN`, `ARCHITECTURE.md`'s CI/CD & Quality Gates table lists it, and this
   plan no longer describes Qodana as removed, closing Gap #32.
-- `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.26` or later itself,
-  closing Gap #26.
+- ✅ Met in v16.0.0: `pom.xml` carries no `tomcat.version` override because the Spring Boot parent manages `11.0.26` or
+  later itself (4.1.2 manages `11.0.27`), closing Gap #26.
 - ✅ Met in v10.0.0: `flyway-migration-versioning.md`'s Current State table has a row for every file in
   `db/migration/`, and the Release Checklist checks it, closing Gap #33.
 - ✅ Met in v10.0.0: `ARCHITECTURE.md` no longer names the deleted `models/ipsc/scores/request/` package or calls its
