@@ -130,8 +130,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
     shooter-log layer is not)
   - #26 The `tomcat.version` override is an untracked standing manual constraint — progressed v8.10.0 (now
     re-checked at every release; the override stays until a Spring Boot GA release manages Tomcat `11.0.26`)
-- **⚪ Open (0):**
-  - *No gaps are currently open.*
+- **⚪ Open (1):**
+  - #41 v15.0.0 reinstated four score-scale constants and `NumberUtil.calculateSum` with no production caller
 
 ### ✅ Completed
 
@@ -1332,7 +1332,24 @@ revisit: Spring Boot does not manage `asm`, so it only goes once `json-smart` st
 
 ### ⚪ Open
 
-*No gaps are currently open.*
+#### 41. v15.0.0 reinstated four score-scale constants and `NumberUtil.calculateSum` with no production caller
+
+**Evidence:** `constants/IpscConstants.java` again declares `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`
+(lines 59–63), and its Javadoc says they are "not currently referenced by any code"; grepping `src/` finds only their
+declarations. `SystemConstants.DEFAULT_SCALE` (line 23) is read only by `NumberUtilTest`, and
+`NumberUtil.calculateSum` (`utils/NumberUtil.java:66`) is called only by its own tests — the production callers use
+`calculatePercentage` (`IpscShooterResultServiceImpl`) and `formatBigDecimal` (`ShooterResultResponse`) alone.
+`CHANGELOG.md` records v15.0.0 reinstating `NumberUtil` and `DEFAULT_SCALE`, and adding the scale constants, after
+Gaps #37 and #38 removed exactly these as inert; only `PERCENTAGE_SCALE` has a caller this time.
+
+**Why it matters:** The same shape as Gaps #9, #37 and #38: inert groundwork that signals a rounding rule nothing
+applies, kept "used" by tests that hide it from the coverage gate. The two gaps closed these by removal, so
+reinstating them without callers repeats the drift, and `DEFAULT_SCALE` is not even the scale the callers pass.
+
+**Proposed improvement:** Either give each a production caller (the scoring layer in Gap #6 is the likely one, using
+`calculateSum` and the three scales) or remove `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE`, `DEFAULT_SCALE`
+and `calculateSum` with its tests, as Gaps #37 and #38 did, resolving the "Not currently referenced" Javadoc either
+way.
 
 ---
 
@@ -1341,7 +1358,7 @@ revisit: Spring Boot does not manage `asm`, so it only goes once `json-smart` st
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                                               |
 |-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0, the shooter-log service and controller remain                                                                                                                                                                                                       |
-| **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0                                                                                                                                                                                                                                                                                              |
+| **Next**    | Remove or apply the reinstated score-scale constants and `NumberUtil.calculateSum` (#41); #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0                                                                                                                                                                                                                                |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                                           |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` has been pinned since v8.3.1 (#26), and `asm.version` since v15.0.0 (Spring Boot does not manage `asm`, so the pin overrides the 9.7.1 that `json-smart` brings in); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
