@@ -29,6 +29,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ➕ Added
 
+##### Database
+
+- **`V11_11_0__rename_semi_auto_rifle_division_names.sql`:** New migration that renames the stored `division` "Rifle
+  Open" and "Rifle Standard" in `match_competitor`, `shooter_log_competitor` and `shooter_log_overall` to "Rifle Semi
+  Auto Open" and "Rifle Semi Auto Standard"; without it an existing row's division reads back as `null`
+
 ##### Domain
 
 - **`Division.RIFLE_PCC`:** New "Rifle PCC" rifle division
@@ -49,13 +55,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Domain
 
-- **`Division`:** `RIFLE_SEMI_AUTO_OPEN` and `RIFLE_SEMI_AUTO_STANDARD` display names are now "Rifle Semi Auto Open"
-  and "Rifle Semi Auto Standard" (were "Rifle Open" and "Rifle Standard")
+- **`Division`:** **Breaking:** `RIFLE_SEMI_AUTO_OPEN` and `RIFLE_SEMI_AUTO_STANDARD` display names are now "Rifle Semi
+  Auto Open" and "Rifle Semi Auto Standard" (were "Rifle Open" and "Rifle Standard"), so a division given by the old
+  names no longer resolves
 
 ##### Services
 
 - **`IpscMatchCompetitorServiceImpl.createMatchCompetitors`:** Now `@Transactional`, so a bulk import is saved or
   rolled back as one unit
+
+##### Documentation
+
+- **`documentation/recommendations/flyway-migration-versioning.md`:** Current State table gains a row for
+  `V11_11_0__rename_semi_auto_rifle_division_names.sql`
 
 ---
 
