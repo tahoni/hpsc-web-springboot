@@ -21,6 +21,28 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 16.0.0 (October 31, 2026)
+
+**Theme:** Rifle PCC Division, Clearer Semi-Auto Division Names & Cleaner Competitor Name Matching
+
+**Key Focus:**
+
+- New `Division.RIFLE_PCC` ("Rifle PCC") rifle division
+- `RIFLE_SEMI_AUTO_OPEN` and `RIFLE_SEMI_AUTO_STANDARD` display names become "Rifle Semi Auto Open" and "Rifle Semi
+  Auto Standard", with `V11_11_0__rename_semi_auto_rifle_division_names.sql` renaming the stored values in
+  `match_competitor`, `shooter_log_competitor` and `shooter_log_overall`
+- `CompetitorHelpers.cleanCompetitorName` strips trailing modified-entry digits of any length, and
+  `IpscConstants.REPLACE_IN_NAMES_REGEX` also removes a "TRO" or "(TRO)" role marker, so more names match their
+  competitor
+- `IpscMatchCompetitorServiceImpl.createMatchCompetitors` is `@Transactional`, so a bulk import is saved or rolled back
+  as one unit
+- Scoped as `v16.0.0` **MAJOR**: a division given by the old "Rifle Open" or "Rifle Standard" names no longer
+  resolves, flagged in `CHANGELOG.md`
+- Improvement plan: Gap #41 is added for the score-scale constants and `NumberUtil.calculateSum` that v15.0.0
+  reinstated without a production caller, leaving 38 gaps closed, #6 and #26 partially completed and #41 open
+- The suite stands at 1,327 passing tests
+- Project version bumped to 16.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 15.0.0 (October 17, 2026)
 
 **Theme:** Shooter Result Calculation & Reading
@@ -136,6 +158,14 @@ Milestones 44 to 50 (versions 10.0.0 to 13.3.0) are archived, unchanged, in
 - Results are stored in the new `ShooterResult` entity and recalculated only when they are out of date
 - `MatchCompetitor` drops its overall and club rankings, which the results now supersede
 - Improvement plan Gap #6 progresses
+
+### Milestone 53: Rifle PCC Division, Clearer Semi-Auto Division Names & Cleaner Competitor Name Matching (v16.0.0)
+
+- `Division.RIFLE_PCC` adds the "Rifle PCC" division, and the semi-auto rifle divisions are named "Rifle Semi Auto Open"
+  and "Rifle Semi Auto Standard", with `V11_11_0__rename_semi_auto_rifle_division_names.sql` renaming the stored values
+- Competitor names match despite trailing modified-entry digits and a "TRO" role marker
+- A bulk match competitor import is saved or rolled back as one unit
+- Improvement plan Gap #41 is added
 
 ---
 
@@ -405,6 +435,11 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   points, stored in a new `ShooterResult` entity and served by one controller. Because that retires the overall and
   club rankings on a match competitor and renames the shooter log `points`, v15.0.0 is the project's seventh
   consecutive MAJOR release, with each breaking change flagged in `CHANGELOG.md` as it landed.
+- **Version 16.x (v16.0.0):** Make more of the real match data resolve — the Rifle PCC division is added, the semi-auto
+  rifle divisions get names that say what they are, and competitor names match despite trailing modified-entry digits
+  and a "TRO" role marker, while a bulk match competitor import is saved or rolled back as one unit. Because the
+  renamed divisions change the names a request may use, v16.0.0 is the project's eighth consecutive MAJOR release,
+  with the breaking change flagged in `CHANGELOG.md` as it landed.
 
 ### Initial Phase (v1.0.0)
 
@@ -703,7 +738,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v15.0.0, the following areas are identified for future enhancement:
+Based on the evolution to v16.0.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -714,7 +749,17 @@ The completed-work logs for versions 8.0.0 to 9.1.0 are archived, unchanged, in
 The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 [`documentation/archive/v10-v13/HISTORY_v10-v13.md`](/documentation/archive/v10-v13/HISTORY_v10-v13.md).
 
-### Recently Completed (v15.0.0)
+### Recently Completed (v16.0.0)
+
+- `Division.RIFLE_PCC` is added, and the semi-auto rifle divisions are renamed with
+  `V11_11_0__rename_semi_auto_rifle_division_names.sql`
+- `CompetitorHelpers` strips trailing modified-entry digits and `IpscConstants.REPLACE_IN_NAMES_REGEX` removes a "TRO"
+  marker
+- `IpscMatchCompetitorServiceImpl.createMatchCompetitors` runs in one transaction
+- Improvement plan: Gap #41 is added, leaving 38 closed, #6 and #26 partially completed and #41 open
+- Project version bumped to 16.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v15.0.0)
 
 - `ShooterResult`, `ShooterResultRepository` and `V11_10_0__create_shooter_result.sql` store a match's calculated
   results; `IpscShooterResultService` and `IpscShooterResultController` calculate and read them
@@ -885,3 +930,8 @@ Version 15.0.0 calculates a match's shooter results — each competitor's rank a
 division and competitor category — stores them in a new `ShooterResult` entity and serves them through
 `IpscShooterResultController`. It is a MAJOR release, because the removed `overallRanking` and `clubRanking` fields and
 CSV columns and the renamed shooter log `points` property are backward-incompatible.
+
+Version 16.0.0 adds the Rifle PCC division, renames the semi-auto rifle divisions to "Rifle Semi Auto Open" and "Rifle
+Semi Auto Standard" with a migration for the stored values, and makes competitor name matching ignore trailing
+modified-entry digits and a "TRO" role marker. It is a MAJOR release, because a division given by the old "Rifle Open"
+or "Rifle Standard" names no longer resolves.

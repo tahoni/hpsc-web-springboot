@@ -27,6 +27,7 @@ public final class CompetitorHelpers {
 
     /** A leading position of one or more digits, followed by an optional whitespace character and a hyphen. */
     private static final Pattern POSITION_PREFIX = Pattern.compile("^\\d++\\s?+-");
+    private static final Pattern MODIFIED_SUFFIX = Pattern.compile("\\s*+\\d++\\s*+$");
 
     /** A range officer marker, as matched by {@link IpscConstants#REPLACE_IN_NAMES_REGEX}. */
     private static final Pattern RANGE_OFFICER_MARKER = Pattern.compile(IpscConstants.REPLACE_IN_NAMES_REGEX);
@@ -61,6 +62,7 @@ public final class CompetitorHelpers {
         }
 
         String name = POSITION_PREFIX.matcher(competitorName).replaceAll("");
+        name = MODIFIED_SUFFIX.matcher(name).replaceAll("");
         name = RANGE_OFFICER_MARKER.matcher(name).replaceAll(" ");
         name = name.replace(".", "");
         return WHITESPACE.matcher(name).replaceAll(" ").trim();

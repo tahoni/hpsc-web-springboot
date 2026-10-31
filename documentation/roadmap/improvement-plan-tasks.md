@@ -448,7 +448,14 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-*No gaps are currently open.*
+**Reinstated score-scale constants and `NumberUtil.calculateSum` have no production caller** *(improvement-plan.md →
+Gap #41)*
+
+- [ ] Confirm with the IDE's find-usages that `IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`,
+  `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum` have no production caller
+- [ ] For each, either give it a production caller (e.g. the scoring layer, Gap #6) or remove it together with its
+  unit tests
+- [ ] Resolve the "Not currently referenced by any code" Javadoc on `MATCH_POINTS_SCALE` either way
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

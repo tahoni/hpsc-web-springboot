@@ -50,7 +50,7 @@ public final class IpscConstants {
      * before a competitor is matched by full name, so {@code "Jane Doe (RO)"}, {@code "RO Jane Doe"} and
      * {@code "Jane RO Doe"} all match {@code "Jane Doe"}.
      */
-    public static final String REPLACE_IN_NAMES_REGEX = "(\\(RO\\)|\\bRO\\b)";
+    public static final String REPLACE_IN_NAMES_REGEX = "(\\(RO\\)|\\bRO\\b|\\(TRO\\)|\\bTRO\\b)";
 
     /**
      * Number of decimal places for match points. Not currently referenced by any code, along with the other score
