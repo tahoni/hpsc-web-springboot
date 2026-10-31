@@ -122,3 +122,43 @@ renamed shooter log `points` are backward-incompatible, so it is MAJOR under the
 **Test Coverage:**
 
 - The suite stands at 1,320 passing tests, with new tests for the shooter result service, controller and `NumberUtil`
+
+### Phase 53: Rifle PCC Division, Clearer Semi-Auto Division Names & Cleaner Competitor Name Matching (v16.0.0)
+
+**Duration:** October 31, 2026
+
+A major release: the Rifle PCC division is added, and the semi-auto rifle divisions are renamed "Rifle Semi Auto Open"
+and "Rifle Semi Auto Standard". A division given by the old "Rifle Open" or "Rifle Standard" names no longer resolves,
+which is backward-incompatible, so it is MAJOR under the Semantic Versioning rules.
+
+**Key Accomplishments:**
+
+**Database**
+
+- `V11_11_0__rename_semi_auto_rifle_division_names.sql` renames the stored `division` in `match_competitor`,
+  `shooter_log_competitor` and `shooter_log_overall`, so existing rows still read back as a division
+
+**Domain & Utilities**
+
+- `Division.RIFLE_PCC` adds the "Rifle PCC" division
+- `CompetitorHelpers.cleanCompetitorName` strips trailing modified-entry digits of any length, and
+  `IpscConstants.REPLACE_IN_NAMES_REGEX` also removes a "TRO" or "(TRO)" role marker, so more names match their
+  competitor
+
+**Services**
+
+- `IpscMatchCompetitorServiceImpl.createMatchCompetitors` is `@Transactional`, so a bulk import is saved or rolled back
+  as one unit
+
+**Build & Metadata**
+
+- Improvement plan: Gap #41 is added, leaving 38 closed, #6 and #26 partially completed and #41 open
+- Project version bumped to 16.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Keeping stored division names in step with the enum, and matching names as they arrive in real exports
+
+**Test Coverage:**
+
+- The suite stands at 1,327 passing tests, with new `cleanCompetitorName` tests for trailing digits and role markers
