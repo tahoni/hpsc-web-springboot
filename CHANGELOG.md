@@ -42,7 +42,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Tests
 
 - **`CompetitorHelpersTest`:** New `cleanCompetitorName` tests for removing a trailing suffix of one, two, three
-  or more digits, alone, after a position prefix and alongside a range officer marker, and for keeping digits that are not at the end of the name
+  or more digits, alone, after a position prefix and alongside a range officer marker, and for keeping digits that
+  are not at the end of the name
 
 #### 🔄 Changed
 
@@ -68,6 +69,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`documentation/recommendations/flyway-migration-versioning.md`:** Current State table gains a row for
   `V11_11_0__rename_semi_auto_rifle_division_names.sql`
+- **`documentation/roadmap/improvement-plan.md`, `improvement-plan-tasks.md`:** New Gap #41 (the score-scale
+  constants and `NumberUtil.calculateSum` reinstated in 15.0.0 with no production caller), added under ⚪ Open and
+  to the Roadmap's Next row
 
 ---
 
