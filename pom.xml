@@ -42,7 +42,7 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <jacoco.reportPath>${project.build.directory}/site/jacoco/jacoco.xml</jacoco.reportPath>
-        <jacoco.version>0.8.15</jacoco.version>
+        <jacoco.version>0.8.16</jacoco.version>
         <logback.version>1.6.5</logback.version>
         <!-- Spring Boot imports the Jackson BOMs through these properties; override them rather than importing a
              Jackson POM, whose parent chain would also re-pin junit-bom. -->
@@ -56,7 +56,7 @@
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-bom</artifactId>
-                <version>3.1.1</version>
+                <version>3.2.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
