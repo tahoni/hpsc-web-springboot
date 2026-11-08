@@ -48,6 +48,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `ShooterLogCompetitorRepository` before deleting; the competitor check still covers `ShooterLogOverall` rows and the
   match check still covers `ShooterLog` links.
 
+##### Constants
+
+- **`IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`:** Removed — nothing referenced them; only
+  `PERCENTAGE_SCALE` has a caller.
+- **`SystemConstants.DEFAULT_SCALE`:** Removed — only `NumberUtilTest` read it.
+
+##### Utilities
+
+- **`NumberUtil.calculateSum`:** Removed with its unit tests — only those tests called it. `NumberUtilTest`'s
+  `calculatePercentage` tests now use a local scale.
+
 ---
 
 ### 🧾 [16.0.0] - 2026-10-31
