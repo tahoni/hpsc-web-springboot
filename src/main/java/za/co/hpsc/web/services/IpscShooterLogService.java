@@ -48,7 +48,7 @@ public interface IpscShooterLogService {
      * @return a {@link ShooterLogBulkResponseHolder} with one result per row, in the same order as the CSV rows.
      * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
-     * @since 16.2.0
+     * @since 16.3.0
      */
     ShooterLogBulkResponseHolder createShooterLogs(String csvData) throws ValidationException, FatalException;
 

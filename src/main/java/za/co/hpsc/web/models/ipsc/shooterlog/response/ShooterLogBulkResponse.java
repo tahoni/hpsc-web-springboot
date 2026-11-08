@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @see ShooterLogBulkResponseHolder
  * @see ShooterLogResponse
- * @since 16.2.0
+ * @since 16.3.0
  */
 @Getter
 @Setter

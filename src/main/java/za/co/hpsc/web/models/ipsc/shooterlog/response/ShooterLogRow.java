@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * missing or unknown in it.
  *
  * @see ShooterLogBulkResponse
- * @since 16.2.0
+ * @since 16.3.0
  */
 @Getter
 @Setter

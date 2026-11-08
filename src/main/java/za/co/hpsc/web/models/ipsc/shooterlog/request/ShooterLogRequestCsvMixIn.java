@@ -20,7 +20,7 @@ import java.util.List;
  * the matches the log covers, separated by {@link za.co.hpsc.web.constants.SystemConstants#ARRAY_SEPARATOR}.
  * </p>
  *
- * @since 16.2.0
+ * @since 16.3.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class ShooterLogRequestCsvMixIn {

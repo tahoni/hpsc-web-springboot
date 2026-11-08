@@ -87,7 +87,7 @@ public class IpscShooterLogController {
      * created, or {@code 422} if every row failed.
      * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
-     * @since 16.2.0
+     * @since 16.3.0
      */
     @PostMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create shooter logs", description = "Create shooter logs in bulk from CSV data: each row "

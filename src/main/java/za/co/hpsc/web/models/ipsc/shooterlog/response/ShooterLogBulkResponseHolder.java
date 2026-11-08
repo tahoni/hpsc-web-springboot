@@ -12,7 +12,7 @@ import java.util.List;
  * each recording whether that row succeeded.
  *
  * @see ShooterLogBulkResponse
- * @since 16.2.0
+ * @since 16.3.0
  */
 @Getter
 @Setter
