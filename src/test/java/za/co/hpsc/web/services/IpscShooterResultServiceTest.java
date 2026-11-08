@@ -380,29 +380,6 @@ class IpscShooterResultServiceTest {
     }
 
     @Test
-    void testCalculateMatchShooterResult_whenCompetitorHasNoCategory_thenRanksThemWithTheNoneCategory()
-            throws NonFatalException {
-        // Arrange
-        IpscMatch match = match(2L, "Club Championship");
-        MatchCompetitor uncategorised = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "50");
-        MatchCompetitor none = matchCompetitor(2L, FirearmType.HANDGUN, Division.OPEN, "25");
-        uncategorised.setCompetitorCategory(null);
-        none.setCompetitorCategory(CompetitorCategory.NONE);
-        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
-        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
-                .thenReturn(List.of(uncategorised, none));
-        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of());
-
-        // Act
-        ipscShooterResultService.calculateMatchShooterResult(2L);
-
-        // Assert
-        List<ShooterResult> saved = savedShooterResults();
-        assertEquals(1, rankOf(saved, uncategorised));
-        assertEquals(2, rankOf(saved, none));
-    }
-
-    @Test
     void testCalculateMatchShooterResult_whenExistingResultWasNeverCalculated_thenRecalculates()
             throws NonFatalException {
         // Arrange

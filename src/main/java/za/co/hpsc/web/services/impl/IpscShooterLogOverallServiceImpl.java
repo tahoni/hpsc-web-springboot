@@ -86,18 +86,17 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
         }
 
         // Competitors are ranked against the others in their division and competitor category, taken from their most
-        // recent match in the log, with competitors without a category (NONE) a group of their own
+        // recent match in the log, with competitors in the NONE category a group of their own. A match's scheduled date
+        // and a result's category are never null: both columns are NOT NULL
         Map<OverallGroup, List<ShooterLogOverall>> groups = new LinkedHashMap<>();
         LocalDateTime dateCalculated = LocalDateTime.now();
         for (Map.Entry<Long, List<ShooterResult>> entry : resultsByCompetitorId.entrySet()) {
             List<ShooterResult> results = entry.getValue();
             ShooterResult latest = results.stream()
-                    .max(Comparator.comparing((ShooterResult result) -> result.getMatch().getScheduledDate(),
-                                    Comparator.nullsFirst(Comparator.naturalOrder()))
+                    .max(Comparator.comparing((ShooterResult result) -> result.getMatch().getScheduledDate())
                             .thenComparing(ShooterResult::getId))
                     .orElseThrow();
-            CompetitorCategory category = (latest.getCompetitorCategory() == null)
-                    ? CompetitorCategory.NONE : latest.getCompetitorCategory();
+            CompetitorCategory category = latest.getCompetitorCategory();
 
             ShooterLogOverall overall = existingByCompetitorId.getOrDefault(entry.getKey(), new ShooterLogOverall());
             overall.setShooterLog(shooterLog);
@@ -209,6 +208,12 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
      * Averages the best percentages a competitor has across the matches of a shooter log: their
      * {@link IpscConstants#SHOOTER_LOG_BEST_MATCHES} highest, or all of them if they have fewer.
      *
+     * <p>
+     * A result without a percentage is ignored. {@link ShooterResult#getPercentageInLog()} is nullable, and although
+     * {@code IpscShooterResultServiceImpl} always sets it, a row inserted by hand or by an earlier version may lack
+     * one. Tolerating that, rather than failing, keeps one bad row from blocking the whole log's calculation.
+     * </p>
+     *
      * @param results the competitor's shooter results in the log.
      * @return the average of the results' best percentages, to {@link IpscConstants#PERCENTAGE_SCALE} decimal
      * places, or {@code null} if none of them has a percentage.
@@ -231,7 +236,8 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
     /**
      * Ranks a group of overall results by overall percentage, highest first, setting each one's rank. Competitors on an
      * equal percentage share a rank and the next rank is skipped, so percentages of 90, 90 and 80 rank 1, 1 and 3. An
-     * overall without a percentage is not ranked.
+     * overall without a percentage is not ranked, for the same reason {@link #averagePercentage} tolerates a missing
+     * percentage: it can only come from a row that {@code IpscShooterResultServiceImpl} did not write.
      *
      * @param group the overall results to rank, which are in the same division and competitor category.
      */

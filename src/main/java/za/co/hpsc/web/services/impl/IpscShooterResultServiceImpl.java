@@ -88,13 +88,11 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
         }
 
         // Competitors are ranked against the others in their firearm type, division and competitor category, with
-        // competitors without a category (NONE) a group of their own
+        // competitors in the NONE category a group of their own. The category is never null: the column is NOT NULL
         Map<ResultGroup, List<MatchCompetitor>> groups = new LinkedHashMap<>();
         for (MatchCompetitor matchCompetitor : matchCompetitors) {
-            CompetitorCategory category = (matchCompetitor.getCompetitorCategory() == null)
-                    ? CompetitorCategory.NONE : matchCompetitor.getCompetitorCategory();
             groups.computeIfAbsent(new ResultGroup(matchCompetitor.getFirearmType(), matchCompetitor.getDivision(),
-                    category), group -> new ArrayList<>()).add(matchCompetitor);
+                    matchCompetitor.getCompetitorCategory()), group -> new ArrayList<>()).add(matchCompetitor);
         }
 
         LocalDateTime dateCalculated = LocalDateTime.now();

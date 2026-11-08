@@ -62,6 +62,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`:** Only verified competitors are included in the
   overall shooter log results, so an unverified competitor's overall is no longer ranked and is deleted on the next
   calculation.
+- **`IpscShooterResultServiceImpl` and `IpscShooterLogOverallServiceImpl`:** The fallback from a null competitor
+  category to `NONE`, and the null-safe ordering of a match's scheduled date, are removed — both were unreachable,
+  since `competitor_category` and `scheduled_date` are `NOT NULL`. The two tests that only covered the category
+  fallbacks are removed with them.
 
 ##### Documentation
 

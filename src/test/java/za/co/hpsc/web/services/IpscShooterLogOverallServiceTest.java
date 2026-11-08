@@ -381,23 +381,6 @@ class IpscShooterLogOverallServiceTest {
     }
 
     @Test
-    void testCalculateShooterLogOverall_whenLatestResultHasNoCategory_thenUsesTheNoneCategory()
-            throws NonFatalException {
-        // Arrange
-        IpscMatch match = match(10L, 1);
-        ShooterLog shooterLog = shooterLog(1L, match);
-        ShooterResult result = shooterResult(100L, match, competitor(5L), "80", Division.OPEN);
-        result.setCompetitorCategory(null);
-        stubLog(shooterLog, List.of(result), List.of());
-
-        // Act
-        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
-
-        // Assert
-        assertEquals(CompetitorCategory.NONE, savedOverallResults().getFirst().getCompetitorCategory());
-    }
-
-    @Test
     void testCalculateShooterLogOverall_whenLogHasNoMatches_thenSavesNothingAndDeletesNothing()
             throws NonFatalException {
         // Arrange
