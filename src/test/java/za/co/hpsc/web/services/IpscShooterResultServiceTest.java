@@ -245,6 +245,93 @@ class IpscShooterResultServiceTest {
     }
 
     @Test
+    void testCalculateMatchShooterResult_whenCompetitorHasNoCategory_thenRanksThemWithTheNoneCategory()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor uncategorised = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "50");
+        MatchCompetitor none = matchCompetitor(2L, FirearmType.HANDGUN, Division.OPEN, "25");
+        uncategorised.setCompetitorCategory(null);
+        none.setCompetitorCategory(CompetitorCategory.NONE);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(uncategorised, none));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of());
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        List<ShooterResult> saved = savedShooterResults();
+        assertEquals(1, rankOf(saved, uncategorised));
+        assertEquals(2, rankOf(saved, none));
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenExistingResultWasNeverCalculated_thenRecalculates()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor matchCompetitor = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "80");
+        ShooterResult existing = shooterResult(10L, 2L);
+        existing.setMatchCompetitor(matchCompetitor);
+        existing.setDateCalculated(null);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(matchCompetitor));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of(existing));
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        assertEquals(1, savedShooterResults().size());
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenMatchHasNoCompetitors_thenReturnsWithoutRecalculating()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L)).thenReturn(List.of());
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of());
+
+        // Act
+        ShooterResponseHolder holder = ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        assertTrue(holder.getShooterResults().isEmpty());
+        verifyNoInteractions(transactionService);
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenResultsWereCalculatedAtDifferentTimes_thenComparesAgainstTheOldest()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        match.setDateUpdated(LocalDateTime.of(2026, 10, 1, 7, 0));
+        MatchCompetitor newer = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "80");
+        MatchCompetitor older = matchCompetitor(2L, FirearmType.HANDGUN, Division.OPEN, "40");
+        ShooterResult newerResult = shooterResult(10L, 2L);
+        newerResult.setMatchCompetitor(newer);
+        newerResult.setDateCalculated(LocalDateTime.of(2026, 10, 1, 8, 0));
+        ShooterResult olderResult = shooterResult(11L, 2L);
+        olderResult.setMatchCompetitor(older);
+        olderResult.setDateCalculated(LocalDateTime.of(2026, 10, 1, 7, 30));
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(newer, older));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of(newerResult, olderResult));
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        verifyNoInteractions(transactionService);
+    }
+
+    @Test
     void testCalculateMatchShooterResult_whenSeveralCompetitorCategories_thenRanksEachCategorySeparately()
             throws NonFatalException {
         // Arrange

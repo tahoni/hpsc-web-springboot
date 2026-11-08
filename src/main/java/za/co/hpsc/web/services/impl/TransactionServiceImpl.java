@@ -8,10 +8,14 @@ import org.springframework.transaction.support.TransactionTemplate;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.domain.ShooterLog;
+import za.co.hpsc.web.domain.ShooterLogOverall;
 import za.co.hpsc.web.domain.ShooterResult;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
+import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.repositories.ShooterResultRepository;
 import za.co.hpsc.web.services.TransactionService;
 
@@ -23,16 +27,22 @@ public class TransactionServiceImpl implements TransactionService {
     private final IpscMatchRepository ipscMatchRepository;
     private final MatchCompetitorRepository matchCompetitorRepository;
     private final ShooterResultRepository shooterResultRepository;
+    private final ShooterLogOverallRepository shooterLogOverallRepository;
+    private final ShooterLogRepository shooterLogRepository;
     private final TransactionTemplate transactionTemplate;
 
     public TransactionServiceImpl(CompetitorRepository competitorRepository, IpscMatchRepository ipscMatchRepository,
                                   MatchCompetitorRepository matchCompetitorRepository,
                                   ShooterResultRepository shooterResultRepository,
+                                  ShooterLogOverallRepository shooterLogOverallRepository,
+                                  ShooterLogRepository shooterLogRepository,
                                   PlatformTransactionManager transactionManager) {
         this.competitorRepository = competitorRepository;
         this.ipscMatchRepository = ipscMatchRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.shooterResultRepository = shooterResultRepository;
+        this.shooterLogOverallRepository = shooterLogOverallRepository;
+        this.shooterLogRepository = shooterLogRepository;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
 
@@ -121,6 +131,36 @@ public class TransactionServiceImpl implements TransactionService {
         });
     }
 
+    @Override
+    public ShooterLog saveShooterLog(ShooterLog shooterLog) {
+        return transactionTemplate.execute(status -> loadAssociations(shooterLogRepository.save(shooterLog)));
+    }
+
+    @Override
+    public void deleteShooterLog(ShooterLog shooterLog) {
+        // Flushed inside the transaction rather than at commit, so a foreign-key violation
+        // surfaces from this call as a DataIntegrityViolationException the caller can handle.
+        transactionTemplate.executeWithoutResult(status -> {
+            shooterLogRepository.delete(shooterLog);
+            shooterLogRepository.flush();
+        });
+    }
+
+    @Override
+    public List<ShooterLogOverall> replaceShooterLogOverallResults(List<ShooterLogOverall> toSave,
+                                                             List<ShooterLogOverall> toDelete) {
+        // Deleted and saved in one transaction and flushed inside it, so a constraint violation surfaces
+        // from this call as a DataIntegrityViolationException the caller can handle.
+        return transactionTemplate.execute(status -> {
+            shooterLogOverallRepository.deleteAll(toDelete);
+            List<ShooterLogOverall> saved = toSave.stream()
+                    .map(shooterLogOverallRepository::save)
+                    .toList();
+            shooterLogOverallRepository.flush();
+            return saved;
+        });
+    }
+
     /**
      * Loads the associations a competitor's response mapping reads, while the transaction is
      * still open.
@@ -144,5 +184,17 @@ public class TransactionServiceImpl implements TransactionService {
     protected IpscMatch loadAssociations(@NonNull IpscMatch match) {
         Hibernate.initialize(match.getClub());
         return match;
+    }
+
+    /**
+     * Loads the associations a shooter log's response mapping reads, while the transaction is still
+     * open.
+     *
+     * @param shooterLog the shooter log whose associations to load; must not be null.
+     * @return {@code shooterLog}, for chaining.
+     */
+    protected ShooterLog loadAssociations(@NonNull ShooterLog shooterLog) {
+        Hibernate.initialize(shooterLog.getMatches());
+        return shooterLog;
     }
 }

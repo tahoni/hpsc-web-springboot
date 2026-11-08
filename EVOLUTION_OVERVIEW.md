@@ -165,3 +165,44 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 **Test Coverage:**
 
 - The suite stands at 1,327 passing tests, with new `cleanCompetitorName` tests for trailing digits and role markers
+
+
+### Phase 54: Shooter Log Management & Overall Results (v16.1.0)
+
+**Database**
+
+- `V11_12_0__drop_shooter_log_competitor.sql` drops the `shooter_log_competitor` table, which nothing references any
+  more, since a competitor's rank and percentage in a log live in `shooter_result`
+
+**Controllers & Services**
+
+- `IpscShooterLogController` and `IpscShooterLogService` create, replace, patch, read and delete shooter logs under
+  `/ipsc/shooter-logs`, with the matches a log covers set by match ID; a match scheduled outside the log's start and end
+  dates is refused, and a log with overall results cannot be deleted
+- `IpscShooterLogOverallController` and `IpscShooterLogOverallService` calculate and read a log's overall results under
+  `/ipsc/shooter-log-overall-results`: each competitor's overall percentage is the average of their best
+  `IpscConstants.SHOOTER_LOG_BEST_MATCHES` (four) percentages, ranked within their division and competitor category
+  with ties sharing a rank, and recalculated only when out of date
+- `TransactionService` gains `saveShooterLog`, `deleteShooterLog` and `replaceShooterLogOverallResults`
+
+**Domain & Utilities**
+
+- `ShooterLogCompetitor` and `ShooterLogCompetitorRepository` are removed
+- `IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE` and `REPLACE_IN_NAMES_REGEX`,
+  `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum` are removed; the name regex is inlined into
+  `CompetitorHelpers.RANGE_OFFICER_MARKER`
+
+**Build & Metadata**
+
+- `jacoco.version` is bumped to 0.8.16 and `springdoc-openapi-bom` to 3.2.0
+- Improvement plan: Gaps #6, #41 and #42 are closed, leaving all 42 gaps closed and none open
+- Project version bumped to 16.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Letting a shooter log be built over the API and calculated from the matches inside its dates
+
+**Test Coverage:**
+
+- The suite stands at 1,439 passing tests, with new controller, service and integration tests for both shooter log
+  stacks and request validation tests

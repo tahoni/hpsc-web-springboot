@@ -3,6 +3,8 @@ package za.co.hpsc.web.services;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.domain.ShooterLog;
+import za.co.hpsc.web.domain.ShooterLogOverall;
 import za.co.hpsc.web.domain.ShooterResult;
 
 import java.util.List;
@@ -123,6 +125,26 @@ public interface TransactionService {
     void deleteMatchCompetitor(MatchCompetitor matchCompetitor);
 
     /**
+     * Creates or updates a shooter log, with the matches it covers.
+     *
+     * @param shooterLog the shooter log to save; a new one is created when its ID is {@code null}. Must not be
+     *                   null.
+     * @return the saved shooter log, including its generated ID and with its matches loaded.
+     * @since 16.1.0
+     */
+    ShooterLog saveShooterLog(ShooterLog shooterLog);
+
+    /**
+     * Deletes a shooter log, along with its links to its matches.
+     *
+     * @param shooterLog the shooter log to delete. Must not be null and must already be persisted.
+     * @throws org.springframework.dao.DataIntegrityViolationException if another record still references the
+     *                                                                  shooter log.
+     * @since 16.1.0
+     */
+    void deleteShooterLog(ShooterLog shooterLog);
+
+    /**
      * Creates or updates a batch of shooter results in a single transaction, so either every one is saved or none
      * is.
      *
@@ -135,4 +157,19 @@ public interface TransactionService {
      * @since 15.0.0
      */
     List<ShooterResult> saveShooterResults(List<ShooterResult> shooterResults);
+
+    /**
+     * Saves some shooter log overall results and deletes others in one transaction, flushing before it commits so a
+     * constraint violation surfaces from this call rather than at commit.
+     *
+     * @param toSave   the overall results to save; a new one is created when its ID is {@code null}. Must not be null.
+     * @param toDelete the overall results to delete. Must not be null.
+     * @return the saved overall results, in the order given.
+     * @throws org.springframework.dao.DataIntegrityViolationException if a unique constraint is violated, such as
+     *                                                                  a second overall for the same shooter log
+     *                                                                  and competitor.
+     * @since 16.1.0
+     */
+    List<ShooterLogOverall> replaceShooterLogOverallResults(List<ShooterLogOverall> toSave,
+                                                      List<ShooterLogOverall> toDelete);
 }

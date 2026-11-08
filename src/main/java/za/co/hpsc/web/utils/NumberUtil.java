@@ -2,7 +2,6 @@ package za.co.hpsc.web.utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
 
 /**
  * Utility class providing methods for numeric calculations and operations.
@@ -45,35 +44,6 @@ public final class NumberUtil {
         }
         // Scales the result to the given scale
         return result.setScale(scale, RoundingMode.HALF_UP);
-    }
-
-    /**
-     * Calculates the sum of a list of {@code BigDecimal} values and scales the result
-     * to the given scale.
-     *
-     * <p>
-     * If the input list is null, the method returns a value of {@code BigDecimal.ZERO}.
-     * Each value in the list is added together, and the result is scaled using
-     * {@code RoundingMode.HALF_UP}.
-     * </p>
-     *
-     * @param values the list of {@code BigDecimal} values to sum.
-     *               Can be null.
-     * @param scale  the number of decimal places of the result, using {@code RoundingMode.HALF_UP}.
-     * @return the sum of the list's values, scaled to {@code scale}.
-     * @since 5.0.0
-     */
-    public static BigDecimal calculateSum(List<BigDecimal> values, int scale) {
-        BigDecimal sum = BigDecimal.ZERO;
-        // Calculates the sum of the values in the list
-        if (values != null) {
-            for (BigDecimal value : values) {
-                sum = sum.add(value);
-            }
-        }
-
-        // Scales the result to the given scale
-        return sum.setScale(scale, RoundingMode.HALF_UP);
     }
 
     /**

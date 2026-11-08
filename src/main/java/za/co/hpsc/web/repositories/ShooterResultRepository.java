@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import za.co.hpsc.web.domain.ShooterResult;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ShooterResultRepository extends JpaRepository<ShooterResult, Long> {
@@ -17,4 +18,9 @@ public interface ShooterResultRepository extends JpaRepository<ShooterResult, Lo
     @Query("select sr from ShooterResult sr join fetch sr.match join fetch sr.competitor "
             + "join fetch sr.matchCompetitor order by sr.id")
     List<ShooterResult> findAllWithDetails();
+
+    // Fetch-joins the same associations for the results of several matches, such as a shooter log's.
+    @Query("select sr from ShooterResult sr join fetch sr.match join fetch sr.competitor "
+            + "join fetch sr.matchCompetitor where sr.match.id in :matchIds order by sr.id")
+    List<ShooterResult> findAllByMatchIdInWithDetails(@Param("matchIds") Collection<Long> matchIds);
 }

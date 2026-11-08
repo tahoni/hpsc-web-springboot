@@ -25,7 +25,6 @@ import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
-import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.services.IpscCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
@@ -42,7 +41,6 @@ import static za.co.hpsc.web.utils.StringUtil.toProperCase;
 public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     private final CompetitorRepository competitorRepository;
     private final MatchCompetitorRepository matchCompetitorRepository;
-    private final ShooterLogCompetitorRepository shooterLogCompetitorRepository;
     private final ShooterLogOverallRepository shooterLogOverallRepository;
 
     private final CompetitorMapper competitorMapper;
@@ -50,13 +48,11 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
 
     public IpscCompetitorServiceImpl(CompetitorRepository competitorRepository,
                                      MatchCompetitorRepository matchCompetitorRepository,
-                                     ShooterLogCompetitorRepository shooterLogCompetitorRepository,
                                      ShooterLogOverallRepository shooterLogOverallRepository,
                                      CompetitorMapper competitorMapper,
                                      TransactionService transactionService) {
         this.competitorRepository = competitorRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
-        this.shooterLogCompetitorRepository = shooterLogCompetitorRepository;
         this.shooterLogOverallRepository = shooterLogOverallRepository;
         this.competitorMapper = competitorMapper;
         this.transactionService = transactionService;
@@ -128,8 +124,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             throw new ValidationException("Competitor with ID " + competitorId
                     + " cannot be deleted: they have recorded match results.");
         }
-        if (shooterLogCompetitorRepository.existsByCompetitorId(competitorId)
-                || shooterLogOverallRepository.existsByCompetitorId(competitorId)) {
+        if (shooterLogOverallRepository.existsByCompetitorId(competitorId)) {
             throw new ValidationException("Competitor with ID " + competitorId
                     + " cannot be deleted: they have shooter logs.");
         }

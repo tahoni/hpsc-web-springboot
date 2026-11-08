@@ -21,6 +21,32 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 16.1.0 (November 8, 2026)
+
+**Theme:** Shooter Log Management & Overall Results
+
+**Key Focus:**
+
+- `IpscShooterLogController` creates, replaces, partially updates, reads and deletes shooter logs under
+  `/ipsc/shooter-logs`, through `IpscShooterLogService`, with the matches a log covers set by match ID
+- A match must be scheduled within its shooter log's start and end dates, both inclusive, and a log with overall
+  results cannot be deleted
+- `IpscShooterLogOverallController` calculates and reads a shooter log's overall results under
+  `/ipsc/shooter-log-overall-results`, through `IpscShooterLogOverallService`: each competitor's overall percentage is
+  the average of their best `IpscConstants.SHOOTER_LOG_BEST_MATCHES` (four) percentages, ranked within their division
+  and competitor category, with ties sharing a rank
+- `ShooterLogCompetitor`, its repository and the `shooter_log_competitor` table are removed with
+  `V11_12_0__drop_shooter_log_competitor.sql`, since a competitor's rank and percentage in a log live in
+  `shooter_result`
+- The unused score-scale constants, `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum` are removed, and
+  `IpscConstants.REPLACE_IN_NAMES_REGEX` is inlined into `CompetitorHelpers.RANGE_OFFICER_MARKER`
+- Scoped as `v16.1.0` **MINOR**: the new endpoints are backward-compatible additions, and nothing removed was part of
+  the public API
+- `jacoco.version` is bumped to 0.8.16 and `springdoc-openapi-bom` to 3.2.0
+- Improvement plan: Gaps #6, #41 and #42 are closed, leaving all 42 gaps closed and none open
+- The suite stands at 1,439 passing tests
+- Project version bumped to 16.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 16.0.0 (October 31, 2026)
 
 **Theme:** Rifle PCC Division, Clearer Semi-Auto Division Names & Cleaner Competitor Name Matching
@@ -170,6 +196,15 @@ Milestones 44 to 50 (versions 10.0.0 to 13.3.0) are archived, unchanged, in
 - Competitor names match despite trailing modified-entry digits and a "TRO" role marker
 - A bulk match competitor import is saved or rolled back as one unit
 - Improvement plan Gap #41 is added
+
+### Milestone 54: Shooter Log Management & Overall Results (v16.1.0)
+
+- `IpscShooterLogController` and `IpscShooterLogService` manage shooter logs and the matches they cover, refusing a
+  match scheduled outside the log's dates
+- `IpscShooterLogOverallController` and `IpscShooterLogOverallService` calculate and read a log's overall results from
+  each competitor's best four match percentages
+- `ShooterLogCompetitor` and its table are dropped
+- Improvement plan Gaps #6, #41 and #42 are closed, so every tracked gap is now closed
 
 ---
 
@@ -439,11 +474,14 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   points, stored in a new `ShooterResult` entity and served by one controller. Because that retires the overall and
   club rankings on a match competitor and renames the shooter log `points`, v15.0.0 is the project's seventh
   consecutive MAJOR release, with each breaking change flagged in `CHANGELOG.md` as it landed.
-- **Version 16.x (v16.0.0):** Make more of the real match data resolve — the Rifle PCC division is added, the semi-auto
+- **Version 16.x (v16.0.0 – v16.1.0):** Make more of the real match data resolve — the Rifle PCC division is added, the semi-auto
   rifle divisions get names that say what they are, and competitor names match despite trailing modified-entry digits
   and a "TRO" role marker, while a bulk match competitor import is saved or rolled back as one unit. Because the
   renamed divisions change the names a request may use, v16.0.0 is the project's eighth consecutive MAJOR release,
-  with the breaking change flagged in `CHANGELOG.md` as it landed.
+  with the breaking change flagged in `CHANGELOG.md` as it landed. v16.1.0 then finishes the shooter log layer that
+  v15.0.0 began — shooter logs can be created and managed over the API, with only matches inside a log's dates allowed,
+  and a log's overall results are calculated from each competitor's best four match percentages — as a
+  backward-compatible MINOR release that also drops the unused `shooter_log_competitor` table.
 
 ### Initial Phase (v1.0.0)
 
@@ -742,7 +780,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v16.0.0, the following areas are identified for future enhancement:
+Based on the evolution to v16.1.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -753,7 +791,20 @@ The completed-work logs for versions 8.0.0 to 9.1.0 are archived, unchanged, in
 The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 [`documentation/archive/v10-v13/HISTORY_v10-v13.md`](/documentation/archive/v10-v13/HISTORY_v10-v13.md).
 
-### Recently Completed (v16.0.0)
+### Recently Completed (v16.1.0)
+
+- `IpscShooterLogController`/`IpscShooterLogService` create, replace, patch, read and delete shooter logs, and refuse a
+  match outside the log's dates
+- `IpscShooterLogOverallController`/`IpscShooterLogOverallService` calculate and read a shooter log's overall results
+  from each competitor's best `IpscConstants.SHOOTER_LOG_BEST_MATCHES` percentages
+- `ShooterLogCompetitor`, `ShooterLogCompetitorRepository` and the `shooter_log_competitor` table are removed with
+  `V11_12_0__drop_shooter_log_competitor.sql`
+- The unused score-scale constants, `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum` are removed
+- `jacoco.version` and `springdoc-openapi-bom` are bumped
+- Improvement plan: Gaps #6, #41 and #42 are closed, leaving all 42 gaps closed and none open
+- Project version bumped to 16.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v16.0.0)
 
 - `Division.RIFLE_PCC` is added, and the semi-auto rifle divisions are renamed with
   `V11_11_0__rename_semi_auto_rifle_division_names.sql`
@@ -941,3 +992,9 @@ Version 16.0.0 adds the Rifle PCC division, renames the semi-auto rifle division
 Semi Auto Standard" with a migration for the stored values, and makes competitor name matching ignore trailing
 modified-entry digits and a "TRO" role marker. It is a MAJOR release, because a division given by the old "Rifle Open"
 or "Rifle Standard" names no longer resolves.
+
+Version 16.1.0 adds shooter log management and overall results: shooter logs can be created, replaced, patched, read and
+deleted through `IpscShooterLogController`, with every match scheduled inside the log's dates, and a log's overall
+results are calculated from each competitor's best four match percentages through `IpscShooterLogOverallController`. It
+drops the unused `shooter_log_competitor` table, the score-scale constants and `NumberUtil.calculateSum`. It is a MINOR
+release, because the new endpoints are backward-compatible additions and nothing removed was part of the public API.
