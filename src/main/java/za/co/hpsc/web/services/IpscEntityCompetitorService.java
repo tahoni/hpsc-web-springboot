@@ -26,10 +26,10 @@ public interface IpscEntityCompetitorService {
      *     Numbers in {@link za.co.hpsc.web.constants.IpscConstants#EXCLUDE_ICS_ALIAS} are ignored.</li>
      *     <li>The same value as an ID number.</li>
      *     <li>The full name, either "FirstName LastName" or "NickName LastName", matched ignoring
-     *     case, after removing the text described by
-     *     {@link za.co.hpsc.web.constants.IpscConstants#REPLACE_IN_NAMES_REGEX} (the "RO" or "(RO)"
-     *     range officer marker, wherever it appears in the name). When the number or ID number matched several competitors, the full name only
-     *     narrows those matches; when they matched none, all competitors are searched by name.</li>
+     *     case, after removing the "RO" or "(RO)" range officer marker, or the "TRO" or "(TRO)" training
+     *     range officer marker, wherever it appears in the name. When the number or ID number matched several
+     *     competitors, the full name only narrows those matches; when they matched none, all competitors are
+     *     searched by name.</li>
      * </ol>
      *
      * @param competitorNumber the competitor's number (SAPSA or club number) or ID number. May be

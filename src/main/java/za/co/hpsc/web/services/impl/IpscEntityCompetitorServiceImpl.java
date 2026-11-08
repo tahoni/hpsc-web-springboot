@@ -51,9 +51,9 @@ public class IpscEntityCompetitorServiceImpl implements IpscEntityCompetitorServ
      * </ol>
      * <p>The full name is normalised before comparison by
      * {@link CompetitorHelpers#cleanCompetitorName(String)}: a leading position is removed, the range
-     * officer marker, "RO" or "(RO)", is removed wherever it appears in the name (see
-     * {@link IpscConstants#REPLACE_IN_NAMES_REGEX}), full stops are removed, runs of whitespace are
-     * collapsed to a single space, and the result is trimmed. So
+     * officer marker, "RO" or "(RO)", or the training range officer marker, "TRO" or "(TRO)", is removed
+     * wherever it appears in the name, full stops are removed, runs of whitespace are collapsed to a single
+     * space, and the result is trimmed. So
      * {@code "Jane Doe RO"}, {@code "RO Jane Doe"} and {@code "Jane (RO) Doe"} are all looked up
      * as {@code "Jane Doe"}.</p>
      * <p>If the final stage does not yield exactly one competitor, an exception is thrown rather

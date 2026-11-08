@@ -29,8 +29,16 @@ public final class CompetitorHelpers {
     private static final Pattern POSITION_PREFIX = Pattern.compile("^\\d++\\s?+-");
     private static final Pattern MODIFIED_SUFFIX = Pattern.compile("\\s*+\\d++\\s*+$");
 
-    /** A range officer marker, as matched by {@link IpscConstants#REPLACE_IN_NAMES_REGEX}. */
-    private static final Pattern RANGE_OFFICER_MARKER = Pattern.compile(IpscConstants.REPLACE_IN_NAMES_REGEX);
+    /**
+     * Regular expression matching the range officer marker some imported names carry, {@code "RO"} or
+     * {@code "(RO)"}, or the training range officer marker, {@code "TRO"} or {@code "(TRO)"}, anywhere in the name:
+     * before, between or after the other parts. {@code "RO"} and {@code "TRO"} must be whole, upper-case words, so
+     * neither is taken from inside a name such as "Romeo", "PEDRO" or "Troy"; {@code "(RO)"} and {@code "(TRO)"} match
+     * wherever they appear. Every match is replaced by a space, and the name's whitespace then collapsed and trimmed,
+     * before a competitor is matched by full name, so {@code "Jane Doe (RO)"}, {@code "RO Jane Doe"},
+     * {@code "Jane TRO Doe"} and {@code "Jane Doe (TRO)"} all match {@code "Jane Doe"}.
+     */
+    private static final Pattern RANGE_OFFICER_MARKER = Pattern.compile("(\\(RO\\)|\\bRO\\b|\\(TRO\\)|\\bTRO\\b)");
 
     /** A run of two or more whitespace characters, matched possessively so it is never backtracked into. */
     private static final Pattern WHITESPACE = Pattern.compile("\\s{2,}+");
@@ -47,9 +55,8 @@ public final class CompetitorHelpers {
      * A leading number at the very start of the name, followed by a hyphen with at most one whitespace character
      * before it, is treated as a position and removed, so {@code "1 - Smith-Jones"} resolves to
      * {@code "Smith-Jones"}, and a value without such a prefix, such as {@code "Smith-Jones"}, keeps its hyphens. Any
-     * {@code RO} or {@code (RO)} range officer marker (see {@link IpscConstants#REPLACE_IN_NAMES_REGEX}) is removed
-     * wherever it appears and so are all full stops, then runs of whitespace are replaced with a single space and the
-     * result is trimmed.
+     * {@code RO}, {@code (RO)}, {@code TRO} or {@code (TRO)} range officer marker is removed wherever it appears and
+     * so are all full stops, then runs of whitespace are replaced with a single space and the result is trimmed.
      * </p>
      *
      * @param competitorName the competitor's full name, optionally prefixed with a position, may be null.

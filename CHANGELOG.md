@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 16.0.0](#-1600---2026-10-31) ← Current
+- [🧾 Version 16.1.0](#-1610---2026-11-08) ← Current
+- [🧾 Version 16.0.0](#-1600---2026-10-31)
 - [🧾 Version 15.0.0](#-1500---2026-10-17)
 - [🧾 Version 14.0.0](#-1400---2026-10-09)
 - [🗄️ Archived Versions 10.0.0 – 13.3.0](/documentation/archive/v10-v13/CHANGELOG_v10-v13.md)
@@ -27,6 +28,111 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [16.1.0] - 2026-11-08
+
+#### ➕ Added
+
+##### Controllers
+
+- **`IpscShooterLogController`:** New controller under `/ipsc/shooter-logs`: `POST` creates a shooter log, `PUT` and
+  `PATCH /{shooterLogId}` replace or partially update one, `GET` returns every log, `GET /{shooterLogId}` one log
+  and `DELETE /{shooterLogId}` removes one.
+- **`IpscShooterLogOverallController`:** New controller under `/ipsc/shooter-log-overall-results`:
+  `POST /logs/{shooterLogId}` calculates a shooter log's overall results, `GET /logs/{shooterLogId}` returns them
+  for one log and `GET` returns them for every log, each a `ShooterLogOverallResponseHolder` linking the log to its
+  overall results.
+
+##### Services
+
+- **`IpscShooterLogService`/`IpscShooterLogServiceImpl`:** New service to create, replace, patch, get and delete a
+  shooter log, with the matches it covers set by match ID. A request naming a match that does not exist is refused,
+  as is one that leaves a match scheduled outside the log's start and end dates (inclusive), and a log that has overall
+  results cannot be deleted.
+- **`TransactionService.saveShooterLog` and `deleteShooterLog`:** Save a shooter log with its matches loaded, and
+  delete one, each in its own transaction.
+- **`IpscShooterLogOverallService`/`IpscShooterLogOverallServiceImpl`:** New service that brings each of a log's
+  matches' shooter results up to date, then gives each competitor an overall percentage — the average of their
+  best `IpscConstants.SHOOTER_LOG_BEST_MATCHES` (four) percentages across the log's matches, or of all of them if
+  they have fewer — and ranks them within their division and competitor category, taken from
+  their most recent match, with ties sharing a rank. It recalculates only when the overall results are out of date, and
+  removes the overall results of competitors who no longer have a result in the log.
+- **`TransactionService.replaceShooterLogOverallResults`:** Saves and deletes shooter log overall results in one
+  transaction.
+
+##### Repositories
+
+- **`ShooterLogOverallRepository.existsByShooterLogId`:** New finder, so a shooter log with overall results can be
+  refused on delete.
+- **`ShooterLogRepository`, `ShooterLogOverallRepository` and `ShooterResultRepository`:** New fetch-joining finders
+  (`findByIdWithMatches`, `findAllWithMatches`, `findAllByShooterLogIdWithDetails`, `findAllWithDetails` and
+  `findAllByMatchIdInWithDetails`) so responses can be mapped outside a transaction.
+
+##### Models
+
+- **`ShooterLogRequest` and `ShooterLogPatchRequest`:** New request DTOs for a shooter log's start and end dates and
+  the IDs of the matches it covers. A replacement needs both dates, with the end date not before the start date.
+- **`ShooterLogOverallResponseHolder`, `ShooterLogOverallResponse` and `ShooterLogResponse`:** New response DTOs
+  linking a shooter log to its overall results, each with the competitor's names and number, category, division, rank
+  and percentage in the log and when they were calculated.
+
+##### Constants
+
+- **`IpscConstants.SHOOTER_LOG_BEST_MATCHES`:** New constant (`4`) — the number of a competitor's best matches in a
+  shooter log that count towards their overall percentage.
+
+#### 🔄 Changed
+
+##### Dependencies
+
+- **`jacoco.version`:** Bumped from 0.8.15 to 0.8.16
+- **`springdoc-openapi-bom`:** Bumped from 3.1.1 to 3.2.0
+
+##### Documentation
+
+- **`ARCHITECTURE.md`:** The Domain Entities table no longer lists `ShooterLogCompetitor`, and its columns are
+  re-padded. The controller, service and Feature Support tables and the project tree gain the shooter log overall
+  controller, service and response DTOs.
+- **`README.md`/`CONTRIBUTING.md`:** No longer say the shooter log service and controller layer is still being built.
+- **`flyway-migration-versioning.md`:** Current State table gains a row for `V11_12_0__drop_shooter_log_competitor.sql`.
+- **`improvement-plan.md`/`improvement-plan-tasks.md`:** Gaps #41, #6 and #42 move to Completed.
+
+#### 🗑️ Removed
+
+##### Database
+
+- **`V11_12_0__drop_shooter_log_competitor.sql`:** New migration that drops the `shooter_log_competitor` table, which
+  nothing references any more — a competitor's rank and percentage in a log live in `shooter_result`. Any rows in the
+  table are discarded.
+
+##### Domain
+
+- **`ShooterLogCompetitor`:** Removed the entity mapping `shooter_log_competitor`, together with its
+  **`ShooterLogCompetitorRepository`**, its repository integration test and the `ScoringFixtures.shooterLogCompetitor`
+  fixture.
+
+##### Services
+
+- **`IpscCompetitorServiceImpl.deleteCompetitor`/`IpscMatchServiceImpl.deleteMatch`:** No longer check
+  `ShooterLogCompetitorRepository` before deleting; the competitor check still covers `ShooterLogOverall` rows and the
+  match check still covers `ShooterLog` links.
+
+##### Constants
+
+- **`IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`:** Removed — nothing referenced them; only
+  `PERCENTAGE_SCALE` has a caller.
+- **`SystemConstants.DEFAULT_SCALE`:** Removed — only `NumberUtilTest` read it.
+- **`IpscConstants.REPLACE_IN_NAMES_REGEX`:** Removed — its pattern is inlined into
+  `CompetitorHelpers.RANGE_OFFICER_MARKER`, its only caller, whose Javadoc now also covers the `TRO`/`(TRO)` training
+  range officer marker the pattern already matched. The Javadoc of `IpscEntityCompetitorService` and its
+  implementation no longer links to the constant.
+
+##### Utilities
+
+- **`NumberUtil.calculateSum`:** Removed with its unit tests — only those tests called it. `NumberUtilTest`'s
+  `calculatePercentage` tests now use a local scale.
 
 ---
 
@@ -49,6 +155,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorHelpersTest`:** New `cleanCompetitorName` tests for removing a trailing suffix of one, two, three
   or more digits, alone, after a position prefix and alongside a range officer marker, and for keeping digits that
   are not at the end of the name
+- **`IpscShooterLogOverallServiceTest`:** New `calculateShooterLogOverall` tests for recalculating when an overall or
+  a shooter result was never calculated, when the shooter log was updated after the overall, for comparing against the
+  oldest of several overalls, for not recalculating when the log was updated before the overall, and for falling back
+  to the `NONE` category when the latest result has none
+- **`IpscShooterLogServiceTest`:** New `patchShooterLog` tests for patching a log that has no start date or no end
+  date
+- **`IpscShooterResultServiceTest`:** New `calculateMatchShooterResult` tests for a competitor without a category, an
+  existing result that was never calculated, a match without competitors and results calculated at different times
+- **`MatchCompetitorMapperTest`:** New `populateResolvableFields` tests for resolving the competitor by ID, by number
+  only, by name only, when none is identified, not found or ambiguous, and for resolving the match by ID
 
 #### 🔄 Changed
 

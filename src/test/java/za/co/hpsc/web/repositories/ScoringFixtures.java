@@ -7,7 +7,6 @@ import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.domain.ShooterLog;
-import za.co.hpsc.web.domain.ShooterLogCompetitor;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
@@ -67,17 +66,5 @@ final class ScoringFixtures {
         shooterLog.setEndDate(LocalDate.of(2026, 9, 30));
         entityManager.persist(shooterLog);
         return shooterLog;
-    }
-
-    static ShooterLogCompetitor shooterLogCompetitor(EntityManager entityManager, ShooterLog shooterLog,
-                                                     MatchCompetitor matchCompetitor) {
-        ShooterLogCompetitor shooterLogCompetitor = new ShooterLogCompetitor();
-        shooterLogCompetitor.setShooterLog(shooterLog);
-        shooterLogCompetitor.setCompetitor(matchCompetitor.getCompetitor());
-        shooterLogCompetitor.setMatchCompetitor(matchCompetitor);
-        shooterLogCompetitor.setCompetitorCategory(matchCompetitor.getCompetitorCategory());
-        shooterLogCompetitor.setDivision(matchCompetitor.getDivision());
-        entityManager.persist(shooterLogCompetitor);
-        return shooterLogCompetitor;
     }
 }

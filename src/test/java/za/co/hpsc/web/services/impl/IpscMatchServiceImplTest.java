@@ -52,7 +52,7 @@ class IpscMatchServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        ipscMatchServiceImpl = new IpscMatchServiceImpl(ipscMatchRepository, null, null, null,
+        ipscMatchServiceImpl = new IpscMatchServiceImpl(ipscMatchRepository, null, null,
                 new MatchMapper(ipscEntityClubService), null);
     }
 

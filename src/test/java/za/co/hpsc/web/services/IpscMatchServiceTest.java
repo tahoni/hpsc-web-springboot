@@ -24,8 +24,8 @@ import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.repositories.ShooterResultRepository;
-import za.co.hpsc.web.repositories.ShooterLogCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.services.impl.IpscEntityClubServiceImpl;
 import za.co.hpsc.web.services.impl.IpscMatchServiceImpl;
@@ -62,9 +62,6 @@ public class IpscMatchServiceTest {
     private ShooterLogRepository shooterLogRepository;
 
     @Mock
-    private ShooterLogCompetitorRepository shooterLogCompetitorRepository;
-
-    @Mock
     private CompetitorRepository competitorRepository;
 
     @Mock
@@ -76,9 +73,9 @@ public class IpscMatchServiceTest {
     void setUp() {
         TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
                 ipscMatchRepository, matchCompetitorRepository, mock(ShooterResultRepository.class),
-                transactionManager);
+                mock(ShooterLogOverallRepository.class), mock(ShooterLogRepository.class), transactionManager);
         ipscMatchService = new IpscMatchServiceImpl(ipscMatchRepository,
-                matchCompetitorRepository, shooterLogRepository, shooterLogCompetitorRepository,
+                matchCompetitorRepository, shooterLogRepository,
                 new MatchMapper(new IpscEntityClubServiceImpl(clubRepository)), transactionService);
     }
 
@@ -353,18 +350,6 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    void testDeleteMatch_whenMatchHasShooterLogEntries_thenThrowsValidationException() {
-        // Arrange
-        when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(newMatch(1L)));
-        when(matchCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
-        when(shooterLogCompetitorRepository.existsByMatchCompetitorMatchId(1L)).thenReturn(true);
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchService.deleteMatch(1L));
-        verify(ipscMatchRepository, never()).delete(any(IpscMatch.class));
-    }
-
-    @Test
     void testDeleteMatch_whenMatchIsLinkedToAShooterLog_thenThrowsValidationException() {
         // Arrange
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(newMatch(1L)));
@@ -382,7 +367,6 @@ public class IpscMatchServiceTest {
         IpscMatch match = newMatch(1L);
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(match));
         when(matchCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
-        when(shooterLogCompetitorRepository.existsByMatchCompetitorMatchId(1L)).thenReturn(false);
 
         // Act
         assertDoesNotThrow(() -> ipscMatchService.deleteMatch(1L));
@@ -397,7 +381,6 @@ public class IpscMatchServiceTest {
         // Arrange
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(newMatch(1L)));
         when(matchCompetitorRepository.existsByMatchId(1L)).thenReturn(false);
-        when(shooterLogCompetitorRepository.existsByMatchCompetitorMatchId(1L)).thenReturn(false);
         doThrow(new DataIntegrityViolationException("FK violation")).when(ipscMatchRepository).flush();
 
         // Act & Assert

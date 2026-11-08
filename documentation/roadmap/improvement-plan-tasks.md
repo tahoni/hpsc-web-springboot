@@ -416,6 +416,55 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Correct `ARCHITECTURE.md`'s `utils/` table, which calls `NumberUtil` "Numeric parsing and formatting helpers" —
   done differently: the `NumberUtil` row is removed with the class
 
+**Reinstated score-scale constants and `NumberUtil.calculateSum` have no production caller** *(improvement-plan.md →
+Gap #41)* —
+✅ Closed in v16.1.0
+
+- [x] Confirm with the IDE's find-usages that `IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`,
+  `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum` have no production caller — confirmed by a name-based scan of `src`; find-usages was not
+  run
+- [x] For each, either give it a production caller (e.g. the scoring layer, Gap #6) or remove it together with its
+  unit tests — all five removed with the `calculateSum` tests
+- [x] Resolve the "Not currently referenced by any code" Javadoc on `MATCH_POINTS_SCALE` either way —
+  removed with the constant
+
+**Match scoring / shooter-log service and controller layer** *(improvement-plan.md → Gap #6)* —
+✅ Closed in v16.1.0
+
+- [x] Introduce `MatchScoreService`/`MatchScoreServiceImpl` (interface + `impl/` split) over the existing
+  `MatchCompetitor`/`MatchStageCompetitor` repositories — as of v9.0.0 `MatchStageCompetitor` and its repository are
+  removed, so this now means the `MatchCompetitor` repository alone — done differently: shipped in v9.1.0 as
+  `IpscMatchCompetitorService`/`IpscMatchCompetitorServiceImpl`
+- [x] Introduce `ShooterLogService`/`ShooterLogServiceImpl` over the existing `ShooterLog*` repositories — as of
+  `V11_12_0`, `ShooterLogCompetitor` and its repository are removed, so this means the `ShooterLog` and
+  `ShooterLogOverall` repositories — done differently: shipped as `IpscShooterLogOverallService`/
+  `IpscShooterLogOverallServiceImpl`
+- [x] Add controller endpoints for both, backed by `@SpringBootTest` integration tests per the
+  `scaffold-integration-tests` conventions — `IpscMatchCompetitorController` and its integration tests shipped in
+  v9.1.0 and extended in v10.0.0 (competitor lookup by number or name, overall-score fields) and v15.0.0
+  (`IpscShooterResultController` `/ipsc/shooter-results` endpoints that calculate and read results over the new
+  `ShooterResult` entity) and `IpscShooterLogOverallController`
+  (`/ipsc/shooter-log-overall-results`)
+- [x] Add Mockito-based controller unit tests per the `scaffold-unit-tests` conventions — done for
+  `IpscMatchCompetitorController` in v9.1.0; `IpscShooterLogOverallController` followed in v16.1.0
+- [x] Hold off on cross-entity orchestration (e.g. a full Practiscore results import) until a concrete need
+  reappears, per the same discipline that closed Gap #1 — held: no import was added
+- [x] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
+  to drop the "still being built" language
+
+**Shooter log creation** *(improvement-plan.md → Gap #42)* —
+✅ Closed in v16.1.0
+
+- [x] Confirm with the IDE's find-usages that nothing writes a `ShooterLog` or its `shooter_log_match` links —
+  confirmed by a name-based scan of `src/main`; find-usages was not run
+- [x] Introduce `IpscShooterLogService`/`IpscShooterLogServiceImpl` (interface + `impl/` split) to create, replace,
+  patch, get and delete a shooter log, with the matches it covers set by match ID, writing through `TransactionService`
+- [x] Add `IpscShooterLogController` under `/ipsc/shooter-logs`, backed by Mockito controller tests and
+  `@SpringBootTest` integration tests per the `scaffold-unit-tests`/`scaffold-integration-tests` conventions
+- [x] Decide what deleting a shooter log does to its overall results, rejecting or cascading explicitly rather than
+  surfacing
+  a raw constraint error
+
 ---
 
 ## 🟡 Partially Completed
@@ -424,39 +473,13 @@ A gap moves here once at least one of its items is checked, but the block as a w
 matching `improvement-plan.md`'s "🟡 Partially Completed" section — and moves on to ✅ Completed once every item is
 checked and the gap's own header there carries a "✅ Closed" suffix.
 
-**Match scoring / shooter-log service and controller layer** *(improvement-plan.md → Gap #6)* —
-🟡 Partially completed in v15.0.0
-
-- [x] Introduce `MatchScoreService`/`MatchScoreServiceImpl` (interface + `impl/` split) over the existing
-  `MatchCompetitor`/`MatchStageCompetitor` repositories — as of v9.0.0 `MatchStageCompetitor` and its repository are
-  removed, so this now means the `MatchCompetitor` repository alone — done differently: shipped in v9.1.0 as
-  `IpscMatchCompetitorService`/`IpscMatchCompetitorServiceImpl`
-- [ ] Introduce `ShooterLogService`/`ShooterLogServiceImpl` over the existing `ShooterLog*` repositories
-- [ ] Add controller endpoints for both, backed by `@SpringBootTest` integration tests per the
-  `scaffold-integration-tests` conventions — `IpscMatchCompetitorController` and its integration tests shipped in
-  v9.1.0 and extended in v10.0.0 (competitor lookup by number or name, overall-score fields) and v15.0.0
-  (`IpscShooterResultController` `/ipsc/shooter-results` endpoints that calculate and read results over the new
-  `ShooterResult` entity); the
-  shooter-log endpoints remain
-- [ ] Add Mockito-based controller unit tests per the `scaffold-unit-tests` conventions — done for
-  `IpscMatchCompetitorController` in v9.1.0; the shooter-log controller remains
-- [ ] Hold off on cross-entity orchestration (e.g. a full Practiscore results import) until a concrete need
-  reappears, per the same discipline that closed Gap #1
-- [ ] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
-  to drop the "still being built" language
+*No gaps are currently partially completed.*
 
 ---
 
 ## ⚪ Open
 
-**Reinstated score-scale constants and `NumberUtil.calculateSum` have no production caller** *(improvement-plan.md →
-Gap #41)*
-
-- [ ] Confirm with the IDE's find-usages that `IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`,
-  `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum` have no production caller
-- [ ] For each, either give it a production caller (e.g. the scoring layer, Gap #6) or remove it together with its
-  unit tests
-- [ ] Resolve the "Not currently referenced by any code" Javadoc on `MATCH_POINTS_SCALE` either way
+*No gaps are currently open.*
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.
