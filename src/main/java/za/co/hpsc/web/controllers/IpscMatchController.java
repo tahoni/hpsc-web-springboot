@@ -139,7 +139,9 @@ public class IpscMatchController {
             @ApiResponse(responseCode = "200", description = "Match replaced.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = MatchResponse.class))),
-            @ApiResponse(responseCode = "400", description = "A required field is missing, or the firearm type/category is unrecognised.",
+            @ApiResponse(responseCode = "400", description = "A required field is missing, the firearm "
+                    + "type/category is unrecognised, or the new date is outside the dates of a shooter log that "
+                    + "covers the match.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "No match with this ID, or the named club, could be found.",
@@ -173,7 +175,9 @@ public class IpscMatchController {
             @ApiResponse(responseCode = "200", description = "Match updated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = MatchResponse.class))),
-            @ApiResponse(responseCode = "400", description = "The named club is blank, or the firearm type/category is unrecognised.",
+            @ApiResponse(responseCode = "400", description = "The named club is blank, the firearm "
+                    + "type/category is unrecognised, or the new date is outside the dates of a shooter log that "
+                    + "covers the match.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "No match with this ID, or the named club, could be found.",

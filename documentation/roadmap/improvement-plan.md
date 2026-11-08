@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (44):**
+- **✅ Completed (45):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -135,6 +135,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
     the rule — closed in v16.1.1 (rules and the manual verification step documented)
   - #44 Javadoc and OpenAPI text still describes shooter results for every competitor, including those now
     excluded — closed in v16.1.1 (Javadoc and OpenAPI descriptions corrected, dead filter removed)
+  - #45 A shooter log's dates were enforced only when the log was written, so a rescheduled match slipped outside
+    them — closed in v16.1.2 (calculation and rescheduling now refuse it)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
 - **⚪ Open (0):**
@@ -1470,6 +1472,33 @@ ranked" note are removed from `IpscShooterResultServiceImpl.rank`, and the winne
 of a null fallback, since `hasPoints` has already excluded competitors without points; `IpscShooterResultServiceImpl`
 now has no missed branches.
 
+#### 45. A shooter log's dates were enforced only when the log was written, so a rescheduled match slipped outside them — ✅ Closed in v16.1.2
+
+**Evidence:** `IpscShooterLogServiceImpl.validateMatchesWithinDates` refused a match outside a shooter log's start and
+end dates, but only while the log itself was created, replaced or patched. Nothing re-checked it afterwards:
+`IpscMatchServiceImpl.updateMatch` and `patchMatch` moved a match to any date, and
+`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` counted every match the log covered whatever its date. A
+match rescheduled after it was added to a log was therefore still counted in that log's overall results, which no
+document describes as allowed. `isUpToDate` also ignored a match's own `dateUpdated`, so moving a match within the log
+could change which of a competitor's matches is the most recent without the overall results being recalculated.
+
+**Why it matters:** The same shape as Gap #43: a rule the code enforces on one path and the documentation presents as
+always holding. A log's dates are the one thing that defines which matches belong to it, and a match could be moved
+out of step with them without any error, leaving overall results that covered matches outside the log's period.
+
+**Proposed improvement:** Apply the same date rule everywhere it matters: refuse a calculation for a log with a match
+outside its dates, refuse rescheduling a match outside the dates of a log that covers it, and treat a match updated
+after the overall results were calculated as making them out of date. Share one helper between the three checks so
+they cannot drift, and state the rule in `README.md`, `ARCHITECTURE.md` and the OpenAPI descriptions.
+
+**Outcome:** Done as proposed. `ShooterLogHelpers.validateMatchesWithinDates` and `isWithinDates` hold the rule once,
+used by `IpscShooterLogServiceImpl` when a log is written, by
+`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`, which now throws a `400` for a log with a match outside
+its dates, and by `IpscMatchServiceImpl.updateMatch` and `patchMatch`, which refuse moving a match to another day
+outside the dates of a log that covers it, found through the new `ShooterLogRepository.findAllByMatchesId`. A log already out of step does not block edits that leave its match on
+the same day. A match updated after the overall results were calculated now marks them out of date. `README.md`,
+`ARCHITECTURE.md` and the service, controller and OpenAPI text describe the rule and its `400` responses.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -1488,7 +1517,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | No items currently scoped — #43 and #44 closed in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                                         |
+| **Now**     | No items currently scoped — #45 closed in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                         |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath; re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
@@ -1600,6 +1629,8 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 - ✅ Met in v16.1.1: the Javadoc on `IpscShooterResultService` and `IpscShooterLogOverallService` and the `@Operation`
   descriptions on `IpscShooterResultController` and `IpscShooterLogOverallController` state which competitors are
   included in results, closing Gap #44.
+- ✅ Met in v16.1.2: a shooter log's calculation refuses a match outside the log's dates, and rescheduling a match
+  outside the dates of a log that covers it is refused, closing Gap #45.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

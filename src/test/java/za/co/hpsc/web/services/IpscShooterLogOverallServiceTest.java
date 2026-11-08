@@ -14,6 +14,7 @@ import za.co.hpsc.web.domain.ShooterResult;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.exceptions.NonFatalException;
+import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.shooterlogoverall.response.ShooterLogOverallResponse;
 import za.co.hpsc.web.models.ipsc.shooterlogoverall.response.ShooterLogOverallResponseHolder;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
@@ -370,6 +371,128 @@ class IpscShooterLogOverallServiceTest {
         shooterLog.setDateUpdated(LocalDateTime.of(2026, 10, 1, 8, 30));
         Competitor competitor = competitor(5L);
         ShooterResult result = shooterResult(100L, match, competitor, "80", Division.OPEN);
+        ShooterLogOverall existing = overall(50L, shooterLog, competitor, LocalDateTime.of(2026, 10, 1, 9, 0));
+        stubLog(shooterLog, List.of(result), List.of(existing));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        verify(transactionService, never()).replaceShooterLogOverallResults(any(), any());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenMatchIsAfterTheLogsEndDate_thenThrowsValidationException() {
+        // Arrange
+        IpscMatch inside = match(10L, 1);
+        IpscMatch outside = match(11L, 2);
+        outside.setScheduledDate(LocalDateTime.of(2026, 10, 5, 0, 0));
+        ShooterLog shooterLog = shooterLog(1L, inside, outside);
+        when(shooterLogRepository.findByIdWithMatches(1L)).thenReturn(Optional.of(shooterLog));
+
+        // Act & Assert
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> ipscShooterLogOverallService.calculateShooterLogOverall(1L));
+        assertTrue(exception.getMessage().startsWith("Match with ID 11 is scheduled for 2026-10-05"));
+        verifyNoInteractions(ipscShooterResultService, shooterResultRepository, shooterLogOverallRepository,
+                transactionService);
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenMatchesAreOnTheLogsFirstAndLastDay_thenIncludesThem()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch first = match(10L, 1);
+        IpscMatch last = match(11L, 30);
+        ShooterLog shooterLog = shooterLog(1L, first, last);
+        stubLog(shooterLog, List.of(), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        verify(ipscShooterResultService).calculateMatchShooterResult(10L);
+        verify(ipscShooterResultService).calculateMatchShooterResult(11L);
+        verify(shooterResultRepository).findAllByMatchIdInWithDetails(List.of(10L, 11L));
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenMatchIsBeforeTheLogsStartDate_thenThrowsValidationException() {
+        // Arrange
+        IpscMatch before = match(10L, 1);
+        before.setScheduledDate(LocalDateTime.of(2026, 8, 31, 0, 0));
+        ShooterLog shooterLog = shooterLog(1L, before);
+        when(shooterLogRepository.findByIdWithMatches(1L)).thenReturn(Optional.of(shooterLog));
+
+        // Act & Assert
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> ipscShooterLogOverallService.calculateShooterLogOverall(1L));
+        assertTrue(exception.getMessage().startsWith("Match with ID 10 is scheduled for 2026-08-31"));
+        verifyNoInteractions(ipscShooterResultService, shooterResultRepository, transactionService);
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenLogHasNoEndDate_thenIncludesEveryMatch() throws NonFatalException {
+        // Arrange
+        IpscMatch outside = match(10L, 1);
+        outside.setScheduledDate(LocalDateTime.of(2027, 1, 5, 0, 0));
+        ShooterLog shooterLog = shooterLog(1L, outside);
+        shooterLog.setEndDate(null);
+        stubLog(shooterLog, List.of(), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        verify(ipscShooterResultService).calculateMatchShooterResult(10L);
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenLogHasNoStartDate_thenIncludesEveryMatch() throws NonFatalException {
+        // Arrange
+        IpscMatch outside = match(10L, 1);
+        outside.setScheduledDate(LocalDateTime.of(2027, 1, 5, 0, 0));
+        ShooterLog shooterLog = shooterLog(1L, outside);
+        shooterLog.setStartDate(null);
+        stubLog(shooterLog, List.of(), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        verify(ipscShooterResultService).calculateMatchShooterResult(10L);
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAMatchWasUpdatedAfterTheOverall_thenRecalculates()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        match.setDateUpdated(LocalDateTime.of(2026, 10, 1, 10, 0));
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor competitor = competitor(5L);
+        ShooterResult result = shooterResult(100L, match, competitor, "80", Division.OPEN);
+        result.setDateCalculated(LocalDateTime.of(2026, 10, 1, 8, 0));
+        ShooterLogOverall existing = overall(50L, shooterLog, competitor, LocalDateTime.of(2026, 10, 1, 9, 0));
+        stubLog(shooterLog, List.of(result), List.of(existing));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        verify(transactionService).replaceShooterLogOverallResults(any(), any());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAMatchWasUpdatedBeforeTheOverall_thenDoesNotRecalculate()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        match.setDateUpdated(LocalDateTime.of(2026, 10, 1, 8, 30));
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor competitor = competitor(5L);
+        ShooterResult result = shooterResult(100L, match, competitor, "80", Division.OPEN);
+        result.setDateCalculated(LocalDateTime.of(2026, 10, 1, 8, 0));
         ShooterLogOverall existing = overall(50L, shooterLog, competitor, LocalDateTime.of(2026, 10, 1, 9, 0));
         stubLog(shooterLog, List.of(result), List.of(existing));
 

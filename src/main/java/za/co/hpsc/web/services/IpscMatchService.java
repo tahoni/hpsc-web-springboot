@@ -65,9 +65,11 @@ public interface IpscMatchService {
      * @param request the match's replacement fields. Must not be null and must carry a match
      *                name, date and firearm type. The club and match category default when omitted.
      * @return the updated match.
-     * @throws ValidationException if a required field is missing, or the firearm type/category
+     * @throws ValidationException if a required field is missing, the firearm type/category
      *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
-     *                             {@link za.co.hpsc.web.enums.MatchCategory}.
+     *                             {@link za.co.hpsc.web.enums.MatchCategory}, or the new date is outside the
+     *                             start and end dates of a shooter log that covers the match. The dates are only
+     *                             checked when the match moves to another day.
      * @throws NonFatalException   if no match with {@code matchId} exists, or the named club
      *                             cannot be found.
      * @since 8.0.0
@@ -88,7 +90,8 @@ public interface IpscMatchService {
      * @return the updated match.
      * @throws ValidationException if the firearm type/category doesn't match a known
      *                             {@link za.co.hpsc.web.enums.FirearmType}/
-     *                             {@link za.co.hpsc.web.enums.MatchCategory}.
+     *                             {@link za.co.hpsc.web.enums.MatchCategory}, or a supplied {@code matchDate} is
+     *                             outside the start and end dates of a shooter log that covers the match.
      * @throws NonFatalException   if no match with {@code matchId} exists, the named club
      *                             cannot be found, or the request's {@code club} is blank and no
      *                             club exists for

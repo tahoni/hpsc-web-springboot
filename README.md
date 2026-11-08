@@ -30,7 +30,8 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
 - **Image Gallery**: Image metadata processing from CSV — a stateless transform by design, not persisted
 - **IPSC Competitors**: Competitor record CRUD, including optional home club, gender and SAPSA/club paid-up status,
   plus bulk CSV import
-- **IPSC Matches**: Match CRUD, including firearm type and match category resolution, plus bulk CSV import
+- **IPSC Matches**: Match CRUD, including firearm type and match category resolution, plus bulk CSV import.
+  A match cannot be rescheduled outside the dates of a shooter log that covers it
 - **IPSC Match Competitors**: CRUD for a competitor's entry in a match, including competitor, match, division and
   category resolution, plus bulk CSV import
 - **IPSC Shooter Results**: Calculation of each competitor's rank and percentage within their firearm type, division
@@ -39,7 +40,7 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
 - **IPSC Shooter Logs**: CRUD for a shooter log: a date range and the matches it covers, set by match ID
 - **IPSC Shooter Log Overall Results**: Calculation of each competitor's overall rank and percentage within their
   division and competitor category across the matches of a shooter log, and reading the results. Only verified
-  competitors are included
+  competitors are included, and a calculation is refused if a match falls outside the log's dates
 
 A competitor is verified when `isVerified` is `true`; it is left unset when a competitor is created without it. Only
 the competitor endpoints can verify a competitor: set it when creating one (the `isVerified` field of
