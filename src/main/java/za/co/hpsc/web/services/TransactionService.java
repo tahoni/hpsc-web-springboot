@@ -159,6 +159,21 @@ public interface TransactionService {
     List<ShooterResult> saveShooterResults(List<ShooterResult> shooterResults);
 
     /**
+     * Saves some shooter results and deletes others in one transaction, flushing before it commits so a constraint
+     * violation surfaces from this call rather than at commit.
+     *
+     * @param toSave   the shooter results to save; a new one is created when its ID is {@code null}. Must not be
+     *                 null.
+     * @param toDelete the shooter results to delete. Must not be null.
+     * @return the saved shooter results, in the order given.
+     * @throws org.springframework.dao.DataIntegrityViolationException if a unique constraint is violated, such as
+     *                                                                  a second result for the same match and match
+     *                                                                  competitor.
+     * @since 16.1.1
+     */
+    List<ShooterResult> replaceShooterResults(List<ShooterResult> toSave, List<ShooterResult> toDelete);
+
+    /**
      * Saves some shooter log overall results and deletes others in one transaction, flushing before it commits so a
      * constraint violation surfaces from this call rather than at commit.
      *

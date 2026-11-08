@@ -186,6 +186,7 @@ class IpscShooterLogOverallServiceIntegrationTest {
         Competitor competitor = new Competitor();
         competitor.setFirstName("Jane");
         competitor.setLastName("Doe");
+        competitor.setIsVerified(true);
         competitor.setClubNumber(clubNumber);
         return competitorRepository.save(competitor);
     }

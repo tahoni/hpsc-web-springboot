@@ -26,8 +26,8 @@ import java.util.List;
  * Controller responsible for handling IPSC shooter result API endpoints.
  *
  * <p>
- * Provides endpoints for calculating each competitor's result in a match, and for retrieving them for a match, or
- * for every match.
+ * Provides endpoints for calculating each verified competitor's result in a match, and for retrieving them for a
+ * match, or for every match.
  * </p>
  *
  * @since 15.0.0
@@ -43,7 +43,8 @@ public class IpscShooterResultController {
     }
 
     /**
-     * Calculates the shooter results for one match, creating or updating one for each of its competitors.
+     * Calculates the shooter results for one match, creating or updating one for each of its verified competitors with
+     * points above zero.
      *
      * @param matchId the identifier of the match to calculate results for.
      * @return the {@link ShooterResponseHolder} linking the match to its freshly calculated shooter results.
@@ -51,10 +52,12 @@ public class IpscShooterResultController {
      * @since 15.0.0
      */
     @PostMapping(value = "/matches/{matchId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Calculate shooter results for match", description = "Calculate every competitor's result "
-            + "in a match: each is ranked by match points within their firearm type, division and competitor "
-            + "category (no category is a group of its own), with their percentage set relative to the group "
-            + "winner. Calculating again updates the existing results.")
+    @Operation(summary = "Calculate shooter results for match", description = "Calculate the result of "
+            + "every verified competitor with points above zero in a match: each is ranked by match points within "
+            + "their firearm type, division and competitor category (no category is a group of its own), with their "
+            + "percentage set relative to the group winner. Competitors who are not verified, or have no points, get "
+            + "no result. Calculating again updates the existing results and removes those of competitors who no "
+            + "longer qualify.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Shooter results calculated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -78,7 +81,8 @@ public class IpscShooterResultController {
      * @since 15.0.0
      */
     @GetMapping(value = "/matches/{matchId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get shooter results for match", description = "Retrieve every shooter's result in a match.")
+    @Operation(summary = "Get shooter results for match",
+            description = "Retrieve every calculated shooter result in a match.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Shooter results retrieved.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -101,7 +105,8 @@ public class IpscShooterResultController {
      * @since 15.0.0
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get all shooter results", description = "Retrieve every shooter's result in every match.")
+    @Operation(summary = "Get all shooter results",
+            description = "Retrieve every calculated shooter result in every match.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Shooter results retrieved.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,

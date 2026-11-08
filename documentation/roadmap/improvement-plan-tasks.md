@@ -465,6 +465,35 @@ Gap #41)* —
   surfacing
   a raw constraint error
 
+**Verified-competitor eligibility in shooter results** *(improvement-plan.md → Gap #43)* —
+✅ Closed in v16.1.1
+
+- [x] Describe the eligibility rules (verified competitor, points above zero) in `README.md`'s IPSC Shooter Results and
+  Shooter Log Overall Results bullets
+- [x] Describe the same rules in `ARCHITECTURE.md`'s Feature Support rows and the `IpscShooterResultService`/
+  `IpscShooterLogOverallService` rows of its service table — done for the shooter result row and both service rows;
+  the Shooter Logs Feature Support row already describes the overall calculation, which the service row now qualifies
+- [x] Decide how a newly imported competitor becomes verified (a documented `PATCH /ipsc/competitors/{id}` step, a
+  default on import, or a required CSV column) and record the decision in `CONTRIBUTING.md` or `ARCHITECTURE.md` —
+  decided: verification is never defaulted; set `isVerified` at creation or use the `PUT` or `PATCH` endpoint,
+  recorded in `README.md` and `ARCHITECTURE.md`'s Competitor Bulk CSV Import Flow rather than `CONTRIBUTING.md`
+- [x] Add a migration only if existing unverified competitors should be backfilled as `V8_7_0` did — not needed: no
+  backfill, so competitors created since `V8_7_0` without `isVerified` stay excluded until they are marked verified
+
+**Result Javadoc and OpenAPI text** *(improvement-plan.md → Gap #44)* —
+✅ Closed in v16.1.1
+
+- [x] Update `IpscShooterResultService`'s Javadoc to say only verified competitors with points above zero get a result,
+  that a result is removed when its competitor stops qualifying, and that a stale result forces a recalculation
+  — done, in the method and class Javadoc and the `@return` text
+- [x] Update `IpscShooterLogOverallService`'s Javadoc to say only verified competitors are included — done, in the
+  class and method Javadoc
+- [x] Update the `@Operation` descriptions on `IpscShooterResultController` and `IpscShooterLogOverallController` to
+  match — done, for the calculate and both read endpoints of each controller
+- [x] Remove the unreachable points filter and "not ranked" note from `IpscShooterResultServiceImpl.rank`, or keep
+  them with a comment explaining why they stay as a guard — removed: `rank`'s points filter and note, and the null
+  fallback on the winner's points
+
 ---
 
 ## 🟡 Partially Completed

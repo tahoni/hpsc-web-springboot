@@ -57,27 +57,42 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
     @Override
     public ShooterResponseHolder calculateMatchShooterResult(Long matchId) throws NonFatalException {
         IpscMatch match = findMatchOrThrow(matchId);
+        // Only verified competitors are included. Competitors without points (none, or 0) did not score, so they get
+        // no result and are not ranked against the others
         List<MatchCompetitor> matchCompetitors =
-                matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(matchId);
-
-        // Results already calculated, found by their match competitor, so calculating again updates them
-        Map<Long, ShooterResult> existingByMatchCompetitorId = new HashMap<>();
-        for (ShooterResult existing : shooterResultRepository.findAllByMatchIdWithDetails(matchId)) {
-            existingByMatchCompetitorId.put(existing.getMatchCompetitor().getId(), existing);
+                matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(matchId).stream()
+                        .filter(this::isVerified)
+                        .filter(this::hasPoints)
+                        .toList();
+        Set<Long> scoredMatchCompetitorIds = new HashSet<>();
+        for (MatchCompetitor matchCompetitor : matchCompetitors) {
+            scoredMatchCompetitorIds.add(matchCompetitor.getId());
         }
 
-        if (isUpToDate(match, matchCompetitors, existingByMatchCompetitorId)) {
+        // Results already calculated, found by their match competitor, so calculating again updates them. A result
+        // whose competitor is no longer verified or no longer has points, such as after the points were cleared, is
+        // stale and removed.
+        Map<Long, ShooterResult> existingByMatchCompetitorId = new HashMap<>();
+        List<ShooterResult> staleShooterResults = new ArrayList<>();
+        for (ShooterResult existing : shooterResultRepository.findAllByMatchIdWithDetails(matchId)) {
+            Long matchCompetitorId = existing.getMatchCompetitor().getId();
+            if (scoredMatchCompetitorIds.contains(matchCompetitorId)) {
+                existingByMatchCompetitorId.put(matchCompetitorId, existing);
+            } else {
+                staleShooterResults.add(existing);
+            }
+        }
+
+        if (staleShooterResults.isEmpty() && isUpToDate(match, matchCompetitors, existingByMatchCompetitorId)) {
             return getShooterResults(matchId);
         }
 
         // Competitors are ranked against the others in their firearm type, division and competitor category, with
-        // competitors without a category (NONE) a group of their own
+        // competitors in the NONE category a group of their own. The category is never null: the column is NOT NULL
         Map<ResultGroup, List<MatchCompetitor>> groups = new LinkedHashMap<>();
         for (MatchCompetitor matchCompetitor : matchCompetitors) {
-            CompetitorCategory category = (matchCompetitor.getCompetitorCategory() == null)
-                    ? CompetitorCategory.NONE : matchCompetitor.getCompetitorCategory();
             groups.computeIfAbsent(new ResultGroup(matchCompetitor.getFirearmType(), matchCompetitor.getDivision(),
-                    category), group -> new ArrayList<>()).add(matchCompetitor);
+                    matchCompetitor.getCompetitorCategory()), group -> new ArrayList<>()).add(matchCompetitor);
         }
 
         LocalDateTime dateCalculated = LocalDateTime.now();
@@ -86,9 +101,8 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
             Map<Long, Integer> ranks = rank(group);
             BigDecimal winnerPoints = group.stream()
                     .map(MatchCompetitor::getPoints)
-                    .filter(Objects::nonNull)
                     .max(Comparator.naturalOrder())
-                    .orElse(null);
+                    .orElseThrow();
 
             for (MatchCompetitor matchCompetitor : group) {
                 ShooterResult shooterResult = existingByMatchCompetitorId
@@ -99,16 +113,36 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
                 shooterResult.setCompetitorCategory(matchCompetitor.getCompetitorCategory());
                 shooterResult.setDivision(matchCompetitor.getDivision());
                 shooterResult.setRankInLog(ranks.get(matchCompetitor.getId()));
-                shooterResult.setPercentageInLog(matchCompetitor.getPoints() == null ? null
-                        : NumberUtil.calculatePercentage(matchCompetitor.getPoints(), winnerPoints,
-                        IpscConstants.PERCENTAGE_SCALE));
+                shooterResult.setPercentageInLog(NumberUtil.calculatePercentage(matchCompetitor.getPoints(),
+                        winnerPoints, IpscConstants.PERCENTAGE_SCALE));
                 shooterResult.setDateCalculated(dateCalculated);
                 shooterResults.add(shooterResult);
             }
         }
-        transactionService.saveShooterResults(shooterResults);
+        transactionService.replaceShooterResults(shooterResults, staleShooterResults);
 
         return getShooterResults(matchId);
+    }
+
+    /**
+     * Whether a match competitor's competitor has been verified. A competitor whose verification was not recorded
+     * is not verified.
+     *
+     * @param matchCompetitor the match competitor to check.
+     * @return {@code true} if the competitor is verified.
+     */
+    private boolean isVerified(MatchCompetitor matchCompetitor) {
+        return Boolean.TRUE.equals(matchCompetitor.getCompetitor().getIsVerified());
+    }
+
+    /**
+     * Whether a match competitor scored: their points are present and above zero.
+     *
+     * @param matchCompetitor the match competitor to check.
+     * @return {@code true} if the match competitor has points above zero.
+     */
+    private boolean hasPoints(MatchCompetitor matchCompetitor) {
+        return (matchCompetitor.getPoints() != null) && (matchCompetitor.getPoints().signum() > 0);
     }
 
     @Override
@@ -194,16 +228,14 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
 
     /**
      * Ranks a group of match competitors by match points, highest first. Competitors on equal points share a rank
-     * and the next rank is skipped, so points of 90, 90 and 80 rank 1, 1 and 3. A competitor without points is not
-     * ranked.
+     * and the next rank is skipped, so points of 90, 90 and 80 rank 1, 1 and 3.
      *
-     * @param group the match competitors to rank, who shot the same firearm type and division and are in
-     *              the same competitor category.
-     * @return each ranked match competitor's rank, by match competitor ID.
+     * @param group the match competitors to rank, who shot the same firearm type and division, are in the same
+     *              competitor category and all have points, as {@link #hasPoints} has already excluded the others.
+     * @return each match competitor's rank, by match competitor ID.
      */
     private Map<Long, Integer> rank(List<MatchCompetitor> group) {
         List<MatchCompetitor> scored = group.stream()
-                .filter(matchCompetitor -> matchCompetitor.getPoints() != null)
                 .sorted(Comparator.comparing(MatchCompetitor::getPoints, Comparator.reverseOrder()))
                 .toList();
         Map<Long, Integer> ranks = new HashMap<>();

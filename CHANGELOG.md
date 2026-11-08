@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 16.1.0](#-1610---2026-11-08) ← Current
+- [🧾 Version 16.1.1](#-1611---2026-11-08) ← Current
+- [🧾 Version 16.1.0](#-1610---2026-11-08)
 - [🧾 Version 16.0.0](#-1600---2026-10-31)
 - [🧾 Version 15.0.0](#-1500---2026-10-17)
 - [🧾 Version 14.0.0](#-1400---2026-10-09)
@@ -28,6 +29,62 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [16.1.1] - 2026-11-08
+
+#### ➕ Added
+
+##### Services
+
+- **`TransactionService.replaceShooterResults`:** New method that deletes stale shooter results and saves the
+  recalculated ones in a single transaction, flushing before it commits so a constraint violation surfaces from the
+  call.
+
+#### 🔄 Changed
+
+##### Services
+
+- **`IpscShooterResultServiceImpl.calculateMatchShooterResult`:** Match competitors without points (none, or 0) are
+  now excluded from the shooter results — they get no result and no longer count towards the group's winner points or
+  anyone's percentage. Previously they were saved with a null rank and percentage.
+- **`IpscShooterResultServiceImpl.calculateMatchShooterResult`:** A result whose competitor no longer has points, such
+  as after the points were cleared, is deleted on the next calculation. Any such stale result also forces a
+  recalculation, so a change made within the recalculation threshold is not missed.
+- **`IpscShooterResultServiceImpl.calculateMatchShooterResult`:** Only competitors whose `isVerified` is `true` are
+  included in the shooter results — unverified competitors, and those whose verification was never recorded, get no
+  result and no longer count towards the group's winner points. A result for a competitor who is no longer verified is
+  deleted on the next calculation.
+- **`IpscShooterResultServiceImpl.rank`:** The points filter and "not ranked" note are removed, and the winner's
+  points no longer fall back to null — both were unreachable once competitors without points are excluded before
+  grouping.
+- **`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`:** Only verified competitors are included in the
+  overall shooter log results, so an unverified competitor's overall is no longer ranked and is deleted on the next
+  calculation.
+- **`IpscShooterResultServiceImpl` and `IpscShooterLogOverallServiceImpl`:** The fallback from a null competitor
+  category to `NONE`, and the null-safe ordering of a match's scheduled date, are removed — both were unreachable,
+  since `competitor_category` and `scheduled_date` are `NOT NULL`. The two tests that only covered the category
+  fallbacks are removed with them.
+- **`IpscShooterLogOverallServiceImpl.averagePercentage` and `rank`:** Their handling of a missing percentage is kept
+  and now documented, along with `IpscShooterLogOverallService`'s Javadoc — `percentage_in_log` is a nullable column,
+  so a row inserted by hand or by an earlier version could lack one, and tolerating it keeps one bad row from failing
+  a whole log's calculation.
+
+##### Documentation
+
+- **`README.md` and `ARCHITECTURE.md`:** State that shooter results include only verified competitors with points above
+  zero, and that shooter log overall results include only verified competitors. They also record that a competitor
+  becomes verified by setting `isVerified` when it is created, or through `PUT` or
+  `PATCH /ipsc/competitors/{competitorId}` afterwards, since the bulk import only creates competitors. They also state
+  that the match competitor import still imports an entry for an unverified competitor, which is only included in
+  results once the competitor is verified, and that neither it nor the match import verifies anyone.
+- **`IpscShooterResultService`, `IpscShooterLogOverallService` and their controllers:** Javadoc and OpenAPI
+  `@Operation` descriptions now state that only verified competitors, and for match results only those with points
+  above zero, are included, and that a result is removed when its competitor stops qualifying.
+- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Gaps #43 (verified-only results with no documented way
+  for an imported competitor to become verified) and #44 (Javadoc and OpenAPI text describing results for every
+  competitor) are added and closed in v16.1.1.
 
 ---
 
