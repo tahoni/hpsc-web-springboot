@@ -59,6 +59,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ShooterLogRequest.validate`:** Rejects a null match ID with a `ValidationException`, a `400`, where it previously
   reached the repository and failed with a `500`.
 
+##### Documentation
+
+- **`README.md`, `ARCHITECTURE.md`, `IpscShooterLogService` and `IpscShooterLogController`:** Describe the shooter log
+  bulk import and add its flow diagram.
+
 ---
 
 ### 🧾 [16.1.1] - 2026-11-08
