@@ -66,6 +66,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   category to `NONE`, and the null-safe ordering of a match's scheduled date, are removed — both were unreachable,
   since `competitor_category` and `scheduled_date` are `NOT NULL`. The two tests that only covered the category
   fallbacks are removed with them.
+- **`IpscShooterLogOverallServiceImpl.averagePercentage` and `rank`:** Their handling of a missing percentage is kept
+  and now documented, along with `IpscShooterLogOverallService`'s Javadoc — `percentage_in_log` is a nullable column,
+  so a row inserted by hand or by an earlier version could lack one, and tolerating it keeps one bad row from failing
+  a whole log's calculation.
 
 ##### Documentation
 

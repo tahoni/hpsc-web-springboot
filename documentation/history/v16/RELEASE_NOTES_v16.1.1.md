@@ -47,6 +47,12 @@ release is backward-compatible.
 
 - The points filter and "not ranked" note in `IpscShooterResultServiceImpl.rank`, and the null fallback on the winner's
   points, are removed, since competitors without points are excluded before they are grouped
+- The fallback from a null competitor category to `NONE` in `IpscShooterResultServiceImpl` and
+  `IpscShooterLogOverallServiceImpl`, and the null-safe ordering of a match's scheduled date, are removed, since
+  `competitor_category` and `scheduled_date` are `NOT NULL`
+- The tolerance for a shooter result without a percentage in `IpscShooterLogOverallServiceImpl` is kept and now
+  documented: `percentage_in_log` is a nullable column, so a row inserted by hand or by an earlier version could lack
+  one, and ignoring it keeps one bad row from failing a whole log's calculation
 
 ---
 
@@ -65,6 +71,9 @@ release is backward-compatible.
 - `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` includes only verified competitors
 - `IpscShooterResultServiceImpl.rank` no longer filters on points, and the winner's points no longer fall back to
   `null`
+- `IpscShooterResultServiceImpl` and `IpscShooterLogOverallServiceImpl` no longer fall back from a null competitor
+  category to `NONE`, and the overall service no longer orders a match's scheduled date null-safely
+- `IpscShooterLogOverallService` and `IpscShooterLogOverallServiceImpl` document why a missing percentage is tolerated
 - `README.md`, `ARCHITECTURE.md`, the `IpscShooterResultService` and `IpscShooterLogOverallService` Javadoc and the
   controllers' OpenAPI `@Operation` descriptions state who is included in results
 - `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add and close Gaps #43 and #44
@@ -114,6 +123,9 @@ calculated, so recalculate each match's results, or the shooter log's overall re
   transaction that saves the recalculated ones, rather than being filtered out when it is read.
 - **The match competitor import is not stricter.** It still imports an entry for an unverified competitor, so the data
   is kept and the entry appears in results as soon as its competitor is verified.
+- **Unreachable code is removed, defensive code is kept.** A fallback is removed only when a `NOT NULL` column or the
+  calling code makes it impossible to reach. Null handling on a nullable column, such as a missing percentage, stays
+  and says why, so a bad row degrades one result rather than the whole calculation.
 - **A PATCH.** No contract changes and the one new method is internal, which `AGENTS.md`'s Semantic Versioning rules
   classify as a backward-compatible fix.
 
@@ -121,12 +133,13 @@ calculated, so recalculate each match's results, or the shooter log's overall re
 
 ## 🧪 Testing
 
-- `./mvnw clean verify -Pcoverage` passes: 1,449 tests with no failures, errors or skips.
+- `./mvnw clean verify -Pcoverage` passes: 1,447 tests with no failures, errors or skips.
 - New tests cover null, zero and unverified competitors in the shooter result and overall result services, deleting a
   stale result when points are cleared or verification is withdrawn, and `TransactionService.replaceShooterResults`
-  including its rollback when the flush fails.
-- Overall coverage is 98.92% branch and 98.80% line, above the 97% minimum, and `IpscShooterResultServiceImpl` has
-  no missed branches.
+  including its rollback when the flush fails. The two tests that only covered the removed category fallbacks are
+  removed with them.
+- Overall coverage is 98.91% branch and 98.80% line, above the 97% minimum, and `IpscShooterResultServiceImpl` has
+  no missed lines or branches. The only missed code in the two services is the null guard on a shooter log's matches.
 
 ---
 

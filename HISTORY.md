@@ -39,10 +39,12 @@ evolution of architecture, features and design philosophy across all versions.
   are included, and that only the competitor endpoints can verify a competitor: the match competitor import still
   imports an entry for an unverified competitor, which only appears in results once its competitor is verified
 - The unreachable points filter in `IpscShooterResultServiceImpl.rank` and the null fallback on the winner's points are
-  removed
+  removed, as are the null-category fallback to `NONE` in both services and the null-safe ordering of a match's
+  scheduled date, whose columns are `NOT NULL`
+- The tolerance for a shooter result without a percentage in `IpscShooterLogOverallServiceImpl` is kept and documented
 - Scoped as `v16.1.1` **PATCH**: no endpoint, request or response contract changes, and the one new method is internal
 - Improvement plan: Gaps #43 and #44 are added and closed, leaving all 44 gaps closed and none open
-- The suite stands at 1,449 passing tests
+- The suite stands at 1,447 passing tests
 - Project version bumped to 16.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 16.1.0 (November 8, 2026)
@@ -833,7 +835,8 @@ The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, i
   `TransactionService.replaceShooterResults`
 - `README.md`, `ARCHITECTURE.md`, the service Javadoc and the OpenAPI descriptions state who is included and how a
   competitor becomes verified
-- The unreachable null handling in `IpscShooterResultServiceImpl.rank` is removed
+- Unreachable null handling in the shooter result and overall services is removed, and the kept tolerance for a
+  missing percentage is documented
 - Improvement plan: Gaps #43 and #44 are added and closed, leaving all 44 gaps closed and none open
 - Project version bumped to 16.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
 

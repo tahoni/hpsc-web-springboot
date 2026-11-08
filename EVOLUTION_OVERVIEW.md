@@ -216,8 +216,10 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
   and deletes the result of one who stops qualifying; any such stale result forces a recalculation
 - `IpscShooterLogOverallServiceImpl` includes only verified competitors and deletes the overall of one who is not
 - `TransactionService.replaceShooterResults` deletes stale results and saves the recalculated ones in one transaction
-- The unreachable points filter in `IpscShooterResultServiceImpl.rank` and the null fallback on the winner's points are
-  removed
+- The unreachable points filter in `IpscShooterResultServiceImpl.rank`, the null fallback on the winner's points, the
+  null-category fallback to `NONE` in both services and the null-safe ordering of a match's scheduled date are removed,
+  since their columns are `NOT NULL`; the tolerance for a missing percentage in `IpscShooterLogOverallServiceImpl`
+  stays, documented, because that column is nullable
 
 **Documentation**
 
@@ -235,5 +237,5 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 
 **Test Coverage:**
 
-- The suite stands at 1,449 passing tests, with new service tests for null, zero and unverified competitors and for
+- The suite stands at 1,447 passing tests, with new service tests for null, zero and unverified competitors and for
   stale-result deletion, and a `TransactionService` test for `replaceShooterResults`

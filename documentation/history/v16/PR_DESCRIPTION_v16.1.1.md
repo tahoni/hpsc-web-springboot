@@ -13,7 +13,8 @@
   one transaction
 - **Changed:** `IpscShooterResultServiceImpl` and `IpscShooterLogOverallServiceImpl` include only verified competitors,
   and match results only those with points above zero; the unreachable null handling in
-  `IpscShooterResultServiceImpl.rank` is removed
+  `IpscShooterResultServiceImpl.rank` is removed, as are the null-category fallbacks and the null-safe date ordering,
+  and the tolerance for a missing percentage is kept and documented
 - **Documentation:** `README.md`, `ARCHITECTURE.md`, the service Javadoc and the controllers' OpenAPI descriptions state
   who is included and that the match competitor import does not verify anyone; improvement plan Gaps #43 and #44 added
   and closed
@@ -23,7 +24,7 @@
 
 ## 🧪 Test Plan
 
-- [x] `./mvnw clean verify -Pcoverage` passes: 1,449 tests, no failures, errors or skips, and coverage above the
+- [x] `./mvnw clean verify -Pcoverage` passes: 1,447 tests, no failures, errors or skips, and coverage above the
   97% minimum
 - [x] `CHANGELOG.md`'s `[Unreleased]` section synced against the branch and renamed to `[16.1.1]`
 - [ ] Check which existing competitors have no `isVerified` value and mark the ones who should appear in results as

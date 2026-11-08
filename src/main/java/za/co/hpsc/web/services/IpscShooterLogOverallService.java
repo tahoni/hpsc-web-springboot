@@ -27,9 +27,15 @@ public interface IpscShooterLogOverallService {
      * one in (all of them if they have fewer), to {@code IpscConstants.PERCENTAGE_SCALE} decimal places. Their
      * category and division are those of their most recent match in the log. Competitors are ranked by overall
      * percentage, highest first, within their division and competitor category (none being a group of its own),
-     * with competitors on an equal percentage sharing a rank and the next rank skipped. A competitor
-     * without a percentage in any match gets neither a rank nor a percentage. Every overall is stamped with the date
-     * and time it was calculated.
+     * with competitors on an equal percentage sharing a rank and the next rank skipped. Every overall is stamped with
+     * the date and time it was calculated.
+     * </p>
+     *
+     * <p>
+     * A shooter result without a percentage is ignored, and a competitor with none in any match gets neither a rank nor
+     * a percentage. {@link za.co.hpsc.web.domain.ShooterResult} stores the percentage in a nullable column and
+     * {@link IpscShooterResultService} always sets it, so this only tolerates a row inserted by hand or by an earlier
+     * version, rather than failing the calculation of the whole log over one bad row.
      * </p>
      *
      * <p>
