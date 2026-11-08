@@ -214,16 +214,15 @@ Contains all business logic.
 
 The JPA entities map to database tables:
 
-| Entity                 | Table                    | Key Relationships                                                      |
-|------------------------|--------------------------|------------------------------------------------------------------------|
-| `Club`                 | `club`                   | No outgoing references; targeted by `Competitor` and `IpscMatch` below |
-| `Competitor`           | `competitor`             | Many-to-one → `Club` (home club, optional)                             |
-| `IpscMatch`            | `ipsc_match`             | Many-to-one → `Club`                                                   |
-| `MatchCompetitor`      | `match_competitor`       | Many-to-one → `Competitor`, `IpscMatch`                                |
-| `ShooterLog`           | `shooter_log`            | Many-to-many → `IpscMatch` (through `shooter_log_match`)               |
-| `ShooterLogCompetitor` | `shooter_log_competitor` | Many-to-one → `ShooterLog`, `Competitor`, `MatchCompetitor`            |
-| `ShooterLogOverall`    | `shooter_log_overall`    | Many-to-one → `ShooterLog`, `Competitor`                               |
-| `ShooterResult`        | `shooter_result`         | Many-to-one → `IpscMatch`, `Competitor`, `MatchCompetitor`             |
+| Entity              | Table                 | Key Relationships                                                      |
+|---------------------|-----------------------|------------------------------------------------------------------------|
+| `Club`              | `club`                | No outgoing references; targeted by `Competitor` and `IpscMatch` below |
+| `Competitor`        | `competitor`          | Many-to-one → `Club` (home club, optional)                             |
+| `IpscMatch`         | `ipsc_match`          | Many-to-one → `Club`                                                   |
+| `MatchCompetitor`   | `match_competitor`    | Many-to-one → `Competitor`, `IpscMatch`                                |
+| `ShooterLog`        | `shooter_log`         | Many-to-many → `IpscMatch` (through `shooter_log_match`)               |
+| `ShooterLogOverall` | `shooter_log_overall` | Many-to-one → `ShooterLog`, `Competitor`                               |
+| `ShooterResult`     | `shooter_result`      | Many-to-one → `IpscMatch`, `Competitor`, `MatchCompetitor`             |
 
 Every relationship's owning (child) side declares a `@ManyToOne`/`@JoinColumn`, all `FetchType.LAZY` — the queries that
 build responses load what they need with `left join fetch` (see Repositories below). Every

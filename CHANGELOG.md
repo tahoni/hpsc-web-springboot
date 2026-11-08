@@ -28,6 +28,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🗑️ Removed
+
+##### Database
+
+- **`V11_12_0__drop_shooter_log_competitor.sql`:** New migration that drops the `shooter_log_competitor` table, which
+  nothing references any more — a competitor's rank and percentage in a log live in `shooter_result`. Any rows in the
+  table are discarded.
+
+##### Domain
+
+- **`ShooterLogCompetitor`:** Removed the entity mapping `shooter_log_competitor`, together with its
+  **`ShooterLogCompetitorRepository`**, its repository integration test and the `ScoringFixtures.shooterLogCompetitor`
+  fixture.
+
+##### Services
+
+- **`IpscCompetitorServiceImpl.deleteCompetitor`/`IpscMatchServiceImpl.deleteMatch`:** No longer check
+  `ShooterLogCompetitorRepository` before deleting; the competitor check still covers `ShooterLogOverall` rows and the
+  match check still covers `ShooterLog` links.
+
 ---
 
 ### 🧾 [16.0.0] - 2026-10-31
