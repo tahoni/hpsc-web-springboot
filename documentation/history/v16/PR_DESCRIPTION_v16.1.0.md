@@ -15,14 +15,16 @@
 - **Removed:** `ShooterLogCompetitor` and its repository, with `V11_12_0__drop_shooter_log_competitor.sql` dropping the
   table; the unused score-scale constants, `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum`
 - **Documentation:** improvement plan Gaps #6, #41 and #42 closed; Flyway versioning table gains `V11_12_0`
+- **Tests:** new branch-coverage tests for shooter log overall, shooter log patch, shooter result and match competitor
+  resolution
 - **Build:** project version bumped to 16.1.0 in `pom.xml` and the OpenAPI annotation
 
 ## 🧪 Test Plan
 
-- [x] `./mvnw clean test` passes: 1,420 tests, no failures, errors or skips
+- [x] `./mvnw clean test` passes: 1,439 tests, no failures, errors or skips
 - [x] `CHANGELOG.md`'s `[Unreleased]` section synced against the branch and renamed to `[16.1.0]`
 - [x] Confirm Flyway applies `V11_12_0` against a MySQL database that still holds `shooter_log_competitor`
-- [x] Run `./mvnw verify -Pcoverage` if a coverage figure is wanted for the PR
+- [x] `./mvnw verify -Pcoverage` passes; the only missed branches left are simple null guards and one unreachable check
 
 ## 🔗 Related Documentation
 
