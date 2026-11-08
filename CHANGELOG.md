@@ -39,6 +39,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscShooterResultServiceImpl.calculateMatchShooterResult`:** A result whose competitor no longer has points, such
   as after the points were cleared, is deleted on the next calculation. Any such stale result also forces a
   recalculation, so a change made within the recalculation threshold is not missed.
+- **`IpscShooterResultServiceImpl.calculateMatchShooterResult`:** Only competitors whose `isVerified` is `true` are
+  included in the shooter results — unverified competitors, and those whose verification was never recorded, get no
+  result and no longer count towards the group's winner points. A result for a competitor who is no longer verified is
+  deleted on the next calculation.
+- **`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`:** Only verified competitors are included in the
+  overall shooter log results, so an unverified competitor's overall is no longer ranked and is deleted on the next
+  calculation.
 - **`TransactionService.replaceShooterResults`:** New method that deletes stale shooter results and saves the
   recalculated ones in a single transaction, flushing before it commits so a constraint violation surfaces from the
   call.

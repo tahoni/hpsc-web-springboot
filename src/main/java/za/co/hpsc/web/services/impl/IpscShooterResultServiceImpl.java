@@ -57,10 +57,11 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
     @Override
     public ShooterResponseHolder calculateMatchShooterResult(Long matchId) throws NonFatalException {
         IpscMatch match = findMatchOrThrow(matchId);
-        // Competitors without points (none, or 0) did not score, so they get no result and are not ranked against
-        // the others
+        // Only verified competitors are included. Competitors without points (none, or 0) did not score, so they get
+        // no result and are not ranked against the others
         List<MatchCompetitor> matchCompetitors =
                 matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(matchId).stream()
+                        .filter(this::isVerified)
                         .filter(this::hasPoints)
                         .toList();
         Set<Long> scoredMatchCompetitorIds = new HashSet<>();
@@ -69,7 +70,8 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
         }
 
         // Results already calculated, found by their match competitor, so calculating again updates them. A result
-        // whose competitor no longer has points, such as after the points were cleared, is stale and removed.
+        // whose competitor is no longer verified or no longer has points, such as after the points were cleared, is
+        // stale and removed.
         Map<Long, ShooterResult> existingByMatchCompetitorId = new HashMap<>();
         List<ShooterResult> staleShooterResults = new ArrayList<>();
         for (ShooterResult existing : shooterResultRepository.findAllByMatchIdWithDetails(matchId)) {
@@ -123,6 +125,17 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
         transactionService.replaceShooterResults(shooterResults, staleShooterResults);
 
         return getShooterResults(matchId);
+    }
+
+    /**
+     * Whether a match competitor's competitor has been verified. A competitor whose verification was not recorded
+     * is not verified.
+     *
+     * @param matchCompetitor the match competitor to check.
+     * @return {@code true} if the competitor is verified.
+     */
+    private boolean isVerified(MatchCompetitor matchCompetitor) {
+        return Boolean.TRUE.equals(matchCompetitor.getCompetitor().getIsVerified());
     }
 
     /**

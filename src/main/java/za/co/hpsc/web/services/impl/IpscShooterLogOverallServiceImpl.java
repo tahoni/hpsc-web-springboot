@@ -65,6 +65,10 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
         Map<Long, List<ShooterResult>> resultsByCompetitorId = new LinkedHashMap<>();
         if (!matchIds.isEmpty()) {
             for (ShooterResult shooterResult : shooterResultRepository.findAllByMatchIdInWithDetails(matchIds)) {
+                // Only verified competitors are included, so an unverified competitor's overall is removed below
+                if (!Boolean.TRUE.equals(shooterResult.getCompetitor().getIsVerified())) {
+                    continue;
+                }
                 resultsByCompetitorId
                         .computeIfAbsent(shooterResult.getCompetitor().getId(), id -> new ArrayList<>())
                         .add(shooterResult);

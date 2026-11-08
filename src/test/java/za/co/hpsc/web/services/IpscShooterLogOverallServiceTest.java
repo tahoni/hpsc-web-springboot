@@ -77,6 +77,36 @@ class IpscShooterLogOverallServiceTest {
     }
 
     @Test
+    void testCalculateShooterLogOverall_whenCompetitorsAreNotVerified_thenExcludesThemAndDeletesTheirOveralls()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor verified = competitor(5L);
+        Competitor unverified = competitor(6L);
+        unverified.setIsVerified(false);
+        Competitor unrecorded = competitor(7L);
+        unrecorded.setIsVerified(null);
+        ShooterLogOverall staleOverall = overall(50L, shooterLog, unverified, LocalDateTime.of(2026, 10, 1, 9, 0));
+        stubLog(shooterLog, List.of(
+                shooterResult(100L, match, verified, "100", Division.OPEN),
+                shooterResult(101L, match, unverified, "90", Division.OPEN),
+                shooterResult(102L, match, unrecorded, "80", Division.OPEN)), List.of(staleOverall));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        ArgumentCaptor<List<ShooterLogOverall>> savedCaptor = listCaptor();
+        ArgumentCaptor<List<ShooterLogOverall>> deletedCaptor = listCaptor();
+        verify(transactionService).replaceShooterLogOverallResults(savedCaptor.capture(), deletedCaptor.capture());
+        assertEquals(1, savedCaptor.getValue().size());
+        assertSame(verified, savedCaptor.getValue().getFirst().getCompetitor());
+        assertEquals(1, savedCaptor.getValue().getFirst().getRankInLog());
+        assertEquals(List.of(staleOverall), deletedCaptor.getValue());
+    }
+
+    @Test
     void testCalculateShooterLogOverall_whenCompetitorHasMoreMatchesThanCount_thenAveragesOnlyTheBestOnes()
             throws NonFatalException {
         // Arrange
@@ -513,6 +543,7 @@ class IpscShooterLogOverallServiceTest {
         competitor.setId(id);
         competitor.setFirstName("Jane");
         competitor.setLastName("Doe");
+        competitor.setIsVerified(true);
         competitor.setNickName("JD");
         return competitor;
     }

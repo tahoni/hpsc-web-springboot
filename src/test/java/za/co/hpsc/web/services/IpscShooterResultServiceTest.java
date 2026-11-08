@@ -70,6 +70,54 @@ class IpscShooterResultServiceTest {
     }
 
     @Test
+    void testCalculateMatchShooterResult_whenCompetitorIsNotVerified_thenExcludesThemAndRanksTheOthers()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor verified = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "80");
+        MatchCompetitor unverified = matchCompetitor(2L, FirearmType.HANDGUN, Division.OPEN, "100");
+        unverified.getCompetitor().setIsVerified(false);
+        MatchCompetitor unrecorded = matchCompetitor(3L, FirearmType.HANDGUN, Division.OPEN, "90");
+        unrecorded.getCompetitor().setIsVerified(null);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(unverified, unrecorded, verified));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of());
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        // The unverified competitors scored higher, but neither counts as the winner
+        List<ShooterResult> saved = savedShooterResults();
+        assertEquals(1, saved.size());
+        assertEquals(1, rankOf(saved, verified));
+        assertEquals(new BigDecimal("100.00"), percentageOf(saved, verified));
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenCompetitorIsNoLongerVerified_thenDeletesTheStaleResult()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor unverified = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "80");
+        unverified.getCompetitor().setIsVerified(false);
+        ShooterResult stale = shooterResult(10L, 2L);
+        stale.setMatchCompetitor(unverified);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(unverified));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of(stale));
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        assertTrue(savedShooterResults().isEmpty());
+        assertEquals(List.of(stale), deletedShooterResults());
+    }
+
+    @Test
     void testCalculateMatchShooterResult_whenCompetitorHasNullPoints_thenExcludesThemAndRanksTheOthers()
             throws NonFatalException {
         // Arrange
@@ -645,6 +693,7 @@ class IpscShooterResultServiceTest {
         competitor.setId(id);
         competitor.setFirstName("Jane");
         competitor.setLastName("Doe");
+        competitor.setIsVerified(true);
 
         MatchCompetitor matchCompetitor = new MatchCompetitor();
         matchCompetitor.setId(id);
@@ -698,6 +747,7 @@ class IpscShooterResultServiceTest {
         competitor.setId(1L);
         competitor.setFirstName("Jane");
         competitor.setLastName("Doe");
+        competitor.setIsVerified(true);
         competitor.setNickName("JD");
         competitor.setCompetitorNumber(7);
 
