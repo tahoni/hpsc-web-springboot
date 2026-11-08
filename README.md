@@ -35,10 +35,8 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
   category resolution, plus bulk CSV import
 - **IPSC Shooter Results**: Calculation of each competitor's rank and percentage within their firearm type, division
   and competitor category in a match, and reading the results
-
-JPA entities and repositories also exist for shooter logs. Request DTOs exist for competitor scores submission,
-laying the groundwork for match result processing and ranking calculations — the service and controller layer
-that will operate on that remaining domain is still being built.
+- **IPSC Shooter Log Overalls**: Calculation of each competitor's overall rank and percentage within their division and
+  competitor category across the matches of a shooter log, and reading the results
 
 The application emphasises structured data processing and validation, with MySQL-backed persistence via Spring Data JPA
 and Hibernate.

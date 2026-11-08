@@ -44,6 +44,11 @@ public final class IpscConstants {
 
     /** Number of decimal places for a percentage. */
     public static final int PERCENTAGE_SCALE = 2;
+    /**
+     * Number of a competitor's best matches in a shooter log that count towards their overall percentage; a
+     * competitor with fewer matches in the log has all of them counted.
+     */
+    public static final int SHOOTER_LOG_BEST_MATCHES = 4;
 
     /** Match category a match defaults to when none is given, by {@code IpscMatchServiceImpl.resolveMatchCategory}. */
     public static final MatchCategory DEFAULT_MATCH_CATEGORY = MatchCategory.CLUB_SHOOT;

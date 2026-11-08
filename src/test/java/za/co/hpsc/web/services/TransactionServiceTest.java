@@ -11,10 +11,12 @@ import org.springframework.transaction.TransactionStatus;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.domain.ShooterLogOverall;
 import za.co.hpsc.web.domain.ShooterResult;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.repositories.ShooterResultRepository;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
@@ -46,6 +48,9 @@ public class TransactionServiceTest {
     private ShooterResultRepository shooterResultRepository;
 
     @Mock
+    private ShooterLogOverallRepository shooterLogOverallRepository;
+
+    @Mock
     private PlatformTransactionManager transactionManager;
 
     @Mock
@@ -56,7 +61,7 @@ public class TransactionServiceTest {
     @BeforeEach
     void setUp() {
         transactionService = new TransactionServiceImpl(competitorRepository, ipscMatchRepository,
-                matchCompetitorRepository, shooterResultRepository, transactionManager);
+                matchCompetitorRepository, shooterResultRepository, shooterLogOverallRepository, transactionManager);
     }
 
     // saveCompetitor()
@@ -293,6 +298,42 @@ public class TransactionServiceTest {
         // Act & Assert
         assertThrows(DataIntegrityViolationException.class,
                 () -> transactionService.saveShooterResults(List.of(new ShooterResult())));
+        verify(transactionManager).rollback(transactionStatus);
+        verify(transactionManager, never()).commit(any());
+    }
+
+    // replaceShooterLogOveralls()
+    @Test
+    void testReplaceShooterLogOveralls_whenCalled_thenDeletesSavesFlushesAndCommitsInOneTransaction() {
+        // Arrange
+        stubTransaction();
+        ShooterLogOverall saved = new ShooterLogOverall();
+        ShooterLogOverall stale = new ShooterLogOverall();
+        when(shooterLogOverallRepository.save(any(ShooterLogOverall.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        List<ShooterLogOverall> result = transactionService.replaceShooterLogOveralls(List.of(saved), List.of(stale));
+
+        // Assert
+        assertEquals(List.of(saved), result);
+        verify(shooterLogOverallRepository).deleteAll(List.of(stale));
+        verify(shooterLogOverallRepository).flush();
+        verify(transactionManager, times(1)).getTransaction(any());
+        verify(transactionManager).commit(transactionStatus);
+    }
+
+    @Test
+    void testReplaceShooterLogOveralls_whenFlushFails_thenRollsBackAndPropagates() {
+        // Arrange
+        stubTransaction();
+        when(shooterLogOverallRepository.save(any(ShooterLogOverall.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        doThrow(new DataIntegrityViolationException("duplicate")).when(shooterLogOverallRepository).flush();
+
+        // Act & Assert
+        assertThrows(DataIntegrityViolationException.class,
+                () -> transactionService.replaceShooterLogOveralls(List.of(new ShooterLogOverall()), List.of()));
         verify(transactionManager).rollback(transactionStatus);
         verify(transactionManager, never()).commit(any());
     }
