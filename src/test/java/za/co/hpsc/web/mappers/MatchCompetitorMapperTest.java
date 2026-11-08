@@ -732,6 +732,127 @@ class MatchCompetitorMapperTest {
         assertNull(matchCompetitor.getCompetitorCategory());
     }
 
+    @Test
+    void testPopulateResolvableFields_whenCompetitorIdGiven_thenLooksCompetitorUpById() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setId(1L);
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor));
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorId(1L);
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.populateResolvableFields(matchCompetitor, request);
+
+        // Assert
+        assertSame(competitor, matchCompetitor.getCompetitor());
+        verifyNoInteractions(ipscEntityCompetitorService);
+    }
+
+    @Test
+    void testPopulateResolvableFields_whenNoCompetitorIdentified_thenLeavesCompetitorNull() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorNumber("  ");
+        request.setCompetitorName(null);
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.populateResolvableFields(matchCompetitor, request);
+
+        // Assert
+        assertNull(matchCompetitor.getCompetitor());
+        verifyNoInteractions(competitorRepository, ipscEntityCompetitorService);
+    }
+
+    @Test
+    void testPopulateResolvableFields_whenOnlyCompetitorNumberGiven_thenResolvesByNumber() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setId(2L);
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("123", ""))
+                .thenReturn(Optional.of(competitor));
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorNumber("123");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.populateResolvableFields(matchCompetitor, request);
+
+        // Assert
+        assertSame(competitor, matchCompetitor.getCompetitor());
+    }
+
+    @Test
+    void testPopulateResolvableFields_whenOnlyCompetitorNameGiven_thenResolvesByName() {
+        // Arrange
+        Competitor competitor = new Competitor();
+        competitor.setId(3L);
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName(null, "Jane Doe"))
+                .thenReturn(Optional.of(competitor));
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorName("Jane Doe");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.populateResolvableFields(matchCompetitor, request);
+
+        // Assert
+        assertSame(competitor, matchCompetitor.getCompetitor());
+    }
+
+    @Test
+    void testPopulateResolvableFields_whenCompetitorNotFound_thenLeavesCompetitorNull() {
+        // Arrange
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("123", "Jane Doe"))
+                .thenReturn(Optional.empty());
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorNumber("123");
+        request.setCompetitorName("Jane Doe");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.populateResolvableFields(matchCompetitor, request);
+
+        // Assert
+        assertNull(matchCompetitor.getCompetitor());
+    }
+
+    @Test
+    void testPopulateResolvableFields_whenCompetitorLookupIsAmbiguous_thenLeavesCompetitorNull() {
+        // Arrange
+        when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("123", "Jane Doe"))
+                .thenThrow(new ValidationException("Several competitors match"));
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setCompetitorNumber("123");
+        request.setCompetitorName("Jane Doe");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.populateResolvableFields(matchCompetitor, request);
+
+        // Assert
+        assertNull(matchCompetitor.getCompetitor());
+    }
+
+    @Test
+    void testPopulateResolvableFields_whenMatchIdGiven_thenLooksMatchUpById() {
+        // Arrange
+        IpscMatch match = new IpscMatch();
+        match.setId(7L);
+        when(ipscMatchRepository.findById(7L)).thenReturn(Optional.of(match));
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setMatchId(7L);
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.populateResolvableFields(matchCompetitor, request);
+
+        // Assert
+        assertSame(match, matchCompetitor.getMatch());
+    }
+
     // resolveDivision()
     @Test
     void testResolveDivision_whenKnown_thenReturnsDivision() {

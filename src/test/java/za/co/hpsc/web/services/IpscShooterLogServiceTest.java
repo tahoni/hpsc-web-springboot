@@ -309,6 +309,40 @@ class IpscShooterLogServiceTest {
     }
 
     @Test
+    void testPatchShooterLog_whenLogHasNoStartDate_thenAppliesTheEndDateWithoutComparing() {
+        // Arrange
+        ShooterLog shooterLog = shooterLog(1L);
+        shooterLog.setStartDate(null);
+        when(shooterLogRepository.findByIdWithMatches(1L)).thenReturn(Optional.of(shooterLog));
+        when(transactionService.saveShooterLog(shooterLog)).thenReturn(shooterLog);
+        ShooterLogPatchRequest request = new ShooterLogPatchRequest();
+        request.setEndDate(LocalDate.of(2026, 8, 1));
+
+        // Act
+        ShooterLogResponse response = ipscShooterLogService.patchShooterLog(1L, request);
+
+        // Assert
+        assertEquals(LocalDate.of(2026, 8, 1), response.getEndDate());
+    }
+
+    @Test
+    void testPatchShooterLog_whenLogHasNoEndDate_thenAppliesTheStartDateWithoutComparing() {
+        // Arrange
+        ShooterLog shooterLog = shooterLog(1L);
+        shooterLog.setEndDate(null);
+        when(shooterLogRepository.findByIdWithMatches(1L)).thenReturn(Optional.of(shooterLog));
+        when(transactionService.saveShooterLog(shooterLog)).thenReturn(shooterLog);
+        ShooterLogPatchRequest request = new ShooterLogPatchRequest();
+        request.setStartDate(LocalDate.of(2026, 10, 1));
+
+        // Act
+        ShooterLogResponse response = ipscShooterLogService.patchShooterLog(1L, request);
+
+        // Assert
+        assertEquals(LocalDate.of(2026, 10, 1), response.getStartDate());
+    }
+
+    @Test
     void testPatchShooterLog_whenMatchIdsAreEmpty_thenClearsTheLogsMatches() {
         // Arrange
         ShooterLog shooterLog = shooterLog(1L, match(10L));

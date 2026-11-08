@@ -250,6 +250,124 @@ class IpscShooterLogOverallServiceTest {
     }
 
     @Test
+    void testCalculateShooterLogOverall_whenAnOverallWasNeverCalculated_thenRecalculates()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor competitor = competitor(5L);
+        ShooterResult result = shooterResult(100L, match, competitor, "80", Division.OPEN);
+        ShooterLogOverall existing = overall(50L, shooterLog, competitor, null);
+        stubLog(shooterLog, List.of(result), List.of(existing));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        verify(transactionService).replaceShooterLogOverallResults(any(), any());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAShooterResultWasNeverCalculated_thenRecalculates()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor competitor = competitor(5L);
+        ShooterResult result = shooterResult(100L, match, competitor, "80", Division.OPEN);
+        result.setDateCalculated(null);
+        ShooterLogOverall existing = overall(50L, shooterLog, competitor, LocalDateTime.of(2026, 10, 1, 9, 0));
+        stubLog(shooterLog, List.of(result), List.of(existing));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        verify(transactionService).replaceShooterLogOverallResults(any(), any());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenOverallsWereCalculatedAtDifferentTimes_thenComparesAgainstTheOldest()
+            throws NonFatalException {
+        // Arrange: the overalls are visited in competitor ID order, so the oldest one is neither first nor last
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor first = competitor(5L);
+        Competitor second = competitor(6L);
+        Competitor third = competitor(7L);
+        List<ShooterResult> results = List.of(
+                shooterResult(100L, match, first, "80", Division.OPEN),
+                shooterResult(101L, match, second, "70", Division.OPEN),
+                shooterResult(102L, match, third, "60", Division.OPEN));
+        List<ShooterLogOverall> existing = List.of(
+                overall(50L, shooterLog, first, LocalDateTime.of(2026, 10, 1, 9, 0)),
+                overall(51L, shooterLog, second, LocalDateTime.of(2026, 10, 1, 10, 0)),
+                overall(52L, shooterLog, third, LocalDateTime.of(2026, 10, 1, 8, 0)));
+        stubLog(shooterLog, results, existing);
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        verify(transactionService, never()).replaceShooterLogOverallResults(any(), any());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenShooterLogWasUpdatedAfterTheOverall_thenRecalculates()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        shooterLog.setDateUpdated(LocalDateTime.of(2026, 10, 1, 9, 30));
+        Competitor competitor = competitor(5L);
+        ShooterResult result = shooterResult(100L, match, competitor, "80", Division.OPEN);
+        ShooterLogOverall existing = overall(50L, shooterLog, competitor, LocalDateTime.of(2026, 10, 1, 9, 0));
+        stubLog(shooterLog, List.of(result), List.of(existing));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        verify(transactionService).replaceShooterLogOverallResults(any(), any());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenShooterLogWasUpdatedBeforeTheOverall_thenDoesNotRecalculate()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        shooterLog.setDateUpdated(LocalDateTime.of(2026, 10, 1, 8, 30));
+        Competitor competitor = competitor(5L);
+        ShooterResult result = shooterResult(100L, match, competitor, "80", Division.OPEN);
+        ShooterLogOverall existing = overall(50L, shooterLog, competitor, LocalDateTime.of(2026, 10, 1, 9, 0));
+        stubLog(shooterLog, List.of(result), List.of(existing));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        verify(transactionService, never()).replaceShooterLogOverallResults(any(), any());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenLatestResultHasNoCategory_thenUsesTheNoneCategory()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        ShooterResult result = shooterResult(100L, match, competitor(5L), "80", Division.OPEN);
+        result.setCompetitorCategory(null);
+        stubLog(shooterLog, List.of(result), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        assertEquals(CompetitorCategory.NONE, savedOverallResults().getFirst().getCompetitorCategory());
+    }
+
+    @Test
     void testCalculateShooterLogOverall_whenLogHasNoMatches_thenSavesNothingAndDeletesNothing()
             throws NonFatalException {
         // Arrange
