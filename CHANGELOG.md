@@ -51,6 +51,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   included in the shooter results — unverified competitors, and those whose verification was never recorded, get no
   result and no longer count towards the group's winner points. A result for a competitor who is no longer verified is
   deleted on the next calculation.
+- **`IpscShooterResultServiceImpl.rank`:** The points filter and "not ranked" note are removed, and the winner's
+  points no longer fall back to null — both were unreachable once competitors without points are excluded before
+  grouping.
 - **`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`:** Only verified competitors are included in the
   overall shooter log results, so an unverified competitor's overall is no longer ranked and is deleted on the next
   calculation.

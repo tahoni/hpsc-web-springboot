@@ -103,9 +103,8 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
             Map<Long, Integer> ranks = rank(group);
             BigDecimal winnerPoints = group.stream()
                     .map(MatchCompetitor::getPoints)
-                    .filter(Objects::nonNull)
                     .max(Comparator.naturalOrder())
-                    .orElse(null);
+                    .orElseThrow();
 
             for (MatchCompetitor matchCompetitor : group) {
                 ShooterResult shooterResult = existingByMatchCompetitorId
@@ -231,16 +230,14 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
 
     /**
      * Ranks a group of match competitors by match points, highest first. Competitors on equal points share a rank
-     * and the next rank is skipped, so points of 90, 90 and 80 rank 1, 1 and 3. A competitor without points is not
-     * ranked.
+     * and the next rank is skipped, so points of 90, 90 and 80 rank 1, 1 and 3.
      *
-     * @param group the match competitors to rank, who shot the same firearm type and division and are in
-     *              the same competitor category.
-     * @return each ranked match competitor's rank, by match competitor ID.
+     * @param group the match competitors to rank, who shot the same firearm type and division, are in the same
+     *              competitor category and all have points, as {@link #hasPoints} has already excluded the others.
+     * @return each match competitor's rank, by match competitor ID.
      */
     private Map<Long, Integer> rank(List<MatchCompetitor> group) {
         List<MatchCompetitor> scored = group.stream()
-                .filter(matchCompetitor -> matchCompetitor.getPoints() != null)
                 .sorted(Comparator.comparing(MatchCompetitor::getPoints, Comparator.reverseOrder()))
                 .toList();
         Map<Long, Integer> ranks = new HashMap<>();
