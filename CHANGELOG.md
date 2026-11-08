@@ -63,6 +63,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`:** Removed — nothing referenced them; only
   `PERCENTAGE_SCALE` has a caller.
 - **`SystemConstants.DEFAULT_SCALE`:** Removed — only `NumberUtilTest` read it.
+- **`IpscConstants.REPLACE_IN_NAMES_REGEX`:** Removed — its pattern is inlined into
+  `CompetitorHelpers.RANGE_OFFICER_MARKER`, its only caller, whose Javadoc now also covers the `TRO`/`(TRO)` training
+  range officer marker the pattern already matched. The Javadoc of `IpscEntityCompetitorService` and its
+  implementation no longer links to the constant.
 
 ##### Utilities
 
