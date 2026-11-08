@@ -102,6 +102,30 @@ class IpscShooterResultServiceIntegrationTest {
         assertNotNull(second.getDateCalculated());
     }
 
+    @Test
+    void testCalculateMatchShooterResult_whenPointsAreLaterCleared_thenRemovesThatCompetitorsResult()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = createMatch("Match A", LocalDate.of(2026, 9, 12));
+        Competitor kept = createCompetitor("HPSC-SR-010");
+        Competitor cleared = createCompetitor("HPSC-SR-011");
+        createMatchCompetitor(kept, match, "100");
+        MatchCompetitor clearedMatchCompetitor = createMatchCompetitor(cleared, match, "50");
+        createMatchCompetitor(createCompetitor("HPSC-SR-012"), match, "0");
+        assertEquals(2, ipscShooterResultService.calculateMatchShooterResult(match.getId())
+                .getShooterResults().size());
+        clearedMatchCompetitor.setPoints(null);
+        matchCompetitorRepository.saveAndFlush(clearedMatchCompetitor);
+
+        // Act
+        ShooterResponseHolder holder = ipscShooterResultService.calculateMatchShooterResult(match.getId());
+
+        // Assert
+        assertEquals(1, holder.getShooterResults().size());
+        assertEquals(kept.getId(), holder.getShooterResults().getFirst().getCompetitorId());
+        assertEquals(1, shooterResultRepository.findAllByMatchIdWithDetails(match.getId()).size());
+    }
+
     // getAllShooterResults()
     @Test
     void testGetAllShooterResults_whenMatchesHaveDifferentDates_thenOrdersThemByDate() {
@@ -185,6 +209,7 @@ class IpscShooterResultServiceIntegrationTest {
         Competitor competitor = new Competitor();
         competitor.setFirstName("Jane");
         competitor.setLastName("Doe");
+        competitor.setIsVerified(true);
         competitor.setClubNumber(clubNumber);
         return competitorRepository.save(competitor);
     }

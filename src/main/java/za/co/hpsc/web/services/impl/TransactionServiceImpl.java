@@ -132,6 +132,20 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public List<ShooterResult> replaceShooterResults(List<ShooterResult> toSave, List<ShooterResult> toDelete) {
+        // Deleted and saved in one transaction and flushed inside it, so a constraint violation surfaces
+        // from this call as a DataIntegrityViolationException the caller can handle.
+        return transactionTemplate.execute(status -> {
+            shooterResultRepository.deleteAll(toDelete);
+            List<ShooterResult> saved = toSave.stream()
+                    .map(shooterResultRepository::save)
+                    .toList();
+            shooterResultRepository.flush();
+            return saved;
+        });
+    }
+
+    @Override
     public ShooterLog saveShooterLog(ShooterLog shooterLog) {
         return transactionTemplate.execute(status -> loadAssociations(shooterLogRepository.save(shooterLog)));
     }

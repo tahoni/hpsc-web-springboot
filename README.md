@@ -34,11 +34,21 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
 - **IPSC Match Competitors**: CRUD for a competitor's entry in a match, including competitor, match, division and
   category resolution, plus bulk CSV import
 - **IPSC Shooter Results**: Calculation of each competitor's rank and percentage within their firearm type, division
-  and competitor category in a match, and reading the results
+  and competitor category in a match, and reading the results. Only verified competitors with points above zero are
+  included
 - **IPSC Shooter Logs**: CRUD for a shooter log: a date range and the matches it covers, set by match ID
 - **IPSC Shooter Log Overall Results**: Calculation of each competitor's overall rank and percentage within their
-  division and
-  competitor category across the matches of a shooter log, and reading the results
+  division and competitor category across the matches of a shooter log, and reading the results. Only verified
+  competitors are included
+
+A competitor is verified when `isVerified` is `true`; it is left unset when a competitor is created without it. Only
+the competitor endpoints can verify a competitor: set it when creating one (the `isVerified` field of
+`POST /ipsc/competitors`, or the `IsVerified` column of `POST /ipsc/competitors/bulk`) or mark an existing competitor
+verified with `PUT` or `PATCH /ipsc/competitors/{competitorId}`.
+
+The match competitor and match bulk CSV imports never verify anyone. The match competitor import still imports an
+entry for an unverified competitor, but that entry is only included in shooter results and shooter log overall results
+once its competitor is verified.
 
 The application emphasises structured data processing and validation, with MySQL-backed persistence via Spring Data JPA
 and Hibernate.
