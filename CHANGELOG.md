@@ -32,6 +32,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Controllers
 
+- **`IpscShooterLogController`:** New controller under `/ipsc/shooter-logs`: `POST` creates a shooter log, `PUT` and
+  `PATCH /{shooterLogId}` replace or partially update one, `GET` returns every log, `GET /{shooterLogId}` one log
+  and `DELETE /{shooterLogId}` removes one.
 - **`IpscShooterLogOverallController`:** New controller under `/ipsc/shooter-log-overall-results`:
   `POST /logs/{shooterLogId}` calculates a shooter log's overall results, `GET /logs/{shooterLogId}` returns them
   for one log and `GET` returns them for every log, each a `ShooterLogOverallResponseHolder` linking the log to its
@@ -39,6 +42,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Services
 
+- **`IpscShooterLogService`/`IpscShooterLogServiceImpl`:** New service to create, replace, patch, get and delete a
+  shooter log, with the matches it covers set by match ID. A request naming a match that does not exist is refused,
+  as is one that leaves a match scheduled outside the log's start and end dates (inclusive), and a log that has overall
+  results cannot be deleted.
+- **`TransactionService.saveShooterLog` and `deleteShooterLog`:** Save a shooter log with its matches loaded, and
+  delete one, each in its own transaction.
 - **`IpscShooterLogOverallService`/`IpscShooterLogOverallServiceImpl`:** New service that brings each of a log's
   matches' shooter results up to date, then gives each competitor an overall percentage — the average of their
   best `IpscConstants.SHOOTER_LOG_BEST_MATCHES` (four) percentages across the log's matches, or of all of them if
@@ -50,12 +59,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Repositories
 
+- **`ShooterLogOverallRepository.existsByShooterLogId`:** New finder, so a shooter log with overall results can be
+  refused on delete.
 - **`ShooterLogRepository`, `ShooterLogOverallRepository` and `ShooterResultRepository`:** New fetch-joining finders
   (`findByIdWithMatches`, `findAllWithMatches`, `findAllByShooterLogIdWithDetails`, `findAllWithDetails` and
   `findAllByMatchIdInWithDetails`) so responses can be mapped outside a transaction.
 
 ##### Models
 
+- **`ShooterLogRequest` and `ShooterLogPatchRequest`:** New request DTOs for a shooter log's start and end dates and
+  the IDs of the matches it covers. A replacement needs both dates, with the end date not before the start date.
 - **`ShooterLogOverallResponseHolder`, `ShooterLogOverallResponse` and `ShooterLogResponse`:** New response DTOs
   linking a shooter log to its overall results, each with the competitor's names and number, category, division, rank
   and percentage in the log and when they were calculated.
@@ -67,6 +80,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### Models
+
+- **`ShooterLogResponse`:** Moved from `models.ipsc.shooterlogoverall.response` to `models.ipsc.shooterlog.response`,
+  as `IpscShooterLogController` now returns it too.
+
 ##### Documentation
 
 - **`ARCHITECTURE.md`:** The Domain Entities table no longer lists `ShooterLogCompetitor`, and its columns are
@@ -74,8 +92,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   controller, service and response DTOs.
 - **`README.md`/`CONTRIBUTING.md`:** No longer say the shooter log service and controller layer is still being built.
 - **`flyway-migration-versioning.md`:** Current State table gains a row for `V11_12_0__drop_shooter_log_competitor.sql`.
-- **`improvement-plan.md`/`improvement-plan-tasks.md`:** Gap #41 moves to Completed, and Gap #6 records that
-  `ShooterLogCompetitor` is gone, leaving `ShooterLog` and `ShooterLogOverall` for a future shooter-log service.
+- **`improvement-plan.md`/`improvement-plan-tasks.md`:** Gaps #41, #6 and #42 move to Completed.
 
 #### 🗑️ Removed
 

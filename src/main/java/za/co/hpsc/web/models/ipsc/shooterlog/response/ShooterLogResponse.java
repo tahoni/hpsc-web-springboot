@@ -1,4 +1,4 @@
-package za.co.hpsc.web.models.ipsc.shooterlogoverall.response;
+package za.co.hpsc.web.models.ipsc.shooterlog.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The shooter log that a set of {@link ShooterLogOverallResponse}s belong to, as returned by
- * {@code IpscShooterLogOverallController}.
+ * A persisted shooter log, as returned by {@code IpscShooterLogController}'s CRUD endpoints and by
+ * {@code IpscShooterLogOverallController}, which links it to its overall results.
  *
- * @see ShooterLogOverallResponseHolder
+ * @see za.co.hpsc.web.models.ipsc.shooterlogoverall.response.ShooterLogOverallResponseHolder
  * @since 16.1.0
  */
 @Getter

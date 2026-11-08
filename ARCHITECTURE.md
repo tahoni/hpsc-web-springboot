@@ -87,6 +87,8 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 │   │   │   │   ├───matchcompetitor/request/  # IPSC match competitor request DTOs
 │   │   │   │   ├───matchcompetitor/response/ # IPSC match competitor response DTOs
 │   │   │   │   ├───shared/              # Comstock-scoring shared fields (extended by the match competitor requests)
+│   │   │   │   ├───shooterlog/request/  # IPSC shooter log request DTOs
+│   │   │   │   ├───shooterlog/response/ # IPSC shooter log response DTOs
 │   │   │   │   ├───shooterlogoverall/response/ # IPSC shooter log overall response DTOs
 │   │   │   │   └───shooterresult/response/ # IPSC shooter result response DTOs
 │   │   │   └───(root)          # Top-level request/response wrapper models
@@ -121,14 +123,14 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 The HPSC Website Backend is a pure REST API server (no frontend) that manages practical shooting club operations. Core
 responsibilities:
 
-| Domain                         | Description                                                                                                                                                                                |
-|--------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Award Ceremonies**           | Award data and ceremony grouping, processed from CSV                                                                                                                                       |
-| **Image Gallery**              | Image metadata processing from CSV                                                                                                                                                         |
-| **IPSC Competitors & Matches** | Full CRUD for competitor and match records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`                                                            |
-| **IPSC Match Competitors**     | Full CRUD for a competitor's entry in a match, plus bulk CSV import, via `IpscMatchCompetitorController`                                                                                   |
-| **IPSC Shooter Results**       | Calculation of a match's ranked results per firearm type, division and competitor category, and reading them, via `IpscShooterResultController`                                            |
-| **Shooter Logs**               | Calculation of a shooter log's overall rank and percentage per division and competitor category from its matches' shooter results, and reading them, via `IpscShooterLogOverallController` |
+| Domain                         | Description                                                                                                                                                                                                                                                                                                |
+|--------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Award Ceremonies**           | Award data and ceremony grouping, processed from CSV                                                                                                                                                                                                                                                       |
+| **Image Gallery**              | Image metadata processing from CSV                                                                                                                                                                                                                                                                         |
+| **IPSC Competitors & Matches** | Full CRUD for competitor and match records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`                                                                                                                                                                            |
+| **IPSC Match Competitors**     | Full CRUD for a competitor's entry in a match, plus bulk CSV import, via `IpscMatchCompetitorController`                                                                                                                                                                                                   |
+| **IPSC Shooter Results**       | Calculation of a match's ranked results per firearm type, division and competitor category, and reading them, via `IpscShooterResultController`                                                                                                                                                            |
+| **Shooter Logs**               | Full CRUD for shooter logs (a date range and the matches it covers) via `IpscShooterLogController`, and calculation of each competitor's overall rank and percentage per division and competitor category from the log's matches' shooter results, and reading them, via `IpscShooterLogOverallController` |
 
 The application follows a strict **N-Tier Layered Architecture** with unidirectional dependencies:
 
@@ -159,6 +161,7 @@ Handles incoming HTTP requests. Does not contain business logic.
 | `IpscCompetitorController`        | `/ipsc/competitors`                 | IPSC competitor CRUD + bulk CSV import           |
 | `IpscMatchController`             | `/ipsc/matches`                     | IPSC match CRUD + bulk CSV import                |
 | `IpscMatchCompetitorController`   | `/ipsc/match-competitors`           | IPSC match competitor CRUD + bulk CSV import     |
+| `IpscShooterLogController`        | `/ipsc/shooter-logs`                | IPSC shooter log CRUD                            |
 | `IpscShooterResultController`     | `/ipsc/shooter-results`             | IPSC shooter result calculation and reading      |
 | `IpscShooterLogOverallController` | `/ipsc/shooter-log-overall-results` | IPSC shooter log overall calculation and reading |
 
@@ -178,18 +181,19 @@ All controllers:
 
 Contains all business logic.
 
-| Interface                      | Implementation                     | Role                                                                                                              |
-|--------------------------------|------------------------------------|-------------------------------------------------------------------------------------------------------------------|
-| `AwardService`                 | `AwardServiceImpl`                 | Award CSV processing (deliberately stateless — see below)                                                         |
-| `ImageService`                 | `ImageServiceImpl`                 | Image CSV processing (deliberately stateless — see below)                                                         |
-| `IpscMatchService`             | `IpscMatchServiceImpl`             | IPSC match CRUD + bulk CSV import                                                                                 |
-| `IpscCompetitorService`        | `IpscCompetitorServiceImpl`        | IPSC competitor CRUD + bulk CSV import                                                                            |
-| `IpscMatchCompetitorService`   | `IpscMatchCompetitorServiceImpl`   | IPSC match competitor CRUD + bulk CSV import                                                                      |
-| `IpscShooterResultService`     | `IpscShooterResultServiceImpl`     | Calculates a match's shooter results (rank and percentage) and reads them                                         |
-| `IpscShooterLogOverallService` | `IpscShooterLogOverallServiceImpl` | Calculates a shooter log's overall results (rank and percentage) from its matches' shooter results and reads them |
-| `IpscEntityCompetitorService`  | `IpscEntityCompetitorServiceImpl`  | Looks up a persisted competitor from the loosely-specified identity in imported data                              |
-| `IpscEntityClubService`        | `IpscEntityClubServiceImpl`        | Resolves clubs by code, abbreviation or name; null-safe comparisons of clubs                                      |
-| `TransactionService`           | `TransactionServiceImpl`           | Commits competitor/match/match competitor/shooter result/shooter log overall writes, each in its own transaction  |
+| Interface                      | Implementation                     | Role                                                                                                                                |
+|--------------------------------|------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `AwardService`                 | `AwardServiceImpl`                 | Award CSV processing (deliberately stateless — see below)                                                                           |
+| `ImageService`                 | `ImageServiceImpl`                 | Image CSV processing (deliberately stateless — see below)                                                                           |
+| `IpscMatchService`             | `IpscMatchServiceImpl`             | IPSC match CRUD + bulk CSV import                                                                                                   |
+| `IpscCompetitorService`        | `IpscCompetitorServiceImpl`        | IPSC competitor CRUD + bulk CSV import                                                                                              |
+| `IpscMatchCompetitorService`   | `IpscMatchCompetitorServiceImpl`   | IPSC match competitor CRUD + bulk CSV import                                                                                        |
+| `IpscShooterLogService`        | `IpscShooterLogServiceImpl`        | IPSC shooter log CRUD, with the matches a log covers set by ID                                                                      |
+| `IpscShooterResultService`     | `IpscShooterResultServiceImpl`     | Calculates a match's shooter results (rank and percentage) and reads them                                                           |
+| `IpscShooterLogOverallService` | `IpscShooterLogOverallServiceImpl` | Calculates a shooter log's overall results (rank and percentage) from its matches' shooter results and reads them                   |
+| `IpscEntityCompetitorService`  | `IpscEntityCompetitorServiceImpl`  | Looks up a persisted competitor from the loosely-specified identity in imported data                                                |
+| `IpscEntityClubService`        | `IpscEntityClubServiceImpl`        | Resolves clubs by code, abbreviation or name; null-safe comparisons of clubs                                                        |
+| `TransactionService`           | `TransactionServiceImpl`           | Commits competitor/match/match competitor/shooter log/shooter result/shooter log overall result writes, each in its own transaction |
 
 > `AwardService.createAwards()`/`ImageService.createImages()` are stateless by design, not an unfinished persistence
 > layer: each parses CSV into response records only, with no repository write — a preview/validation transform
@@ -284,9 +288,15 @@ shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchS
 `ShooterResultResponse`, `ShooterMatchResultResponse` and `ShooterResponseHolder` — a match linked to its shooter
 results, consumed by `IpscShooterResultController`.
 
+#### `models/ipsc/shooterlog/request/` and `models/ipsc/shooterlog/response/`
+
+`ShooterLogRequest`, `ShooterLogPatchRequest` and `ShooterLogResponse` — a shooter log's date range and the
+matches it covers, consumed by `IpscShooterLogController`; `ShooterLogResponse` also identifies the log in
+`IpscShooterLogOverallController`.
+
 #### `models/ipsc/shooterlogoverall/response/`
 
-`ShooterLogOverallResponse`, `ShooterLogResponse` and `ShooterLogOverallResponseHolder` — a shooter log linked to its
+`ShooterLogOverallResponse` and `ShooterLogOverallResponseHolder` — a shooter log linked to its
 overall results, consumed by `IpscShooterLogOverallController`.
 
 ---

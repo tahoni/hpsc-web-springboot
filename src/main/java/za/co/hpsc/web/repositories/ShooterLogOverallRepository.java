@@ -12,6 +12,8 @@ public interface ShooterLogOverallRepository extends JpaRepository<ShooterLogOve
 
     boolean existsByCompetitorId(Long competitorId);
 
+    boolean existsByShooterLogId(Long shooterLogId);
+
     // Fetch-joins the lazy shooter log and competitor read when mapping an overall to its response, so
     // they're usable outside a transaction (open-in-view is disabled).
     @Query("select slo from ShooterLogOverall slo join fetch slo.shooterLog join fetch slo.competitor "

@@ -73,7 +73,7 @@ public class IpscMatchServiceTest {
     void setUp() {
         TransactionService transactionService = new TransactionServiceImpl(competitorRepository,
                 ipscMatchRepository, matchCompetitorRepository, mock(ShooterResultRepository.class),
-                mock(ShooterLogOverallRepository.class), transactionManager);
+                mock(ShooterLogOverallRepository.class), mock(ShooterLogRepository.class), transactionManager);
         ipscMatchService = new IpscMatchServiceImpl(ipscMatchRepository,
                 matchCompetitorRepository, shooterLogRepository,
                 new MatchMapper(new IpscEntityClubServiceImpl(clubRepository)), transactionService);

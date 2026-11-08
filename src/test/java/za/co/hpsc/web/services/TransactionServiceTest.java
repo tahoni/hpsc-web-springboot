@@ -1,5 +1,6 @@
 package za.co.hpsc.web.services;
 
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,12 +12,14 @@ import org.springframework.transaction.TransactionStatus;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.domain.ShooterLog;
 import za.co.hpsc.web.domain.ShooterLogOverall;
 import za.co.hpsc.web.domain.ShooterResult;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
+import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.repositories.ShooterResultRepository;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
@@ -51,6 +54,9 @@ public class TransactionServiceTest {
     private ShooterLogOverallRepository shooterLogOverallRepository;
 
     @Mock
+    private ShooterLogRepository shooterLogRepository;
+
+    @Mock
     private PlatformTransactionManager transactionManager;
 
     @Mock
@@ -61,7 +67,8 @@ public class TransactionServiceTest {
     @BeforeEach
     void setUp() {
         transactionService = new TransactionServiceImpl(competitorRepository, ipscMatchRepository,
-                matchCompetitorRepository, shooterResultRepository, shooterLogOverallRepository, transactionManager);
+                matchCompetitorRepository, shooterResultRepository, shooterLogOverallRepository,
+                shooterLogRepository, transactionManager);
     }
 
     // saveCompetitor()
@@ -267,6 +274,37 @@ public class TransactionServiceTest {
         verify(transactionManager, never()).commit(any());
     }
 
+    // saveShooterLog()
+    @Test
+    void testSaveShooterLog_whenCalled_thenSavesLoadsMatchesAndCommits() {
+        // Arrange
+        stubTransaction();
+        ShooterLog shooterLog = new ShooterLog();
+        shooterLog.setMatches(new java.util.ArrayList<>());
+        when(shooterLogRepository.save(shooterLog)).thenReturn(shooterLog);
+
+        // Act
+        ShooterLog result = transactionService.saveShooterLog(shooterLog);
+
+        // Assert
+        assertSame(shooterLog, result);
+        assertTrue(Hibernate.isInitialized(result.getMatches()));
+        verify(transactionManager).commit(transactionStatus);
+    }
+
+    @Test
+    void testSaveShooterLog_whenSaveFails_thenRollsBackAndPropagates() {
+        // Arrange
+        stubTransaction();
+        when(shooterLogRepository.save(any(ShooterLog.class))).thenThrow(new DataIntegrityViolationException("bad"));
+
+        // Act & Assert
+        assertThrows(DataIntegrityViolationException.class,
+                () -> transactionService.saveShooterLog(new ShooterLog()));
+        verify(transactionManager).rollback(transactionStatus);
+        verify(transactionManager, never()).commit(any());
+    }
+
     // saveShooterResults()
     @Test
     void testSaveShooterResults_whenCalled_thenSavesEachFlushesAndCommitsInOneTransaction() {
@@ -300,6 +338,34 @@ public class TransactionServiceTest {
                 () -> transactionService.saveShooterResults(List.of(new ShooterResult())));
         verify(transactionManager).rollback(transactionStatus);
         verify(transactionManager, never()).commit(any());
+    }
+
+    // deleteShooterLog()
+    @Test
+    void testDeleteShooterLog_whenCalled_thenDeletesFlushesAndCommits() {
+        // Arrange
+        stubTransaction();
+        ShooterLog shooterLog = new ShooterLog();
+
+        // Act
+        transactionService.deleteShooterLog(shooterLog);
+
+        // Assert
+        verify(shooterLogRepository).delete(shooterLog);
+        verify(shooterLogRepository).flush();
+        verify(transactionManager).commit(transactionStatus);
+    }
+
+    @Test
+    void testDeleteShooterLog_whenFlushFails_thenRollsBackAndRethrows() {
+        // Arrange
+        stubTransaction();
+        doThrow(new DataIntegrityViolationException("FK violation")).when(shooterLogRepository).flush();
+
+        // Act & Assert
+        assertThrows(DataIntegrityViolationException.class,
+                () -> transactionService.deleteShooterLog(new ShooterLog()));
+        verify(transactionManager).rollback(transactionStatus);
     }
 
     // replaceShooterLogOverallResults()

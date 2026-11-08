@@ -35,6 +35,7 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
   category resolution, plus bulk CSV import
 - **IPSC Shooter Results**: Calculation of each competitor's rank and percentage within their firearm type, division
   and competitor category in a match, and reading the results
+- **IPSC Shooter Logs**: CRUD for a shooter log: a date range and the matches it covers, set by match ID
 - **IPSC Shooter Log Overall Results**: Calculation of each competitor's overall rank and percentage within their
   division and
   competitor category across the matches of a shooter log, and reading the results
