@@ -416,6 +416,18 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 - [x] Correct `ARCHITECTURE.md`'s `utils/` table, which calls `NumberUtil` "Numeric parsing and formatting helpers" —
   done differently: the `NumberUtil` row is removed with the class
 
+**Reinstated score-scale constants and `NumberUtil.calculateSum` have no production caller** *(improvement-plan.md →
+Gap #41)* —
+✅ Closed in the unreleased changes
+
+- [x] Confirm with the IDE's find-usages that `IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`,
+  `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum` have no production caller — confirmed by a name-based scan of `src`; find-usages was not
+  run
+- [x] For each, either give it a production caller (e.g. the scoring layer, Gap #6) or remove it together with its
+  unit tests — all five removed with the `calculateSum` tests
+- [x] Resolve the "Not currently referenced by any code" Javadoc on `MATCH_POINTS_SCALE` either way —
+  removed with the constant
+
 ---
 
 ## 🟡 Partially Completed
@@ -431,7 +443,9 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
   `MatchCompetitor`/`MatchStageCompetitor` repositories — as of v9.0.0 `MatchStageCompetitor` and its repository are
   removed, so this now means the `MatchCompetitor` repository alone — done differently: shipped in v9.1.0 as
   `IpscMatchCompetitorService`/`IpscMatchCompetitorServiceImpl`
-- [ ] Introduce `ShooterLogService`/`ShooterLogServiceImpl` over the existing `ShooterLog*` repositories
+- [ ] Introduce `ShooterLogService`/`ShooterLogServiceImpl` over the existing `ShooterLog*` repositories — as of
+  the unreleased `V11_12_0`, `ShooterLogCompetitor` and its repository are removed, so this means the `ShooterLog` and
+  `ShooterLogOverall` repositories
 - [ ] Add controller endpoints for both, backed by `@SpringBootTest` integration tests per the
   `scaffold-integration-tests` conventions — `IpscMatchCompetitorController` and its integration tests shipped in
   v9.1.0 and extended in v10.0.0 (competitor lookup by number or name, overall-score fields) and v15.0.0
@@ -449,14 +463,7 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-**Reinstated score-scale constants and `NumberUtil.calculateSum` have no production caller** *(improvement-plan.md →
-Gap #41)*
-
-- [ ] Confirm with the IDE's find-usages that `IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`,
-  `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum` have no production caller
-- [ ] For each, either give it a production caller (e.g. the scoring layer, Gap #6) or remove it together with its
-  unit tests
-- [ ] Resolve the "Not currently referenced by any code" Javadoc on `MATCH_POINTS_SCALE` either way
+*No gaps are currently open.*
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

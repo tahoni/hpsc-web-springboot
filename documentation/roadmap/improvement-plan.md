@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (39):**
+- **✅ Completed (40):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -124,14 +124,16 @@ number or a newly met precondition on an existing gap — see the `update-improv
     lookups by code; the `AGENTS.md` example heading corrected)
   - #40 Renaming every `Division` name left stored divisions with no data migration — closed v14.0.0 (`V11_7_0`
     renames the stored divisions)
+  - #41 v15.0.0 reinstated four score-scale constants and `NumberUtil.calculateSum` with no production caller —
+    closed in the unreleased changes (three scales, `DEFAULT_SCALE` and `calculateSum` removed with their tests)
 - **🟡 Partially Completed (1):**
   - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v15.0.0 (the
     match competitor service and `/ipsc/match-competitors` controller are built, extended in v10.0.0 with
     competitor lookup by number or name and overall-score fields, and in v15.0.0 with
     `/ipsc/shooter-results` endpoints that calculate and read results over the new `ShooterResult` entity; the
     shooter-log layer is not)
-- **⚪ Open (1):**
-  - #41 v15.0.0 reinstated four score-scale constants and `NumberUtil.calculateSum` with no production caller
+- **⚪ Open (0):**
+  - *No gaps are currently open.*
 
 ### ✅ Completed
 
@@ -1278,6 +1280,27 @@ their tests, and `SystemConstants.DEFAULT_SCALE` is removed with its Javadoc ref
 `ARCHITECTURE.md`'s `utils/` table no longer lists the two deleted classes, and `AGENTS.md`'s example of a `final`
 utility class now names `ValueUtil`. If the scoring layer (Gap #6) needs percentage or sum helpers it can add them with their first caller.
 
+#### 41. v15.0.0 reinstated four score-scale constants and `NumberUtil.calculateSum` with no production caller — ✅ Closed in the unreleased changes
+
+**Evidence:** `constants/IpscConstants.java` again declares `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`
+(lines 59–63), and its Javadoc says they are "not currently referenced by any code"; grepping `src/` finds only their
+declarations. `SystemConstants.DEFAULT_SCALE` (line 23) is read only by `NumberUtilTest`, and
+`NumberUtil.calculateSum` (`utils/NumberUtil.java:66`) is called only by its own tests — the production callers use
+`calculatePercentage` (`IpscShooterResultServiceImpl`) and `formatBigDecimal` (`ShooterResultResponse`) alone.
+`CHANGELOG.md` records v15.0.0 reinstating `NumberUtil` and `DEFAULT_SCALE`, and adding the scale constants, after
+Gaps #37 and #38 removed exactly these as inert; only `PERCENTAGE_SCALE` has a caller this time.
+
+**Why it matters:** The same shape as Gaps #9, #37 and #38: inert groundwork that signals a rounding rule nothing
+applies, kept "used" by tests that hide it from the coverage gate. The two gaps closed these by removal, so
+reinstating them without callers repeats the drift, and `DEFAULT_SCALE` is not even the scale the callers pass.
+
+**Proposed improvement:** Either give each a production caller (the scoring layer in Gap #6 is the likely one, using
+`calculateSum` and the three scales) or remove `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE`, `DEFAULT_SCALE`
+and `calculateSum` with its tests, as Gaps #37 and #38 did, resolving the "Not currently referenced" Javadoc either
+way.
+
+**Outcome:** Done as proposed, by removal rather than waiting on a caller — the choice Gaps #37 and #38 made. `IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE` are removed, along with the "not currently referenced" Javadoc on the first, so `PERCENTAGE_SCALE`, the one scale with a caller, is the only one left. `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum` are removed with the `calculateSum` tests, and `NumberUtilTest`'s `calculatePercentage` tests now use a local scale. `NumberUtil` keeps `calculatePercentage` and `formatBigDecimal`, which production code calls. If the scoring layer (Gap #6) needs a sum helper or another scale it can add one with its first caller.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -1336,26 +1359,15 @@ minutes after the oldest result was calculated — and otherwise returns the cur
 `percentageInLog` (`V11_9_0`). It still does not add a shooter-log service or controller. The gap closes once a
 shooter-log service and controller exist, and the docs drop their "still being built" language.
 
+The unreleased work on `feature/drop-shooter-log-competitor` narrows the shooter-log half further without finishing it:
+`ShooterLogCompetitor`, its repository and the `shooter_log_competitor` table (`V11_12_0`) are removed, since
+`ShooterResult` now carries each competitor's rank and percentage, so the shooter-log layer a future service would
+operate on is `ShooterLog` and `ShooterLogOverall` alone, and the two delete-time `existsBy…` checks that used it are
+gone. Still no shooter-log service or controller exists, so the gap stands.
+
 ### ⚪ Open
 
-#### 41. v15.0.0 reinstated four score-scale constants and `NumberUtil.calculateSum` with no production caller
-
-**Evidence:** `constants/IpscConstants.java` again declares `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`
-(lines 59–63), and its Javadoc says they are "not currently referenced by any code"; grepping `src/` finds only their
-declarations. `SystemConstants.DEFAULT_SCALE` (line 23) is read only by `NumberUtilTest`, and
-`NumberUtil.calculateSum` (`utils/NumberUtil.java:66`) is called only by its own tests — the production callers use
-`calculatePercentage` (`IpscShooterResultServiceImpl`) and `formatBigDecimal` (`ShooterResultResponse`) alone.
-`CHANGELOG.md` records v15.0.0 reinstating `NumberUtil` and `DEFAULT_SCALE`, and adding the scale constants, after
-Gaps #37 and #38 removed exactly these as inert; only `PERCENTAGE_SCALE` has a caller this time.
-
-**Why it matters:** The same shape as Gaps #9, #37 and #38: inert groundwork that signals a rounding rule nothing
-applies, kept "used" by tests that hide it from the coverage gate. The two gaps closed these by removal, so
-reinstating them without callers repeats the drift, and `DEFAULT_SCALE` is not even the scale the callers pass.
-
-**Proposed improvement:** Either give each a production caller (the scoring layer in Gap #6 is the likely one, using
-`calculateSum` and the three scales) or remove `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE`, `TIME_SCALE`, `DEFAULT_SCALE`
-and `calculateSum` with its tests, as Gaps #37 and #38 did, resolving the "Not currently referenced" Javadoc either
-way.
+*No gaps are currently open.*
 
 ---
 
@@ -1364,7 +1376,7 @@ way.
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                                               |
 |-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0, the shooter-log service and controller remain                                                                                                                                                                                                       |
-| **Next**    | Remove or apply the reinstated score-scale constants and `NumberUtil.calculateSum` (#41); #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0                                                                                                                                                                                                                                |
+| **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in the unreleased changes                                                                                                                                                                                                                                                               |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                                           |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath; re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist                                          |
 
@@ -1463,6 +1475,8 @@ way.
 - ✅ Met in v14.0.0: `V11_7_0__drop_division_suffix_from_division_names.sql` rewrites the stored `division` values in
   `match_competitor`, `shooter_log_competitor` and `shooter_log_overall` to the renamed `Division` names, so existing
   rows read back as a division, closing Gap #40.
+- ✅ Met in the unreleased changes: `IpscConstants`' `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`,
+  `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum` are removed rather than left unused, closing Gap #41.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.
