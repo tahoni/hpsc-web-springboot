@@ -169,7 +169,7 @@ public interface TransactionService {
      * @throws org.springframework.dao.DataIntegrityViolationException if a unique constraint is violated, such as
      *                                                                  a second result for the same match and match
      *                                                                  competitor.
-     * @since 16.2.0
+     * @since 16.1.1
      */
     List<ShooterResult> replaceShooterResults(List<ShooterResult> toSave, List<ShooterResult> toDelete);
 
