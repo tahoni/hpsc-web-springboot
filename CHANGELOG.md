@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 16.1.1](#-1611---2026-11-08) ← Current
+- [🧾 Version 16.1.2](#-1612---2026-11-09) ← Current
+- [🧾 Version 16.1.1](#-1611---2026-11-08)
 - [🧾 Version 16.1.0](#-1610---2026-11-08)
 - [🧾 Version 16.0.0](#-1600---2026-10-31)
 - [🧾 Version 15.0.0](#-1500---2026-10-17)
@@ -29,6 +30,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [16.1.2] - 2026-11-09
 
 #### ➕ Added
 
@@ -51,6 +56,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `IpscMatchService` and `IpscMatchController`:** State that a calculation is refused if a match falls outside the
   log's dates, and that rescheduling a match outside the dates of a shooter log that covers it is refused. The `400`
   responses are added to the calculate, `PUT` and `PATCH` endpoints' OpenAPI documentation.
+- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Gap #45 (a shooter log's dates enforced only when the log
+  was written, so a rescheduled match slipped outside them) is added and closed in v16.1.2.
 
 #### 🐛 Fixed
 
