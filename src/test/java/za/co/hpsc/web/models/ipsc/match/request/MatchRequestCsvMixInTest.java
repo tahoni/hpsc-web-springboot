@@ -122,7 +122,8 @@ class MatchRequestCsvMixInTest {
     }
 
     @Test
-    void testCsvDeserialization_whenCsvHasMatchIdColumn_thenBindsIt() throws Exception {
+    void testCsvDeserialization_whenCsvHasMatchIdColumn_thenDoesNotReadItAndMapsTheOtherColumns()
+            throws Exception {
         // Arrange
         String csvData = """
                 MatchId,MatchDate,MatchName,MatchFirearmType,MatchCategory
@@ -133,7 +134,12 @@ class MatchRequestCsvMixInTest {
         List<MatchRequest> rows = readRows(csvData);
 
         // Assert
-        assertEquals(7L, rows.getFirst().getMatchId());
+        assertEquals(1, rows.size());
+        assertNull(rows.getFirst().getMatchId());
+        assertEquals(LocalDate.of(2026, 4, 10), rows.getFirst().getMatchDate());
+        assertEquals("Club Championship", rows.getFirst().getMatchName());
+        assertEquals("Pistol", rows.getFirst().getMatchFirearmType());
+        assertEquals("Level 1", rows.getFirst().getMatchCategory());
     }
 
     @Test

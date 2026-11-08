@@ -193,8 +193,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
-     * Normalises a {@link CompetitorRequest} read from a CSV row into a new {@link CompetitorRequest}, dropping any
-     * {@code competitorId}.
+     * Normalises a {@link CompetitorRequest} read from a CSV row into a new {@link CompetitorRequest}, which has no
+     * {@code competitorId} as a CSV row carries none.
      *
      * <p>
      * Every name column and the gender are proper-cased (see {@link za.co.hpsc.web.utils.StringUtil#toProperCase(String)}). The
@@ -210,7 +210,6 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      */
     protected CompetitorRequest normaliseCsvRequest(@NonNull CompetitorRequest csvRow) {
         return new CompetitorRequest(
-                csvRow.getCompetitorId(),
                 toProperCase(csvRow.getFirstName()),
                 CompetitorHelpers.toSentenceCaseLastName(toProperCase(csvRow.getLastName())),
                 toProperCase(csvRow.getMiddleNames()),

@@ -97,6 +97,24 @@ public class MatchRequest {
     }
 
     /**
+     * Constructs a {@code MatchRequest} for a new match, as read from a bulk CSV import row, which has no identifier of
+     * its own since the import only creates matches. Read through {@link MatchRequestCsvMixIn}.
+     *
+     * @param matchDate        the date the match was/will be shot. Must not be null.
+     * @param matchName        the match's name. Must not be null or blank.
+     * @param club             the name of the club hosting the match; may be null or blank.
+     * @param matchFirearmType the firearm type this match is shot with.
+     * @param matchCategory    the category/tier of this match.
+     * @param startTime        time the match started; may be null.
+     * @param endTime          time the match ended; may be null.
+     * @param url              a URL with more information about this match; may be null.
+     */
+    public MatchRequest(LocalDate matchDate, String matchName, String club, String matchFirearmType,
+                        String matchCategory, LocalTime startTime, LocalTime endTime, String url) {
+        this(null, matchDate, matchName, club, matchFirearmType, matchCategory, startTime, endTime, url);
+    }
+
+    /**
      * Checks that the request carries what is needed to create a match before any of it is used. Nothing is looked
      * up, so this only checks that values are present.
      *

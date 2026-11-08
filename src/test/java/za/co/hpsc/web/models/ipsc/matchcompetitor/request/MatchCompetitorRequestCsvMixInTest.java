@@ -17,7 +17,8 @@ class MatchCompetitorRequestCsvMixInTest {
 
     // CSV deserialization
     @Test
-    void testCsvDeserialization_whenValidRow_thenMapsAllFields() throws Exception {
+    void testCsvDeserialization_whenValidRow_thenMapsAllFieldsExceptTheRowsOwnMatchCompetitorId()
+            throws Exception {
         // Arrange
         String csvData = """
                 MatchCompetitorId,CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF,Pts,IsVisitor
@@ -30,7 +31,8 @@ class MatchCompetitorRequestCsvMixInTest {
         // Assert
         assertEquals(1, rows.size());
         MatchCompetitorRequest row = rows.getFirst();
-        assertEquals(7L, row.getMatchCompetitorId());
+        // The row's own ID column is not read, but the competitor and match it refers to are
+        assertNull(row.getMatchCompetitorId());
         assertEquals(1L, row.getCompetitorId());
         assertEquals(2L, row.getMatchId());
         assertEquals("HPSC", row.getMatchClub());

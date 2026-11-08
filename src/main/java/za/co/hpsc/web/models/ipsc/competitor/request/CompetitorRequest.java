@@ -140,6 +140,39 @@ public class CompetitorRequest {
     }
 
     /**
+     * Constructs a {@code CompetitorRequest} for a new competitor, as read from a bulk CSV import row, which has no
+     * identifier of its own since the import only creates competitors. Read through
+     * {@link CompetitorRequestCsvMixIn}.
+     *
+     * @param firstName       the competitor's first name. Must not be null or blank.
+     * @param lastName        the competitor's last name. Must not be null or blank.
+     * @param middleNames     the competitor's middle names; may be null.
+     * @param nickName        the competitor's nickname; may be null.
+     * @param dateOfBirth     the competitor's date of birth; may be null.
+     * @param gender          the competitor's gender; may be null.
+     * @param homeClub        the competitor's home club; may be null.
+     * @param sapsaNumber     the competitor's SAPSA number; may be null.
+     * @param competitorNumber the competitor's number; may be null.
+     * @param clubNumber      the competitor's club number; may be null.
+     * @param idNumber        the competitor's ID number; may be null.
+     * @param cellphoneNumber the competitor's cellphone number; may be null.
+     * @param emailAddresses  the competitor's email addresses; may be null.
+     * @param paidUpSapsa     whether the competitor is paid up with SAPSA; may be null.
+     * @param paidUpNgpsa     whether the competitor is paid up with NGPSA; may be null.
+     * @param paidUpClub      whether the competitor is paid up with their club; may be null.
+     * @param isVerified      whether the competitor has been verified; may be null.
+     */
+    public CompetitorRequest(String firstName, String lastName, String middleNames, String nickName,
+                             LocalDate dateOfBirth, String gender, String homeClub, Integer sapsaNumber,
+                             String competitorNumber, String clubNumber, String idNumber, String cellphoneNumber,
+                             List<String> emailAddresses, Boolean paidUpSapsa, Boolean paidUpNgpsa,
+                             Boolean paidUpClub, Boolean isVerified) {
+        this(null, firstName, lastName, middleNames, nickName, dateOfBirth, gender, homeClub, sapsaNumber,
+                competitorNumber, clubNumber, idNumber, cellphoneNumber, emailAddresses, paidUpSapsa, paidUpNgpsa,
+                paidUpClub, isVerified);
+    }
+
+    /**
      * Checks that the request carries the names needed to create a competitor before any of them is used. Nothing is
      * looked up, so this only checks that values are present.
      *

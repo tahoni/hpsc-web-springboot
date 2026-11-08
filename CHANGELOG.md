@@ -30,6 +30,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Models
+
+- **`MatchRequestCsvMixIn`, `CompetitorRequestCsvMixIn` and `MatchCompetitorRequestCsvMixIn`:** The bulk CSV imports no
+  longer read a `MatchId`, `CompetitorId` or `MatchCompetitorId` column respectively, as it was bound but never used as
+  the row's own ID, since the imports only create records. A file that still has the column imports as before, as
+  unknown columns are ignored. The match competitor import still reads `CompetitorId` and `MatchId`, which name the
+  competitor and match an entry belongs to, and the JSON request bodies are unchanged.
+- **`MatchRequest`, `CompetitorRequest` and `MatchCompetitorRequest`:** Each gains a constructor without its own ID,
+  which the CSV mix-ins bind in place of the JSON constructor.
+
+##### Services
+
+- **`IpscCompetitorServiceImpl.normaliseCsvRequest`:** No longer passes on a competitor ID, as a CSV row carries none.
+
 ---
 
 ### 🧾 [16.1.1] - 2026-11-08
