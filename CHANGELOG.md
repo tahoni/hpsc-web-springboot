@@ -29,21 +29,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
-#### ➕ Added
-
-##### Tests
-
-- **`IpscShooterLogOverallServiceTest`:** New `calculateShooterLogOverall` tests for recalculating when an overall or
-  a shooter result was never calculated, when the shooter log was updated after the overall, for comparing against the
-  oldest of several overalls, for not recalculating when the log was updated before the overall, and for falling back
-  to the `NONE` category when the latest result has none
-- **`IpscShooterLogServiceTest`:** New `patchShooterLog` tests for patching a log that has no start date or no end
-  date
-- **`IpscShooterResultServiceTest`:** New `calculateMatchShooterResult` tests for a competitor without a category, an
-  existing result that was never calculated, a match without competitors and results calculated at different times
-- **`MatchCompetitorMapperTest`:** New `populateResolvableFields` tests for resolving the competitor by ID, by number
-  only, by name only, when none is identified, not found or ambiguous, and for resolving the match by ID
-
 ---
 
 ### 🧾 [16.1.0] - 2026-11-08
@@ -170,6 +155,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`CompetitorHelpersTest`:** New `cleanCompetitorName` tests for removing a trailing suffix of one, two, three
   or more digits, alone, after a position prefix and alongside a range officer marker, and for keeping digits that
   are not at the end of the name
+- **`IpscShooterLogOverallServiceTest`:** New `calculateShooterLogOverall` tests for recalculating when an overall or
+  a shooter result was never calculated, when the shooter log was updated after the overall, for comparing against the
+  oldest of several overalls, for not recalculating when the log was updated before the overall, and for falling back
+  to the `NONE` category when the latest result has none
+- **`IpscShooterLogServiceTest`:** New `patchShooterLog` tests for patching a log that has no start date or no end
+  date
+- **`IpscShooterResultServiceTest`:** New `calculateMatchShooterResult` tests for a competitor without a category, an
+  existing result that was never calculated, a match without competitors and results calculated at different times
+- **`MatchCompetitorMapperTest`:** New `populateResolvableFields` tests for resolving the competitor by ID, by number
+  only, by name only, when none is identified, not found or ambiguous, and for resolving the match by ID
 
 #### 🔄 Changed
 

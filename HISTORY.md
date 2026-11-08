@@ -44,7 +44,7 @@ evolution of architecture, features and design philosophy across all versions.
   the public API
 - `jacoco.version` is bumped to 0.8.16 and `springdoc-openapi-bom` to 3.2.0
 - Improvement plan: Gaps #6, #41 and #42 are closed, leaving all 42 gaps closed and none open
-- The suite stands at 1,420 passing tests
+- The suite stands at 1,439 passing tests
 - Project version bumped to 16.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 16.0.0 (October 31, 2026)

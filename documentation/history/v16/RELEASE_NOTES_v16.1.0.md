@@ -97,7 +97,7 @@ read them, so check that no external report or query still uses the table before
 
 ## 📊 Statistics
 
-- **Files Changed:** 53 against `main` before this release's documentation; 3,892 insertions and 536 deletions
+- **Files Changed:** 55 against `main` before this release's documentation; 4,252 insertions and 536 deletions
 - **New Source Files:** 12 (11 classes and a migration)
 - **Renamed Source Files:** 0
 - **Deleted Source Files:** 2
@@ -125,9 +125,11 @@ read them, so check that no external report or query still uses the table before
 
 ## 🧪 Testing
 
-- `./mvnw clean test` passes: 1,420 tests with no failures, errors or skips.
+- `./mvnw clean test` passes: 1,439 tests with no failures, errors or skips.
 - New tests cover both controllers with Mockito, both services at the interface and implementation tiers, both services
   end-to-end against the H2 `test` profile, the request validation, and the transaction methods.
+- Branch coverage is closed for the shooter log overall, shooter log patch, shooter result and match competitor
+  resolution paths. Only simple null guards and one unreachable defensive check are left uncovered.
 
 ---
 
