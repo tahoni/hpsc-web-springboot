@@ -11,6 +11,9 @@ import java.util.Optional;
 public interface ShooterLogRepository extends JpaRepository<ShooterLog, Long> {
     boolean existsByMatchesId(Long matchId);
 
+    // The shooter logs covering a match, read to check that rescheduling it keeps it within their dates.
+    List<ShooterLog> findAllByMatchesId(Long matchId);
+
     // Fetch-joins the lazy matches read when mapping a shooter log to its response, so they're usable
     // outside a transaction (open-in-view is disabled).
     @Query("select distinct sl from ShooterLog sl left join fetch sl.matches where sl.id = :id")

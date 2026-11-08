@@ -13,11 +13,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.IpscMatch;
+import za.co.hpsc.web.domain.ShooterLog;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.helpers.ShooterLogHelpers;
 import za.co.hpsc.web.mappers.MatchMapper;
 import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
@@ -31,6 +33,7 @@ import za.co.hpsc.web.services.IpscMatchService;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +92,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         validateForCreate(request);
         IpscMatch match = findMatchOrThrow(matchId);
 
+        LocalDate previousDate = match.getScheduledDate().toLocalDate();
         matchMapper.applyFields(match, request);
+        validateWithinShooterLogDates(match, previousDate);
         return toResponse(transactionService.saveMatch(match));
     }
 
@@ -97,7 +102,9 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     public MatchResponse patchMatch(Long matchId, MatchPatchRequest request) {
         IpscMatch match = findMatchOrThrow(matchId);
 
+        LocalDate previousDate = match.getScheduledDate().toLocalDate();
         matchMapper.applyPatchFields(match, request);
+        validateWithinShooterLogDates(match, previousDate);
 
         return toResponse(transactionService.saveMatch(match));
     }
@@ -201,6 +208,29 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     protected IpscMatch findMatchOrThrow(Long matchId) {
         return ipscMatchRepository.findByIdWithClub(matchId)
                 .orElseThrow(() -> new NonFatalException("No IPSC match found with ID " + matchId));
+    }
+
+    /**
+     * Checks that rescheduling a match keeps it within the start and end dates of every shooter log that covers it,
+     * both inclusive. Nothing is checked when the match stays on the same day, so a log already left out of step does
+     * not block unrelated edits to its match.
+     *
+     * @param match        the match with its new date applied; must not be null.
+     * @param previousDate the date the match was scheduled for before the change; must not be null.
+     * @throws ValidationException if the new date is outside the dates of a shooter log that covers the match.
+     */
+    protected void validateWithinShooterLogDates(IpscMatch match, LocalDate previousDate) {
+        LocalDate newDate = match.getScheduledDate().toLocalDate();
+        if (newDate.equals(previousDate)) {
+            return;
+        }
+        for (ShooterLog shooterLog : shooterLogRepository.findAllByMatchesId(match.getId())) {
+            if (!ShooterLogHelpers.isWithinDates(match, shooterLog)) {
+                throw new ValidationException("Match with ID " + match.getId() + " cannot be rescheduled to " + newDate
+                        + ": it is outside the dates " + shooterLog.getStartDate() + " to " + shooterLog.getEndDate()
+                        + " of shooter log with ID " + shooterLog.getId() + ".");
+            }
+        }
     }
 
     /**

@@ -85,6 +85,37 @@ class ShooterLogHelpersTest {
         assertTrue(exception.getMessage().startsWith("Match with ID 10 is scheduled for 2026-08-31"));
     }
 
+    // isWithinDates()
+    @Test
+    void testIsWithinDates_whenMatchIsOnTheBoundaryDates_thenReturnsTrue() {
+        // Arrange
+        ShooterLog shooterLog = shooterLog(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30));
+
+        // Act & Assert
+        assertTrue(ShooterLogHelpers.isWithinDates(match(10L, LocalDate.of(2026, 9, 1)), shooterLog));
+        assertTrue(ShooterLogHelpers.isWithinDates(match(11L, LocalDate.of(2026, 9, 30)), shooterLog));
+    }
+
+    @Test
+    void testIsWithinDates_whenMatchIsOutsideTheDates_thenReturnsFalse() {
+        // Arrange
+        ShooterLog shooterLog = shooterLog(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30));
+
+        // Act & Assert
+        assertFalse(ShooterLogHelpers.isWithinDates(match(10L, LocalDate.of(2026, 8, 31)), shooterLog));
+        assertFalse(ShooterLogHelpers.isWithinDates(match(11L, LocalDate.of(2026, 10, 1)), shooterLog));
+    }
+
+    @Test
+    void testIsWithinDates_whenLogHasNoStartOrEndDate_thenReturnsTrue() {
+        // Arrange
+        IpscMatch match = match(10L, LocalDate.of(2030, 1, 1));
+
+        // Act & Assert
+        assertTrue(ShooterLogHelpers.isWithinDates(match, shooterLog(null, LocalDate.of(2026, 9, 30))));
+        assertTrue(ShooterLogHelpers.isWithinDates(match, shooterLog(LocalDate.of(2026, 9, 1), null)));
+    }
+
     // Helpers
     private ShooterLog shooterLog(LocalDate startDate, LocalDate endDate, IpscMatch... matches) {
         ShooterLog shooterLog = new ShooterLog();
