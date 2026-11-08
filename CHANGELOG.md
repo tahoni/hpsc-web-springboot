@@ -42,6 +42,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ShooterLogHelpers.validateMatchesWithinDates`:** New helper holding the date check that
   `IpscShooterLogServiceImpl` ran when a log was written, so the overall calculation applies the same rule and message.
 
+#### 🔄 Changed
+
+##### Documentation
+
+- **`README.md`, `ARCHITECTURE.md`, `IpscShooterLogOverallService` and `IpscShooterLogOverallController`:** State that
+  a calculation is refused if a match falls outside the log's dates, and add the `400` response to the calculate
+  endpoint's OpenAPI documentation.
+
 ---
 
 ### 🧾 [16.1.1] - 2026-11-08

@@ -57,13 +57,18 @@ public class IpscShooterLogOverallController {
             description = "Calculate every verified competitor's "
             + "overall standing in a shooter log: the average of their best four percentages across the log's "
             + "matches, ranked within their division and competitor category (no category is a group of its own). "
-            + "Competitors who are not verified are not included. The matches' shooter results are brought up to "
-            + "date first. Calculating again updates the existing overall results and removes those of competitors "
-            + "who no longer qualify.")
+            + "Competitors who are not verified are not included. Every match must be scheduled within the log's "
+            + "dates, which is checked again as a match can be rescheduled after it was added. The matches' shooter "
+            + "results are brought up to date first. Calculating again updates the existing overall results and "
+            + "removes those of competitors who no longer qualify.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Shooter log overall results calculated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ShooterLogOverallResponseHolder.class))),
+            @ApiResponse(responseCode = "400", description = "A match the log covers is scheduled outside the log's "
+                    + "dates.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "No shooter log with this ID could be found.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
