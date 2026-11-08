@@ -206,3 +206,34 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 
 - The suite stands at 1,439 passing tests, with new controller, service and integration tests for both shooter log
   stacks and request validation tests
+
+
+### Phase 55: Verified-Only Shooter Results (v16.1.1)
+
+**Controllers & Services**
+
+- `IpscShooterResultServiceImpl` includes only competitors whose `isVerified` is `true` and whose points are above zero,
+  and deletes the result of one who stops qualifying; any such stale result forces a recalculation
+- `IpscShooterLogOverallServiceImpl` includes only verified competitors and deletes the overall of one who is not
+- `TransactionService.replaceShooterResults` deletes stale results and saves the recalculated ones in one transaction
+- The unreachable points filter in `IpscShooterResultServiceImpl.rank` and the null fallback on the winner's points are
+  removed
+
+**Documentation**
+
+- `README.md` and `ARCHITECTURE.md` state who is included in results and that only the competitor endpoints verify a
+  competitor; the service Javadoc and the controllers' OpenAPI descriptions say the same
+
+**Build & Metadata**
+
+- Improvement plan: Gaps #43 and #44 are added and closed, leaving all 44 gaps closed and none open
+- Project version bumped to 16.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Making a result mean a verified competitor who scored, and keeping stored results in step with who still qualifies
+
+**Test Coverage:**
+
+- The suite stands at 1,449 passing tests, with new service tests for null, zero and unverified competitors and for
+  stale-result deletion, and a `TransactionService` test for `replaceShooterResults`

@@ -21,6 +21,30 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 16.1.1 (November 8, 2026)
+
+**Theme:** Verified-Only Shooter Results
+
+**Key Focus:**
+
+- `IpscShooterResultServiceImpl.calculateMatchShooterResult` includes only competitors whose `isVerified` is `true` and
+  whose points are above zero, so a competitor without points, or one who is not verified, gets no result and no longer
+  counts towards a group winner's points or anyone's percentage
+- A result whose competitor stops qualifying, such as after their points were cleared, is deleted on the next
+  calculation, and any such stale result forces a recalculation
+- `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` includes only verified competitors, deleting the overall
+  of one who is not
+- `TransactionService.replaceShooterResults` deletes stale results and saves the recalculated ones in one transaction
+- `README.md`, `ARCHITECTURE.md`, the service Javadoc and the controllers' OpenAPI descriptions state which competitors
+  are included, and that only the competitor endpoints can verify a competitor: the match competitor import still
+  imports an entry for an unverified competitor, which only appears in results once its competitor is verified
+- The unreachable points filter in `IpscShooterResultServiceImpl.rank` and the null fallback on the winner's points are
+  removed
+- Scoped as `v16.1.1` **PATCH**: no endpoint, request or response contract changes, and the one new method is internal
+- Improvement plan: Gaps #43 and #44 are added and closed, leaving all 44 gaps closed and none open
+- The suite stands at 1,449 passing tests
+- Project version bumped to 16.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 16.1.0 (November 8, 2026)
 
 **Theme:** Shooter Log Management & Overall Results
@@ -205,6 +229,14 @@ Milestones 44 to 50 (versions 10.0.0 to 13.3.0) are archived, unchanged, in
   each competitor's best four match percentages
 - `ShooterLogCompetitor` and its table are dropped
 - Improvement plan Gaps #6, #41 and #42 are closed, so every tracked gap is now closed
+
+### Milestone 55: Verified-Only Shooter Results (v16.1.1)
+
+- Shooter results and a shooter log's overall results include only verified competitors, and match results only
+  competitors with points above zero
+- Results whose competitor stops qualifying are deleted on the next calculation
+- The docs, Javadoc and OpenAPI text say who is included and how a competitor becomes verified
+- Improvement plan Gaps #43 and #44 are added and closed, so every tracked gap stays closed
 
 ---
 
@@ -474,14 +506,16 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   points, stored in a new `ShooterResult` entity and served by one controller. Because that retires the overall and
   club rankings on a match competitor and renames the shooter log `points`, v15.0.0 is the project's seventh
   consecutive MAJOR release, with each breaking change flagged in `CHANGELOG.md` as it landed.
-- **Version 16.x (v16.0.0 – v16.1.0):** Make more of the real match data resolve — the Rifle PCC division is added, the semi-auto
-  rifle divisions get names that say what they are, and competitor names match despite trailing modified-entry digits
-  and a "TRO" role marker, while a bulk match competitor import is saved or rolled back as one unit. Because the
-  renamed divisions change the names a request may use, v16.0.0 is the project's eighth consecutive MAJOR release,
-  with the breaking change flagged in `CHANGELOG.md` as it landed. v16.1.0 then finishes the shooter log layer that
-  v15.0.0 began — shooter logs can be created and managed over the API, with only matches inside a log's dates allowed,
-  and a log's overall results are calculated from each competitor's best four match percentages — as a
-  backward-compatible MINOR release that also drops the unused `shooter_log_competitor` table.
+- **Version 16.x (v16.0.0 – v16.1.1):** Make more of the real match data resolve — the Rifle PCC division is added,
+  the semi-auto rifle divisions get names that say what they are, and competitor names match despite trailing
+  modified-entry digits and a "TRO" role marker, while a bulk match competitor import is saved or rolled back as one
+  unit. Because the renamed divisions change the names a request may use, v16.0.0 is the project's eighth consecutive
+  MAJOR release, with the breaking change flagged in `CHANGELOG.md` as it landed. v16.1.0 then finishes the shooter
+  log layer that v15.0.0 began — shooter logs can be created and managed over the API, with only matches inside a
+  log's dates allowed, and a log's overall results are calculated from each competitor's best four match percentages —
+  as a backward-compatible MINOR release that also drops the unused `shooter_log_competitor` table. v16.1.1 then
+  tightens who those results count — only verified competitors with points, with the result of one who stops
+  qualifying removed — as a PATCH release that changes no contract.
 
 ### Initial Phase (v1.0.0)
 
@@ -780,7 +814,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v16.1.0, the following areas are identified for future enhancement:
+Based on the evolution to v16.1.1, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -791,7 +825,19 @@ The completed-work logs for versions 8.0.0 to 9.1.0 are archived, unchanged, in
 The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 [`documentation/archive/v10-v13/HISTORY_v10-v13.md`](/documentation/archive/v10-v13/HISTORY_v10-v13.md).
 
-### Recently Completed (v16.1.0)
+### Recently Completed (v16.1.1)
+
+- Shooter results include only verified competitors with points above zero, and a shooter log's overall results only
+  verified competitors
+- A result whose competitor no longer qualifies is deleted on the next calculation, through the new
+  `TransactionService.replaceShooterResults`
+- `README.md`, `ARCHITECTURE.md`, the service Javadoc and the OpenAPI descriptions state who is included and how a
+  competitor becomes verified
+- The unreachable null handling in `IpscShooterResultServiceImpl.rank` is removed
+- Improvement plan: Gaps #43 and #44 are added and closed, leaving all 44 gaps closed and none open
+- Project version bumped to 16.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v16.1.0)
 
 - `IpscShooterLogController`/`IpscShooterLogService` create, replace, patch, read and delete shooter logs, and refuse a
   match outside the log's dates
