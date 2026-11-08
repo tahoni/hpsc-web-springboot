@@ -21,8 +21,8 @@
 
 - [x] `./mvnw clean test` passes: 1,420 tests, no failures, errors or skips
 - [x] `CHANGELOG.md`'s `[Unreleased]` section synced against the branch and renamed to `[16.1.0]`
-- [ ] Confirm Flyway applies `V11_12_0` against a MySQL database that still holds `shooter_log_competitor`
-- [ ] Run `./mvnw verify -Pcoverage` if a coverage figure is wanted for the PR
+- [x] Confirm Flyway applies `V11_12_0` against a MySQL database that still holds `shooter_log_competitor`
+- [x] Run `./mvnw verify -Pcoverage` if a coverage figure is wanted for the PR
 
 ## 🔗 Related Documentation
 
