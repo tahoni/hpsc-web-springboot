@@ -16,6 +16,7 @@ import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.PowerFactor;
 import za.co.hpsc.web.exceptions.NonFatalException;
+import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.shooterlogoverall.response.ShooterLogOverallResponse;
 import za.co.hpsc.web.models.ipsc.shooterlogoverall.response.ShooterLogOverallResponseHolder;
 import za.co.hpsc.web.repositories.CompetitorRepository;
@@ -108,6 +109,55 @@ class IpscShooterLogOverallServiceIntegrationTest {
         assertNotNull(streakyOverall.getDateCalculated());
     }
 
+    @Test
+    void testCalculateShooterLogOverall_whenAMatchIsLaterRescheduledOutsideTheLog_thenThrowsAndKeepsTheOverallResults()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch first = createMatch("Match A", LocalDate.of(2026, 9, 12));
+        IpscMatch second = createMatch("Match B", LocalDate.of(2026, 9, 19));
+        ShooterLog shooterLog = createShooterLog(first, second);
+        Competitor shooter = createCompetitor("HPSC-SLO-005");
+        Competitor rival = createCompetitor("HPSC-SLO-006");
+        createMatchCompetitor(shooter, first, "50");
+        createMatchCompetitor(rival, first, "100");
+        createMatchCompetitor(shooter, second, "80");
+        // shooter: (50 / 100 * 100 + 100) / 2 = 75.00, as the only competitor in the second match
+        assertEquals("75.00", overallOf(ipscShooterLogOverallService.calculateShooterLogOverall(shooterLog.getId()),
+                shooter).getPercentageInLog());
+        second.setScheduledDate(LocalDate.of(2026, 10, 5).atStartOfDay());
+        ipscMatchRepository.saveAndFlush(second);
+
+        // Act & Assert
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> ipscShooterLogOverallService.calculateShooterLogOverall(shooterLog.getId()));
+        assertTrue(exception.getMessage().contains("Match with ID " + second.getId() + " is scheduled for 2026-10-05"));
+        assertEquals("75.00", overallOf(ipscShooterLogOverallService.getShooterLogOverallResults(shooterLog.getId()),
+                shooter).getPercentageInLog());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAMatchIsRescheduledWithinTheLog_thenRecalculates()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch first = createMatch("Match A", LocalDate.of(2026, 9, 12));
+        IpscMatch second = createMatch("Match B", LocalDate.of(2026, 9, 19));
+        ShooterLog shooterLog = createShooterLog(first, second);
+        Competitor shooter = createCompetitor("HPSC-SLO-007");
+        createMatchCompetitor(shooter, first, "50");
+        createMatchCompetitor(createCompetitor("HPSC-SLO-008"), first, "100");
+        createMatchCompetitor(shooter, second, "80");
+        ipscShooterLogOverallService.calculateShooterLogOverall(shooterLog.getId());
+        second.setScheduledDate(LocalDate.of(2026, 9, 25).atStartOfDay());
+        ipscMatchRepository.saveAndFlush(second);
+
+        // Act
+        ShooterLogOverallResponseHolder holder =
+                ipscShooterLogOverallService.calculateShooterLogOverall(shooterLog.getId());
+
+        // Assert
+        assertEquals("75.00", overallOf(holder, shooter).getPercentageInLog());
+        assertEquals(2, holder.getShooterLogOverallResults().size());
+    }
     @Test
     void testCalculateShooterLogOverall_whenShooterLogDoesNotExist_thenThrowsNonFatalException() {
         // Act & Assert

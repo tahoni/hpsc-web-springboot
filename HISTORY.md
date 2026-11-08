@@ -21,6 +21,31 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 16.1.2 (November 9, 2026)
+
+**Theme:** Shooter Log Dates Enforced After the Log Is Written
+
+**Key Focus:**
+
+- `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` refuses, with a `400`, a shooter log that covers a match
+  scheduled outside the log's start and end dates, and calculates and changes nothing
+- `IpscMatchServiceImpl.updateMatch` and `patchMatch` refuse, with a `400` naming the log, moving a match to another day
+  outside the dates of a shooter log that covers it; a match that stays on the same day is not checked, so a log
+  already out of step does not block unrelated edits
+- A match updated after a log's overall results were calculated marks them out of date, since moving a match within the
+  log can change which of a competitor's matches is the most recent
+- `ShooterLogHelpers` holds the date check once, as `validateMatchesWithinDates` and `isWithinDates`, shared by
+  `IpscShooterLogServiceImpl`, the overall calculation and the reschedule check;
+  `ShooterLogRepository.findAllByMatchesId` finds the logs that cover a match
+- The unreachable missing-scheduled-date check is removed, since `ipsc_match.scheduled_date` is `NOT NULL`
+- `README.md`, `ARCHITECTURE.md`, the service Javadoc and the OpenAPI descriptions state the rule and its `400`
+  responses
+- Scoped as `v16.1.2` **PATCH**: it fixes a gap in a rule the API already enforced on writing a log, adding no endpoint,
+  request or response field, and the one new repository method is internal
+- Improvement plan: Gap #45 is added and closed, leaving all 45 gaps closed and none open
+- The suite stands at 1,476 passing tests
+- Project version bumped to 16.1.2 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 16.1.1 (November 8, 2026)
 
 **Theme:** Verified-Only Shooter Results
@@ -239,6 +264,14 @@ Milestones 44 to 50 (versions 10.0.0 to 13.3.0) are archived, unchanged, in
 - Results whose competitor stops qualifying are deleted on the next calculation
 - The docs, Javadoc and OpenAPI text say who is included and how a competitor becomes verified
 - Improvement plan Gaps #43 and #44 are added and closed, so every tracked gap stays closed
+
+### Milestone 56: Shooter Log Dates Enforced After the Log Is Written (v16.1.2)
+
+- A shooter log's calculation refuses a match outside the log's dates, and rescheduling a match outside the dates of a
+  log that covers it is refused
+- A match updated after the overall results were calculated marks them out of date
+- One shared date check serves the log, the calculation and the reschedule
+- Improvement plan Gap #45 is added and closed, so every tracked gap stays closed
 
 ---
 
@@ -508,7 +541,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   points, stored in a new `ShooterResult` entity and served by one controller. Because that retires the overall and
   club rankings on a match competitor and renames the shooter log `points`, v15.0.0 is the project's seventh
   consecutive MAJOR release, with each breaking change flagged in `CHANGELOG.md` as it landed.
-- **Version 16.x (v16.0.0 – v16.1.1):** Make more of the real match data resolve — the Rifle PCC division is added,
+- **Version 16.x (v16.0.0 – v16.1.2):** Make more of the real match data resolve — the Rifle PCC division is added,
   the semi-auto rifle divisions get names that say what they are, and competitor names match despite trailing
   modified-entry digits and a "TRO" role marker, while a bulk match competitor import is saved or rolled back as one
   unit. Because the renamed divisions change the names a request may use, v16.0.0 is the project's eighth consecutive
@@ -517,7 +550,9 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   log's dates allowed, and a log's overall results are calculated from each competitor's best four match percentages —
   as a backward-compatible MINOR release that also drops the unused `shooter_log_competitor` table. v16.1.1 then
   tightens who those results count — only verified competitors with points, with the result of one who stops
-  qualifying removed — as a PATCH release that changes no contract.
+  qualifying removed — as a PATCH release that changes no contract. v16.1.2 then keeps a log's dates true after it is
+  written — a match can no longer be rescheduled outside them, and a calculation refuses one that is — as a PATCH
+  release that adds no contract.
 
 ### Initial Phase (v1.0.0)
 
@@ -816,7 +851,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v16.1.1, the following areas are identified for future enhancement:
+Based on the evolution to v16.1.2, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -827,7 +862,17 @@ The completed-work logs for versions 8.0.0 to 9.1.0 are archived, unchanged, in
 The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 [`documentation/archive/v10-v13/HISTORY_v10-v13.md`](/documentation/archive/v10-v13/HISTORY_v10-v13.md).
 
-### Recently Completed (v16.1.1)
+### Recently Completed (v16.1.2)
+
+- A shooter log's overall calculation refuses a match outside the log's dates, and rescheduling a match outside the
+  dates of a shooter log that covers it is refused, both with a `400`
+- A match updated after the overall results were calculated marks them out of date
+- `ShooterLogHelpers` holds the date check once, shared by the log, the calculation and the reschedule, and the
+  unreachable missing-scheduled-date check is removed
+- Improvement plan: Gap #45 is added and closed, leaving all 45 gaps closed and none open
+- Project version bumped to 16.1.2 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v16.1.1)
 
 - Shooter results include only verified competitors with points above zero, and a shooter log's overall results only
   verified competitors

@@ -239,3 +239,34 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 
 - The suite stands at 1,447 passing tests, with new service tests for null, zero and unverified competitors and for
   stale-result deletion, and a `TransactionService` test for `replaceShooterResults`
+
+
+### Phase 56: Shooter Log Dates Enforced After the Log Is Written (v16.1.2)
+
+**Controllers & Services**
+
+- `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` refuses a log that covers a match outside its dates,
+  and a match updated after the overall results were calculated marks them out of date
+- `IpscMatchServiceImpl.updateMatch` and `patchMatch` refuse moving a match to another day outside the dates of a
+  shooter log that covers it, found through `ShooterLogRepository.findAllByMatchesId`
+- `ShooterLogHelpers` holds the date check once for `IpscShooterLogServiceImpl`, the calculation and the reschedule
+  check, and the unreachable missing-scheduled-date check is removed
+
+**Documentation**
+
+- `README.md` and `ARCHITECTURE.md` state the rule; the service Javadoc and the controllers' OpenAPI descriptions add
+  the `400` responses
+
+**Build & Metadata**
+
+- Improvement plan: Gap #45 is added and closed, leaving all 45 gaps closed and none open
+- Project version bumped to 16.1.2 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Keeping a rule enforced on writing a shooter log true when a match changes afterwards
+
+**Test Coverage:**
+
+- The suite stands at 1,476 passing tests, with new helper, match service and overall service unit and integration
+  tests

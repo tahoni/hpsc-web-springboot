@@ -10,6 +10,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.IpscMatch;
+import za.co.hpsc.web.domain.ShooterLog;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.enums.MatchCategory;
@@ -478,6 +479,7 @@ public class IpscMatchServiceTest {
         // Arrange
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
 
@@ -493,6 +495,7 @@ public class IpscMatchServiceTest {
         // Arrange
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
 
         MatchPatchRequest patch = new MatchPatchRequest();
@@ -507,6 +510,7 @@ public class IpscMatchServiceTest {
         // Arrange
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
@@ -527,6 +531,7 @@ public class IpscMatchServiceTest {
         // Arrange
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubMatchSaveReturnsSameEntity();
 
@@ -546,6 +551,7 @@ public class IpscMatchServiceTest {
         // Arrange
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubMatchSaveReturnsSameEntity();
@@ -570,6 +576,7 @@ public class IpscMatchServiceTest {
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
         existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubMatchSaveReturnsSameEntity();
 
@@ -588,6 +595,7 @@ public class IpscMatchServiceTest {
         // Arrange
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubMatchSaveReturnsSameEntity();
@@ -608,6 +616,7 @@ public class IpscMatchServiceTest {
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
         existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         stubMatchSaveReturnsSameEntity();
 
@@ -626,6 +635,7 @@ public class IpscMatchServiceTest {
         // Arrange
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
 
         MatchPatchRequest patch = new MatchPatchRequest();
@@ -641,6 +651,7 @@ public class IpscMatchServiceTest {
         Club club = newClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         existing.setName("Club Championship");
         existing.setClub(club);
         existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
@@ -683,6 +694,7 @@ public class IpscMatchServiceTest {
         // Arrange
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
 
@@ -696,6 +708,7 @@ public class IpscMatchServiceTest {
         // Arrange
         IpscMatch existing = new IpscMatch();
         existing.setId(1L);
+        existing.setScheduledDate(LocalDate.of(2026, 9, 12).atStartOfDay());
         when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
         when(ipscMatchRepository.save(any(IpscMatch.class))).thenReturn(existing);
 
@@ -726,6 +739,144 @@ public class IpscMatchServiceTest {
         assertEquals(LocalTime.of(16, 0), updated.getEndTime());
         assertEquals("https://example.com/matches/different", updated.getUrl());
         assertSame(otherClub, existing.getClub());
+    }
+
+    // Rescheduling a match covered by a shooter log
+    @Test
+    void testPatchMatch_whenNewDateIsOutsideACoveringLogsDates_thenThrowsValidationException() {
+        // Arrange
+        IpscMatch existing = newMatch(1L);
+        when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
+        when(shooterLogRepository.findAllByMatchesId(1L))
+                .thenReturn(List.of(shooterLog(7L, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30))));
+        MatchPatchRequest patch = new MatchPatchRequest();
+        patch.setMatchDate(LocalDate.of(2026, 10, 5));
+
+        // Act & Assert
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> ipscMatchService.patchMatch(1L, patch));
+        assertEquals("Match with ID 1 cannot be rescheduled to 2026-10-05: it is outside the dates 2026-09-01 to "
+                + "2026-09-30 of shooter log with ID 7.", exception.getMessage());
+        verify(ipscMatchRepository, never()).save(any(IpscMatch.class));
+    }
+
+    @Test
+    void testPatchMatch_whenNewDateIsWithinEveryCoveringLogsDates_thenReschedulesIt() {
+        // Arrange
+        IpscMatch existing = newMatch(1L);
+        when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
+        when(shooterLogRepository.findAllByMatchesId(1L)).thenReturn(List.of(
+                shooterLog(7L, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30)),
+                shooterLog(8L, LocalDate.of(2026, 9, 15), LocalDate.of(2026, 9, 20))));
+        stubMatchSaveReturnsSameEntity();
+        MatchPatchRequest patch = new MatchPatchRequest();
+        patch.setMatchDate(LocalDate.of(2026, 9, 15));
+
+        // Act
+        MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(1L, patch));
+
+        // Assert
+        assertEquals(LocalDate.of(2026, 9, 15), patched.getMatchDate());
+    }
+
+    @Test
+    void testPatchMatch_whenNewDateIsOutsideOneOfSeveralCoveringLogs_thenThrowsValidationException() {
+        // Arrange
+        IpscMatch existing = newMatch(1L);
+        when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
+        when(shooterLogRepository.findAllByMatchesId(1L)).thenReturn(List.of(
+                shooterLog(7L, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30)),
+                shooterLog(8L, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 14))));
+        MatchPatchRequest patch = new MatchPatchRequest();
+        patch.setMatchDate(LocalDate.of(2026, 9, 15));
+
+        // Act & Assert
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> ipscMatchService.patchMatch(1L, patch));
+        assertTrue(exception.getMessage().endsWith("of shooter log with ID 8."));
+    }
+
+    @Test
+    void testPatchMatch_whenCoveringLogHasNoDates_thenReschedulesIt() {
+        // Arrange
+        IpscMatch existing = newMatch(1L);
+        when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
+        when(shooterLogRepository.findAllByMatchesId(1L)).thenReturn(List.of(shooterLog(7L, null, null)));
+        stubMatchSaveReturnsSameEntity();
+        MatchPatchRequest patch = new MatchPatchRequest();
+        patch.setMatchDate(LocalDate.of(2027, 1, 5));
+
+        // Act & Assert
+        assertDoesNotThrow(() -> ipscMatchService.patchMatch(1L, patch));
+    }
+
+    @Test
+    void testPatchMatch_whenMatchStaysOnTheSameDay_thenDoesNotCheckShooterLogs() {
+        // Arrange
+        IpscMatch existing = newMatch(1L);
+        when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
+        stubMatchSaveReturnsSameEntity();
+        MatchPatchRequest patch = new MatchPatchRequest();
+        patch.setMatchDate(LocalDate.of(2026, 9, 12));
+        patch.setMatchName("Renamed Match");
+
+        // Act
+        assertDoesNotThrow(() -> ipscMatchService.patchMatch(1L, patch));
+
+        // Assert
+        verify(shooterLogRepository, never()).findAllByMatchesId(any());
+    }
+
+    @Test
+    void testUpdateMatch_whenNewDateIsOutsideACoveringLogsDates_thenThrowsValidationException() {
+        // Arrange
+        IpscMatch existing = newMatch(1L);
+        when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
+        stubExistingClub("Test Club", ClubIdentifier.SOSC);
+        when(shooterLogRepository.findAllByMatchesId(1L))
+                .thenReturn(List.of(shooterLog(7L, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30))));
+        MatchRequest replacement = validRequest("Test Club");
+        replacement.setMatchDate(LocalDate.of(2026, 8, 31));
+
+        // Act & Assert
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> ipscMatchService.updateMatch(1L, replacement));
+        assertTrue(exception.getMessage().startsWith("Match with ID 1 cannot be rescheduled to 2026-08-31"));
+        verify(ipscMatchRepository, never()).save(any(IpscMatch.class));
+    }
+
+    @Test
+    void testUpdateMatch_whenNewDateIsWithinTheCoveringLogsDates_thenReplacesTheMatch() {
+        // Arrange
+        IpscMatch existing = newMatch(1L);
+        when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
+        stubExistingClub("Test Club", ClubIdentifier.SOSC);
+        when(shooterLogRepository.findAllByMatchesId(1L))
+                .thenReturn(List.of(shooterLog(7L, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30))));
+        stubMatchSaveReturnsSameEntity();
+        MatchRequest replacement = validRequest("Test Club");
+        replacement.setMatchDate(LocalDate.of(2026, 9, 30));
+
+        // Act
+        MatchResponse updated = assertDoesNotThrow(() -> ipscMatchService.updateMatch(1L, replacement));
+
+        // Assert
+        assertEquals(LocalDate.of(2026, 9, 30), updated.getMatchDate());
+    }
+
+    @Test
+    void testUpdateMatch_whenMatchStaysOnTheSameDay_thenDoesNotCheckShooterLogs() {
+        // Arrange
+        IpscMatch existing = newMatch(1L);
+        when(ipscMatchRepository.findByIdWithClub(1L)).thenReturn(Optional.of(existing));
+        stubExistingClub("Test Club", ClubIdentifier.SOSC);
+        stubMatchSaveReturnsSameEntity();
+
+        // Act
+        assertDoesNotThrow(() -> ipscMatchService.updateMatch(1L, validRequest("Test Club")));
+
+        // Assert
+        verify(shooterLogRepository, never()).findAllByMatchesId(any());
     }
 
     // Helpers
@@ -767,6 +918,14 @@ public class IpscMatchServiceTest {
             match.setId(1L);
             return match;
         });
+    }
+
+    private ShooterLog shooterLog(Long id, LocalDate startDate, LocalDate endDate) {
+        ShooterLog shooterLog = new ShooterLog();
+        shooterLog.setId(id);
+        shooterLog.setStartDate(startDate);
+        shooterLog.setEndDate(endDate);
+        return shooterLog;
     }
 
     private IpscMatch newMatch(Long id) {

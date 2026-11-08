@@ -133,16 +133,6 @@ class IpscShooterLogServiceImplTest {
         assertTrue(exception.getMessage().startsWith("Match with ID 11 is scheduled for 2026-10-01"));
     }
 
-    @Test
-    void testValidateMatchesWithinDates_whenAMatchHasNoScheduledDate_thenThrowsValidationException() {
-        // Arrange
-        ShooterLog shooterLog = shooterLog(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30), match(10L, null));
-
-        // Act & Assert
-        assertThrows(ValidationException.class,
-                () -> ipscShooterLogServiceImpl.validateMatchesWithinDates(shooterLog));
-    }
-
     // Helpers
     private ShooterLog shooterLog(LocalDate startDate, LocalDate endDate, IpscMatch... matches) {
         ShooterLog shooterLog = new ShooterLog();
@@ -154,7 +144,7 @@ class IpscShooterLogServiceImplTest {
 
     private IpscMatch match(Long id, LocalDate date) {
         IpscMatch match = match(id);
-        match.setScheduledDate(date == null ? null : date.atStartOfDay());
+        match.setScheduledDate(date.atStartOfDay());
         return match;
     }
 
