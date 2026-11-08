@@ -43,7 +43,8 @@ public class IpscShooterLogOverallController {
     }
 
     /**
-     * Calculates the overall results for one shooter log, creating or updating one for each of its competitors.
+     * Calculates the overall results for one shooter log, creating or updating one for each of its verified
+     * competitors.
      *
      * @param shooterLogId the identifier of the shooter log to calculate overall results for.
      * @return the {@link ShooterLogOverallResponseHolder} linking the shooter log to its freshly calculated overall
@@ -53,11 +54,12 @@ public class IpscShooterLogOverallController {
      */
     @PostMapping(value = "/logs/{shooterLogId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Calculate overall results for shooter log",
-            description = "Calculate every competitor's overall "
-            + "standing in a shooter log: the average of their best four percentages across the log's matches, "
-            + "ranked within their division and competitor category (no category is a group of its own). The "
-            + "matches' shooter results are brought up to date first. Calculating again updates the existing "
-            + "overall results.")
+            description = "Calculate every verified competitor's "
+            + "overall standing in a shooter log: the average of their best four percentages across the log's "
+            + "matches, ranked within their division and competitor category (no category is a group of its own). "
+            + "Competitors who are not verified are not included. The matches' shooter results are brought up to "
+            + "date first. Calculating again updates the existing overall results and removes those of competitors "
+            + "who no longer qualify.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Shooter log overall results calculated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -81,8 +83,8 @@ public class IpscShooterLogOverallController {
      * @since 16.1.0
      */
     @GetMapping(value = "/logs/{shooterLogId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get overall results for shooter log", description = "Retrieve every competitor's overall "
-            + "standing in a shooter log.")
+    @Operation(summary = "Get overall results for shooter log", description = "Retrieve every verified competitor's "
+            + "overall standing in a shooter log.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Shooter log overall results retrieved.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -105,8 +107,8 @@ public class IpscShooterLogOverallController {
      * @since 16.1.0
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get all shooter log overall results", description = "Retrieve every competitor's overall "
-            + "standing in every shooter log.")
+    @Operation(summary = "Get all shooter log overall results", description = "Retrieve every verified competitor's "
+            + "overall standing in every shooter log.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Shooter log overall results retrieved.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,

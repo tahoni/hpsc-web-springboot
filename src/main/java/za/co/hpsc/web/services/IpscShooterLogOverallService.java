@@ -6,21 +6,23 @@ import za.co.hpsc.web.models.ipsc.shooterlogoverall.response.ShooterLogOverallRe
 import java.util.List;
 
 /**
- * The {@code IpscShooterLogOverallService} interface provides access to shooter log overall results: each competitor's
- * overall standing across the matches of a shooter log, calculated from their shooter results and read back by
- * shooter log.
+ * The {@code IpscShooterLogOverallService} interface provides access to shooter log overall results: each verified
+ * competitor's overall standing across the matches of a shooter log, calculated from their shooter results and read
+ * back by shooter log.
  *
  * @since 16.1.0
  */
 public interface IpscShooterLogOverallService {
     /**
      * Calculates the overall results for one shooter log, creating or updating a
-     * {@link za.co.hpsc.web.domain.ShooterLogOverall} for each competitor with a shooter result in one of the log's
-     * matches.
+     * {@link za.co.hpsc.web.domain.ShooterLogOverall} for each verified competitor with a shooter result in one of
+     * the log's matches.
      *
      * <p>
      * The shooter results of each of the log's matches are brought up to date first, as by
-     * {@link IpscShooterResultService#calculateMatchShooterResult(Long)}. A competitor's overall percentage is the
+     * {@link IpscShooterResultService#calculateMatchShooterResult(Long)}. Only competitors whose {@code isVerified} is
+     * {@code true} are included; the overall of one who is not, or who no longer has a result, is removed. A
+     * competitor's overall percentage is the
      * average of their best {@code IpscConstants.SHOOTER_LOG_BEST_MATCHES} percentages across the matches they have
      * one in (all of them if they have fewer), to {@code IpscConstants.PERCENTAGE_SCALE} decimal places. Their
      * category and division are those of their most recent match in the log. Competitors are ranked by overall

@@ -57,6 +57,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`:** Only verified competitors are included in the
   overall shooter log results, so an unverified competitor's overall is no longer ranked and is deleted on the next
   calculation.
+
 ##### Documentation
 
 - **`README.md` and `ARCHITECTURE.md`:** State that shooter results include only verified competitors with points above
@@ -65,8 +66,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `PATCH /ipsc/competitors/{competitorId}` afterwards, since the bulk import only creates competitors. They also state
   that the match competitor import still imports an entry for an unverified competitor, which is only included in
   results once the competitor is verified, and that neither it nor the match import verifies anyone.
-- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Gap #43 (verified-only results with no documented way for
-  an imported competitor to become verified) is added and closed in v16.1.1.
+- **`IpscShooterResultService`, `IpscShooterLogOverallService` and their controllers:** Javadoc and OpenAPI
+  `@Operation` descriptions now state that only verified competitors, and for match results only those with points
+  above zero, are included, and that a result is removed when its competitor stops qualifying.
+- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Gaps #43 (verified-only results with no documented way
+  for an imported competitor to become verified) and #44 (Javadoc and OpenAPI text describing results for every
+  competitor) are added and closed in v16.1.1.
 
 ---
 

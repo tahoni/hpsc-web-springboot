@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (43):**
+- **✅ Completed (44):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -133,6 +133,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
     to run on — closed in v16.1.0 (`IpscShooterLogService` and `/ipsc/shooter-logs`)
   - #43 Shooter results now count only verified competitors, but imports leave `isVerified` unset and no doc states
     the rule — closed in v16.1.1 (rules and the manual verification step documented)
+  - #44 Javadoc and OpenAPI text still describes shooter results for every competitor, including those now
+    excluded — closed in v16.1.1 (Javadoc and OpenAPI descriptions corrected, dead filter removed)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
 - **⚪ Open (0):**
@@ -1434,6 +1436,40 @@ competitor, and both docs say it is only included in results once the competitor
 match import verifies anyone. No migration was added, so competitors created since `V8_7_0` without `isVerified` stay
 excluded until they are marked verified.
 
+#### 44. Javadoc and OpenAPI text still describes shooter results for every competitor, including those now excluded — ✅ Closed in v16.1.1
+
+**Evidence:** `IpscShooterResultServiceImpl.calculateMatchShooterResult` now keeps only verified competitors with
+points above zero, and deletes the result of one who no longer qualifies, but the text describing it was not updated.
+`IpscShooterResultService` (lines 9, 17 and 24) says it creates or updates a result "for each of the match's
+competitors" and that "a competitor without match points gets neither a rank nor a percentage", when such a competitor
+now gets no result at all; its recalculation paragraph also omits the new trigger, a stale result.
+`IpscShooterResultController` (lines 29, 54, 81 and 104) and `IpscShooterLogOverallController` (lines 56, 84 and 108)
+describe "every competitor's" result, and `IpscShooterLogOverallService` (line 18) lists "each competitor with a
+shooter result" without the verified condition. These are the descriptions Swagger UI shows to API callers.
+Separately, the `A competitor without points is not ranked` note on `IpscShooterResultServiceImpl.rank` (line 234) and
+its `getPoints() != null` filter can no longer apply, since the caller already drops those competitors; the filter is
+the one branch of that class the tests miss.
+
+**Why it matters:** The same shape as Gap #43, at the API-contract level: behaviour the code enforces that its
+published description contradicts. A caller reading the OpenAPI text, or a contributor reading the service interface,
+expects a result for every competitor in the match and cannot tell why one is missing. The Javadoc is also now wrong
+about a case, a competitor without points, that has a dedicated test.
+
+**Proposed improvement:** Update the Javadoc on `IpscShooterResultService` and `IpscShooterLogOverallService`, and the
+`@Operation` descriptions on `IpscShooterResultController` and `IpscShooterLogOverallController`, to say that only
+verified competitors, and for match results only those with points above zero, are included, and that a result is
+removed when its competitor stops qualifying. Remove the now-unreachable points filter and the "not ranked" note from
+`IpscShooterResultServiceImpl.rank`, or keep them with a comment explaining why they stay as a guard.
+
+**Outcome:** Done as proposed. The Javadoc on `IpscShooterResultService` and `IpscShooterLogOverallService` and the
+`@Operation` descriptions on `IpscShooterResultController` and `IpscShooterLogOverallController` now say that only
+verified competitors, and for match results only those with points above zero, are included, that a result is removed
+when its competitor stops qualifying, and that a stale result forces a recalculation; the read endpoints now describe
+the calculated or verified competitors' results rather than every competitor's. The unreachable points filter and "not
+ranked" note are removed from `IpscShooterResultServiceImpl.rank`, and the winner's points use `orElseThrow` instead
+of a null fallback, since `hasPoints` has already excluded competitors without points; `IpscShooterResultServiceImpl`
+now has no missed branches.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -1452,7 +1488,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | No items currently scoped — #43 closed in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                                                 |
+| **Now**     | No items currently scoped — #43 and #44 closed in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                                         |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath; re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
@@ -1561,6 +1597,9 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
   get and delete shooter logs with the matches they cover, closing Gap #42.
 - ✅ Met in v16.1.1: `README.md` and `ARCHITECTURE.md` state that shooter results and overall results include only
   verified competitors with points, and record how a newly created competitor becomes verified, closing Gap #43.
+- ✅ Met in v16.1.1: the Javadoc on `IpscShooterResultService` and `IpscShooterLogOverallService` and the `@Operation`
+  descriptions on `IpscShooterResultController` and `IpscShooterLogOverallController` state which competitors are
+  included in results, closing Gap #44.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

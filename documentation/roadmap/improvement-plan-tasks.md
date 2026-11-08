@@ -480,6 +480,20 @@ Gap #41)* —
 - [x] Add a migration only if existing unverified competitors should be backfilled as `V8_7_0` did — not needed: no
   backfill, so competitors created since `V8_7_0` without `isVerified` stay excluded until they are marked verified
 
+**Result Javadoc and OpenAPI text** *(improvement-plan.md → Gap #44)* —
+✅ Closed in v16.1.1
+
+- [x] Update `IpscShooterResultService`'s Javadoc to say only verified competitors with points above zero get a result,
+  that a result is removed when its competitor stops qualifying, and that a stale result forces a recalculation
+  — done, in the method and class Javadoc and the `@return` text
+- [x] Update `IpscShooterLogOverallService`'s Javadoc to say only verified competitors are included — done, in the
+  class and method Javadoc
+- [x] Update the `@Operation` descriptions on `IpscShooterResultController` and `IpscShooterLogOverallController` to
+  match — done, for the calculate and both read endpoints of each controller
+- [x] Remove the unreachable points filter and "not ranked" note from `IpscShooterResultServiceImpl.rank`, or keep
+  them with a comment explaining why they stay as a guard — removed: `rank`'s points filter and note, and the null
+  fallback on the winner's points
+
 ---
 
 ## 🟡 Partially Completed
