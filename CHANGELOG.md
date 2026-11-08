@@ -29,6 +29,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Services
+
+- **`TransactionService.replaceShooterResults`:** New method that deletes stale shooter results and saves the
+  recalculated ones in a single transaction, flushing before it commits so a constraint violation surfaces from the
+  call.
+
 #### 🔄 Changed
 
 ##### Services
@@ -46,10 +54,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`:** Only verified competitors are included in the
   overall shooter log results, so an unverified competitor's overall is no longer ranked and is deleted on the next
   calculation.
-- **`TransactionService.replaceShooterResults`:** New method that deletes stale shooter results and saves the
-  recalculated ones in a single transaction, flushing before it commits so a constraint violation surfaces from the
-  call.
-
 ##### Documentation
 
 - **`README.md` and `ARCHITECTURE.md`:** State that shooter results include only verified competitors with points above
