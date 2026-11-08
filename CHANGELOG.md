@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 16.0.0](#-1600---2026-10-31) ← Current
+- [🧾 Version 16.1.0](#-1610---2026-11-08) ← Current
+- [🧾 Version 16.0.0](#-1600---2026-10-31)
 - [🧾 Version 15.0.0](#-1500---2026-10-17)
 - [🧾 Version 14.0.0](#-1400---2026-10-09)
 - [🗄️ Archived Versions 10.0.0 – 13.3.0](/documentation/archive/v10-v13/CHANGELOG_v10-v13.md)
@@ -27,6 +28,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [16.1.0] - 2026-11-08
 
 #### ➕ Added
 
@@ -80,10 +85,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
-##### Models
+##### Dependencies
 
-- **`ShooterLogResponse`:** Moved from `models.ipsc.shooterlogoverall.response` to `models.ipsc.shooterlog.response`,
-  as `IpscShooterLogController` now returns it too.
+- **`jacoco.version`:** Bumped from 0.8.15 to 0.8.16
+- **`springdoc-openapi-bom`:** Bumped from 3.1.1 to 3.2.0
 
 ##### Documentation
 

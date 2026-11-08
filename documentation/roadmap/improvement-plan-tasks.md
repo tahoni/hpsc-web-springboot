@@ -418,7 +418,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 
 **Reinstated score-scale constants and `NumberUtil.calculateSum` have no production caller** *(improvement-plan.md →
 Gap #41)* —
-✅ Closed in the unreleased changes
+✅ Closed in v16.1.0
 
 - [x] Confirm with the IDE's find-usages that `IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`,
   `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum` have no production caller — confirmed by a name-based scan of `src`; find-usages was not
@@ -429,31 +429,31 @@ Gap #41)* —
   removed with the constant
 
 **Match scoring / shooter-log service and controller layer** *(improvement-plan.md → Gap #6)* —
-✅ Closed in the unreleased changes
+✅ Closed in v16.1.0
 
 - [x] Introduce `MatchScoreService`/`MatchScoreServiceImpl` (interface + `impl/` split) over the existing
   `MatchCompetitor`/`MatchStageCompetitor` repositories — as of v9.0.0 `MatchStageCompetitor` and its repository are
   removed, so this now means the `MatchCompetitor` repository alone — done differently: shipped in v9.1.0 as
   `IpscMatchCompetitorService`/`IpscMatchCompetitorServiceImpl`
 - [x] Introduce `ShooterLogService`/`ShooterLogServiceImpl` over the existing `ShooterLog*` repositories — as of
-  the unreleased `V11_12_0`, `ShooterLogCompetitor` and its repository are removed, so this means the `ShooterLog` and
+  `V11_12_0`, `ShooterLogCompetitor` and its repository are removed, so this means the `ShooterLog` and
   `ShooterLogOverall` repositories — done differently: shipped as `IpscShooterLogOverallService`/
   `IpscShooterLogOverallServiceImpl`
 - [x] Add controller endpoints for both, backed by `@SpringBootTest` integration tests per the
   `scaffold-integration-tests` conventions — `IpscMatchCompetitorController` and its integration tests shipped in
   v9.1.0 and extended in v10.0.0 (competitor lookup by number or name, overall-score fields) and v15.0.0
   (`IpscShooterResultController` `/ipsc/shooter-results` endpoints that calculate and read results over the new
-  `ShooterResult` entity) and the unreleased `IpscShooterLogOverallController`
+  `ShooterResult` entity) and `IpscShooterLogOverallController`
   (`/ipsc/shooter-log-overall-results`)
 - [x] Add Mockito-based controller unit tests per the `scaffold-unit-tests` conventions — done for
-  `IpscMatchCompetitorController` in v9.1.0; `IpscShooterLogOverallController` followed in the unreleased changes
+  `IpscMatchCompetitorController` in v9.1.0; `IpscShooterLogOverallController` followed in v16.1.0
 - [x] Hold off on cross-entity orchestration (e.g. a full Practiscore results import) until a concrete need
   reappears, per the same discipline that closed Gap #1 — held: no import was added
 - [x] Once live, update `ARCHITECTURE.md`'s Feature Support table and `README.md`/`CONTRIBUTING.md`'s matching notes
   to drop the "still being built" language
 
 **Shooter log creation** *(improvement-plan.md → Gap #42)* —
-✅ Closed in the unreleased changes
+✅ Closed in v16.1.0
 
 - [x] Confirm with the IDE's find-usages that nothing writes a `ShooterLog` or its `shooter_log_match` links —
   confirmed by a name-based scan of `src/main`; find-usages was not run
