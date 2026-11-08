@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -14,11 +15,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogPatchRequest;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogRequest;
+import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogBulkResponse;
+import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogResponse;
 import za.co.hpsc.web.services.IpscShooterLogService;
 
@@ -72,6 +76,56 @@ public class IpscShooterLogController {
     ResponseEntity<ShooterLogResponse> createShooterLog(@Valid @RequestBody ShooterLogRequest request)
             throws ValidationException, NonFatalException {
         return ResponseEntity.status(HttpStatus.CREATED).body(ipscShooterLogService.createShooterLog(request));
+    }
+
+    /**
+     * Creates shooter logs in bulk from CSV data.
+     *
+     * @param csvData the CSV data, one shooter log per row, with a header row of {@code StartDate},
+     *                {@code EndDate} and {@code MatchIds}.
+     * @return a {@link ShooterLogBulkResponseHolder} with one result per row: {@code 201} if at least one row was
+     * created, or {@code 422} if every row failed.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     * @since 16.2.0
+     */
+    @PostMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Create shooter logs", description = "Create shooter logs in bulk from CSV data: each row "
+            + "is a start date, an end date and the IDs of the matches the log covers, separated by semicolons. Each "
+            + "row is saved on its own, so a row that fails is reported with the values it supplied and the reason "
+            + "while the rest are still created.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "At least one row was created (or the CSV had no "
+                    + "rows). Each row's result says whether it was created and, if not, why: a missing date, an end "
+                    + "date before the start date, an unknown match, or a match outside the row's dates.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ShooterLogBulkResponseHolder.class))),
+            @ApiResponse(responseCode = "400", description = "The CSV data is blank or cannot be parsed.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "422", description = "The CSV was readable but no row could be created. "
+                    + "The body lists each row's result and the reason it failed.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ShooterLogBulkResponseHolder.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error occurred while reading the "
+                    + "CSV data.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class)))
+    })
+    ResponseEntity<ShooterLogBulkResponseHolder> createShooterLogs(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(mediaType = "text/plain",
+                            schema = @Schema(implementation = String.class),
+                            examples = @ExampleObject("""
+                                    StartDate,EndDate,MatchIds
+                                    yyyy-MM-dd,yyyy-MM-dd,0;0
+                                    """)))
+            @RequestBody String csvData) throws ValidationException, FatalException {
+        ShooterLogBulkResponseHolder holder = ipscShooterLogService.createShooterLogs(csvData);
+
+        List<ShooterLogBulkResponse> results = holder.getShooterLogResults();
+        boolean allFailed = !results.isEmpty() && results.stream().noneMatch(ShooterLogBulkResponse::isSuccess);
+        return ResponseEntity.status(allFailed ? HttpStatus.UNPROCESSABLE_CONTENT : HttpStatus.CREATED).body(holder);
     }
 
     /**

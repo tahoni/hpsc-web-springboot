@@ -30,6 +30,35 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Controllers
+
+- **`IpscShooterLogController.createShooterLogs`:** New `POST /ipsc/shooter-logs/bulk` creates shooter logs from CSV
+  data, one log per row with `StartDate`, `EndDate` and `MatchIds` columns, the match IDs separated by semicolons. Each
+  row is saved on its own: a failed row is reported with the values it supplied and the reason, and the rest are still
+  created. It returns `201` if any row was created and `422` if every row failed.
+
+##### Services
+
+- **`IpscShooterLogService.createShooterLogs`:** Reads the CSV and creates each row through `createShooterLog`, so a row
+  gets the same checks as a single log: both dates present, the end not before the start, every match existing and
+  every match scheduled within the row's dates.
+
+##### Models
+
+- **`ShooterLogRequestCsvMixIn`:** Binds the CSV column names onto `ShooterLogRequest`. No column is required, so a row
+  without a date is reported on its own instead of failing the file.
+- **`ShooterLogBulkResponse`, `ShooterLogBulkResponseHolder` and `ShooterLogRow`:** The per-row results of an import,
+  with a failed row's values as text.
+
+#### 🔄 Changed
+
+##### Models
+
+- **`ShooterLogRequest.validate`:** Rejects a null match ID with a `ValidationException`, a `400`, where it previously
+  reached the repository and failed with a `500`.
+
 ---
 
 ### 🧾 [16.1.1] - 2026-11-08

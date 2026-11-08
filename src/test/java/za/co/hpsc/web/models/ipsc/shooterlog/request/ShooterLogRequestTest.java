@@ -100,6 +100,26 @@ class ShooterLogRequestTest {
     }
 
     @Test
+    void testValidate_whenMatchIdsAreNull_thenDoesNotThrow() {
+        // Arrange
+        ShooterLogRequest request = new ShooterLogRequest(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30), null);
+        request.setMatchIds(null);
+
+        // Act & Assert
+        assertDoesNotThrow(request::validate);
+    }
+
+    @Test
+    void testValidate_whenAMatchIdIsNull_thenThrowsValidationException() {
+        // Arrange
+        ShooterLogRequest request = new ShooterLogRequest(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30),
+                java.util.Arrays.asList(10L, null));
+
+        // Act & Assert
+        assertThrows(ValidationException.class, request::validate);
+    }
+
+    @Test
     void testValidate_whenStartAndEndDateAreTheSameDay_thenDoesNotThrow() {
         // Arrange
         ShooterLogRequest request = new ShooterLogRequest(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 1), null);

@@ -1,9 +1,11 @@
 package za.co.hpsc.web.services;
 
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogPatchRequest;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogRequest;
+import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogResponse;
 
 import java.util.List;
@@ -30,6 +32,25 @@ public interface IpscShooterLogService {
      * @since 16.1.0
      */
     ShooterLogResponse createShooterLog(ShooterLogRequest request) throws ValidationException, NonFatalException;
+
+    /**
+     * Creates a batch of shooter logs from CSV data.
+     *
+     * <p>
+     * Each row is a log's {@code StartDate}, {@code EndDate} and {@code MatchIds}, the identifiers of the matches it
+     * covers separated by {@code ;}, and is created by the same rules as
+     * {@link #createShooterLog(ShooterLogRequest)}. Each row is saved on its own, so a row that fails, such as one with
+     * a missing date, an unknown match or a match outside its dates, is reported with the values it supplied and the
+     * reason while the rest are still created.
+     * </p>
+     *
+     * @param csvData the CSV data, one shooter log per row, with a header row. Must not be null or blank.
+     * @return a {@link ShooterLogBulkResponseHolder} with one result per row, in the same order as the CSV rows.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     * @since 16.2.0
+     */
+    ShooterLogBulkResponseHolder createShooterLogs(String csvData) throws ValidationException, FatalException;
 
     /**
      * Replaces an existing shooter log's dates and matches with those on the request.

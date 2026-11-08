@@ -13,6 +13,8 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogPatchRequest;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogRequest;
+import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogBulkResponse;
+import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogResponse;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
@@ -460,6 +462,169 @@ class IpscShooterLogServiceTest {
         // Assert
         assertEquals(LocalDate.of(2026, 10, 1), response.getStartDate());
         assertEquals(List.of(11L), response.getMatchIds());
+    }
+
+    // createShooterLogs()
+    @Test
+    void testCreateShooterLogs_whenRowsAreValid_thenCreatesEachLogWithItsMatches() throws Exception {
+        // Arrange
+        when(ipscMatchRepository.findAllById(List.of(10L, 11L))).thenReturn(List.of(match(10L), match(11L)));
+        List<Long> nextId = new ArrayList<>(List.of(5L, 6L));
+        when(transactionService.saveShooterLog(any(ShooterLog.class))).thenAnswer(invocation -> {
+            ShooterLog saved = invocation.getArgument(0);
+            saved.setId(nextId.removeFirst());
+            return saved;
+        });
+        String csvData = """
+                StartDate,EndDate,MatchIds
+                2026-09-01,2026-09-30,10;11
+                2026-09-01,2026-09-30,
+                """;
+
+        // Act
+        ShooterLogBulkResponseHolder holder = ipscShooterLogService.createShooterLogs(csvData);
+
+        // Assert
+        assertEquals(2, holder.getShooterLogResults().size());
+        ShooterLogBulkResponse first = holder.getShooterLogResults().get(0);
+        ShooterLogBulkResponse second = holder.getShooterLogResults().get(1);
+        assertTrue(first.isSuccess());
+        assertEquals("", first.getMessage());
+        assertNull(first.getShooterLogRow());
+        assertEquals(5L, first.getShooterLog().getShooterLogId());
+        assertEquals(List.of(10L, 11L), first.getShooterLog().getMatchIds());
+        assertTrue(second.isSuccess());
+        assertEquals(6L, second.getShooterLog().getShooterLogId());
+        assertEquals(List.of(), second.getShooterLog().getMatchIds());
+    }
+
+    @Test
+    void testCreateShooterLogs_whenRowsFail_thenReportsEachWithItsValuesAndStillCreatesTheOthers()
+            throws Exception {
+        // Arrange
+        when(ipscMatchRepository.findAllById(List.of(10L))).thenReturn(List.of(match(10L)));
+        when(ipscMatchRepository.findAllById(List.of(99L))).thenReturn(List.of());
+        when(ipscMatchRepository.findAllById(List.of(12L)))
+                .thenReturn(List.of(match(12L, LocalDate.of(2026, 10, 5))));
+        when(transactionService.saveShooterLog(any(ShooterLog.class))).thenAnswer(invocation -> {
+            ShooterLog saved = invocation.getArgument(0);
+            saved.setId(5L);
+            return saved;
+        });
+        String csvData = """
+                StartDate,EndDate,MatchIds
+                2026-09-01,2026-09-30,10
+                2026-09-01,2026-09-30,99
+                2026-09-01,2026-09-30,12
+                ,2026-09-30,10
+                2026-09-30,2026-09-01,10
+                """;
+
+        // Act
+        ShooterLogBulkResponseHolder holder = ipscShooterLogService.createShooterLogs(csvData);
+
+        // Assert
+        List<ShooterLogBulkResponse> results = holder.getShooterLogResults();
+        assertEquals(5, results.size());
+        assertTrue(results.get(0).isSuccess());
+
+        assertFalse(results.get(1).isSuccess());
+        assertEquals("No IPSC match found with ID 99", results.get(1).getMessage());
+        assertNull(results.get(1).getShooterLog());
+        assertEquals("2026-09-01", results.get(1).getShooterLogRow().getStartDate());
+        assertEquals("2026-09-30", results.get(1).getShooterLogRow().getEndDate());
+        assertEquals("99", results.get(1).getShooterLogRow().getMatchIds());
+
+        assertFalse(results.get(2).isSuccess());
+        assertTrue(results.get(2).getMessage().startsWith("Match with ID 12 is scheduled for 2026-10-05"));
+
+        assertFalse(results.get(3).isSuccess());
+        assertEquals("Shooter log start date is required.", results.get(3).getMessage());
+        assertEquals("", results.get(3).getShooterLogRow().getStartDate());
+
+        assertFalse(results.get(4).isSuccess());
+        assertEquals("Shooter log end date cannot be before its start date.", results.get(4).getMessage());
+        verify(transactionService, times(1)).saveShooterLog(any(ShooterLog.class));
+    }
+
+    @Test
+    void testCreateShooterLogs_whenEveryRowFails_thenReturnsEachAsFailed() throws Exception {
+        // Arrange
+        String csvData = """
+                StartDate,EndDate,MatchIds
+                ,2026-09-30,
+                2026-09-01,,
+                """;
+
+        // Act
+        ShooterLogBulkResponseHolder holder = ipscShooterLogService.createShooterLogs(csvData);
+
+        // Assert
+        assertEquals(2, holder.getShooterLogResults().size());
+        assertTrue(holder.getShooterLogResults().stream().noneMatch(ShooterLogBulkResponse::isSuccess));
+        verifyNoInteractions(transactionService);
+    }
+
+    @Test
+    void testCreateShooterLogs_whenCsvHasOnlyAHeader_thenReturnsNoResults() throws Exception {
+        // Act
+        ShooterLogBulkResponseHolder holder = ipscShooterLogService.createShooterLogs("StartDate,EndDate,MatchIds\n");
+
+        // Assert
+        assertTrue(holder.getShooterLogResults().isEmpty());
+        verifyNoInteractions(transactionService);
+    }
+
+    @Test
+    void testCreateShooterLogs_whenColumnsAreMissingOrUnknown_thenReadsTheOnesThatArePresent() throws Exception {
+        // Arrange
+        when(transactionService.saveShooterLog(any(ShooterLog.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        String csvData = """
+                Notes,EndDate,StartDate
+                ignored,2026-09-30,2026-09-01
+                """;
+
+        // Act
+        ShooterLogBulkResponseHolder holder = ipscShooterLogService.createShooterLogs(csvData);
+
+        // Assert
+        ShooterLogBulkResponse result = holder.getShooterLogResults().getFirst();
+        assertTrue(result.isSuccess());
+        assertEquals(LocalDate.of(2026, 9, 1), result.getShooterLog().getStartDate());
+        assertEquals(LocalDate.of(2026, 9, 30), result.getShooterLog().getEndDate());
+    }
+
+    @Test
+    void testCreateShooterLogs_whenCsvIsNullOrBlank_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscShooterLogService.createShooterLogs(null));
+        assertThrows(ValidationException.class, () -> ipscShooterLogService.createShooterLogs("  \t\n "));
+        verifyNoInteractions(transactionService);
+    }
+
+    @Test
+    void testCreateShooterLogs_whenADateCannotBeParsed_thenThrowsValidationException() {
+        // Arrange
+        String csvData = """
+                StartDate,EndDate,MatchIds
+                not-a-date,2026-09-30,10
+                """;
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscShooterLogService.createShooterLogs(csvData));
+        verifyNoInteractions(transactionService);
+    }
+
+    @Test
+    void testCreateShooterLog_whenAMatchIdIsNull_thenThrowsValidationException() {
+        // Arrange
+        ShooterLogRequest request = new ShooterLogRequest(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30),
+                java.util.Arrays.asList(10L, null));
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscShooterLogService.createShooterLog(request));
+        verifyNoInteractions(ipscMatchRepository, transactionService);
     }
 
     // Helpers
