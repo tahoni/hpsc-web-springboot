@@ -28,6 +28,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Documentation
+
+- **`ARCHITECTURE.md`:** The Domain Entities table no longer lists `ShooterLogCompetitor`, and its columns are
+  re-padded.
+- **`flyway-migration-versioning.md`:** Current State table gains a row for `V11_12_0__drop_shooter_log_competitor.sql`.
+- **`improvement-plan.md`/`improvement-plan-tasks.md`:** Gap #41 moves to Completed, and Gap #6 records that
+  `ShooterLogCompetitor` is gone, leaving `ShooterLog` and `ShooterLogOverall` for a future shooter-log service.
+
 #### 🗑️ Removed
 
 ##### Database
