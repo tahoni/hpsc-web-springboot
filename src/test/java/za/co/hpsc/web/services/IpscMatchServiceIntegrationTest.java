@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
+import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.domain.ShooterLog;
 import za.co.hpsc.web.enums.ClubIdentifier;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
@@ -28,9 +30,11 @@ import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.ShooterLogRepository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,6 +66,9 @@ class IpscMatchServiceIntegrationTest {
 
     @Autowired
     private MatchCompetitorRepository matchCompetitorRepository;
+
+    @Autowired
+    private ShooterLogRepository shooterLogRepository;
 
     // createMatch()
     @Test
@@ -515,7 +522,82 @@ class IpscMatchServiceIntegrationTest {
         }
     }
 
+    // Rescheduling a match covered by a shooter log
+    @Test
+    void testPatchMatch_whenRescheduledOutsideACoveringShooterLog_thenThrowsValidationException() {
+        // Arrange
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
+        ShooterLog shooterLog = createShooterLog(created.getMatchId(), LocalDate.of(2026, 9, 1),
+                LocalDate.of(2026, 9, 30));
+        MatchPatchRequest patch = new MatchPatchRequest();
+        patch.setMatchDate(LocalDate.of(2026, 10, 5));
+
+        // Act & Assert
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> ipscMatchService.patchMatch(created.getMatchId(), patch));
+        assertEquals("Match with ID " + created.getMatchId() + " cannot be rescheduled to 2026-10-05: it is outside "
+                + "the dates 2026-09-01 to 2026-09-30 of shooter log with ID " + shooterLog.getId() + ".",
+                exception.getMessage());
+    }
+
+    @Test
+    void testUpdateMatch_whenRescheduledOutsideACoveringShooterLog_thenThrowsValidationException() {
+        // Arrange
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
+        createShooterLog(created.getMatchId(), LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30));
+        MatchRequest replacement = validRequest("Test Club");
+        replacement.setMatchDate(LocalDate.of(2026, 8, 31));
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscMatchService.updateMatch(created.getMatchId(), replacement));
+    }
+
+    @Test
+    void testPatchMatch_whenRescheduledWithinACoveringShooterLog_thenChangesTheDate() {
+        // Arrange
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
+        createShooterLog(created.getMatchId(), LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30));
+        MatchPatchRequest patch = new MatchPatchRequest();
+        patch.setMatchDate(LocalDate.of(2026, 9, 30));
+
+        // Act
+        MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(created.getMatchId(), patch));
+
+        // Assert
+        assertEquals(LocalDate.of(2026, 9, 30), patched.getMatchDate());
+    }
+
+    @Test
+    void testPatchMatch_whenMatchWasAlreadyOutsideItsLogAndTheDateIsUnchanged_thenStillAllowsOtherEdits() {
+        // Arrange
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        MatchResponse created = ipscMatchService.createMatch(validRequest("Test Club"));
+        createShooterLog(created.getMatchId(), LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30));
+        IpscMatch stored = ipscMatchRepository.findById(created.getMatchId()).orElseThrow();
+        stored.setScheduledDate(LocalDate.of(2026, 10, 5).atStartOfDay());
+        ipscMatchRepository.saveAndFlush(stored);
+        MatchPatchRequest patch = new MatchPatchRequest();
+        patch.setMatchName("Renamed Match");
+
+        // Act
+        MatchResponse patched = assertDoesNotThrow(() -> ipscMatchService.patchMatch(created.getMatchId(), patch));
+
+        // Assert
+        assertEquals("Renamed Match", patched.getMatchName());
+    }
+
     // Helpers
+    private ShooterLog createShooterLog(Long matchId, LocalDate startDate, LocalDate endDate) {
+        ShooterLog shooterLog = new ShooterLog();
+        shooterLog.setStartDate(startDate);
+        shooterLog.setEndDate(endDate);
+        shooterLog.setMatches(new ArrayList<>(List.of(ipscMatchRepository.findById(matchId).orElseThrow())));
+        return shooterLogRepository.saveAndFlush(shooterLog);
+    }
+
     private void createClub(String name, ClubIdentifier identifier) {
         Club club = new Club();
         club.setName(name);

@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 16.1.1](#-1611---2026-11-08) ← Current
+- [🧾 Version 16.1.2](#-1612---2026-11-09) ← Current
+- [🧾 Version 16.1.1](#-1611---2026-11-08)
 - [🧾 Version 16.1.0](#-1610---2026-11-08)
 - [🧾 Version 16.0.0](#-1600---2026-10-31)
 - [🧾 Version 15.0.0](#-1500---2026-10-17)
@@ -29,6 +30,51 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [16.1.2] - 2026-11-09
+
+#### ➕ Added
+
+##### Repositories
+
+- **`ShooterLogRepository.findAllByMatchesId`:** Finds the shooter logs that cover a match, so rescheduling it can be
+  checked against their dates.
+
+#### 🔄 Changed
+
+##### Services
+
+- **`IpscShooterLogServiceImpl.validateMatchesWithinDates`:** The `ValidationException` for a match with no scheduled
+  date is removed, along with the three tests that only covered it — `ipsc_match.scheduled_date` is `NOT NULL`, so a
+  match always has one. The check itself now lives in `ShooterLogHelpers.validateMatchesWithinDates`.
+
+##### Documentation
+
+- **`README.md`, `ARCHITECTURE.md`, `IpscShooterLogOverallService`, `IpscShooterLogOverallController`,
+  `IpscMatchService` and `IpscMatchController`:** State that a calculation is refused if a match falls outside the
+  log's dates, and that rescheduling a match outside the dates of a shooter log that covers it is refused. The `400`
+  responses are added to the calculate, `PUT` and `PATCH` endpoints' OpenAPI documentation.
+- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Gap #45 (a shooter log's dates enforced only when the log
+  was written, so a rescheduled match slipped outside them) is added and closed in v16.1.2.
+
+#### 🐛 Fixed
+
+##### Services
+
+- **`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`:** A `ValidationException`, a `400`, is now thrown if
+  a match the shooter log covers is scheduled outside its start and end dates, both inclusive, and nothing is
+  calculated or changed. The dates were only enforced when a log was written, so a match rescheduled afterwards was
+  still counted. A match updated after the overall results were calculated also marks them out of date, as moving a
+  match within the log can change which of a competitor's matches is the most recent.
+- **`IpscMatchServiceImpl.updateMatch` and `patchMatch`:** A `ValidationException`, a `400`, is now thrown if the new
+  date puts the match outside the start and end dates of a shooter log that covers it, naming the log, so a match can
+  no longer be moved out of step with its logs. The check only runs when the match moves to another day, so a log
+  already out of step does not block unrelated edits.
+- **`ShooterLogHelpers`:** New helper holding the date check that `IpscShooterLogServiceImpl` ran when a log was
+  written, as `validateMatchesWithinDates` and `isWithinDates`, so the log, the overall calculation and the match
+  reschedule check apply the same rule.
 
 ---
 

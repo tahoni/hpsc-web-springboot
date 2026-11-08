@@ -10,6 +10,7 @@ import za.co.hpsc.web.domain.ShooterResult;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.exceptions.NonFatalException;
+import za.co.hpsc.web.helpers.ShooterLogHelpers;
 import za.co.hpsc.web.models.ipsc.shooterlogoverall.response.ShooterLogOverallResponse;
 import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogResponse;
 import za.co.hpsc.web.models.ipsc.shooterlogoverall.response.ShooterLogOverallResponseHolder;
@@ -54,8 +55,9 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
     @Override
     public ShooterLogOverallResponseHolder calculateShooterLogOverall(Long shooterLogId) throws NonFatalException {
         ShooterLog shooterLog = findShooterLogOrThrow(shooterLogId);
-        List<Long> matchIds = (shooterLog.getMatches() == null) ? List.of()
-                : shooterLog.getMatches().stream().map(IpscMatch::getId).toList();
+        // A match can be rescheduled after it was added to the log, so check the dates again before using any of them
+        ShooterLogHelpers.validateMatchesWithinDates(shooterLog);
+        List<Long> matchIds = matchesOf(shooterLog).stream().map(IpscMatch::getId).toList();
 
         // Brings each match's results up to date, which is a no-op for a match whose results already are
         for (Long matchId : matchIds) {
@@ -163,10 +165,20 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
     }
 
     /**
+     * The matches a shooter log covers.
+     *
+     * @param shooterLog the shooter log.
+     * @return the log's matches, or an empty list if its matches were not loaded.
+     */
+    private List<IpscMatch> matchesOf(ShooterLog shooterLog) {
+        return (shooterLog.getMatches() == null) ? List.of() : shooterLog.getMatches();
+    }
+
+    /**
      * Whether a shooter log's overall results are up to date: exactly the competitors with a shooter result in the
-     * log have
-     * one, each has been calculated, no shooter result was calculated after the oldest overall was, and the shooter
-     * log was not updated after it either.
+     * log have one, each has been calculated, no shooter result was calculated after the oldest overall was, and
+     * neither the shooter log nor any of its matches was updated after it either. A match updated within the log's
+     * dates, such as one rescheduled to another day, can change which of a competitor's matches is the most recent.
      *
      * @param shooterLog            the shooter log the overall results are for.
      * @param resultsByCompetitorId the log's shooter results, by competitor ID.
@@ -199,6 +211,11 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
                 if ((result.getDateCalculated() == null) || result.getDateCalculated().isAfter(oldestCalculated)) {
                     return false;
                 }
+            }
+        }
+        for (IpscMatch match : matchesOf(shooterLog)) {
+            if ((match.getDateUpdated() != null) && match.getDateUpdated().isAfter(oldestCalculated)) {
+                return false;
             }
         }
         return (shooterLog.getDateUpdated() == null) || !shooterLog.getDateUpdated().isAfter(oldestCalculated);
