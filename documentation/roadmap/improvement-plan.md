@@ -39,7 +39,7 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 | Source                                              | Goal / constraint                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 |-----------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `README.md`, `ARCHITECTURE.md`                      | Rebuild the match/competitor domain's service and controller layer on top of the existing JPA entities and repositories — ✅ delivered in v8.0.0 as `IpscCompetitorService`/`IpscMatchService` and their controllers                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — explicitly called out as still being built, not aspirational — 🟡 match competitor half delivered in v9.1.0 as `IpscMatchCompetitorService` and its controller, extended in v10.0.0; the shooter-log half is outstanding (Gap #6)                                                                                                                                                                                                                       |
+| `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`   | Build the match/competitor **scoring** and shooter-log service/controller layer over the existing JPA entities, repositories and already-fixed request DTOs — ✅ delivered: `IpscMatchCompetitorService` and its controller in v9.1.0 (extended in v10.0.0), and the shooter log overall service and controller in the unreleased changes; creating shooter logs is outstanding (Gap #42)                                                                                                                                                                                                                             |
 | `ARCHITECTURE.md` (Layered Architecture)            | Strict unidirectional layering: Controller → Service → Repository → Database; no layer may skip the one below it, and controllers must carry no business logic                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `ARCHITECTURE.md` (Exception handling), `CLAUDE.md` | All exceptions extend `FatalException`, `NonFatalException` or `ValidationException`, handled centrally by `ControllerAdvice` — never caught and rethrown as generic `RuntimeException`                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | `ARCHITECTURE.md` (CI/CD & Quality Gates)           | Security analysis (CodeQL) and Build & Tests (`build.yml`, `./mvnw verify -Pcoverage`) are automatic gates on push/PR to `main`/`develop`; the latter also enforces a 97% JaCoCo line-coverage minimum, tightened to near the real baseline in v8.4.0 (Gap #4 closed; 98.77% line as of v8.9.0), and a matching 97% branch minimum since v8.11.1; Qodana static analysis was removed in v8.2.0 after never once succeeding in CI (see Gap #7), then returned in v8.12.0 as `code_quality.yml`, now passing with a `QODANA_TOKEN` secret (Gap #32); the `Dockerfile` has been built on push/PR since v8.11.1 (Gap #31) |
@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (40):**
+- **✅ Completed (41):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -126,14 +126,14 @@ number or a newly met precondition on an existing gap — see the `update-improv
     renames the stored divisions)
   - #41 v15.0.0 reinstated four score-scale constants and `NumberUtil.calculateSum` with no production caller —
     closed in the unreleased changes (three scales, `DEFAULT_SCALE` and `calculateSum` removed with their tests)
-- **🟡 Partially Completed (1):**
-  - #6 Match scoring / shooter-log service and controller layer are not yet built — progressed v15.0.0 (the
-    match competitor service and `/ipsc/match-competitors` controller are built, extended in v10.0.0 with
-    competitor lookup by number or name and overall-score fields, and in v15.0.0 with
-    `/ipsc/shooter-results` endpoints that calculate and read results over the new `ShooterResult` entity; the
-    shooter-log layer is not)
-- **⚪ Open (0):**
-  - *No gaps are currently open.*
+  - #6 Match scoring / shooter-log service and controller layer are not yet built — closed in the unreleased
+    changes (`IpscShooterLogOverallService` and `/ipsc/shooter-log-overalls` calculate and read a log's
+    overalls; creating the logs themselves is Gap #42)
+- **🟡 Partially Completed (0):**
+  - *No gaps are currently partially completed.*
+- **⚪ Open (1):**
+  - #42 Nothing creates a shooter log or links it to matches, so the shooter log overall endpoints have nothing
+    to run on
 
 ### ✅ Completed
 
@@ -1301,13 +1301,7 @@ way.
 
 **Outcome:** Done as proposed, by removal rather than waiting on a caller — the choice Gaps #37 and #38 made. `IpscConstants.MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE` are removed, along with the "not currently referenced" Javadoc on the first, so `PERCENTAGE_SCALE`, the one scale with a caller, is the only one left. `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum` are removed with the `calculateSum` tests, and `NumberUtilTest`'s `calculatePercentage` tests now use a local scale. `NumberUtil` keeps `calculatePercentage` and `formatBigDecimal`, which production code calls. If the scoring layer (Gap #6) needs a sum helper or another scale it can add one with its first caller.
 
-### 🟡 Partially Completed
-
-A gap moves here when it has at least one **Progress** paragraph (per
-`update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
-but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
-
-#### 6. Match scoring / shooter-log service and controller layer are not yet built — 🟡 Partially completed in v15.0.0
+#### 6. Match scoring / shooter-log service and controller layer are not yet built — ✅ Closed in the unreleased changes
 
 **Evidence:** `ARCHITECTURE.md`'s Feature Support table states, "JPA entities and repositories exist for
 match/competitor scoring and shooter logs, but the service/controller layer that operates on them is still being
@@ -1365,9 +1359,45 @@ The unreleased work on `feature/drop-shooter-log-competitor` narrows the shooter
 operate on is `ShooterLog` and `ShooterLogOverall` alone, and the two delete-time `existsBy…` checks that used it are
 gone. Still no shooter-log service or controller exists, so the gap stands.
 
+**Outcome:** Done differently from the proposal: the shooter-log half is `IpscShooterLogOverallService` (interface +
+`impl/` split) and `IpscShooterLogOverallController`, not a general `ShooterLogService`. `/ipsc/shooter-log-overalls`
+calculates a shooter log's overalls (`POST /logs/{shooterLogId}`) and reads them for one log or for every log, over
+`ShooterLogRepository`, `ShooterLogOverallRepository` and `ShooterResultRepository`, with Mockito controller and
+service tests and `@SpringBootTest` integration tests. A competitor's overall percentage is the average of their best
+`IpscConstants.SHOOTER_LOG_BEST_MATCHES` (four) match percentages in the log, ranked within their division and
+competitor category. `ARCHITECTURE.md`, `README.md` and `CONTRIBUTING.md` no longer say the layer is still being
+built. What remains is creating the shooter logs themselves through the API, which Gap #42 tracks.
+
+### 🟡 Partially Completed
+
+A gap moves here when it has at least one **Progress** paragraph (per
+`update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
+but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
+
+*No gaps are currently partially completed.*
+
 ### ⚪ Open
 
-*No gaps are currently open.*
+#### 42. Nothing creates a shooter log or links it to matches, so the shooter log overall endpoints have nothing to run on
+
+**Evidence:** `ShooterLogRepository` is only read: `IpscShooterLogOverallServiceImpl` calls `findByIdWithMatches` and
+`findAllWithMatches`, and `IpscMatchServiceImpl.deleteMatch` calls `existsByMatchesId`. A search of `src/main` finds no
+`new ShooterLog()` and no `ShooterLogRepository.save`, and no controller or service writes a `ShooterLog`, its
+`startDate`/`endDate` or its `shooter_log_match` links. `IpscShooterLogOverallController` (`/ipsc/shooter-log-overalls`)
+calculates and reads overalls only for logs that already exist, so those rows can currently be inserted only by hand
+in the database.
+
+**Why it matters:** The same shape as Gap #1 and Gap #6 — an entity and repository exist, and an endpoint operates on
+them, but nothing creates the data. A calculate endpoint whose input can't be created through the API is half a
+feature, and `deleteMatch`'s "referenced by shooter logs" check guards links nothing can make.
+
+**Proposed improvement:** Apply the pattern that closed Gap #1: introduce `IpscShooterLogService` (interface + `impl/`
+split) and `IpscShooterLogController` under `/ipsc/shooter-logs` to create, replace, patch, get and delete a shooter
+log, with its start and end dates and the matches it covers set by match ID, writing through `TransactionService`
+and backed by Mockito controller and service tests and `@SpringBootTest` integration tests. Deleting a log must
+decide what happens to its overalls, rejecting or cascading explicitly rather than surfacing a raw constraint error,
+as Gap #12 did for matches and competitors.
+
 
 ---
 
@@ -1375,7 +1405,7 @@ gone. Still no shooter-log service or controller exists, so the gap stands.
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                                               |
 |-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | Finish the match scoring / shooter-log layer (#6): the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0, the shooter-log service and controller remain                                                                                                                                                                                                       |
+| **Now**     | Create shooter logs and link them to matches through the API (#42); #6 closed in the unreleased changes after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                                           |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in the unreleased changes                                                                                                                                                                                                                                                               |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                                           |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath; re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist                                          |
@@ -1477,6 +1507,9 @@ gone. Still no shooter-log service or controller exists, so the gap stands.
   rows read back as a division, closing Gap #40.
 - ✅ Met in the unreleased changes: `IpscConstants`' `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`,
   `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum` are removed rather than left unused, closing Gap #41.
+- ✅ Met in the unreleased changes: `IpscShooterLogOverallController` and `IpscShooterLogOverallService` calculate and
+  read a shooter log's overalls, and `ARCHITECTURE.md`, `README.md` and `CONTRIBUTING.md` drop their "still being built"
+  language, closing Gap #6.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.
