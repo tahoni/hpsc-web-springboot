@@ -1,5 +1,6 @@
 package za.co.hpsc.web.services.impl;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.IpscMatch;
@@ -208,7 +209,7 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
      * @return the average of the results' best percentages, to {@link IpscConstants#PERCENTAGE_SCALE} decimal
      * places, or {@code null} if none of them has a percentage.
      */
-    private BigDecimal averagePercentage(List<ShooterResult> results) {
+    @Nullable private BigDecimal averagePercentage(List<ShooterResult> results) {
         List<BigDecimal> percentages = results.stream()
                 .map(ShooterResult::getPercentageInLog)
                 .filter(Objects::nonNull)
