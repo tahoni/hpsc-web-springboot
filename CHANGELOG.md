@@ -47,9 +47,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Documentation
 
-- **`README.md`, `ARCHITECTURE.md`, `IpscShooterLogOverallService` and `IpscShooterLogOverallController`:** State that
-  a calculation is refused if a match falls outside the log's dates, and add the `400` response to the calculate
-  endpoint's OpenAPI documentation.
+- **`README.md`, `ARCHITECTURE.md`, `IpscShooterLogOverallService`, `IpscShooterLogOverallController`,
+  `IpscMatchService` and `IpscMatchController`:** State that a calculation is refused if a match falls outside the
+  log's dates, and that rescheduling a match outside the dates of a shooter log that covers it is refused. The `400`
+  responses are added to the calculate, `PUT` and `PATCH` endpoints' OpenAPI documentation.
 
 #### 🐛 Fixed
 
