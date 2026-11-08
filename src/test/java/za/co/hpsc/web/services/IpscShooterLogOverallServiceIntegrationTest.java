@@ -62,7 +62,7 @@ class IpscShooterLogOverallServiceIntegrationTest {
 
     // calculateShooterLogOverall()
     @Test
-    void testCalculateShooterLogOverall_whenCalledTwice_thenUpdatesTheSameOveralls() throws NonFatalException {
+    void testCalculateShooterLogOverall_whenCalledTwice_thenUpdatesTheSameOverallResults() throws NonFatalException {
         // Arrange
         IpscMatch match = createMatch("Match A", LocalDate.of(2026, 9, 12));
         ShooterLog shooterLog = createShooterLog(match);
@@ -75,7 +75,7 @@ class IpscShooterLogOverallServiceIntegrationTest {
                 ipscShooterLogOverallService.calculateShooterLogOverall(shooterLog.getId());
 
         // Assert
-        assertEquals(2, holder.getShooterLogOveralls().size());
+        assertEquals(2, holder.getShooterLogOverallResults().size());
         assertEquals(2, shooterLogOverallRepository.findAllByShooterLogIdWithDetails(shooterLog.getId()).size());
     }
 
@@ -116,7 +116,7 @@ class IpscShooterLogOverallServiceIntegrationTest {
     }
 
     @Test
-    void testCalculateShooterLogOverall_whenLogHasNoMatches_thenReturnsTheLogWithNoOveralls()
+    void testCalculateShooterLogOverall_whenLogHasNoMatches_thenReturnsTheLogWithNoOverallResults()
             throws NonFatalException {
         // Arrange
         ShooterLog shooterLog = createShooterLog();
@@ -127,12 +127,12 @@ class IpscShooterLogOverallServiceIntegrationTest {
 
         // Assert
         assertEquals(shooterLog.getId(), holder.getShooterLog().getShooterLogId());
-        assertTrue(holder.getShooterLogOveralls().isEmpty());
+        assertTrue(holder.getShooterLogOverallResults().isEmpty());
     }
 
-    // getAllShooterLogOveralls()
+    // getAllShooterLogOverallResults()
     @Test
-    void testGetAllShooterLogOveralls_whenSeveralLogs_thenGroupsThemByLogIncludingOnesWithNoOveralls()
+    void testGetAllShooterLogOverallResults_whenSeveralLogs_thenGroupsThemByLogIncludingOnesWithNoOverallResults()
             throws NonFatalException {
         // Arrange
         IpscMatch match = createMatch("Match A", LocalDate.of(2026, 9, 12));
@@ -142,24 +142,25 @@ class IpscShooterLogOverallServiceIntegrationTest {
         ShooterLog empty = createShooterLog();
 
         // Act
-        List<ShooterLogOverallResponseHolder> holders = ipscShooterLogOverallService.getAllShooterLogOveralls();
+        List<ShooterLogOverallResponseHolder> holders = ipscShooterLogOverallService.getAllShooterLogOverallResults();
 
         // Assert
         assertTrue(holders.stream().anyMatch(holder -> calculated.getId().equals(holder.getShooterLog()
-                .getShooterLogId()) && (holder.getShooterLogOveralls().size() == 1)));
+                .getShooterLogId()) && (holder.getShooterLogOverallResults().size() == 1)));
         assertTrue(holders.stream().anyMatch(holder -> empty.getId().equals(holder.getShooterLog().getShooterLogId())
-                && holder.getShooterLogOveralls().isEmpty()));
+                && holder.getShooterLogOverallResults().isEmpty()));
     }
 
-    // getShooterLogOveralls()
+    // getShooterLogOverallResults()
     @Test
-    void testGetShooterLogOveralls_whenShooterLogDoesNotExist_thenThrowsNonFatalException() {
+    void testGetShooterLogOverallResults_whenShooterLogDoesNotExist_thenThrowsNonFatalException() {
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscShooterLogOverallService.getShooterLogOveralls(999_999L));
+        assertThrows(NonFatalException.class, () -> ipscShooterLogOverallService.getShooterLogOverallResults(999_999L));
     }
 
     @Test
-    void testGetShooterLogOveralls_whenLogHasOveralls_thenReturnsOnlyThatLogsOveralls() throws NonFatalException {
+    void testGetShooterLogOverallResults_whenLogHasOverallResults_thenReturnsOnlyThatLogsOverallResults()
+            throws NonFatalException {
         // Arrange
         IpscMatch match = createMatch("Match A", LocalDate.of(2026, 9, 12));
         ShooterLog shooterLog = createShooterLog(match);
@@ -169,13 +170,14 @@ class IpscShooterLogOverallServiceIntegrationTest {
         createShooterLogOverall(otherLog, competitor);
 
         // Act
-        ShooterLogOverallResponseHolder holder = ipscShooterLogOverallService.getShooterLogOveralls(shooterLog.getId());
+        ShooterLogOverallResponseHolder holder =
+                ipscShooterLogOverallService.getShooterLogOverallResults(shooterLog.getId());
 
         // Assert
         assertEquals(shooterLog.getId(), holder.getShooterLog().getShooterLogId());
         assertEquals(List.of(match.getId()), holder.getShooterLog().getMatchIds());
         assertEquals(List.of(overall.getId()),
-                holder.getShooterLogOveralls().stream().map(ShooterLogOverallResponse::getShooterLogOverallId)
+                holder.getShooterLogOverallResults().stream().map(ShooterLogOverallResponse::getShooterLogOverallId)
                         .toList());
     }
 
@@ -225,7 +227,7 @@ class IpscShooterLogOverallServiceIntegrationTest {
     }
 
     private ShooterLogOverallResponse overallOf(ShooterLogOverallResponseHolder holder, Competitor competitor) {
-        return holder.getShooterLogOveralls().stream()
+        return holder.getShooterLogOverallResults().stream()
                 .filter(overall -> competitor.getId().equals(overall.getCompetitorId()))
                 .findFirst()
                 .orElseThrow();

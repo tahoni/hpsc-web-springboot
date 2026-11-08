@@ -6,7 +6,7 @@ import za.co.hpsc.web.models.ipsc.shooterlogoverall.response.ShooterLogOverallRe
 import java.util.List;
 
 /**
- * The {@code IpscShooterLogOverallService} interface provides access to shooter log overalls: each competitor's
+ * The {@code IpscShooterLogOverallService} interface provides access to shooter log overall results: each competitor's
  * overall standing across the matches of a shooter log, calculated from their shooter results and read back by
  * shooter log.
  *
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface IpscShooterLogOverallService {
     /**
-     * Calculates the overalls for one shooter log, creating or updating a
+     * Calculates the overall results for one shooter log, creating or updating a
      * {@link za.co.hpsc.web.domain.ShooterLogOverall} for each competitor with a shooter result in one of the log's
      * matches.
      *
@@ -31,16 +31,18 @@ public interface IpscShooterLogOverallService {
      * </p>
      *
      * <p>
-     * Calculating again updates the existing overalls rather than adding duplicates, and removes those of
+     * Calculating again updates the existing overall results rather than adding duplicates, and removes those of
      * competitors who no longer have a result in the log, but only when they are out of date: that is, when a
      * competitor has no overall yet or one calculated before a shooter result was, or the shooter log was updated
-     * after its overalls were calculated. Otherwise, nothing is recalculated and the current overalls are returned
+     * after its overall results were calculated. Otherwise, nothing is recalculated and the current overall results
+     * are returned
      * as they are.
      * </p>
      *
-     * @param shooterLogId the identifier of the shooter log to calculate overalls for.
-     * @return the shooter log, linked to its overalls, freshly calculated unless they were already up to date; the
-     * overalls are empty if the log has no competitors.
+     * @param shooterLogId the identifier of the shooter log to calculate overall results for.
+     * @return the shooter log, linked to its overall results, freshly calculated unless they were already up to date;
+     * the
+     * overall results are empty if the log has no competitors.
      * @throws NonFatalException if no shooter log with {@code shooterLogId} exists, or a match's shooter results
      *                           cannot be calculated.
      * @since 16.1.0
@@ -48,22 +50,23 @@ public interface IpscShooterLogOverallService {
     ShooterLogOverallResponseHolder calculateShooterLogOverall(Long shooterLogId) throws NonFatalException;
 
     /**
-     * Retrieves the overalls for one shooter log.
+     * Retrieves the overall results for one shooter log.
      *
-     * @param shooterLogId the identifier of the shooter log to retrieve overalls for.
-     * @return the shooter log, linked to its overalls in order of creation; the overalls are empty if none has been
+     * @param shooterLogId the identifier of the shooter log to retrieve overall results for.
+     * @return the shooter log, linked to its overall results in order of creation; the overall results are empty if
+     * none has been
      * calculated.
      * @throws NonFatalException if no shooter log with {@code shooterLogId} exists.
      * @since 16.1.0
      */
-    ShooterLogOverallResponseHolder getShooterLogOveralls(Long shooterLogId) throws NonFatalException;
+    ShooterLogOverallResponseHolder getShooterLogOverallResults(Long shooterLogId) throws NonFatalException;
 
     /**
-     * Retrieves the overalls for every shooter log.
+     * Retrieves the overall results for every shooter log.
      *
      * @return one holder per shooter log, ordered by start date, earliest first, each linking the log to its
-     * overalls, which are empty for a log none has been calculated for; empty if there are no shooter logs.
+     * overall results, which are empty for a log none has been calculated for; empty if there are no shooter logs.
      * @since 16.1.0
      */
-    List<ShooterLogOverallResponseHolder> getAllShooterLogOveralls();
+    List<ShooterLogOverallResponseHolder> getAllShooterLogOverallResults();
 }

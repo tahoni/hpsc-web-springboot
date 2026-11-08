@@ -152,15 +152,15 @@ Layer notes below).
 
 Handles incoming HTTP requests. Does not contain business logic.
 
-| Controller                        | Mapping                      | Responsibility                                   |
-|-----------------------------------|------------------------------|--------------------------------------------------|
-| `AwardController`                 | `/awards`                    | Award CSV processing                             |
-| `ImageController`                 | `/images`                    | Image CSV processing                             |
-| `IpscCompetitorController`        | `/ipsc/competitors`          | IPSC competitor CRUD + bulk CSV import           |
-| `IpscMatchController`             | `/ipsc/matches`              | IPSC match CRUD + bulk CSV import                |
-| `IpscMatchCompetitorController`   | `/ipsc/match-competitors`    | IPSC match competitor CRUD + bulk CSV import     |
-| `IpscShooterResultController`     | `/ipsc/shooter-results`      | IPSC shooter result calculation and reading      |
-| `IpscShooterLogOverallController` | `/ipsc/shooter-log-overalls` | IPSC shooter log overall calculation and reading |
+| Controller                        | Mapping                             | Responsibility                                   |
+|-----------------------------------|-------------------------------------|--------------------------------------------------|
+| `AwardController`                 | `/awards`                           | Award CSV processing                             |
+| `ImageController`                 | `/images`                           | Image CSV processing                             |
+| `IpscCompetitorController`        | `/ipsc/competitors`                 | IPSC competitor CRUD + bulk CSV import           |
+| `IpscMatchController`             | `/ipsc/matches`                     | IPSC match CRUD + bulk CSV import                |
+| `IpscMatchCompetitorController`   | `/ipsc/match-competitors`           | IPSC match competitor CRUD + bulk CSV import     |
+| `IpscShooterResultController`     | `/ipsc/shooter-results`             | IPSC shooter result calculation and reading      |
+| `IpscShooterLogOverallController` | `/ipsc/shooter-log-overall-results` | IPSC shooter log overall calculation and reading |
 
 All controllers:
 
@@ -178,18 +178,18 @@ All controllers:
 
 Contains all business logic.
 
-| Interface                      | Implementation                     | Role                                                                                                             |
-|--------------------------------|------------------------------------|------------------------------------------------------------------------------------------------------------------|
-| `AwardService`                 | `AwardServiceImpl`                 | Award CSV processing (deliberately stateless — see below)                                                        |
-| `ImageService`                 | `ImageServiceImpl`                 | Image CSV processing (deliberately stateless — see below)                                                        |
-| `IpscMatchService`             | `IpscMatchServiceImpl`             | IPSC match CRUD + bulk CSV import                                                                                |
-| `IpscCompetitorService`        | `IpscCompetitorServiceImpl`        | IPSC competitor CRUD + bulk CSV import                                                                           |
-| `IpscMatchCompetitorService`   | `IpscMatchCompetitorServiceImpl`   | IPSC match competitor CRUD + bulk CSV import                                                                     |
-| `IpscShooterResultService`     | `IpscShooterResultServiceImpl`     | Calculates a match's shooter results (rank and percentage) and reads them                                        |
-| `IpscShooterLogOverallService` | `IpscShooterLogOverallServiceImpl` | Calculates a shooter log's overalls (rank and percentage) from its matches' shooter results and reads them       |
-| `IpscEntityCompetitorService`  | `IpscEntityCompetitorServiceImpl`  | Looks up a persisted competitor from the loosely-specified identity in imported data                             |
-| `IpscEntityClubService`        | `IpscEntityClubServiceImpl`        | Resolves clubs by code, abbreviation or name; null-safe comparisons of clubs                                     |
-| `TransactionService`           | `TransactionServiceImpl`           | Commits competitor/match/match competitor/shooter result/shooter log overall writes, each in its own transaction |
+| Interface                      | Implementation                     | Role                                                                                                              |
+|--------------------------------|------------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| `AwardService`                 | `AwardServiceImpl`                 | Award CSV processing (deliberately stateless — see below)                                                         |
+| `ImageService`                 | `ImageServiceImpl`                 | Image CSV processing (deliberately stateless — see below)                                                         |
+| `IpscMatchService`             | `IpscMatchServiceImpl`             | IPSC match CRUD + bulk CSV import                                                                                 |
+| `IpscCompetitorService`        | `IpscCompetitorServiceImpl`        | IPSC competitor CRUD + bulk CSV import                                                                            |
+| `IpscMatchCompetitorService`   | `IpscMatchCompetitorServiceImpl`   | IPSC match competitor CRUD + bulk CSV import                                                                      |
+| `IpscShooterResultService`     | `IpscShooterResultServiceImpl`     | Calculates a match's shooter results (rank and percentage) and reads them                                         |
+| `IpscShooterLogOverallService` | `IpscShooterLogOverallServiceImpl` | Calculates a shooter log's overall results (rank and percentage) from its matches' shooter results and reads them |
+| `IpscEntityCompetitorService`  | `IpscEntityCompetitorServiceImpl`  | Looks up a persisted competitor from the loosely-specified identity in imported data                              |
+| `IpscEntityClubService`        | `IpscEntityClubServiceImpl`        | Resolves clubs by code, abbreviation or name; null-safe comparisons of clubs                                      |
+| `TransactionService`           | `TransactionServiceImpl`           | Commits competitor/match/match competitor/shooter result/shooter log overall writes, each in its own transaction  |
 
 > `AwardService.createAwards()`/`ImageService.createImages()` are stateless by design, not an unfinished persistence
 > layer: each parses CSV into response records only, with no repository write — a preview/validation transform
@@ -287,7 +287,7 @@ results, consumed by `IpscShooterResultController`.
 #### `models/ipsc/shooterlogoverall/response/`
 
 `ShooterLogOverallResponse`, `ShooterLogResponse` and `ShooterLogOverallResponseHolder` — a shooter log linked to its
-overalls, consumed by `IpscShooterLogOverallController`.
+overall results, consumed by `IpscShooterLogOverallController`.
 
 ---
 

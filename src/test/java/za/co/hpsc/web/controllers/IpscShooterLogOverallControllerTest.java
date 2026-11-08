@@ -25,16 +25,17 @@ class IpscShooterLogOverallControllerTest {
     @InjectMocks
     private IpscShooterLogOverallController ipscShooterLogOverallController;
 
-    // createShooterLogOveralls()
+    // createShooterLogOverallResults()
     @Test
-    void testCreateShooterLogOveralls_whenServiceSucceeds_thenReturns200WithServiceBody() throws NonFatalException {
+    void testCreateShooterLogOverallResults_whenServiceSucceeds_thenReturns200WithServiceBody()
+            throws NonFatalException {
         // Arrange
         ShooterLogOverallResponseHolder response = new ShooterLogOverallResponseHolder();
         when(ipscShooterLogOverallService.calculateShooterLogOverall(1L)).thenReturn(response);
 
         // Act
         ResponseEntity<ShooterLogOverallResponseHolder> result =
-                ipscShooterLogOverallController.createShooterLogOveralls(1L);
+                ipscShooterLogOverallController.createShooterLogOverallResults(1L);
 
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -42,24 +43,26 @@ class IpscShooterLogOverallControllerTest {
     }
 
     @Test
-    void testCreateShooterLogOveralls_whenServiceThrows_thenPropagatesNonFatalException() throws NonFatalException {
+    void testCreateShooterLogOverallResults_whenServiceThrows_thenPropagatesNonFatalException()
+            throws NonFatalException {
         // Arrange
         when(ipscShooterLogOverallService.calculateShooterLogOverall(99L))
                 .thenThrow(new NonFatalException("not found"));
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscShooterLogOverallController.createShooterLogOveralls(99L));
+        assertThrows(NonFatalException.class,
+                () -> ipscShooterLogOverallController.createShooterLogOverallResults(99L));
     }
 
-    // getAllShooterLogOveralls()
+    // getAllShooterLogOverallResults()
     @Test
-    void testGetAllShooterLogOveralls_whenNoShooterLogs_thenReturnsEmptyList() {
+    void testGetAllShooterLogOverallResults_whenNoShooterLogs_thenReturnsEmptyList() {
         // Arrange
-        when(ipscShooterLogOverallService.getAllShooterLogOveralls()).thenReturn(List.of());
+        when(ipscShooterLogOverallService.getAllShooterLogOverallResults()).thenReturn(List.of());
 
         // Act
         ResponseEntity<List<ShooterLogOverallResponseHolder>> result =
-                ipscShooterLogOverallController.getAllShooterLogOveralls();
+                ipscShooterLogOverallController.getAllShooterLogOverallResults();
 
         // Assert
         assertNotNull(result.getBody());
@@ -67,30 +70,30 @@ class IpscShooterLogOverallControllerTest {
     }
 
     @Test
-    void testGetAllShooterLogOveralls_whenServiceSucceeds_thenReturns200WithServiceBody() {
+    void testGetAllShooterLogOverallResults_whenServiceSucceeds_thenReturns200WithServiceBody() {
         // Arrange
         List<ShooterLogOverallResponseHolder> response = List.of(new ShooterLogOverallResponseHolder());
-        when(ipscShooterLogOverallService.getAllShooterLogOveralls()).thenReturn(response);
+        when(ipscShooterLogOverallService.getAllShooterLogOverallResults()).thenReturn(response);
 
         // Act
         ResponseEntity<List<ShooterLogOverallResponseHolder>> result =
-                ipscShooterLogOverallController.getAllShooterLogOveralls();
+                ipscShooterLogOverallController.getAllShooterLogOverallResults();
 
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertSame(response, result.getBody());
     }
 
-    // getShooterLogOveralls()
+    // getShooterLogOverallResults()
     @Test
-    void testGetShooterLogOveralls_whenServiceSucceeds_thenReturns200WithServiceBody() throws NonFatalException {
+    void testGetShooterLogOverallResults_whenServiceSucceeds_thenReturns200WithServiceBody() throws NonFatalException {
         // Arrange
         ShooterLogOverallResponseHolder response = new ShooterLogOverallResponseHolder();
-        when(ipscShooterLogOverallService.getShooterLogOveralls(1L)).thenReturn(response);
+        when(ipscShooterLogOverallService.getShooterLogOverallResults(1L)).thenReturn(response);
 
         // Act
         ResponseEntity<ShooterLogOverallResponseHolder> result =
-                ipscShooterLogOverallController.getShooterLogOveralls(1L);
+                ipscShooterLogOverallController.getShooterLogOverallResults(1L);
 
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -98,11 +101,12 @@ class IpscShooterLogOverallControllerTest {
     }
 
     @Test
-    void testGetShooterLogOveralls_whenServiceThrows_thenPropagatesNonFatalException() throws NonFatalException {
+    void testGetShooterLogOverallResults_whenServiceThrows_thenPropagatesNonFatalException() throws NonFatalException {
         // Arrange
-        when(ipscShooterLogOverallService.getShooterLogOveralls(99L)).thenThrow(new NonFatalException("not found"));
+        when(ipscShooterLogOverallService.getShooterLogOverallResults(99L))
+                .thenThrow(new NonFatalException("not found"));
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscShooterLogOverallController.getShooterLogOveralls(99L));
+        assertThrows(NonFatalException.class, () -> ipscShooterLogOverallController.getShooterLogOverallResults(99L));
     }
 }

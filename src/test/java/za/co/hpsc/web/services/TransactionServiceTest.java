@@ -302,9 +302,9 @@ public class TransactionServiceTest {
         verify(transactionManager, never()).commit(any());
     }
 
-    // replaceShooterLogOveralls()
+    // replaceShooterLogOverallResults()
     @Test
-    void testReplaceShooterLogOveralls_whenCalled_thenDeletesSavesFlushesAndCommitsInOneTransaction() {
+    void testReplaceShooterLogOverallResults_whenCalled_thenDeletesSavesFlushesAndCommitsInOneTransaction() {
         // Arrange
         stubTransaction();
         ShooterLogOverall saved = new ShooterLogOverall();
@@ -313,7 +313,8 @@ public class TransactionServiceTest {
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
-        List<ShooterLogOverall> result = transactionService.replaceShooterLogOveralls(List.of(saved), List.of(stale));
+        List<ShooterLogOverall> result =
+                transactionService.replaceShooterLogOverallResults(List.of(saved), List.of(stale));
 
         // Assert
         assertEquals(List.of(saved), result);
@@ -324,7 +325,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void testReplaceShooterLogOveralls_whenFlushFails_thenRollsBackAndPropagates() {
+    void testReplaceShooterLogOverallResults_whenFlushFails_thenRollsBackAndPropagates() {
         // Arrange
         stubTransaction();
         when(shooterLogOverallRepository.save(any(ShooterLogOverall.class)))
@@ -333,7 +334,7 @@ public class TransactionServiceTest {
 
         // Act & Assert
         assertThrows(DataIntegrityViolationException.class,
-                () -> transactionService.replaceShooterLogOveralls(List.of(new ShooterLogOverall()), List.of()));
+                () -> transactionService.replaceShooterLogOverallResults(List.of(new ShooterLogOverall()), List.of()));
         verify(transactionManager).rollback(transactionStatus);
         verify(transactionManager, never()).commit(any());
     }

@@ -33,8 +33,8 @@ import java.util.List;
  * @since 16.1.0
  */
 @Controller
-@RequestMapping("/ipsc/shooter-log-overalls")
-@Tag(name = "IPSC Shooter Log Overalls", description = "IPSC Shooter Log Overalls API")
+@RequestMapping("/ipsc/shooter-log-overall-results")
+@Tag(name = "IPSC Shooter Log Overall Results", description = "IPSC Shooter Log Overall Results API")
 public class IpscShooterLogOverallController {
     private final IpscShooterLogOverallService ipscShooterLogOverallService;
 
@@ -43,75 +43,77 @@ public class IpscShooterLogOverallController {
     }
 
     /**
-     * Calculates the overalls for one shooter log, creating or updating one for each of its competitors.
+     * Calculates the overall results for one shooter log, creating or updating one for each of its competitors.
      *
-     * @param shooterLogId the identifier of the shooter log to calculate overalls for.
-     * @return the {@link ShooterLogOverallResponseHolder} linking the shooter log to its freshly calculated overalls.
+     * @param shooterLogId the identifier of the shooter log to calculate overall results for.
+     * @return the {@link ShooterLogOverallResponseHolder} linking the shooter log to its freshly calculated overall
+     * results.
      * @throws NonFatalException if no shooter log with {@code shooterLogId} exists.
      * @since 16.1.0
      */
     @PostMapping(value = "/logs/{shooterLogId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Calculate overalls for shooter log", description = "Calculate every competitor's overall "
+    @Operation(summary = "Calculate overall results for shooter log",
+            description = "Calculate every competitor's overall "
             + "standing in a shooter log: the average of their best four percentages across the log's matches, "
             + "ranked within their division and competitor category (no category is a group of its own). The "
             + "matches' shooter results are brought up to date first. Calculating again updates the existing "
-            + "overalls.")
+            + "overall results.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Shooter log overalls calculated.",
+            @ApiResponse(responseCode = "200", description = "Shooter log overall results calculated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ShooterLogOverallResponseHolder.class))),
             @ApiResponse(responseCode = "404", description = "No shooter log with this ID could be found.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<ShooterLogOverallResponseHolder> createShooterLogOveralls(
-            @Parameter(description = "Identifier of the shooter log to calculate overalls for.")
+    ResponseEntity<ShooterLogOverallResponseHolder> createShooterLogOverallResults(
+            @Parameter(description = "Identifier of the shooter log to calculate overall results for.")
             @PathVariable Long shooterLogId) throws NonFatalException {
         return ResponseEntity.ok(ipscShooterLogOverallService.calculateShooterLogOverall(shooterLogId));
     }
 
     /**
-     * Retrieves the overalls for one shooter log.
+     * Retrieves the overall results for one shooter log.
      *
-     * @param shooterLogId the identifier of the shooter log to retrieve overalls for.
-     * @return the {@link ShooterLogOverallResponseHolder} linking the shooter log to its overalls.
+     * @param shooterLogId the identifier of the shooter log to retrieve overall results for.
+     * @return the {@link ShooterLogOverallResponseHolder} linking the shooter log to its overall results.
      * @throws NonFatalException if no shooter log with {@code shooterLogId} exists.
      * @since 16.1.0
      */
     @GetMapping(value = "/logs/{shooterLogId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get overalls for shooter log", description = "Retrieve every competitor's overall "
+    @Operation(summary = "Get overall results for shooter log", description = "Retrieve every competitor's overall "
             + "standing in a shooter log.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Shooter log overalls retrieved.",
+            @ApiResponse(responseCode = "200", description = "Shooter log overall results retrieved.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ShooterLogOverallResponseHolder.class))),
             @ApiResponse(responseCode = "404", description = "No shooter log with this ID could be found.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<ShooterLogOverallResponseHolder> getShooterLogOveralls(
-            @Parameter(description = "Identifier of the shooter log to retrieve overalls for.")
+    ResponseEntity<ShooterLogOverallResponseHolder> getShooterLogOverallResults(
+            @Parameter(description = "Identifier of the shooter log to retrieve overall results for.")
             @PathVariable Long shooterLogId) throws NonFatalException {
-        return ResponseEntity.ok(ipscShooterLogOverallService.getShooterLogOveralls(shooterLogId));
+        return ResponseEntity.ok(ipscShooterLogOverallService.getShooterLogOverallResults(shooterLogId));
     }
 
     /**
-     * Retrieves the overalls for every shooter log.
+     * Retrieves the overall results for every shooter log.
      *
      * @return one {@link ShooterLogOverallResponseHolder} per shooter log, earliest start date first, including
-     * those without overalls.
+     * those without overall results.
      * @since 16.1.0
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get all shooter log overalls", description = "Retrieve every competitor's overall "
+    @Operation(summary = "Get all shooter log overall results", description = "Retrieve every competitor's overall "
             + "standing in every shooter log.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Shooter log overalls retrieved.",
+            @ApiResponse(responseCode = "200", description = "Shooter log overall results retrieved.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             array = @ArraySchema(schema = @Schema(
                                     implementation = ShooterLogOverallResponseHolder.class))))
     })
-    ResponseEntity<List<ShooterLogOverallResponseHolder>> getAllShooterLogOveralls() {
-        return ResponseEntity.ok(ipscShooterLogOverallService.getAllShooterLogOveralls());
+    ResponseEntity<List<ShooterLogOverallResponseHolder>> getAllShooterLogOverallResults() {
+        return ResponseEntity.ok(ipscShooterLogOverallService.getAllShooterLogOverallResults());
     }
 }

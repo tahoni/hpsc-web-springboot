@@ -32,9 +32,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Controllers
 
-- **`IpscShooterLogOverallController`:** New controller under `/ipsc/shooter-log-overalls`: `POST /logs/{shooterLogId}`
-  calculates a shooter log's overalls, `GET /logs/{shooterLogId}` returns them for one log and `GET` returns them for
-  every log, each a `ShooterLogOverallResponseHolder` linking the log to its overalls.
+- **`IpscShooterLogOverallController`:** New controller under `/ipsc/shooter-log-overall-results`:
+  `POST /logs/{shooterLogId}` calculates a shooter log's overall results, `GET /logs/{shooterLogId}` returns them
+  for one log and `GET` returns them for every log, each a `ShooterLogOverallResponseHolder` linking the log to its
+  overall results.
 
 ##### Services
 
@@ -42,9 +43,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   matches' shooter results up to date, then gives each competitor an overall percentage — the average of their
   best `IpscConstants.SHOOTER_LOG_BEST_MATCHES` (four) percentages across the log's matches, or of all of them if
   they have fewer — and ranks them within their division and competitor category, taken from
-  their most recent match, with ties sharing a rank. It recalculates only when the overalls are out of date, and
-  removes the overalls of competitors who no longer have a result in the log.
-- **`TransactionService.replaceShooterLogOveralls`:** Saves and deletes shooter log overalls in one transaction.
+  their most recent match, with ties sharing a rank. It recalculates only when the overall results are out of date, and
+  removes the overall results of competitors who no longer have a result in the log.
+- **`TransactionService.replaceShooterLogOverallResults`:** Saves and deletes shooter log overall results in one
+  transaction.
 
 ##### Repositories
 
@@ -55,8 +57,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Models
 
 - **`ShooterLogOverallResponseHolder`, `ShooterLogOverallResponse` and `ShooterLogResponse`:** New response DTOs
-  linking a shooter log to its overalls, each with the competitor's names and number, category, division, rank and
-  percentage in the log and when they were calculated.
+  linking a shooter log to its overall results, each with the competitor's names and number, category, division, rank
+  and percentage in the log and when they were calculated.
 
 ##### Constants
 

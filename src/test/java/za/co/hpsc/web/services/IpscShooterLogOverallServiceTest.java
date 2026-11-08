@@ -68,7 +68,7 @@ class IpscShooterLogOverallServiceTest {
         ipscShooterLogOverallService.calculateShooterLogOverall(1L);
 
         // Assert
-        ShooterLogOverall saved = savedOveralls().getFirst();
+        ShooterLogOverall saved = savedOverallResults().getFirst();
         assertSame(shooterLog, saved.getShooterLog());
         assertSame(competitor, saved.getCompetitor());
         assertEquals(new BigDecimal("90.00"), saved.getPercentageInLog());
@@ -99,7 +99,7 @@ class IpscShooterLogOverallServiceTest {
 
         // Assert
         // The best four are 100, 90, 80 and 70; the 10 is dropped
-        assertEquals(new BigDecimal("85.00"), savedOveralls().getFirst().getPercentageInLog());
+        assertEquals(new BigDecimal("85.00"), savedOverallResults().getFirst().getPercentageInLog());
     }
 
     @Test
@@ -122,7 +122,7 @@ class IpscShooterLogOverallServiceTest {
         ipscShooterLogOverallService.calculateShooterLogOverall(1L);
 
         // Assert
-        List<ShooterLogOverall> saved = savedOveralls();
+        List<ShooterLogOverall> saved = savedOverallResults();
         assertEquals(1, overallOf(saved, fourth).getRankInLog());
         assertEquals(2, overallOf(saved, first).getRankInLog());
         assertEquals(2, overallOf(saved, second).getRankInLog());
@@ -145,7 +145,7 @@ class IpscShooterLogOverallServiceTest {
         ipscShooterLogOverallService.calculateShooterLogOverall(1L);
 
         // Assert
-        List<ShooterLogOverall> saved = savedOveralls();
+        List<ShooterLogOverall> saved = savedOverallResults();
         assertEquals(1, overallOf(saved, open).getRankInLog());
         assertEquals(1, overallOf(saved, production).getRankInLog());
     }
@@ -166,7 +166,7 @@ class IpscShooterLogOverallServiceTest {
         ipscShooterLogOverallService.calculateShooterLogOverall(1L);
 
         // Assert
-        assertEquals(Division.PRODUCTION, savedOveralls().getFirst().getDivision());
+        assertEquals(Division.PRODUCTION, savedOverallResults().getFirst().getDivision());
     }
 
     @Test
@@ -181,14 +181,14 @@ class IpscShooterLogOverallServiceTest {
         ipscShooterLogOverallService.calculateShooterLogOverall(1L);
 
         // Assert
-        ShooterLogOverall saved = savedOveralls().getFirst();
+        ShooterLogOverall saved = savedOverallResults().getFirst();
         assertNull(saved.getRankInLog());
         assertNull(saved.getPercentageInLog());
         assertNotNull(saved.getDateCalculated());
     }
 
     @Test
-    void testCalculateShooterLogOverall_whenOverallsExist_thenUpdatesThemAndDeletesThoseWithoutResults()
+    void testCalculateShooterLogOverall_whenOverallResultsExist_thenUpdatesThemAndDeletesThoseWithoutResults()
             throws NonFatalException {
         // Arrange
         IpscMatch match = match(10L, 1);
@@ -205,14 +205,15 @@ class IpscShooterLogOverallServiceTest {
         // Assert
         ArgumentCaptor<List<ShooterLogOverall>> toSave = listCaptor();
         ArgumentCaptor<List<ShooterLogOverall>> toDelete = listCaptor();
-        verify(transactionService).replaceShooterLogOveralls(toSave.capture(), toDelete.capture());
+        verify(transactionService).replaceShooterLogOverallResults(toSave.capture(), toDelete.capture());
         assertEquals(1, toSave.getValue().size());
         assertSame(existing, toSave.getValue().getFirst());
         assertEquals(List.of(stale), toDelete.getValue());
     }
 
     @Test
-    void testCalculateShooterLogOverall_whenOverallsAreUpToDate_thenDoesNotRecalculate() throws NonFatalException {
+    void testCalculateShooterLogOverall_whenOverallResultsAreUpToDate_thenDoesNotRecalculate()
+            throws NonFatalException {
         // Arrange
         IpscMatch match = match(10L, 1);
         ShooterLog shooterLog = shooterLog(1L, match);
@@ -226,7 +227,7 @@ class IpscShooterLogOverallServiceTest {
         ipscShooterLogOverallService.calculateShooterLogOverall(1L);
 
         // Assert
-        verify(transactionService, never()).replaceShooterLogOveralls(any(), any());
+        verify(transactionService, never()).replaceShooterLogOverallResults(any(), any());
     }
 
     @Test
@@ -245,7 +246,7 @@ class IpscShooterLogOverallServiceTest {
         ipscShooterLogOverallService.calculateShooterLogOverall(1L);
 
         // Assert
-        verify(transactionService).replaceShooterLogOveralls(any(), any());
+        verify(transactionService).replaceShooterLogOverallResults(any(), any());
     }
 
     @Test
@@ -260,7 +261,7 @@ class IpscShooterLogOverallServiceTest {
         ShooterLogOverallResponseHolder holder = ipscShooterLogOverallService.calculateShooterLogOverall(1L);
 
         // Assert
-        assertTrue(holder.getShooterLogOveralls().isEmpty());
+        assertTrue(holder.getShooterLogOverallResults().isEmpty());
         verifyNoInteractions(ipscShooterResultService, shooterResultRepository, transactionService);
     }
 
@@ -276,54 +277,55 @@ class IpscShooterLogOverallServiceTest {
         verifyNoInteractions(shooterResultRepository, ipscShooterResultService, transactionService);
     }
 
-    // getAllShooterLogOveralls()
+    // getAllShooterLogOverallResults()
     @Test
-    void testGetAllShooterLogOveralls_whenNoShooterLogs_thenReturnsEmptyList() {
+    void testGetAllShooterLogOverallResults_whenNoShooterLogs_thenReturnsEmptyList() {
         // Arrange
         when(shooterLogOverallRepository.findAllWithDetails()).thenReturn(List.of());
         when(shooterLogRepository.findAllWithMatches()).thenReturn(List.of());
 
         // Act
-        List<ShooterLogOverallResponseHolder> result = ipscShooterLogOverallService.getAllShooterLogOveralls();
+        List<ShooterLogOverallResponseHolder> result = ipscShooterLogOverallService.getAllShooterLogOverallResults();
 
         // Assert
         assertTrue(result.isEmpty());
     }
 
     @Test
-    void testGetAllShooterLogOveralls_whenSeveralLogs_thenGroupsOverallsByLogIncludingLogsWithNone() {
+    void testGetAllShooterLogOverallResults_whenSeveralLogs_thenGroupsOverallResultsByLogIncludingLogsWithNone() {
         // Arrange
-        ShooterLog withOveralls = shooterLog(1L, match(10L, 1));
-        ShooterLog withoutOveralls = shooterLog(2L);
-        ShooterLogOverall overall = overall(50L, withOveralls, competitor(5L), LocalDateTime.of(2026, 10, 1, 9, 0));
+        ShooterLog withOverallResults = shooterLog(1L, match(10L, 1));
+        ShooterLog withoutOverallResults = shooterLog(2L);
+        ShooterLogOverall overall = overall(50L, withOverallResults, competitor(5L),
+                LocalDateTime.of(2026, 10, 1, 9, 0));
         when(shooterLogOverallRepository.findAllWithDetails()).thenReturn(List.of(overall));
-        when(shooterLogRepository.findAllWithMatches()).thenReturn(List.of(withOveralls, withoutOveralls));
+        when(shooterLogRepository.findAllWithMatches()).thenReturn(List.of(withOverallResults, withoutOverallResults));
 
         // Act
-        List<ShooterLogOverallResponseHolder> result = ipscShooterLogOverallService.getAllShooterLogOveralls();
+        List<ShooterLogOverallResponseHolder> result = ipscShooterLogOverallService.getAllShooterLogOverallResults();
 
         // Assert
         assertEquals(2, result.size());
         assertEquals(1L, result.get(0).getShooterLog().getShooterLogId());
         assertEquals(List.of(10L), result.get(0).getShooterLog().getMatchIds());
-        assertEquals(1, result.get(0).getShooterLogOveralls().size());
+        assertEquals(1, result.get(0).getShooterLogOverallResults().size());
         assertEquals(2L, result.get(1).getShooterLog().getShooterLogId());
-        assertTrue(result.get(1).getShooterLogOveralls().isEmpty());
+        assertTrue(result.get(1).getShooterLogOverallResults().isEmpty());
     }
 
-    // getShooterLogOveralls()
+    // getShooterLogOverallResults()
     @Test
-    void testGetShooterLogOveralls_whenShooterLogDoesNotExist_thenThrowsNonFatalException() {
+    void testGetShooterLogOverallResults_whenShooterLogDoesNotExist_thenThrowsNonFatalException() {
         // Arrange
         when(shooterLogRepository.findByIdWithMatches(99L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscShooterLogOverallService.getShooterLogOveralls(99L));
+        assertThrows(NonFatalException.class, () -> ipscShooterLogOverallService.getShooterLogOverallResults(99L));
         verifyNoInteractions(shooterLogOverallRepository);
     }
 
     @Test
-    void testGetShooterLogOveralls_whenLogHasOveralls_thenMapsEachToAResponse() throws NonFatalException {
+    void testGetShooterLogOverallResults_whenLogHasOverallResults_thenMapsEachToAResponse() throws NonFatalException {
         // Arrange
         ShooterLog shooterLog = shooterLog(1L, match(10L, 1));
         ShooterLogOverall overall = overall(50L, shooterLog, competitor(5L), LocalDateTime.of(2026, 10, 1, 9, 0));
@@ -333,11 +335,11 @@ class IpscShooterLogOverallServiceTest {
         when(shooterLogOverallRepository.findAllByShooterLogIdWithDetails(1L)).thenReturn(List.of(overall));
 
         // Act
-        ShooterLogOverallResponseHolder holder = ipscShooterLogOverallService.getShooterLogOveralls(1L);
+        ShooterLogOverallResponseHolder holder = ipscShooterLogOverallService.getShooterLogOverallResults(1L);
 
         // Assert
         assertEquals(1L, holder.getShooterLog().getShooterLogId());
-        ShooterLogOverallResponse response = holder.getShooterLogOveralls().getFirst();
+        ShooterLogOverallResponse response = holder.getShooterLogOverallResults().getFirst();
         assertEquals(50L, response.getShooterLogOverallId());
         assertEquals(5L, response.getCompetitorId());
         assertEquals(List.of("Jane Doe", "JD Doe"), response.getCompetitorNames());
@@ -358,14 +360,14 @@ class IpscShooterLogOverallServiceTest {
         return ArgumentCaptor.forClass(List.class);
     }
 
-    private List<ShooterLogOverall> savedOveralls() {
+    private List<ShooterLogOverall> savedOverallResults() {
         ArgumentCaptor<List<ShooterLogOverall>> captor = listCaptor();
-        verify(transactionService).replaceShooterLogOveralls(captor.capture(), any());
+        verify(transactionService).replaceShooterLogOverallResults(captor.capture(), any());
         return new ArrayList<>(captor.getValue());
     }
 
-    private ShooterLogOverall overallOf(List<ShooterLogOverall> overalls, Competitor competitor) {
-        return overalls.stream()
+    private ShooterLogOverall overallOf(List<ShooterLogOverall> overallResults, Competitor competitor) {
+        return overallResults.stream()
                 .filter(overall -> overall.getCompetitor() == competitor)
                 .findFirst()
                 .orElseThrow();

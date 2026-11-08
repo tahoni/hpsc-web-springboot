@@ -21,10 +21,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShooterLogOverallResponseHolder {
-    /** The shooter log the overalls belong to. */
+    /** The shooter log the overall results belong to. */
     @NotNull
     private ShooterLogResponse shooterLog;
-    /** The overalls of the competitors in the shooter log; empty if none has been calculated. */
+    /** The overall results of the competitors in the shooter log; empty if none has been calculated. */
     @NotNull
-    private List<ShooterLogOverallResponse> shooterLogOveralls = new ArrayList<>();
+    private List<ShooterLogOverallResponse> shooterLogOverallResults = new ArrayList<>();
 }

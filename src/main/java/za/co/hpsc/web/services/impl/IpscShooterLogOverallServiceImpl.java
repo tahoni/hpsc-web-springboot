@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 /**
- * Default {@link IpscShooterLogOverallService}, calculating shooter log overalls from the persisted
+ * Default {@link IpscShooterLogOverallService}, calculating shooter log overall results from the persisted
  * {@link ShooterResult}s of a log's matches and reading them back from the persisted {@link ShooterLogOverall}s.
  *
  * @since 16.1.0
@@ -70,14 +70,14 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
             }
         }
 
-        // Overalls already calculated, found by their competitor, so calculating again updates them
+        // Overall Results already calculated, found by their competitor, so calculating again updates them
         Map<Long, ShooterLogOverall> existingByCompetitorId = new HashMap<>();
         for (ShooterLogOverall existing : shooterLogOverallRepository.findAllByShooterLogIdWithDetails(shooterLogId)) {
             existingByCompetitorId.put(existing.getCompetitor().getId(), existing);
         }
 
         if (isUpToDate(shooterLog, resultsByCompetitorId, existingByCompetitorId)) {
-            return getShooterLogOveralls(shooterLogId);
+            return getShooterLogOverallResults(shooterLogId);
         }
 
         // Competitors are ranked against the others in their division and competitor category, taken from their most
@@ -115,34 +115,34 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
                 .filter(existing -> !resultsByCompetitorId.containsKey(existing.getKey()))
                 .map(Map.Entry::getValue)
                 .toList();
-        transactionService.replaceShooterLogOveralls(toSave, toDelete);
+        transactionService.replaceShooterLogOverallResults(toSave, toDelete);
 
-        return getShooterLogOveralls(shooterLogId);
+        return getShooterLogOverallResults(shooterLogId);
     }
 
     @Override
-    public ShooterLogOverallResponseHolder getShooterLogOveralls(Long shooterLogId) throws NonFatalException {
+    public ShooterLogOverallResponseHolder getShooterLogOverallResults(Long shooterLogId) throws NonFatalException {
         ShooterLog shooterLog = findShooterLogOrThrow(shooterLogId);
-        List<ShooterLogOverallResponse> shooterLogOveralls =
+        List<ShooterLogOverallResponse> shooterLogOverallResults =
                 shooterLogOverallRepository.findAllByShooterLogIdWithDetails(shooterLogId).stream()
                         .map(ShooterLogOverallResponse::new)
                         .toList();
-        return new ShooterLogOverallResponseHolder(new ShooterLogResponse(shooterLog), shooterLogOveralls);
+        return new ShooterLogOverallResponseHolder(new ShooterLogResponse(shooterLog), shooterLogOverallResults);
     }
 
     @Override
-    public List<ShooterLogOverallResponseHolder> getAllShooterLogOveralls() {
-        // Grouped by shooter log ID, so a log without overalls is still returned, with none
-        Map<Long, List<ShooterLogOverallResponse>> overallsByShooterLogId = new HashMap<>();
+    public List<ShooterLogOverallResponseHolder> getAllShooterLogOverallResults() {
+        // Grouped by shooter log ID, so a log without overall results is still returned, with none
+        Map<Long, List<ShooterLogOverallResponse>> overallResultsByShooterLogId = new HashMap<>();
         for (ShooterLogOverall shooterLogOverall : shooterLogOverallRepository.findAllWithDetails()) {
-            overallsByShooterLogId
+            overallResultsByShooterLogId
                     .computeIfAbsent(shooterLogOverall.getShooterLog().getId(), id -> new ArrayList<>())
                     .add(new ShooterLogOverallResponse(shooterLogOverall));
         }
 
         return shooterLogRepository.findAllWithMatches().stream()
                 .map(shooterLog -> new ShooterLogOverallResponseHolder(new ShooterLogResponse(shooterLog),
-                        overallsByShooterLogId.getOrDefault(shooterLog.getId(), List.of())))
+                        overallResultsByShooterLogId.getOrDefault(shooterLog.getId(), List.of())))
                 .toList();
     }
 
@@ -159,14 +159,16 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
     }
 
     /**
-     * Whether a shooter log's overalls are up to date: exactly the competitors with a shooter result in the log have
+     * Whether a shooter log's overall results are up to date: exactly the competitors with a shooter result in the
+     * log have
      * one, each has been calculated, no shooter result was calculated after the oldest overall was, and the shooter
      * log was not updated after it either.
      *
-     * @param shooterLog            the shooter log the overalls are for.
+     * @param shooterLog            the shooter log the overall results are for.
      * @param resultsByCompetitorId the log's shooter results, by competitor ID.
-     * @param existingByCompetitorId the log's existing overalls, by competitor ID.
-     * @return {@code true} if the overalls can be returned as they are; {@code false} if they must be recalculated.
+     * @param existingByCompetitorId the log's existing overall results, by competitor ID.
+     * @return {@code true} if the overall results can be returned as they are; {@code false} if they must be
+     * recalculated.
      */
     private boolean isUpToDate(ShooterLog shooterLog, Map<Long, List<ShooterResult>> resultsByCompetitorId,
                                Map<Long, ShooterLogOverall> existingByCompetitorId) {
@@ -222,11 +224,11 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
     }
 
     /**
-     * Ranks a group of overalls by overall percentage, highest first, setting each one's rank. Competitors on an
+     * Ranks a group of overall results by overall percentage, highest first, setting each one's rank. Competitors on an
      * equal percentage share a rank and the next rank is skipped, so percentages of 90, 90 and 80 rank 1, 1 and 3. An
      * overall without a percentage is not ranked.
      *
-     * @param group the overalls to rank, which are in the same division and competitor category.
+     * @param group the overall results to rank, which are in the same division and competitor category.
      */
     private void rank(List<ShooterLogOverall> group) {
         List<ShooterLogOverall> scored = group.stream()
@@ -246,7 +248,7 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
         }
     }
 
-    /** The division and competitor category that overalls are ranked within. */
+    /** The division and competitor category that overall results are ranked within. */
     private record OverallGroup(Division division, CompetitorCategory competitorCategory) {
     }
 }

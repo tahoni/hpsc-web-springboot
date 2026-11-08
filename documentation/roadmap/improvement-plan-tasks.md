@@ -444,7 +444,7 @@ Gap #41)* —
   v9.1.0 and extended in v10.0.0 (competitor lookup by number or name, overall-score fields) and v15.0.0
   (`IpscShooterResultController` `/ipsc/shooter-results` endpoints that calculate and read results over the new
   `ShooterResult` entity) and the unreleased `IpscShooterLogOverallController`
-  (`/ipsc/shooter-log-overalls`)
+  (`/ipsc/shooter-log-overall-results`)
 - [x] Add Mockito-based controller unit tests per the `scaffold-unit-tests` conventions — done for
   `IpscMatchCompetitorController` in v9.1.0; `IpscShooterLogOverallController` followed in the unreleased changes
 - [x] Hold off on cross-entity orchestration (e.g. a full Practiscore results import) until a concrete need
@@ -473,7 +473,8 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
   patch, get and delete a shooter log, with the matches it covers set by match ID, writing through `TransactionService`
 - [ ] Add `IpscShooterLogController` under `/ipsc/shooter-logs`, backed by Mockito controller tests and
   `@SpringBootTest` integration tests per the `scaffold-unit-tests`/`scaffold-integration-tests` conventions
-- [ ] Decide what deleting a shooter log does to its overalls, rejecting or cascading explicitly rather than surfacing
+- [ ] Decide what deleting a shooter log does to its overall results, rejecting or cascading explicitly rather than
+  surfacing
   a raw constraint error
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording

@@ -127,8 +127,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #41 v15.0.0 reinstated four score-scale constants and `NumberUtil.calculateSum` with no production caller —
     closed in the unreleased changes (three scales, `DEFAULT_SCALE` and `calculateSum` removed with their tests)
   - #6 Match scoring / shooter-log service and controller layer are not yet built — closed in the unreleased
-    changes (`IpscShooterLogOverallService` and `/ipsc/shooter-log-overalls` calculate and read a log's
-    overalls; creating the logs themselves is Gap #42)
+    changes (`IpscShooterLogOverallService` and `/ipsc/shooter-log-overall-results` calculate and read a log's
+    overall results; creating the logs themselves is Gap #42)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
 - **⚪ Open (1):**
@@ -1360,13 +1360,14 @@ operate on is `ShooterLog` and `ShooterLogOverall` alone, and the two delete-tim
 gone. Still no shooter-log service or controller exists, so the gap stands.
 
 **Outcome:** Done differently from the proposal: the shooter-log half is `IpscShooterLogOverallService` (interface +
-`impl/` split) and `IpscShooterLogOverallController`, not a general `ShooterLogService`. `/ipsc/shooter-log-overalls`
-calculates a shooter log's overalls (`POST /logs/{shooterLogId}`) and reads them for one log or for every log, over
-`ShooterLogRepository`, `ShooterLogOverallRepository` and `ShooterResultRepository`, with Mockito controller and
-service tests and `@SpringBootTest` integration tests. A competitor's overall percentage is the average of their best
-`IpscConstants.SHOOTER_LOG_BEST_MATCHES` (four) match percentages in the log, ranked within their division and
-competitor category. `ARCHITECTURE.md`, `README.md` and `CONTRIBUTING.md` no longer say the layer is still being
-built. What remains is creating the shooter logs themselves through the API, which Gap #42 tracks.
+`impl/` split) and `IpscShooterLogOverallController`, not a general `ShooterLogService`.
+`/ipsc/shooter-log-overall-results` calculates a shooter log's overall results (`POST /logs/{shooterLogId}`) and reads
+them for one log or for every log, over `ShooterLogRepository`, `ShooterLogOverallRepository` and
+`ShooterResultRepository`, with Mockito controller and service tests and `@SpringBootTest` integration tests. A
+competitor's overall percentage is the average of their best `IpscConstants.SHOOTER_LOG_BEST_MATCHES` (four) match
+percentages in the log, ranked within their division and competitor category. `ARCHITECTURE.md`, `README.md` and
+`CONTRIBUTING.md` no longer say the layer is still being built. What remains is creating the shooter logs themselves
+through the API, which Gap #42 tracks.
 
 ### 🟡 Partially Completed
 
@@ -1381,11 +1382,11 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 #### 42. Nothing creates a shooter log or links it to matches, so the shooter log overall endpoints have nothing to run on
 
 **Evidence:** `ShooterLogRepository` is only read: `IpscShooterLogOverallServiceImpl` calls `findByIdWithMatches` and
-`findAllWithMatches`, and `IpscMatchServiceImpl.deleteMatch` calls `existsByMatchesId`. A search of `src/main` finds no
-`new ShooterLog()` and no `ShooterLogRepository.save`, and no controller or service writes a `ShooterLog`, its
-`startDate`/`endDate` or its `shooter_log_match` links. `IpscShooterLogOverallController` (`/ipsc/shooter-log-overalls`)
-calculates and reads overalls only for logs that already exist, so those rows can currently be inserted only by hand
-in the database.
+`findAllWithMatches`, and `IpscMatchServiceImpl.deleteMatch` calls `existsByMatchesId`. A search of `src/main` finds
+no `new ShooterLog()` and no `ShooterLogRepository.save`, and no controller or service writes a `ShooterLog`, its
+`startDate`/`endDate` or its `shooter_log_match` links. `IpscShooterLogOverallController`
+(`/ipsc/shooter-log-overall-results`) calculates and reads overall results only for logs that already exist, so those
+rows can currently be inserted only by hand in the database.
 
 **Why it matters:** The same shape as Gap #1 and Gap #6 — an entity and repository exist, and an endpoint operates on
 them, but nothing creates the data. A calculate endpoint whose input can't be created through the API is half a
@@ -1393,9 +1394,9 @@ feature, and `deleteMatch`'s "referenced by shooter logs" check guards links not
 
 **Proposed improvement:** Apply the pattern that closed Gap #1: introduce `IpscShooterLogService` (interface + `impl/`
 split) and `IpscShooterLogController` under `/ipsc/shooter-logs` to create, replace, patch, get and delete a shooter
-log, with its start and end dates and the matches it covers set by match ID, writing through `TransactionService`
-and backed by Mockito controller and service tests and `@SpringBootTest` integration tests. Deleting a log must
-decide what happens to its overalls, rejecting or cascading explicitly rather than surfacing a raw constraint error,
+log, with its start and end dates and the matches it covers set by match ID, writing through `TransactionService` and
+backed by Mockito controller and service tests and `@SpringBootTest` integration tests. Deleting a log must decide
+what happens to its overall results, rejecting or cascading explicitly rather than surfacing a raw constraint error,
 as Gap #12 did for matches and competitors.
 
 
@@ -1508,8 +1509,8 @@ as Gap #12 did for matches and competitors.
 - ✅ Met in the unreleased changes: `IpscConstants`' `MATCH_POINTS_SCALE`, `HIT_FACTOR_SCALE` and `TIME_SCALE`,
   `SystemConstants.DEFAULT_SCALE` and `NumberUtil.calculateSum` are removed rather than left unused, closing Gap #41.
 - ✅ Met in the unreleased changes: `IpscShooterLogOverallController` and `IpscShooterLogOverallService` calculate and
-  read a shooter log's overalls, and `ARCHITECTURE.md`, `README.md` and `CONTRIBUTING.md` drop their "still being built"
-  language, closing Gap #6.
+  read a shooter log's overall results, and `ARCHITECTURE.md`, `README.md` and `CONTRIBUTING.md` drop their "still
+  being built" language, closing Gap #6.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

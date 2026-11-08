@@ -127,7 +127,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<ShooterLogOverall> replaceShooterLogOveralls(List<ShooterLogOverall> toSave,
+    public List<ShooterLogOverall> replaceShooterLogOverallResults(List<ShooterLogOverall> toSave,
                                                              List<ShooterLogOverall> toDelete) {
         // Deleted and saved in one transaction and flushed inside it, so a constraint violation surfaces
         // from this call as a DataIntegrityViolationException the caller can handle.
