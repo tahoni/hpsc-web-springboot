@@ -57,16 +57,31 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
     @Override
     public ShooterResponseHolder calculateMatchShooterResult(Long matchId) throws NonFatalException {
         IpscMatch match = findMatchOrThrow(matchId);
+        // Competitors without points (none, or 0) did not score, so they get no result and are not ranked against
+        // the others
         List<MatchCompetitor> matchCompetitors =
-                matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(matchId);
-
-        // Results already calculated, found by their match competitor, so calculating again updates them
-        Map<Long, ShooterResult> existingByMatchCompetitorId = new HashMap<>();
-        for (ShooterResult existing : shooterResultRepository.findAllByMatchIdWithDetails(matchId)) {
-            existingByMatchCompetitorId.put(existing.getMatchCompetitor().getId(), existing);
+                matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(matchId).stream()
+                        .filter(this::hasPoints)
+                        .toList();
+        Set<Long> scoredMatchCompetitorIds = new HashSet<>();
+        for (MatchCompetitor matchCompetitor : matchCompetitors) {
+            scoredMatchCompetitorIds.add(matchCompetitor.getId());
         }
 
-        if (isUpToDate(match, matchCompetitors, existingByMatchCompetitorId)) {
+        // Results already calculated, found by their match competitor, so calculating again updates them. A result
+        // whose competitor no longer has points, such as after the points were cleared, is stale and removed.
+        Map<Long, ShooterResult> existingByMatchCompetitorId = new HashMap<>();
+        List<ShooterResult> staleShooterResults = new ArrayList<>();
+        for (ShooterResult existing : shooterResultRepository.findAllByMatchIdWithDetails(matchId)) {
+            Long matchCompetitorId = existing.getMatchCompetitor().getId();
+            if (scoredMatchCompetitorIds.contains(matchCompetitorId)) {
+                existingByMatchCompetitorId.put(matchCompetitorId, existing);
+            } else {
+                staleShooterResults.add(existing);
+            }
+        }
+
+        if (staleShooterResults.isEmpty() && isUpToDate(match, matchCompetitors, existingByMatchCompetitorId)) {
             return getShooterResults(matchId);
         }
 
@@ -99,16 +114,25 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
                 shooterResult.setCompetitorCategory(matchCompetitor.getCompetitorCategory());
                 shooterResult.setDivision(matchCompetitor.getDivision());
                 shooterResult.setRankInLog(ranks.get(matchCompetitor.getId()));
-                shooterResult.setPercentageInLog(matchCompetitor.getPoints() == null ? null
-                        : NumberUtil.calculatePercentage(matchCompetitor.getPoints(), winnerPoints,
-                        IpscConstants.PERCENTAGE_SCALE));
+                shooterResult.setPercentageInLog(NumberUtil.calculatePercentage(matchCompetitor.getPoints(),
+                        winnerPoints, IpscConstants.PERCENTAGE_SCALE));
                 shooterResult.setDateCalculated(dateCalculated);
                 shooterResults.add(shooterResult);
             }
         }
-        transactionService.saveShooterResults(shooterResults);
+        transactionService.replaceShooterResults(shooterResults, staleShooterResults);
 
         return getShooterResults(matchId);
+    }
+
+    /**
+     * Whether a match competitor scored: their points are present and above zero.
+     *
+     * @param matchCompetitor the match competitor to check.
+     * @return {@code true} if the match competitor has points above zero.
+     */
+    private boolean hasPoints(MatchCompetitor matchCompetitor) {
+        return (matchCompetitor.getPoints() != null) && (matchCompetitor.getPoints().signum() > 0);
     }
 
     @Override

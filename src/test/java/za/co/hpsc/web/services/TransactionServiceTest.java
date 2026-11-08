@@ -340,6 +340,40 @@ public class TransactionServiceTest {
         verify(transactionManager, never()).commit(any());
     }
 
+    // replaceShooterResults()
+    @Test
+    void testReplaceShooterResults_whenCalled_thenDeletesSavesAndFlushesInOneTransaction() {
+        // Arrange
+        stubTransaction();
+        ShooterResult toSave = new ShooterResult();
+        ShooterResult toDelete = new ShooterResult();
+        when(shooterResultRepository.save(any(ShooterResult.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        List<ShooterResult> result = transactionService.replaceShooterResults(List.of(toSave), List.of(toDelete));
+
+        // Assert
+        assertEquals(List.of(toSave), result);
+        verify(shooterResultRepository).deleteAll(List.of(toDelete));
+        verify(shooterResultRepository).flush();
+        verify(transactionManager, times(1)).getTransaction(any());
+        verify(transactionManager).commit(transactionStatus);
+    }
+
+    @Test
+    void testReplaceShooterResults_whenFlushFails_thenRollsBackAndPropagates() {
+        // Arrange
+        stubTransaction();
+        doThrow(new DataIntegrityViolationException("duplicate")).when(shooterResultRepository).flush();
+
+        // Act & Assert
+        assertThrows(DataIntegrityViolationException.class,
+                () -> transactionService.replaceShooterResults(List.of(), List.of(new ShooterResult())));
+        verify(transactionManager).rollback(transactionStatus);
+        verify(transactionManager, never()).commit(any());
+    }
+
     // deleteShooterLog()
     @Test
     void testDeleteShooterLog_whenCalled_thenDeletesFlushesAndCommits() {

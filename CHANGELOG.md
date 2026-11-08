@@ -29,6 +29,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Services
+
+- **`IpscShooterResultServiceImpl.calculateMatchShooterResult`:** Match competitors without points (none, or 0) are
+  now excluded from the shooter results — they get no result and no longer count towards the group's winner points or
+  anyone's percentage. Previously they were saved with a null rank and percentage.
+- **`IpscShooterResultServiceImpl.calculateMatchShooterResult`:** A result whose competitor no longer has points, such
+  as after the points were cleared, is deleted on the next calculation. Any such stale result also forces a
+  recalculation, so a change made within the recalculation threshold is not missed.
+- **`TransactionService.replaceShooterResults`:** New method that deletes stale shooter results and saves the
+  recalculated ones in a single transaction, flushing before it commits so a constraint violation surfaces from the
+  call.
+
 ---
 
 ### 🧾 [16.1.0] - 2026-11-08

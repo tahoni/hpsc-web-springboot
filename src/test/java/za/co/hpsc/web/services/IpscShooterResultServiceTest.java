@@ -53,7 +53,7 @@ class IpscShooterResultServiceTest {
 
     // calculateMatchShooterResult()
     @Test
-    void testCalculateMatchShooterResult_whenCompetitorsHaveNoPoints_thenLeavesRankAndPercentageNull()
+    void testCalculateMatchShooterResult_whenCompetitorsHaveNoPoints_thenExcludesThemFromTheResults()
             throws NonFatalException {
         // Arrange
         IpscMatch match = match(2L, "Club Championship");
@@ -66,10 +66,97 @@ class IpscShooterResultServiceTest {
         ipscShooterResultService.calculateMatchShooterResult(2L);
 
         // Assert
-        ShooterResult saved = savedShooterResults().getFirst();
-        assertNull(saved.getRankInLog());
-        assertNull(saved.getPercentageInLog());
-        assertNotNull(saved.getDateCalculated());
+        verifyNoInteractions(transactionService);
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenCompetitorHasNullPoints_thenExcludesThemAndRanksTheOthers()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor scored = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "80");
+        MatchCompetitor unscored = matchCompetitor(2L, FirearmType.HANDGUN, Division.OPEN, null);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(unscored, scored));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of());
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        List<ShooterResult> saved = savedShooterResults();
+        assertEquals(1, saved.size());
+        assertEquals(1, rankOf(saved, scored));
+        assertEquals(new BigDecimal("100.00"), percentageOf(saved, scored));
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenCompetitorHasZeroPoints_thenExcludesThemAndRanksTheOthers()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor scored = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "80");
+        MatchCompetitor zero = matchCompetitor(2L, FirearmType.HANDGUN, Division.OPEN, "0");
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(zero, scored));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of());
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        List<ShooterResult> saved = savedShooterResults();
+        assertEquals(1, saved.size());
+        assertEquals(1, rankOf(saved, scored));
+        assertEquals(new BigDecimal("100.00"), percentageOf(saved, scored));
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenPointsWereClearedAfterCalculation_thenDeletesTheStaleResult()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor scored = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "80");
+        MatchCompetitor cleared = matchCompetitor(2L, FirearmType.HANDGUN, Division.OPEN, null);
+        ShooterResult existingScored = shooterResult(10L, 2L);
+        existingScored.setMatchCompetitor(scored);
+        ShooterResult stale = shooterResult(11L, 2L);
+        stale.setMatchCompetitor(cleared);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(scored, cleared));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L))
+                .thenReturn(List.of(existingScored, stale));
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        assertEquals(List.of(existingScored), savedShooterResults());
+        assertEquals(List.of(stale), deletedShooterResults());
+    }
+
+    @Test
+    void testCalculateMatchShooterResult_whenOnlyStaleResultsRemain_thenDeletesThemAndSavesNone()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(2L, "Club Championship");
+        MatchCompetitor cleared = matchCompetitor(1L, FirearmType.HANDGUN, Division.OPEN, "0");
+        ShooterResult stale = shooterResult(10L, 2L);
+        stale.setMatchCompetitor(cleared);
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match));
+        when(matchCompetitorRepository.findAllByMatchIdWithCompetitorAndMatch(2L))
+                .thenReturn(List.of(cleared));
+        when(shooterResultRepository.findAllByMatchIdWithDetails(2L)).thenReturn(List.of(stale));
+
+        // Act
+        ipscShooterResultService.calculateMatchShooterResult(2L);
+
+        // Assert
+        assertTrue(savedShooterResults().isEmpty());
+        assertEquals(List.of(stale), deletedShooterResults());
     }
 
     @Test
@@ -408,7 +495,8 @@ class IpscShooterResultServiceTest {
         assertEquals(1, rankOf(saved, tied));
         assertEquals(3, rankOf(saved, third));
         assertEquals(new BigDecimal("50.00"), percentageOf(saved, third));
-        assertNull(rankOf(saved, unscored));
+        assertEquals(3, saved.size());
+        assertTrue(saved.stream().noneMatch(result -> result.getMatchCompetitor() == unscored));
     }
 
     // getAllShooterResults()
@@ -586,7 +674,14 @@ class IpscShooterResultServiceTest {
     @SuppressWarnings("unchecked")
     private List<ShooterResult> savedShooterResults() {
         ArgumentCaptor<List<ShooterResult>> captor = ArgumentCaptor.forClass(List.class);
-        verify(transactionService).saveShooterResults(captor.capture());
+        verify(transactionService).replaceShooterResults(captor.capture(), anyList());
+        return new ArrayList<>(captor.getValue());
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<ShooterResult> deletedShooterResults() {
+        ArgumentCaptor<List<ShooterResult>> captor = ArgumentCaptor.forClass(List.class);
+        verify(transactionService).replaceShooterResults(anyList(), captor.capture());
         return new ArrayList<>(captor.getValue());
     }
 
