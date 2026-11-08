@@ -101,7 +101,7 @@ calculated, so recalculate each match's results, or the shooter log's overall re
 
 ## 📊 Statistics
 
-- **Files Changed:** 18 against `main` before this release's documentation; 554 insertions and 68 deletions
+- **Files Changed:** 18 against `main` before this release's documentation; 602 insertions and 133 deletions
 - **New Source Files:** 0
 - **Renamed Source Files:** 0
 - **Deleted Source Files:** 0
