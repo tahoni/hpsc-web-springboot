@@ -61,6 +61,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   imported, but its result now carries a message saying the entry is left out of shooter results until the competitor
   is verified. The message of a successfully imported row was always empty before.
 
+##### Documentation
+
+- **`README.md`, `ARCHITECTURE.md`, `IpscCompetitorController` and `IpscMatchCompetitorController`:** Describe verifying
+  competitors in bulk and the message on a match competitor import row whose competitor is not verified.
+
 ---
 
 ### 🧾 [16.1.1] - 2026-11-08
