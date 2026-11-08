@@ -30,6 +30,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🐛 Fixed
+
+##### Services
+
+- **`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`:** A `ValidationException`, a `400`, is now thrown if
+  a match the shooter log covers is scheduled outside its start and end dates, both inclusive, and nothing is
+  calculated or changed. The dates were only enforced when a log was written, so a match rescheduled afterwards was
+  still counted. A match updated after the overall results were calculated also marks them out of date, as moving a
+  match within the log can change which of a competitor's matches is the most recent.
+- **`ShooterLogHelpers.validateMatchesWithinDates`:** New helper holding the date check that
+  `IpscShooterLogServiceImpl` ran when a log was written, so the overall calculation applies the same rule and message.
+
 ---
 
 ### 🧾 [16.1.1] - 2026-11-08
