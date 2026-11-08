@@ -50,6 +50,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   recalculated ones in a single transaction, flushing before it commits so a constraint violation surfaces from the
   call.
 
+##### Documentation
+
+- **`README.md` and `ARCHITECTURE.md`:** State that shooter results include only verified competitors with points above
+  zero, and that shooter log overall results include only verified competitors. They also record that a competitor
+  becomes verified by setting `isVerified` when it is created, or through `PUT` or
+  `PATCH /ipsc/competitors/{competitorId}` afterwards, since the bulk import only creates competitors. They also state that the match competitor import still
+  imports an entry for an unverified competitor, which is only included in results once the competitor is verified, and
+  that neither it nor the match import verifies anyone.
+- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Gap #43 (verified-only results with no documented way for
+  an imported competitor to become verified) is added and closed in v16.1.1.
+
 ---
 
 ### 🧾 [16.1.0] - 2026-11-08

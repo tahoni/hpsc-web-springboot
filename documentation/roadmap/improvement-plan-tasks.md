@@ -465,6 +465,21 @@ Gap #41)* —
   surfacing
   a raw constraint error
 
+**Verified-competitor eligibility in shooter results** *(improvement-plan.md → Gap #43)* —
+✅ Closed in v16.1.1
+
+- [x] Describe the eligibility rules (verified competitor, points above zero) in `README.md`'s IPSC Shooter Results and
+  Shooter Log Overall Results bullets
+- [x] Describe the same rules in `ARCHITECTURE.md`'s Feature Support rows and the `IpscShooterResultService`/
+  `IpscShooterLogOverallService` rows of its service table — done for the shooter result row and both service rows;
+  the Shooter Logs Feature Support row already describes the overall calculation, which the service row now qualifies
+- [x] Decide how a newly imported competitor becomes verified (a documented `PATCH /ipsc/competitors/{id}` step, a
+  default on import, or a required CSV column) and record the decision in `CONTRIBUTING.md` or `ARCHITECTURE.md` —
+  decided: verification is never defaulted; set `isVerified` at creation or use the `PATCH` endpoint, recorded in
+  `README.md` and `ARCHITECTURE.md`'s Competitor Bulk CSV Import Flow rather than `CONTRIBUTING.md`
+- [x] Add a migration only if existing unverified competitors should be backfilled as `V8_7_0` did — not needed: no
+  backfill, so competitors created since `V8_7_0` without `isVerified` stay excluded until they are marked verified
+
 ---
 
 ## 🟡 Partially Completed

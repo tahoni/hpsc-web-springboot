@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (42):**
+- **✅ Completed (43):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -131,6 +131,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
     results; creating the logs themselves is Gap #42)
   - #42 Nothing creates a shooter log or links it to matches, so the shooter log overall endpoints have nothing
     to run on — closed in v16.1.0 (`IpscShooterLogService` and `/ipsc/shooter-logs`)
+  - #43 Shooter results now count only verified competitors, but imports leave `isVerified` unset and no doc states
+    the rule — closed in v16.1.1 (rules and the manual verification step documented)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
 - **⚪ Open (0):**
@@ -1397,6 +1399,41 @@ Mockito controller and service tests and `@SpringBootTest` integration tests. A 
 exist is refused with a `404`, and deleting a shooter log that has overall results is refused with a `400` rather than
 surfacing a raw constraint error, as Gap #12 did for matches and competitors.
 
+#### 43. Shooter results now count only verified competitors, but imports leave `isVerified` unset and no doc states the rule — ✅ Closed in v16.1.1
+
+**Evidence:** `IpscShooterResultServiceImpl.calculateMatchShooterResult` keeps a match competitor only when
+`Competitor.isVerified` is `true` and its points are above zero, and `IpscShooterLogOverallServiceImpl` drops results
+of unverified competitors the same way (`CHANGELOG.md`'s `[Unreleased]` section records both rules). Nothing sets
+`isVerified` for a new competitor: `CompetitorRequest` documents it as "stored as `null` when omitted",
+`CompetitorMapper` copies it as given, and the CSV import passes `csvRow.getIsVerified()` through
+(`IpscCompetitorServiceImpl`). `V8_7_0__add_competitor_is_verified.sql` marked only the competitors that already
+existed as verified, so every competitor created since, without an explicit `isVerified`, is excluded from results
+without any message. `README.md`'s IPSC Shooter Results and Shooter Log Overall Results bullets and
+`ARCHITECTURE.md`'s Feature Support rows and service table describe ranking "each competitor", and no document
+mentions that unverified competitors, and those without points, are left out.
+
+**Why it matters:** The same shape as Gaps #9 and #12: behaviour the code enforces that the documentation doesn't
+state, with a data path that cannot satisfy it by default. A newly imported competitor who shot a match has no result
+and no error, and the only way to learn why is to read the service. A contributor reading `README.md` or
+`ARCHITECTURE.md` would expect every scored competitor to be ranked.
+
+**Proposed improvement:** State the eligibility rules (verified, and points above zero) in `README.md`'s and
+`ARCHITECTURE.md`'s shooter result and overall result descriptions. Decide how a competitor becomes verified — a
+documented manual step through `PATCH /ipsc/competitors/{id}`, a default on import, or a CSV column the importer
+requires — and record the decision in `CONTRIBUTING.md` or `ARCHITECTURE.md`, adding a migration only if existing
+unverified competitors should be backfilled as `V8_7_0` did.
+
+**Outcome:** Done as proposed, documenting the rule and the existing manual step rather than changing behaviour:
+verification stays a deliberate, never-defaulted flag. `README.md`'s shooter result and overall result bullets and
+`ARCHITECTURE.md`'s Feature Support row and service table rows now say that only verified competitors (and, for match
+results, those with points above zero) are included. `README.md` and `ARCHITECTURE.md`'s Competitor Bulk CSV Import
+Flow record how a competitor becomes verified: by setting `isVerified` (the `IsVerified` CSV column) when it is
+created, or through `PATCH /ipsc/competitors/{competitorId}` afterwards, since the bulk import only creates
+competitors and cannot verify an existing one. The match competitor import still imports an entry for an unverified
+competitor, and both docs say it is only included in results once the competitor is verified and that neither it nor the
+match import verifies anyone. No migration was added, so competitors created since `V8_7_0` without `isVerified` stay
+excluded until they are marked verified.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -1415,7 +1452,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | No items currently scoped — #6 and #42 closed in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                                                                 |
+| **Now**     | No items currently scoped — #43 closed in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                                                 |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath; re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
@@ -1522,6 +1559,8 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
   being built" language, closing Gap #6.
 - ✅ Met in v16.1.0: `IpscShooterLogController` and `IpscShooterLogService` create, replace, patch,
   get and delete shooter logs with the matches they cover, closing Gap #42.
+- ✅ Met in v16.1.1: `README.md` and `ARCHITECTURE.md` state that shooter results and overall results include only
+  verified competitors with points, and record how a newly created competitor becomes verified, closing Gap #43.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.
