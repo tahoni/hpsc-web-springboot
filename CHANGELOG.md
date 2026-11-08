@@ -30,6 +30,37 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Controllers
+
+- **`IpscCompetitorController.verifyCompetitors`:** New `POST /ipsc/competitors/verify` marks several competitors as
+  verified from a list of their IDs, returning one result per distinct ID. Each ID that matches a competitor is
+  verified, and one that matches nobody is reported in its own result instead of failing the others.
+
+##### Services
+
+- **`IpscCompetitorService.verifyCompetitors`:** Verifies every competitor that exists in a single transaction through
+  `TransactionService.saveCompetitors`, leaving one that is already verified as it is and reporting it as such.
+
+##### Models
+
+- **`CompetitorVerifyRequest`, `CompetitorVerifyResponse` and `CompetitorVerifyResponseHolder`:** The request carrying
+  the competitor IDs, and the per-competitor results of a bulk verification.
+
+##### Repositories
+
+- **`CompetitorRepository.findAllByIdInWithHomeClubAndEmailAddresses`:** Fetch-joins the home club and email addresses
+  of several competitors, so their responses can be mapped outside a transaction.
+
+#### 🔄 Changed
+
+##### Services
+
+- **`IpscMatchCompetitorServiceImpl.createMatchCompetitors`:** A row whose competitor is not verified is still
+  imported, but its result now carries a message saying the entry is left out of shooter results until the competitor
+  is verified. The message of a successfully imported row was always empty before.
+
 ---
 
 ### 🧾 [16.1.1] - 2026-11-08

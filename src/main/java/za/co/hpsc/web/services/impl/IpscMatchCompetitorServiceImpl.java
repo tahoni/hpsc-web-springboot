@@ -114,8 +114,13 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
 
                 matchCompetitor = new MatchCompetitor();
                 matchCompetitorMapper.applyFields(matchCompetitor, request);
-                matchCompetitorBulkResponses.add(
-                        new MatchCompetitorBulkResponse(true, "", toResponse(save(matchCompetitor)), null));
+                MatchCompetitorResponse saved = toResponse(save(matchCompetitor));
+                // The entry is still imported, but results only include verified competitors, so say it is left out
+                String message = Boolean.TRUE.equals(matchCompetitor.getCompetitor().getIsVerified()) ? ""
+                        : "Imported, but competitor with ID " + matchCompetitor.getCompetitor().getId()
+                        + " is not verified, so this entry is left out of shooter results until the competitor is "
+                        + "verified.";
+                matchCompetitorBulkResponses.add(new MatchCompetitorBulkResponse(true, message, saved, null));
             } catch (ValidationException | NonFatalException e) {
                 log.warn("Match competitor skipped due to error: {}", e.getMessage());
                 matchCompetitorBulkResponses.add(failedRow(e.getMessage(), request, matchCompetitor));
