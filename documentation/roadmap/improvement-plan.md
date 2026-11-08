@@ -1428,7 +1428,7 @@ verification stays a deliberate, never-defaulted flag. `README.md`'s shooter res
 `ARCHITECTURE.md`'s Feature Support row and service table rows now say that only verified competitors (and, for match
 results, those with points above zero) are included. `README.md` and `ARCHITECTURE.md`'s Competitor Bulk CSV Import
 Flow record how a competitor becomes verified: by setting `isVerified` (the `IsVerified` CSV column) when it is
-created, or through `PATCH /ipsc/competitors/{competitorId}` afterwards, since the bulk import only creates
+created, or through `PUT` or `PATCH /ipsc/competitors/{competitorId}` afterwards, since the bulk import only creates
 competitors and cannot verify an existing one. The match competitor import still imports an entry for an unverified
 competitor, and both docs say it is only included in results once the competitor is verified and that neither it nor the
 match import verifies anyone. No migration was added, so competitors created since `V8_7_0` without `isVerified` stay
