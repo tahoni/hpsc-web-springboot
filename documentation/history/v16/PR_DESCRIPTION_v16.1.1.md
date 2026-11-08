@@ -27,9 +27,9 @@
 - [x] `./mvnw clean verify -Pcoverage` passes: 1,447 tests, no failures, errors or skips, and coverage above the
   97% minimum
 - [x] `CHANGELOG.md`'s `[Unreleased]` section synced against the branch and renamed to `[16.1.1]`
-- [ ] Check which existing competitors have no `isVerified` value and mark the ones who should appear in results as
+- [x] Check which existing competitors have no `isVerified` value and mark the ones who should appear in results as
   verified, since no migration backfills them
-- [ ] Recalculate a match's results and a shooter log's overall results and confirm unverified competitors are removed
+- [x] Recalculate a match's results and a shooter log's overall results and confirm unverified competitors are removed
 
 ## 🔗 Related Documentation
 
