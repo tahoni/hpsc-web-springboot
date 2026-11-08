@@ -23,8 +23,7 @@ public final class ShooterLogHelpers {
      *
      * @param shooterLog the shooter log to check; must not be null. A log without a start or end date, or without
      *                   matches, has nothing to check.
-     * @throws ValidationException if a match has no scheduled date, or is scheduled before the log's start date or
-     *                             after its end date.
+     * @throws ValidationException if a match is scheduled before the log's start date or after its end date.
      */
     public static void validateMatchesWithinDates(ShooterLog shooterLog) {
         if ((shooterLog.getStartDate() == null) || (shooterLog.getEndDate() == null)
@@ -33,10 +32,6 @@ public final class ShooterLogHelpers {
         }
 
         for (IpscMatch match : shooterLog.getMatches()) {
-            if (match.getScheduledDate() == null) {
-                throw new ValidationException("Match with ID " + match.getId()
-                        + " has no scheduled date, so it cannot be checked against the shooter log's dates.");
-            }
             LocalDate matchDate = match.getScheduledDate().toLocalDate();
             if (matchDate.isBefore(shooterLog.getStartDate()) || matchDate.isAfter(shooterLog.getEndDate())) {
                 throw new ValidationException("Match with ID " + match.getId() + " is scheduled for " + matchDate

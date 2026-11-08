@@ -161,8 +161,7 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
      *
      * @param shooterLog the shooter log to check; must not be null. A log without a start or end date, or without
      *                   matches, has nothing to check.
-     * @throws ValidationException if a match has no scheduled date, or is scheduled before the log's start date or
-     *                             after its end date.
+     * @throws ValidationException if a match is scheduled before the log's start date or after its end date.
      */
     protected void validateMatchesWithinDates(ShooterLog shooterLog) {
         ShooterLogHelpers.validateMatchesWithinDates(shooterLog);

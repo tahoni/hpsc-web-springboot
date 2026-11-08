@@ -85,17 +85,6 @@ class ShooterLogHelpersTest {
         assertTrue(exception.getMessage().startsWith("Match with ID 10 is scheduled for 2026-08-31"));
     }
 
-    @Test
-    void testValidateMatchesWithinDates_whenAMatchHasNoScheduledDate_thenThrowsValidationException() {
-        // Arrange
-        ShooterLog shooterLog = shooterLog(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30), match(10L, null));
-
-        // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> ShooterLogHelpers.validateMatchesWithinDates(shooterLog));
-        assertTrue(exception.getMessage().startsWith("Match with ID 10 has no scheduled date"));
-    }
-
     // Helpers
     private ShooterLog shooterLog(LocalDate startDate, LocalDate endDate, IpscMatch... matches) {
         ShooterLog shooterLog = new ShooterLog();
@@ -108,7 +97,7 @@ class ShooterLogHelpersTest {
     private IpscMatch match(Long id, LocalDate date) {
         IpscMatch match = new IpscMatch();
         match.setId(id);
-        match.setScheduledDate(date == null ? null : date.atStartOfDay());
+                match.setScheduledDate(date.atStartOfDay());
         return match;
     }
 }

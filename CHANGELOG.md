@@ -44,6 +44,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### Services
+
+- **`IpscShooterLogServiceImpl.validateMatchesWithinDates`:** The `ValidationException` for a match with no scheduled
+  date is removed, along with the three tests that only covered it — `ipsc_match.scheduled_date` is `NOT NULL`, so a
+  match always has one. The check itself now lives in `ShooterLogHelpers.validateMatchesWithinDates`.
+
 ##### Documentation
 
 - **`README.md`, `ARCHITECTURE.md`, `IpscShooterLogOverallService` and `IpscShooterLogOverallController`:** State that
