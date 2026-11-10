@@ -20,7 +20,7 @@ public class CompetitorResponseHolder {
     /** The list of competitors created or updated by the bulk import. */
     @NotNull
     private List<CompetitorResponse> competitors;
-    /** The result of each row of the import, in the same order as the CSV, including a row that was skipped. */
+    /** The result of each row of the import, in the same order as the CSV. */
     @NotNull
     private List<CompetitorBulkResponse> results;
 

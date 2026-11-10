@@ -13,7 +13,6 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
-import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponse;
@@ -122,37 +121,6 @@ class IpscCompetitorControllerTest {
 
         // Assert
         assertSame(holder, result.getBody());
-    }
-
-    @Test
-    void testCreateCompetitors_whenEveryRowWasSkipped_thenReturns422WithTheHolder() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        CompetitorResponseHolder holder = new CompetitorResponseHolder(List.of(), List.of(
-                new CompetitorBulkResponse(1, false, "Skipped.", null),
-                new CompetitorBulkResponse(2, false, "Skipped.", null)));
-        when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenReturn(holder);
-
-        // Act
-        ResponseEntity<CompetitorResponseHolder> result = ipscCompetitorController.createCompetitors(VALID_CSV);
-
-        // Assert
-        assertEquals(HttpStatus.UNPROCESSABLE_CONTENT, result.getStatusCode());
-        assertSame(holder, result.getBody());
-    }
-
-    @Test
-    void testCreateCompetitors_whenSomeRowsWereSkipped_thenReturns201() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        CompetitorResponseHolder holder = new CompetitorResponseHolder(List.of(new CompetitorResponse()), List.of(
-                new CompetitorBulkResponse(1, false, "Skipped.", null),
-                new CompetitorBulkResponse(2, true, "", new CompetitorResponse())));
-        when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenReturn(holder);
-
-        // Act
-        ResponseEntity<CompetitorResponseHolder> result = ipscCompetitorController.createCompetitors(VALID_CSV);
-
-        // Assert
-        assertEquals(HttpStatus.CREATED, result.getStatusCode());
     }
 
     // deleteCompetitor()

@@ -31,7 +31,6 @@ import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.services.IpscCompetitorService;
-import za.co.hpsc.web.services.IpscEntityCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.io.IOException;
@@ -53,20 +52,17 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     private final ShooterLogOverallRepository shooterLogOverallRepository;
 
     private final CompetitorMapper competitorMapper;
-    private final IpscEntityCompetitorService ipscEntityCompetitorService;
     private final TransactionService transactionService;
 
     public IpscCompetitorServiceImpl(CompetitorRepository competitorRepository,
                                      MatchCompetitorRepository matchCompetitorRepository,
                                      ShooterLogOverallRepository shooterLogOverallRepository,
                                      CompetitorMapper competitorMapper,
-                                     IpscEntityCompetitorService ipscEntityCompetitorService,
                                      TransactionService transactionService) {
         this.competitorRepository = competitorRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.shooterLogOverallRepository = shooterLogOverallRepository;
         this.competitorMapper = competitorMapper;
-        this.ipscEntityCompetitorService = ipscEntityCompetitorService;
         this.transactionService = transactionService;
     }
 
@@ -99,17 +95,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             CompetitorRequest normalised = normaliseCsvRequest(competitorRequest);
             Competitor newCompetitor = newCompetitor(normalised);
             Competitor existing = findExistingCompetitor(newCompetitor);
-            if ((existing != null) && !isIdentifiedBy(existing, newCompetitor)) {
-                // Matched on its name alone, which is not enough to tell two people with the same name apart
-                String message = "Skipped: " + newCompetitor.getFirstName() + " " + newCompetitor.getLastName()
-                        + " has no club number or ID number matching the existing competitor with ID "
-                        + existing.getId() + ", and a full name alone cannot tell two people apart.";
-                log.warn("Competitor skipped due to a full name match only: {}", message);
-                results.add(new CompetitorBulkResponse(rowNumber, false, message, null));
-                continue;
-            }
-
-            CompetitorBulkResponse result = new CompetitorBulkResponse(rowNumber, true, "", null);
+            CompetitorBulkResponse result = new CompetitorBulkResponse(rowNumber, "", null);
             if (existing == null) {
                 competitors.add(newCompetitor);
             } else {
@@ -245,40 +231,21 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
-     * Finds the competitor a bulk import row refers to, through
-     * {@link IpscEntityCompetitorService#findCompetitorByIdentifierAndFullName(String, String)}: by the row's club
-     * number or, when it has none, its ID number, and by its full name when it has neither or the identifier narrows
-     * nothing down.
+     * Finds the competitor a bulk import row refers to: the one with the row's club number, which is unique. A row
+     * without a club number, as every row for a home club other than HPSC's is, never refers to an existing
+     * competitor, since neither a name nor an ID number is enough to tell two people apart.
      *
      * @param candidate the competitor built from the row, with its club number already resolved.
-     * @return the existing competitor with its home club and email addresses loaded, or {@code null} if none matches
-     * and the row so creates a new one.
-     * @throws ValidationException if the row matches several competitors.
+     * @return the existing competitor with its home club and email addresses loaded, or {@code null} if none has the
+     * row's club number and the row so creates a new one.
      */
     protected Competitor findExistingCompetitor(Competitor candidate) {
-        String identifier = hasText(candidate.getClubNumber()) ? candidate.getClubNumber() : candidate.getIdNumber();
-        String fullName = candidate.getFirstName() + " " + candidate.getLastName();
-        try {
-            return ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName(identifier, fullName)
-                    .flatMap(found -> competitorRepository.findByIdWithHomeClubAndEmailAddresses(found.getId()))
-                    .orElse(null);
-        } catch (NonFatalException e) {
-            // No competitor matched, so the row creates a new one
+        if (!hasText(candidate.getClubNumber())) {
             return null;
         }
-    }
-
-    /**
-     * Whether an existing competitor shares a club number or ID number with a bulk import row, rather than having been
-     * matched on its full name alone.
-     *
-     * @param existing  the existing competitor the row was matched to.
-     * @param candidate the competitor built from the row.
-     * @return {@code true} if the club numbers or the ID numbers are the same, and neither is blank.
-     */
-    protected boolean isIdentifiedBy(Competitor existing, Competitor candidate) {
-        return (hasText(candidate.getClubNumber()) && candidate.getClubNumber().equals(existing.getClubNumber()))
-                || (hasText(candidate.getIdNumber()) && candidate.getIdNumber().equals(existing.getIdNumber()));
+        return competitorRepository.findByClubNumber(candidate.getClubNumber())
+                .flatMap(found -> competitorRepository.findByIdWithHomeClubAndEmailAddresses(found.getId()))
+                .orElse(null);
     }
 
     /**

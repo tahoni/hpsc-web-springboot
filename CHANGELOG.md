@@ -38,15 +38,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Models
 
 - **`MatchResponse.warnings`:** Lists the problems found with a match when it is read, left out of the JSON when empty.
-- **`CompetitorBulkResponse`:** The result of one row of the bulk competitor import: its row number, whether it was
-  imported, a message and the competitor it created or updated, which is `null` for a skipped row.
+- **`CompetitorBulkResponse`:** The result of one row of the bulk competitor import: its row number, a message and
+  the competitor it created or updated.
 - **`CompetitorResponseHolder.results`:** Holds a `CompetitorBulkResponse` for every row of the bulk competitor import,
-  in CSV order, so a skipped row is reported in the response as well as logged. `competitors` is unchanged.
-
-##### Controllers
-
-- **`IpscCompetitorController.createCompetitors`:** `POST /ipsc/competitors/bulk` now returns `422`, with the same body,
-  when every row of a non-empty CSV was skipped, as the match competitor import does when every row fails.
+  in CSV order. `competitors` is unchanged.
 
 ##### Services
 
@@ -55,12 +50,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   calculated. The match is still returned, so it stays readable and fixable.
 - **`IpscMatchServiceImpl.updateMatch` and `patchMatch`:** An edit that leaves a match on the same day is still not
   blocked by a shooter log it is already out of step with, but now reports the log in the response's `warnings`.
-- **`IpscCompetitorServiceImpl.createCompetitors`:** A bulk import row for a competitor that already exists now updates
-  and verifies that competitor instead of creating another. A row is matched through
-  `IpscEntityCompetitorService.findCompetitorByIdentifierAndFullName`, by its club number or, when it has none, its ID
-  number, and by its full name. A row matched on its full name alone is skipped with a logged warning, as in the match
-  competitor import, since a name cannot tell two people apart; one that matches several competitors is refused. The
-  matched competitor takes the row's data, as in a full update, and is marked verified.
+- **`IpscCompetitorServiceImpl.createCompetitors`:** A bulk import row whose club number is an existing competitor's now
+  updates and verifies that competitor instead of creating another. The competitor takes the row's data, as in a full
+  update, and is marked verified. A row without a club number, as every row for a home club other than HPSC's is,
+  always creates a competitor, as neither a name nor an ID number is enough to tell two people apart.
 
 #### 🔄 Changed
 
