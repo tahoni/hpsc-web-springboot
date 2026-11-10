@@ -564,6 +564,16 @@ Gap #41)* —
 - [x] Describe the warnings in `README.md`, `ARCHITECTURE.md` and the match controller and service OpenAPI text and
   Javadoc — done
 
+**`flyway-mysql` pinned above the Flyway version Spring Boot manages** *(improvement-plan.md → Gap #50)* —
+✅ Closed in v16.4.0
+
+- [x] Drop the `flyway-mysql` version so it takes the one Spring Boot manages — done, in `pom.xml`
+- [x] Confirm that `flyway-core`, the MySQL module and the Maven plugin share one version — done, with
+  `dependency:tree`: all three at `12.4.0`
+- [x] Run the migrations against a MySQL database on the aligned version — done, with a temporary `@SpringBootTest`
+  against a throwaway `mysql:8.4` container: all 38 migrations applied on Flyway `12.4.0`, then the test and the
+  container were removed
+
 ---
 
 ## 🟡 Partially Completed
@@ -572,14 +582,7 @@ A gap moves here once at least one of its items is checked, but the block as a w
 matching `improvement-plan.md`'s "🟡 Partially Completed" section — and moves on to ✅ Completed once every item is
 checked and the gap's own header there carries a "✅ Closed" suffix.
 
-**`flyway-mysql` pinned above the Flyway version Spring Boot manages** *(improvement-plan.md → Gap #50)* —
-🟡 Partially completed in v16.4.0
-
-- [x] Drop the `flyway-mysql` version so it takes the one Spring Boot manages — done, in `pom.xml`
-- [x] Confirm that `flyway-core`, the MySQL module and the Maven plugin share one version — done, with
-  `dependency:tree`: all three at `12.4.0`
-- [ ] Run the migrations against a MySQL database on the aligned version — not yet done; the `test` profile bypasses
-  Flyway on H2
+*No gaps are currently partially completed.*
 
 ---
 
