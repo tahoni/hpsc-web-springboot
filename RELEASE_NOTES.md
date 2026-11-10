@@ -1,4 +1,4 @@
-# Release Notes – Version 16.3.0
+# Release Notes – Version 16.4.0
 
 **Release Date:** November 10, 2026 **Status:** ✨ Stable
 
@@ -6,45 +6,68 @@
 
 ## 🎯 Theme
 
-**Shooter Log Bulk CSV Import**
+**Changing Existing Records in Bulk**
 
-Version 16.3.0 is a minor release. Competitors, matches and match competitors can each be loaded from CSV, with every
-row reported on its own, but a shooter log could only be created one request at a time. A new endpoint creates shooter
-logs from CSV, one log per row, and checks each row exactly as a single log is checked. A row that fails is reported
-with the values it supplied and the reason, and the rest are still created. Nothing existing changes shape, so the
-release is backward-compatible.
+Version 16.4.0 is a minor release. The bulk CSV imports could create records but not change them: an existing shooter
+log could be replaced or patched only one request at a time, a competitor row for someone already stored hit the
+unique club number, and a match that had fallen outside the dates of its shooter log said nothing when it was read.
+New `PUT` and `PATCH` bulk endpoints change existing shooter logs, with `PATCH` able to add and remove matches, a
+competitor row for an existing club number now updates and verifies that competitor, and a match reports the conflict
+in its `warnings`. Every addition is optional or new, so the release is backward-compatible.
 
 ---
 
 ## ⭐ Key Highlights
 
-### 📥 Bulk Import
+### 📥 Bulk Shooter Log Updates
 
-- `POST /ipsc/shooter-logs/bulk` creates shooter logs from `text/plain` CSV data, one log per row, with `StartDate`,
-  `EndDate` and `MatchIds` columns; the match IDs in a row are separated by semicolons
-- Each row is created through `createShooterLog` in its own transaction, so a row needs both dates, an end date not
-  before the start date, and existing matches that are all scheduled within the row's dates
-- The endpoint answers `201` if any row was created, or the CSV had no rows, and `422` if every row failed; blank or
-  unreadable CSV is a `400`
+- `PUT /ipsc/shooter-logs/bulk` replaces existing shooter logs and `PATCH /ipsc/shooter-logs/bulk` updates them, from
+  `text/plain` CSV with a `ShooterLogId` column beside `StartDate`, `EndDate` and `MatchIds`
+- Each row goes through `updateShooterLog` or `patchShooterLog` in its own transaction, so a failed row is reported
+  with the values it supplied and the rest are still saved; the endpoints answer `200`, or `422` if every row failed
+- In a bulk `PATCH` an empty column leaves that field unchanged, and a bulk `PUT` needs both dates and clears the
+  matches when `MatchIds` is empty
 
-### 🧾 Per-Row Reporting
+### ➕ Adding and Removing Matches
 
-- A failed row comes back as a `ShooterLogBulkResponse` with `success` set to `false`, the reason in `message` and a
-  `ShooterLogRow` holding every value the row supplied, as text
-- A row without a start or end date is reported on its own instead of failing the file, because
-  `ShooterLogRequestCsvMixIn` marks no column as required
+- `ShooterLogPatchRequest` gains `addMatchIds` and `removeMatchIds`, and the bulk `PATCH` the matching `AddMatchIds`
+  and `RemoveMatchIds` columns, so a log's matches change without restating them
+- `matchIds` still replaces the list in full and is applied first, then the additions, then the removals; adding a
+  match the log already covers, or removing one it does not, changes nothing
+- An unknown match to add is a `404`, a match both added and removed is a `400`, and every match the log ends up with
+  is still checked against its dates
 
-### 🛡️ Null Match IDs
+### 🏆 Competitor Import Updates
 
-- `ShooterLogRequest.validate` rejects a null match ID with a `ValidationException`, a `400`; before, it reached the
-  repository and failed with a `500`
+- A `POST /ipsc/competitors/bulk` row whose club number is an existing competitor's updates that competitor with the
+  row's data and marks it verified, instead of creating another
+- A row without a club number, as every row for a home club other than HPSC's is, always creates a competitor, since
+  neither a name nor an ID number can tell two people apart
+- `CompetitorResponseHolder.results` holds a `CompetitorBulkResponse` for every row, with its row number, a message
+  and the competitor; `competitors` is unchanged
 
-### 📖 Documented Import
+### ⚠️ Match Warnings
 
-- `README.md` and `ARCHITECTURE.md` describe the import, and `ARCHITECTURE.md` gains a Shooter Log Bulk CSV Import Flow
-  diagram
-- The Javadoc on `IpscShooterLogService` and the OpenAPI description on `IpscShooterLogController` cover the columns,
-  the per-row behaviour and the `201`, `400`, `422` and `500` responses
+- A match outside the dates of a shooter log that covers it now says so in `MatchResponse.warnings` when it is read,
+  and when it is edited without changing its day
+- The match is still returned, so it stays readable and fixable, and a move to another day outside the dates is still
+  refused with a `400`
+
+### 🧪 Migrations in CI
+
+- A new `migrations` job in `build.yml` runs `FlywayMysqlMigrationTest` against a throwaway `mysql:8.4` service
+  container on every push and pull request to `main` and `develop`
+- The test applies every migration to an empty database through the application's runtime classpath, and checks that
+  none is pending or failed, the application tables exist and the checksums validate
+- It runs only when `FLYWAY_MYSQL_URL` is set, so the normal build, which uses H2, needs no MySQL and reports it as
+  skipped
+
+### 🛠️ Housekeeping
+
+- `flyway-mysql` takes the `12.4.0` Spring Boot manages instead of a `13.7.0` pin that mixed two Flyway majors; all 38
+  migrations were applied to a throwaway MySQL 8.4 on it
+- The match, competitor and match competitor CSV imports stop reading their own ID column, which was bound but never
+  used
 
 ---
 
@@ -52,19 +75,30 @@ release is backward-compatible.
 
 ### Added
 
-- `IpscShooterLogController.createShooterLogs`, serving `POST /ipsc/shooter-logs/bulk`
-- `IpscShooterLogService.createShooterLogs` and its implementation, with `readShooterLogs` parsing the CSV
-- `ShooterLogRequestCsvMixIn`, binding the CSV column names onto `ShooterLogRequest`
-- `ShooterLogBulkResponse`, `ShooterLogBulkResponseHolder` and `ShooterLogRow`, with `ShooterLogRowTest` and
-  `ShooterLogRequestCsvMixInTest`
-- Controller, service and `@SpringBootTest` integration tests for the import
+- `IpscShooterLogController.updateShooterLogs` and `patchShooterLogs`, serving `PUT` and
+  `PATCH /ipsc/shooter-logs/bulk`, with `IpscShooterLogService.updateShooterLogs` and `patchShooterLogs`
+- `ShooterLogBulkRequest` and `ShooterLogBulkRequestCsvMixIn`, binding the bulk update columns
+- `FlywayMysqlMigrationTest` and the `migrations` job in `.github/workflows/build.yml`, running the Flyway migrations
+  against MySQL 8.4
+- `ShooterLogPatchRequest.addMatchIds` and `removeMatchIds`, with `validate`, and `ShooterLogRow.shooterLogId`,
+  `addMatchIds` and `removeMatchIds`
+- `CompetitorBulkResponse` and `CompetitorResponseHolder.results`
+- `MatchResponse.warnings`, `IpscMatchServiceImpl` filling it, and `ShooterLogHelpers.describeOutsideDates`
+- Mockito, mix-in and `@SpringBootTest` integration tests for the above
 
 ### Changed
 
-- `ShooterLogRequest.validate` rejects a null match ID with a `ValidationException`
-- `IpscCompetitorService` and `IpscShooterLogServiceImpl` drop an unused import each, with no change in behaviour
-- `README.md`, `ARCHITECTURE.md`, `IpscShooterLogService` and `IpscShooterLogController` describe the import
-- `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add and close Gap #47
+- `IpscShooterLogService.patchShooterLog` adds and removes matches after any replacement
+- `IpscCompetitorServiceImpl.createCompetitors` updates and verifies a competitor whose club number a row names
+- `MatchRequestCsvMixIn`, `CompetitorRequestCsvMixIn` and `MatchCompetitorRequestCsvMixIn` stop reading a `MatchId`,
+  `CompetitorId` or `MatchCompetitorId` column respectively, and `MatchRequest`, `CompetitorRequest` and
+  `MatchCompetitorRequest` gain a constructor without their own ID
+- `pom.xml` no longer pins `flyway-mysql`
+- `ARCHITECTURE.md` and `CONTRIBUTING.md` list the migrations gate, and `ARCHITECTURE.md`'s project tree the new
+  `migrations/` test directory
+- `README.md`, `ARCHITECTURE.md`, the match and competitor controller OpenAPI text and the service Javadoc describe
+  the changes
+- `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add and close Gaps #48, #49 and #50
 
 ### Fixed
 
@@ -78,78 +112,88 @@ Nothing is removed.
 
 ## 🚀 Migration Guide
 
-No action is needed: no existing endpoint, request or response changes shape, and there is no schema change.
+No action is needed: no existing endpoint, request or response loses or changes a field, and there is no schema
+change. A file that still has a `MatchId`, `CompetitorId` or `MatchCompetitorId` column imports as before, as unknown
+columns are ignored.
 
-To use the import, post `text/plain` CSV with a header row to `POST /ipsc/shooter-logs/bulk`:
+Two behaviours differ. A bulk competitor row whose club number already exists now updates and verifies that
+competitor, where it failed on the unique club number before. A failed row of the shooter log bulk create now also
+carries empty `shooterLogId`, `addMatchIds` and `removeMatchIds` values in its `shooterLogRow`.
+
+To change existing shooter logs, post `text/plain` CSV with a header row to `PUT` or `PATCH /ipsc/shooter-logs/bulk`:
 
 ```
-StartDate,EndDate,MatchIds
-yyyy-MM-dd,yyyy-MM-dd,0;0
+ShooterLogId,StartDate,EndDate,MatchIds,AddMatchIds,RemoveMatchIds
+0,yyyy-MM-dd,yyyy-MM-dd,0;0,0;0,0;0
 ```
 
-A date must be `yyyy-MM-dd`; a date in another format makes the whole file a `400`, while a missing date or an unknown
-match fails only its own row. Check each result's `success` rather than the status alone, since a `201` can still carry
-failed rows.
+The `PUT` reads `ShooterLogId`, `StartDate`, `EndDate` and `MatchIds` and ignores the other two columns; the `PATCH`
+reads all of them and leaves any empty column unchanged. A date must be `yyyy-MM-dd`; a date in another format makes
+the whole file a `400`, while a missing log ID, an unknown log or match, or a match outside the dates fails only its
+own row. Check each result's `success` rather than the status alone, since a `200` can still carry failed rows.
 
 ---
 
 ## 📊 Statistics
 
-- **Files Changed:** 18 against `main` before this release's documentation; 815 insertions and 13 deletions
-- **New Source Files:** 4 (`ShooterLogRequestCsvMixIn`, `ShooterLogBulkResponse`, `ShooterLogBulkResponseHolder` and
-  `ShooterLogRow`), plus two test classes
+- **Files Changed:** 41 against `main` before this release's history and release notes; 1,921 insertions and 99
+  deletions
+- **New Source Files:** 3 (`CompetitorBulkResponse`, `ShooterLogBulkRequest` and `ShooterLogBulkRequestCsvMixIn`),
+  plus two test classes
 - **Renamed Source Files:** 0
 - **Deleted Source Files:** 0
-- **New Dependencies:** 0
+- **New Dependencies:** 0, with one pin removed
 
 ---
 
 ## 🧭 Design Notes
 
-- **Every row goes through the single-log path.** `createShooterLogs` calls `createShooterLog` for each row, so the
-  date, match and within-the-dates rules are written once and a row cannot be accepted that a single request would
-  refuse.
-- **One bad row does not spoil the file.** Each row is saved in its own transaction, and a failed row is reported and
-  skipped, as the competitor, match and match competitor imports treat theirs.
-- **Nothing is required at the column level.** The mix-in marks no column required, so a missing date is a row failure
-  with its values shown, not a parse error that rejects every row.
-- **`422` only when nothing was created.** A file where some rows succeed is a `201`, so the caller reads each row's
-  result for the failures.
-- **A MINOR.** The new endpoint is an externally visible, backward-compatible addition, which `AGENTS.md`'s Semantic
-  Versioning rules classify as MINOR; the stricter match ID check only turns a `500` into a `400`.
+- **Every bulk row goes through the single-record path.** `updateShooterLogs` and `patchShooterLogs` call
+  `updateShooterLog` and `patchShooterLog` for each row, so the date, match and within-the-dates rules are written
+  once and a row cannot be accepted that a single request would refuse.
+- **Add and remove sit beside replace.** `matchIds` keeps meaning "this is the list", so existing callers are
+  unaffected, and `addMatchIds` and `removeMatchIds` are the optional way to change it without restating it.
+- **The club number is the only duplicate check.** It is the one unique identifier, so a competitor row matches on it
+  alone; a name or an ID number can be shared, and treating either as the same person would merge people.
+- **A warning, not a refusal.** A match already out of step with its log stays readable and editable, so it can be
+  fixed, and an unrelated edit is not blocked; only a move to another day outside the dates is refused.
+- **Migrations are checked on MySQL, not H2.** The `test` profile bypasses Flyway and builds the schema on H2, so
+  `FlywayMysqlMigrationTest` runs the real migrations against MySQL 8.4 in CI only, switched on by `FLYWAY_MYSQL_URL`,
+  which keeps the normal build free of a MySQL requirement.
+- **A MINOR.** The new endpoints and optional fields are externally visible, backward-compatible additions, which
+  `AGENTS.md`'s Semantic Versioning rules classify as MINOR; nothing existing is removed or changes shape.
 
 ---
 
 ## 🧪 Testing
 
-- `./mvnw verify -Pcoverage` passes: 1,524 tests with no failures, errors or skips.
-- New tests cover `ShooterLogRequestCsvMixIn`'s column binding, `ShooterLogRow`, the null match ID check,
-  `IpscShooterLogController.createShooterLogs` returning `201` and `422`, and `IpscShooterLogService.createShooterLogs`
-  creating good rows, reporting a missing date, an unknown match and a match outside the dates, and rejecting blank or
-  unparseable CSV, in Mockito unit tests and `@SpringBootTest` integration tests.
-- Overall coverage is 99.15% branch and 98.63% line, above the 97% minimum.
+- `./mvnw verify -Pcoverage` passes: 1,569 tests with no failures or errors, 3 of them skipped because
+  `FlywayMysqlMigrationTest` runs only where `FLYWAY_MYSQL_URL` is set.
+- New tests cover the bulk update mix-in's column binding, `ShooterLogPatchRequest.validate`, the `PUT` and `PATCH`
+  bulk controller statuses, `updateShooterLogs` and `patchShooterLogs` with valid and invalid rows, adding and
+  removing matches, the competitor update by club number, and the match `warnings` on read and on a same-day edit, in
+  Mockito unit tests and `@SpringBootTest` integration tests.
+- `FlywayMysqlMigrationTest` applies all 38 migrations to a MySQL 8.4 database on `flyway-core` and `flyway-mysql`
+  `12.4.0` and validates their checksums; the `migrations` CI job runs it, and it was also run locally against a
+  throwaway `mysql:8.4` container.
+- Overall coverage is 98.74% branch and 98.36% line, above the 97% minimum.
 
 ---
 
 ## 🐛 Known Issues
 
-- A `MatchCompetitorId`, `MatchId` or `CompetitorId` column in the match, competitor or match competitor CSV imports,
-  is read but never used as the row's own ID, since the imports only create records.
-- A shooter log already out of step with a match's date is only caught when its overall results are calculated, or when
-  the match moves to another day; it is not reported when either date is left alone.
-- The bulk competitor import only creates competitors, so it cannot verify one that already exists; use
-  `POST /ipsc/competitors/verify` afterwards.
-- The shooter log import only creates logs; there is no way to add matches to, or update, an existing log in bulk.
-- `pom.xml` still overrides `logback.version`, the Jackson BOM properties, `mysql-connector-j` and `flyway-mysql`, set
-  above Spring Boot's managed versions.
+- A bulk competitor row without a club number always creates a competitor, so re-importing a file of such rows, as
+  every row for a home club other than HPSC's is, creates them again.
+- `pom.xml` still overrides `logback.version`, the Jackson BOM properties and `mysql-connector-j`, set above Spring
+  Boot's managed versions.
 
 ---
 
 ## 🔮 Future Enhancements
 
-- Report a match whose date is outside a covering log's dates when it is read, not only when the log is calculated.
-- Consider updating existing shooter logs, or adding matches to them, from CSV if loading a season by hand proves slow.
 - Drop the remaining dependency pins once Spring Boot manages versions at least as new.
+- Consider a safer key than the club number for matching non-HPSC competitor rows, if re-importing them proves a
+  problem.
 
 ---
 
@@ -161,7 +205,7 @@ failed rows.
 
 ## 📝 Notes
 
-Version 16.3.0 gives shooter logs the report-and-continue CSV import that competitors, matches and match competitors
-already had. It leaves the improvement plan with all 47 gaps closed and none open.
+Version 16.4.0 lets the bulk imports change what they created, and has a match say when it has fallen out of step with
+its shooter log. It leaves the improvement plan with all 50 gaps closed and none open.
 
 ---

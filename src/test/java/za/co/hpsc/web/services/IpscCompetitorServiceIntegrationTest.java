@@ -310,6 +310,94 @@ class IpscCompetitorServiceIntegrationTest {
     }
 
     @Test
+    void testCreateCompetitors_whenClubNumberMatchesAnExistingCompetitor_thenUpdatesAndVerifiesIt() {
+        // Arrange
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        CompetitorRequest request = validRequest("HPSC-001");
+        request.setHomeClub("Test Club");
+        CompetitorResponse existing = ipscCompetitorService.createCompetitor(request);
+        long countBefore = competitorRepository.count();
+        String csvData = CSV_HEADER + "Jane,Smith,,,,,Test Club,,,HPSC-001,,,jane@example.com,true,false\n";
+
+        // Act
+        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertEquals(1, holder.getCompetitors().size());
+        CompetitorResponse updated = holder.getCompetitors().getFirst();
+        assertEquals(existing.getCompetitorId(), updated.getCompetitorId());
+        assertEquals("Smith", updated.getLastName());
+        assertEquals(List.of("jane@example.com"), updated.getEmailAddresses());
+        assertEquals(Boolean.TRUE, updated.getIsVerified());
+        assertEquals(countBefore, competitorRepository.count());
+        assertEquals(1, holder.getResults().size());
+        assertEquals(1, holder.getResults().getFirst().getRowNumber());
+        assertTrue(holder.getResults().getFirst().getMessage().contains("ID " + existing.getCompetitorId()));
+        assertSame(updated, holder.getResults().getFirst().getCompetitor());
+    }
+
+    @Test
+    void testCreateCompetitors_whenOnlyTheIdNumberMatchesAnExistingCompetitor_thenCreatesANewCompetitor() {
+        // Arrange
+        createClub("Other Club", ClubIdentifier.SOSC);
+        CompetitorRequest request = validRequest(null);
+        request.setHomeClub("Other Club");
+        request.setIdNumber("8001015009087");
+        CompetitorResponse existing = ipscCompetitorService.createCompetitor(request);
+        long countBefore = competitorRepository.count();
+        String csvData = CSV_HEADER + "Jane,Smith,,,,,Other Club,,,,8001015009087,,,\n";
+
+        // Act
+        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertNotEquals(existing.getCompetitorId(), holder.getCompetitors().getFirst().getCompetitorId());
+        assertEquals("", holder.getResults().getFirst().getMessage());
+        assertEquals(countBefore + 1, competitorRepository.count());
+    }
+
+    @Test
+    void testCreateCompetitors_whenOnlyTheFullNameMatchesAnExistingCompetitor_thenCreatesANewCompetitor() {
+        // Arrange
+        createClub("Other Club", ClubIdentifier.SOSC);
+        CompetitorRequest request = validRequest(null);
+        request.setHomeClub("Other Club");
+        CompetitorResponse existing = ipscCompetitorService.createCompetitor(request);
+        long countBefore = competitorRepository.count();
+        String csvData = CSV_HEADER + "Jane,Doe,,,,,Other Club,,,,,,jane@example.com,true,false\n";
+
+        // Act
+        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertNotEquals(existing.getCompetitorId(), holder.getCompetitors().getFirst().getCompetitorId());
+        assertNotEquals(Boolean.TRUE, ipscCompetitorService.getCompetitor(existing.getCompetitorId()).getIsVerified());
+        assertEquals(countBefore + 1, competitorRepository.count());
+    }
+
+    @Test
+    void testCreateCompetitors_whenRowsMixExistingAndNewCompetitors_thenReturnsThemInRowOrder() {
+        // Arrange
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        CompetitorRequest request = validRequest("HPSC-001");
+        request.setHomeClub("Test Club");
+        CompetitorResponse existing = ipscCompetitorService.createCompetitor(request);
+        String csvData = CSV_HEADER + "Anna,New,,,,,Test Club,,,HPSC-002,,,,\n" + "Jane,Smith,,,,,Test Club,,,HPSC-001,,,,\n";
+
+        // Act
+        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertEquals(2, holder.getCompetitors().size());
+        assertEquals("HPSC-002", holder.getCompetitors().get(0).getClubNumber());
+        assertNotEquals(existing.getCompetitorId(), holder.getCompetitors().get(0).getCompetitorId());
+        assertEquals(existing.getCompetitorId(), holder.getCompetitors().get(1).getCompetitorId());
+        assertEquals(List.of(1, 2), holder.getResults().stream().map(result -> result.getRowNumber()).toList());
+        assertEquals("", holder.getResults().get(0).getMessage());
+        assertSame(holder.getCompetitors().get(0), holder.getResults().get(0).getCompetitor());
+    }
+
+    @Test
     void testCreateCompetitors_whenSingleRowWithAllFields_thenPersistsCompetitorWithAllFieldsMapped() {
         // Arrange
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);

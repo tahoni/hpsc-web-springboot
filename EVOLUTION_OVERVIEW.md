@@ -346,3 +346,55 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 
 - The suite stands at 1,524 passing tests, with new controller, request mix-in, row model, service and integration
   tests for the import and for the null match ID check
+
+
+### Phase 59: Changing Existing Records in Bulk (v16.4.0)
+
+**Controllers & Services**
+
+- `IpscShooterLogController.updateShooterLogs` and `patchShooterLogs` serve `PUT` and `PATCH /ipsc/shooter-logs/bulk`,
+  answering `200`, or `422` if every row failed
+- `IpscShooterLogService.updateShooterLogs` and `patchShooterLogs` read the CSV and apply each row through
+  `updateShooterLog` or `patchShooterLog`, in its own transaction; a row without a `ShooterLogId`, or naming an
+  unknown log, is reported with the values it supplied
+- `IpscShooterLogService.patchShooterLog` adds the matches in `addMatchIds` and removes those in `removeMatchIds`
+  after any `matchIds`, then checks every match against the log's dates
+- `IpscCompetitorServiceImpl.createCompetitors` finds the competitor a row names by its club number, the one unique
+  identifier, applies the row to it and marks it verified; a row without a club number always creates a competitor
+- `IpscMatchServiceImpl.getMatch`, `getAllMatches`, `updateMatch` and `patchMatch` fill a match's `warnings` for each
+  covering shooter log it is outside, and `getAllMatches` does it from one query rather than one per match
+
+**Models**
+
+- `ShooterLogBulkRequest` and `ShooterLogBulkRequestCsvMixIn` bind the `ShooterLogId`, `StartDate`, `EndDate`,
+  `MatchIds`, `AddMatchIds` and `RemoveMatchIds` columns, with none required
+- `ShooterLogPatchRequest.addMatchIds` and `removeMatchIds`, with `validate` refusing a null ID or a match both added
+  and removed; `ShooterLogRow` also carries `shooterLogId`, `addMatchIds` and `removeMatchIds`
+- `CompetitorBulkResponse` and `CompetitorResponseHolder.results` report each competitor import row; `MatchResponse`
+  gains `warnings`, left out of the JSON when empty
+- The three CSV mix-ins stop binding their own ID column, and `MatchRequest`, `CompetitorRequest` and
+  `MatchCompetitorRequest` gain a constructor without it
+
+**Documentation**
+
+- `README.md` and `ARCHITECTURE.md` describe the bulk replace and update, the competitor update and the match
+  warnings; the controller OpenAPI text and service Javadoc say the same
+
+**Build & Metadata**
+
+- `flyway-mysql` is no longer pinned to `13.7.0`, so it takes the `12.4.0` Spring Boot manages, and all 38 migrations
+  were applied to a throwaway MySQL 8.4 on it
+- A `migrations` job in `build.yml` runs `FlywayMysqlMigrationTest` against a throwaway `mysql:8.4` service container
+  on every push and pull request; the test is skipped unless `FLYWAY_MYSQL_URL` is set
+- Improvement plan: Gaps #48, #49 and #50 are added and closed, leaving all 50 gaps closed and none open
+- Project version bumped to 16.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Letting the per-row, report-and-continue bulk imports change what they created, not only create it
+
+**Test Coverage:**
+
+- The suite stands at 1,569 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with new controller, request
+  mix-in, service, integration and migration tests for the bulk updates, the competitor update, the match warnings and
+  the Flyway migrations on MySQL

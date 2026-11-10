@@ -254,4 +254,101 @@ class IpscShooterLogControllerTest {
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscShooterLogController.updateShooterLog(1L, request));
     }
+
+    // updateShooterLogs()
+    @Test
+    void testUpdateShooterLogs_whenSomeRowsSucceed_thenReturns200WithServiceBody() throws FatalException {
+        // Arrange
+        ShooterLogBulkResponseHolder holder = new ShooterLogBulkResponseHolder(List.of(
+                new ShooterLogBulkResponse(true, "", new ShooterLogResponse(), null),
+                new ShooterLogBulkResponse(false, "No shooter log found with ID 9", null, new ShooterLogRow())));
+        when(ipscShooterLogService.updateShooterLogs("csv")).thenReturn(holder);
+
+        // Act
+        ResponseEntity<ShooterLogBulkResponseHolder> result = ipscShooterLogController.updateShooterLogs("csv");
+
+        // Assert
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertSame(holder, result.getBody());
+    }
+
+    @Test
+    void testUpdateShooterLogs_whenEveryRowFails_thenReturns422WithServiceBody() throws FatalException {
+        // Arrange
+        ShooterLogBulkResponseHolder holder = new ShooterLogBulkResponseHolder(List.of(
+                new ShooterLogBulkResponse(false, "Shooter log ID is required.", null, new ShooterLogRow())));
+        when(ipscShooterLogService.updateShooterLogs("csv")).thenReturn(holder);
+
+        // Act
+        ResponseEntity<ShooterLogBulkResponseHolder> result = ipscShooterLogController.updateShooterLogs("csv");
+
+        // Assert
+        assertEquals(HttpStatus.UNPROCESSABLE_CONTENT, result.getStatusCode());
+        assertSame(holder, result.getBody());
+    }
+
+    @Test
+    void testUpdateShooterLogs_whenThereAreNoRows_thenReturns200() throws FatalException {
+        // Arrange
+        when(ipscShooterLogService.updateShooterLogs("csv")).thenReturn(new ShooterLogBulkResponseHolder(List.of()));
+
+        // Act
+        ResponseEntity<ShooterLogBulkResponseHolder> result = ipscShooterLogController.updateShooterLogs("csv");
+
+        // Assert
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+    }
+
+    @Test
+    void testUpdateShooterLogs_whenServiceThrowsValidationException_thenPropagates() throws FatalException {
+        // Arrange
+        when(ipscShooterLogService.updateShooterLogs("csv")).thenThrow(new ValidationException("bad"));
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscShooterLogController.updateShooterLogs("csv"));
+    }
+
+    // patchShooterLogs()
+    @Test
+    void testPatchShooterLogs_whenSomeRowsSucceed_thenReturns200WithServiceBody() throws FatalException {
+        // Arrange
+        ShooterLogBulkResponseHolder holder = new ShooterLogBulkResponseHolder(List.of(
+                new ShooterLogBulkResponse(true, "", new ShooterLogResponse(), null),
+                new ShooterLogBulkResponse(false, "No shooter log found with ID 9", null, new ShooterLogRow())));
+        when(ipscShooterLogService.patchShooterLogs("csv")).thenReturn(holder);
+
+        // Act
+        ResponseEntity<ShooterLogBulkResponseHolder> result = ipscShooterLogController.patchShooterLogs("csv");
+
+        // Assert
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertSame(holder, result.getBody());
+    }
+
+    @Test
+    void testPatchShooterLogs_whenEveryRowFails_thenReturns422WithServiceBody() throws FatalException {
+        // Arrange
+        ShooterLogBulkResponseHolder holder = new ShooterLogBulkResponseHolder(List.of(
+                new ShooterLogBulkResponse(false, "Shooter log ID is required.", null, new ShooterLogRow())));
+        when(ipscShooterLogService.patchShooterLogs("csv")).thenReturn(holder);
+
+        // Act
+        ResponseEntity<ShooterLogBulkResponseHolder> result = ipscShooterLogController.patchShooterLogs("csv");
+
+        // Assert
+        assertEquals(HttpStatus.UNPROCESSABLE_CONTENT, result.getStatusCode());
+        assertSame(holder, result.getBody());
+    }
+
+    @Test
+    void testPatchShooterLogs_whenThereAreNoRows_thenReturns200() throws FatalException {
+        // Arrange
+        when(ipscShooterLogService.patchShooterLogs("csv")).thenReturn(new ShooterLogBulkResponseHolder(List.of()));
+
+        // Act
+        ResponseEntity<ShooterLogBulkResponseHolder> result = ipscShooterLogController.patchShooterLogs("csv");
+
+        // Assert
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+    }
 }

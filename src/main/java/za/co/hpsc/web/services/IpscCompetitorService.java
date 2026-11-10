@@ -39,7 +39,14 @@ public interface IpscCompetitorService {
             throws ValidationException, NonFatalException;
 
     /**
-     * Creates a batch of new IPSC competitors from CSV data.
+     * Creates a batch of new IPSC competitors from CSV data, updating and verifying any that already exist.
+     *
+     * <p>
+     * A row refers to an existing competitor when its club number is the competitor's, as a club number is unique.
+     * That competitor takes the row's data, as in a full update, and is marked verified rather than a second one being
+     * created. A row without a club number always creates a competitor, as neither a name nor an ID number is enough
+     * to tell two people apart.
+     * </p>
      *
      * <p>
      * Each row is validated and built by the same rules as
@@ -50,8 +57,8 @@ public interface IpscCompetitorService {
      *
      * @param csvData the CSV data containing competitor information, one competitor per row.
      *                Must not be null or blank.
-     * @return a {@link CompetitorResponseHolder} containing the created competitors, in the same
-     * order as the CSV rows.
+     * @return a {@link CompetitorResponseHolder} containing the created or updated competitors, in the same
+     * order as the CSV rows, and the result of every row.
      * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
      *                             missing a required field, if a row's gender doesn't match a
      *                             known {@link za.co.hpsc.web.enums.Gender}, or if a row's home

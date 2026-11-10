@@ -531,6 +531,49 @@ Gap #41)* —
 - [x] Answer `422` only when every row failed — done, `201` otherwise
 - [x] Describe it in `README.md` and `ARCHITECTURE.md` — done, with a Shooter Log Bulk CSV Import Flow diagram
 
+**Shooter log bulk update and competitor import verification** *(improvement-plan.md → Gap #48)* —
+✅ Closed in v16.4.0
+
+- [x] Add `PUT` and `PATCH /ipsc/shooter-logs/bulk`, taking `text/plain` CSV with a `ShooterLogId` column beside the
+  create columns — done, as `IpscShooterLogController.updateShooterLogs` and `patchShooterLogs` and
+  `IpscShooterLogService.updateShooterLogs` and `patchShooterLogs`, with `ShooterLogBulkRequestCsvMixIn` binding the
+  columns
+- [x] Apply each row through `updateShooterLog` or `patchShooterLog` in its own transaction — done, a row without a
+  `ShooterLogId` is reported as failed
+- [x] Report a failed row with the values it supplied, and answer `422` only when every row failed — done, `200`
+  otherwise, with `ShooterLogRow.shooterLogId`, `addMatchIds` and `removeMatchIds` carrying what the row named
+- [x] Let a `PATCH` add matches to and remove them from a log's matches, and a `PUT` replace the match list — done
+  differently: `ShooterLogPatchRequest.addMatchIds` and `removeMatchIds` on the single and the bulk `PATCH`, applied
+  after any `matchIds`, which still replaces the list in full; a match both added and removed is a `400`, and the
+  `PUT` already replaced the list
+- [x] Let a bulk competitor row for an existing competitor update and verify it instead of creating another — done
+  differently: matched on the club number only, in `IpscCompetitorServiceImpl.createCompetitors`, as neither an ID
+  number nor a full name can tell two people apart
+- [x] Report each competitor row — done, as `CompetitorBulkResponse` in `CompetitorResponseHolder.results`
+- [x] Describe both in `ARCHITECTURE.md` — done
+
+**Match date conflicts reported when read** *(improvement-plan.md → Gap #49)* —
+✅ Closed in v16.4.0
+
+- [x] Report a match outside the dates of a covering shooter log in the match's own response when it is read — done,
+  as `MatchResponse.warnings`, filled by `IpscMatchServiceImpl.getMatch` and `getAllMatches`
+- [x] Report it when the match is edited without changing day, without blocking the edit — done, in `updateMatch` and
+  `patchMatch`; a move to another day outside the dates is still refused
+- [x] Share the date check with the calculation and the reschedule — done, `ShooterLogHelpers.describeOutsideDates`
+  builds on `isWithinDates`
+- [x] Describe the warnings in `README.md`, `ARCHITECTURE.md` and the match controller and service OpenAPI text and
+  Javadoc — done
+
+**`flyway-mysql` pinned above the Flyway version Spring Boot manages** *(improvement-plan.md → Gap #50)* —
+✅ Closed in v16.4.0
+
+- [x] Drop the `flyway-mysql` version so it takes the one Spring Boot manages — done, in `pom.xml`
+- [x] Confirm that `flyway-core`, the MySQL module and the Maven plugin share one version — done, with
+  `dependency:tree`: all three at `12.4.0`
+- [x] Run the migrations against a MySQL database on the aligned version — done, with a temporary `@SpringBootTest`
+  against a throwaway `mysql:8.4` container: all 38 migrations applied on Flyway `12.4.0`, then the test and the
+  container were removed
+
 ---
 
 ## 🟡 Partially Completed

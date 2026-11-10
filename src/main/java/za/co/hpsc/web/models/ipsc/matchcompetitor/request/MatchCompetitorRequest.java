@@ -163,6 +163,46 @@ public class MatchCompetitorRequest extends IpscMatchScore {
     }
 
     /**
+     * Constructs a {@code MatchCompetitorRequest} for a new entry, as read from a bulk CSV import row, which has no
+     * identifier of its own since the import only creates entries. The competitor and match it refers to are still
+     * identified, as the import resolves them. Read through {@link MatchCompetitorRequestCsvMixIn}.
+     *
+     * @param competitorId                the identifier of the competitor; may be null if named or numbered instead.
+     * @param competitorName              the competitor's name; may be null.
+     * @param competitorNumber            the competitor's number; may be null.
+     * @param matchId                     the identifier of the match. Must not be null.
+     * @param matchClub                   the club the entry is for; may be null.
+     * @param competitorCategory          the competitor's category. Must not be null.
+     * @param firearmType                 the firearm type; may be null.
+     * @param division                    the division. Must not be null.
+     * @param powerFactor                 the power factor; may be null.
+     * @param points                      the competitor's match points; may be null.
+     * @param percentage                  the competitor's percentage; may be null.
+     * @param time                        the competitor's total time; may be null.
+     * @param percentageOfPossiblePoints  the percentage of the possible points; may be null.
+     * @param alpha                       the total A-zone hits; may be null.
+     * @param charlie                     the total C-zone hits; may be null.
+     * @param delta                       the total D-zone hits; may be null.
+     * @param misses                      the total misses; may be null.
+     * @param noPenaltyMisses             the total misses without the usual penalty; may be null.
+     * @param noShoots                    the total no-shoot hits; may be null.
+     * @param proceduralErrors            the total procedural penalties; may be null.
+     * @param additionalPenalties         the total additional penalties; may be null.
+     * @param isVisitor                   whether the competitor was a visitor; may be null.
+     */
+    public MatchCompetitorRequest(Long competitorId, String competitorName, String competitorNumber, Long matchId,
+                                  String matchClub, String competitorCategory, String firearmType, String division,
+                                  String powerFactor, BigDecimal points, BigDecimal percentage, BigDecimal time,
+                                  BigDecimal percentageOfPossiblePoints, Integer alpha, Integer charlie,
+                                  Integer delta, Integer misses, Integer noPenaltyMisses, Integer noShoots,
+                                  Integer proceduralErrors, Integer additionalPenalties, Boolean isVisitor) {
+        this(null, competitorId, competitorName, competitorNumber, matchId, matchClub, competitorCategory,
+                firearmType, division, powerFactor, points, percentage, time, percentageOfPossiblePoints, alpha,
+                charlie, delta, misses, noPenaltyMisses, noShoots, proceduralErrors, additionalPenalties,
+                isVisitor);
+    }
+
+    /**
      * Checks that the request carries what is needed to identify the competitor and the match, before any of it is
      * resolved. Nothing is looked up, so this only checks that values are present.
      *

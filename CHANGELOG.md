@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 16.3.0](#-1630---2026-11-10) ← Current
+- [🧾 Version 16.4.0](#-1640---2026-11-10) ← Current
+- [🧾 Version 16.3.0](#-1630---2026-11-10)
 - [🧾 Version 16.2.0](#-1620---2026-11-10)
 - [🧾 Version 16.1.2](#-1612---2026-11-09)
 - [🧾 Version 16.1.1](#-1611---2026-11-08)
@@ -32,6 +33,112 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [16.4.0] - 2026-11-10
+
+#### ➕ Added
+
+##### Controllers
+
+- **`IpscShooterLogController.updateShooterLogs` and `patchShooterLogs`:** New `PUT /ipsc/shooter-logs/bulk` and
+  `PATCH /ipsc/shooter-logs/bulk` endpoints, taking `text/plain` CSV with a `ShooterLogId` column and the same
+  `StartDate`, `EndDate` and `MatchIds` columns as the bulk create, plus `AddMatchIds` and `RemoveMatchIds` columns
+  that the `PATCH` applies. Each row is saved on its own, so a row that fails is reported with the values it supplied
+  and the reason while the rest are still saved. They return `200`, or `422` if every row failed.
+
+##### Models
+
+- **`ShooterLogPatchRequest.addMatchIds` and `removeMatchIds`:** Add matches to, and remove them from, a shooter log's
+  current matches without restating the rest, applied after any `matchIds`, which still replaces them in full. Nothing
+  is looked up by `validate()`, which refuses a null ID or a match that is both added and removed.
+- **`ShooterLogBulkRequest` and `ShooterLogBulkRequestCsvMixIn`:** A CSV row of a bulk shooter log update: a
+  `ShooterLogRequest` that also carries the `ShooterLogId` of the log to change and the `addMatchIds` and
+  `removeMatchIds` a bulk partial update applies.
+- **`ShooterLogRow.shooterLogId`, `addMatchIds` and `removeMatchIds`:** The `ShooterLogId` and the matches to add and
+  remove that a failed bulk update row supplied; empty for a row that creates a log.
+- **`MatchResponse.warnings`:** Lists the problems found with a match when it is read, left out of the JSON when empty.
+- **`CompetitorBulkResponse`:** The result of one row of the bulk competitor import: its row number, a message and
+  the competitor it created or updated.
+- **`CompetitorResponseHolder.results`:** Holds a `CompetitorBulkResponse` for every row of the bulk competitor import,
+  in CSV order. `competitors` is unchanged.
+
+##### Services
+
+- **`IpscShooterLogService.updateShooterLogs` and `patchShooterLogs`:** Replace or partially update shooter logs from
+  CSV, each row through `updateShooterLog` or `patchShooterLog` in its own transaction. A bulk partial update treats an
+  empty date or `MatchIds` column as unchanged, so clearing a log's matches takes a bulk replacement, and adds and
+  removes matches through its `AddMatchIds` and `RemoveMatchIds` columns.
+- **`IpscShooterLogService.patchShooterLog`:** Now adds the matches in `addMatchIds` and removes those in
+  `removeMatchIds` from the log's current matches, ignoring one already covered when adding and one not covered when
+  removing, then checks every match the log ends up with against its dates as before. An unknown match to add is a
+  `404`, and a match both added and removed is a `400`.
+- **`IpscMatchServiceImpl.getMatch` and `getAllMatches`:** A match whose date is outside the dates of a shooter log that
+  covers it is now reported in its `warnings` when it is read, rather than only when the log's overall results are
+  calculated. The match is still returned, so it stays readable and fixable.
+- **`IpscMatchServiceImpl.updateMatch` and `patchMatch`:** An edit that leaves a match on the same day is still not
+  blocked by a shooter log it is already out of step with, but now reports the log in the response's `warnings`.
+- **`ShooterLogHelpers.describeOutsideDates`:** Builds the warning for a match scheduled outside a covering shooter
+  log's dates, from the same `isWithinDates` check the calculation and reschedule paths use, for the match read and
+  edit responses to report.
+- **`IpscCompetitorServiceImpl.createCompetitors`:** A bulk import row whose club number is an existing competitor's now
+  updates and verifies that competitor instead of creating another. The competitor takes the row's data, as in a full
+  update, and is marked verified. A row without a club number, as every row for a home club other than HPSC's is,
+  always creates a competitor, as neither a name nor an ID number is enough to tell two people apart.
+
+##### Tests
+
+- **`FlywayMysqlMigrationTest`:** Runs every Flyway migration against an empty MySQL database through the application's
+  own runtime classpath, and checks that each migration file is applied, none is pending or failed, the application
+  tables exist and the checksums validate. It runs only when `FLYWAY_MYSQL_URL` names the database, with
+  `FLYWAY_MYSQL_USER` and `FLYWAY_MYSQL_PASSWORD`, and is skipped everywhere else, as the `test` profile bypasses Flyway
+  on H2.
+
+##### Tooling
+
+- **`.github/workflows/build.yml`:** A new `migrations` job starts a throwaway `mysql:8.4` service container, the
+  version `docker-compose.yml` runs, and runs `FlywayMysqlMigrationTest` against it on every push and pull request to
+  `main` and `develop`, so a migration that MySQL rejects shows before deployment.
+
+#### 🔄 Changed
+
+##### Controllers
+
+- **`IpscCompetitorController.createCompetitors` and `IpscMatchController`:** The OpenAPI descriptions now say that a
+  bulk competitor row for an existing competitor updates and verifies it, and that a match outside the dates of a
+  shooter log that covers it carries a message in its `warnings` when it is read or edited.
+
+##### Models
+
+- **`MatchRequestCsvMixIn`, `CompetitorRequestCsvMixIn` and `MatchCompetitorRequestCsvMixIn`:** The bulk CSV imports no
+  longer read a `MatchId`, `CompetitorId` or `MatchCompetitorId` column respectively, as it was bound but never used as
+  the row's own ID, since the imports only create records. A file that still has the column imports as before, as
+  unknown columns are ignored. The match competitor import still reads `CompetitorId` and `MatchId`, which name the
+  competitor and match an entry belongs to, and the JSON request bodies are unchanged.
+- **`MatchRequest`, `CompetitorRequest` and `MatchCompetitorRequest`:** Each gains a constructor without its own ID,
+  which the CSV mix-ins bind in place of the JSON constructor.
+
+##### Services
+
+- **`IpscCompetitorServiceImpl.normaliseCsvRequest`:** No longer passes on a competitor ID, as a CSV row carries none.
+
+##### Dependencies
+
+- **`pom.xml`:** `flyway-mysql` is no longer pinned to `13.7.0`, so it takes the `12.4.0` Spring Boot manages. The pin
+  put Flyway 13's MySQL module on the runtime classpath beside the `12.4.0` `flyway-core` that
+  `spring-boot-starter-flyway` brings in, and beside the `12.4.0` Maven plugin, mixing two Flyway majors. All three now
+  share one version, and `mysql-connector-j`, `logback.version` and the Jackson BOM properties stay pinned above
+  Spring Boot's.
+
+##### Documentation
+
+- **`README.md` and `ARCHITECTURE.md`:** Describe the bulk shooter log replace and update with its add and remove
+  columns, the bulk competitor import updating and verifying a competitor by club number, and the match `warnings`.
+- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Add Gaps #48, #49 and #50, each closed in this release, to
+  the plan and its task list.
+- **`ARCHITECTURE.md` and `CONTRIBUTING.md`:** List the migrations gate in the CI/CD & Quality Gates table and the
+  gate summary, and the new `migrations/` test directory in the project structure tree.
 
 ---
 
@@ -808,7 +915,8 @@ For issues, feature requests or questions:
 
 **Last Updated:** 2026-08-25
 
-[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.3.0...HEAD
+[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.4.0...HEAD
+[16.4.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.3.0...v16.4.0
 [16.3.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.2.0...v16.3.0
 [16.2.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.1.2...v16.2.0
 [16.1.2]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.1.1...v16.1.2
