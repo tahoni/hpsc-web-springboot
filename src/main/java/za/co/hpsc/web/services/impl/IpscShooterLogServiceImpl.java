@@ -75,10 +75,7 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
 
     @Override
     public ShooterLogBulkResponseHolder createShooterLogs(String csvData) throws FatalException {
-        if (!hasText(csvData)) {
-            log.error("The provided csv data is null or empty.");
-            throw new ValidationException("CSV data cannot be null or blank.");
-        }
+        requireCsvData(csvData);
 
         // Each row is saved in its own transaction, so a bad row is reported and skipped without affecting the others
         List<ShooterLogBulkResponse> shooterLogBulkResponses = new ArrayList<>();
@@ -181,6 +178,19 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
     }
 
     /**
+     * Checks that bulk CSV data was supplied.
+     *
+     * @param csvData the CSV data; may be null.
+     * @throws ValidationException if the CSV data is null or blank.
+     */
+    private void requireCsvData(String csvData) {
+        if (!hasText(csvData)) {
+            log.error("The provided csv data is null or empty.");
+            throw new ValidationException("CSV data cannot be null or blank.");
+        }
+    }
+
+    /**
      * Whether a list of identifiers has any.
      *
      * @param ids the identifiers; may be null.
@@ -249,10 +259,7 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
     private ShooterLogBulkResponseHolder updateRows(String csvData,
                                                     BiFunction<Long, ShooterLogBulkRequest, ShooterLogResponse> update,
                                                     boolean replace) throws FatalException {
-        if (!hasText(csvData)) {
-            log.error("The provided csv data is null or empty.");
-            throw new ValidationException("CSV data cannot be null or blank.");
-        }
+        requireCsvData(csvData);
 
         List<ShooterLogBulkResponse> shooterLogBulkResponses = new ArrayList<>();
         for (ShooterLogBulkRequest row : readRows(csvData, ShooterLogBulkRequest.class,

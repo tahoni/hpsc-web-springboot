@@ -5,6 +5,7 @@ import za.co.hpsc.web.domain.ShooterLog;
 import za.co.hpsc.web.exceptions.ValidationException;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 /**
  * Helper methods shared by the services that read or write a {@link ShooterLog}.
@@ -62,14 +63,14 @@ public final class ShooterLogHelpers {
      *
      * @param match      the match to check; must not be null.
      * @param shooterLog the shooter log that covers the match; must not be null.
-     * @return the warning, or {@code null} if the match is within the log's dates.
+     * @return the warning, or empty if the match is within the log's dates.
      */
-    public static String describeOutsideDates(IpscMatch match, ShooterLog shooterLog) {
+    public static Optional<String> describeOutsideDates(IpscMatch match, ShooterLog shooterLog) {
         if (isWithinDates(match, shooterLog)) {
-            return null;
+            return Optional.empty();
         }
-        return "Match is scheduled for " + match.getScheduledDate().toLocalDate() + ", outside the dates "
+        return Optional.of("Match is scheduled for " + match.getScheduledDate().toLocalDate() + ", outside the dates "
                 + shooterLog.getStartDate() + " to " + shooterLog.getEndDate() + " of shooter log with ID "
-                + shooterLog.getId() + ".";
+                + shooterLog.getId() + ".");
     }
 }

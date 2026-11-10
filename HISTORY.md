@@ -52,7 +52,7 @@ evolution of architecture, features and design philosophy across all versions.
 - Scoped as `v16.4.0` **MINOR**: the new endpoints and the optional `warnings`, `results` and request fields are
   backward-compatible additions, and nothing existing breaks
 - Improvement plan: Gaps #48, #49 and #50 are added and closed, leaving all 50 gaps closed and none open
-- The suite stands at 1,567 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
+- The suite stands at 1,569 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
 - Project version bumped to 16.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 16.3.0 (November 10, 2026)
