@@ -31,14 +31,15 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
 - **IPSC Competitors**: Competitor record CRUD, including optional home club, gender and SAPSA/club paid-up status,
   plus bulk CSV import
 - **IPSC Matches**: Match CRUD, including firearm type and match category resolution, plus bulk CSV import.
-  A match cannot be rescheduled outside the dates of a shooter log that covers it
+  A match cannot be rescheduled outside the dates of a shooter log that covers it, and one already outside them
+  reports it in its `warnings` when it is read or edited
 - **IPSC Match Competitors**: CRUD for a competitor's entry in a match, including competitor, match, division and
   category resolution, plus bulk CSV import
 - **IPSC Shooter Results**: Calculation of each competitor's rank and percentage within their firearm type, division
   and competitor category in a match, and reading the results. Only verified competitors with points above zero are
   included
 - **IPSC Shooter Logs**: CRUD for a shooter log: a date range and the matches it covers, set by match ID, plus bulk
-  CSV import that reports each failed row and still creates the rest
+  CSV import, replace and update that report each failed row and still save the rest
 - **IPSC Shooter Log Overall Results**: Calculation of each competitor's overall rank and percentage within their
   division and competitor category across the matches of a shooter log, and reading the results. Only verified
   competitors are included, and a calculation is refused if a match falls outside the log's dates

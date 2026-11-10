@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (47):**
+- **✅ Completed (49):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -141,6 +141,11 @@ number or a newly met precondition on an existing gap — see the `update-improv
     out of results — closed in v16.2.0 (`POST /ipsc/competitors/verify` and a message on the import row)
   - #47 Shooter logs can only be created one at a time, unlike the other bulk-imported records — closed in v16.3.0
     (`POST /ipsc/shooter-logs/bulk`)
+  - #48 Existing shooter logs can only be changed one at a time, and the competitor import cannot verify one that
+    already exists — closed in v16.4.0 (`PUT` and `PATCH /ipsc/shooter-logs/bulk`; the competitor import updates and
+    verifies a competitor by club number)
+  - #49 A match outside a covering shooter log's dates is reported only when the log is calculated or the match moves
+    day — closed in v16.4.0 (`MatchResponse.warnings` on read and on a same-day edit)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
 - **⚪ Open (0):**
@@ -1557,6 +1562,64 @@ if every row failed. `ShooterLogRequest.validate` now rejects a null match ID wi
 the repository. `README.md` and `ARCHITECTURE.md` describe the import and show its flow, with Mockito controller and
 service tests, a request mix-in test and `@SpringBootTest` integration tests.
 
+#### 48. Existing shooter logs can only be changed one at a time, and the competitor import cannot verify one that already exists — ✅ Closed in v16.4.0
+
+**Evidence:** Gap #47 added `POST /ipsc/shooter-logs/bulk`, but an existing log could still be replaced or patched
+only through `PUT` and `PATCH /ipsc/shooter-logs/{shooterLogId}`, one request per log. The v16.3.0 `RELEASE_NOTES.md`
+Known Issues say "The shooter log import only creates logs; there is no way to add matches to, or update, an existing
+log in bulk", and its Future Enhancements propose updating existing logs from CSV "if loading a season by hand proves
+slow". The same Known Issues say the bulk competitor import "only creates competitors, so it cannot verify one that
+already exists". A competitor row whose club number was already stored hit the unique `club_number` column instead. No
+gap tracked either limit, so both were stated and had no number.
+
+**Why it matters:** The same shape as Gap #47, one step on: the bulk import creates records, but correcting them
+afterwards, a log's dates or matches or a competitor loaded earlier, meant one request per record or a re-import that
+the database rejected. A season's logs could be loaded in one request and not fixed in one.
+
+**Proposed improvement:** Add `PUT` and `PATCH /ipsc/shooter-logs/bulk`, taking `text/plain` CSV with a `ShooterLogId`
+column beside the create columns, and apply each row through `updateShooterLog` or `patchShooterLog`, reporting a
+failed row with the values it supplied and answering `422` only when every row failed. Let a bulk competitor row whose
+club number is an existing competitor's update and verify that competitor instead of creating another, and report each
+row.
+
+**Outcome:** Done, with two differences from the proposal. `IpscShooterLogController.updateShooterLogs` and
+`patchShooterLogs` serve `PUT` and `PATCH /ipsc/shooter-logs/bulk`, reading each row as a `ShooterLogBulkRequest`
+through `ShooterLogBulkRequestCsvMixIn` and applying it through `updateShooterLog` or `patchShooterLog` in its own
+transaction; a row without a `ShooterLogId`, or naming an unknown log, is reported with the values it supplied, and
+the endpoints answer `200`, or `422` if every row failed. In a bulk `PATCH` an empty column leaves that field
+unchanged, so a non-empty `MatchIds` replaces the log's matches but cannot add to them, and clearing them takes a bulk
+`PUT`. `IpscCompetitorServiceImpl.createCompetitors` now matches a row only on its club number, the one unique
+identifier, through `CompetitorRepository.findByClubNumber`: neither an ID number nor a full name can tell two people
+apart, so a row without a club number always creates a competitor. A matched competitor takes the row's data and is
+marked verified, and `CompetitorResponseHolder.results` carries a `CompetitorBulkResponse` for every row.
+`ARCHITECTURE.md` describes both, with Mockito controller tests, a mix-in test and `@SpringBootTest` integration
+tests.
+
+#### 49. A match outside a covering shooter log's dates is reported only when the log is calculated or the match moves day — ✅ Closed in v16.4.0
+
+**Evidence:** Gap #45 made `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` refuse a log with a match
+outside its dates, and `IpscMatchServiceImpl.updateMatch` and `patchMatch` refuse moving a match to another day
+outside them. A match already out of step, and edited without changing its day, was reported nowhere, and reading it
+through `GET /ipsc/matches` gave no sign of the conflict. The v16.3.0 `RELEASE_NOTES.md` Known Issues say such a log
+"is only caught when its overall results are calculated, or when the match moves to another day; it is not reported
+when either date is left alone", and its Future Enhancements propose reporting it "when it is read, not only when the
+log is calculated". No gap tracked it.
+
+**Why it matters:** The same shape as Gaps #45 and #46: a rule the code enforces on some paths, whose violation stays
+silent where people look. A match could sit outside a log's dates for as long as nobody calculated that log, and the
+calculation then failed with a `400` the match's own endpoints had given no warning of.
+
+**Proposed improvement:** Report the conflict in the match's own response when it is read and when it is edited
+without changing its day, without refusing either, so the match stays readable and fixable and an unrelated edit is
+not blocked. Reuse the date check the calculation and the reschedule already share, so the three cannot drift.
+
+**Outcome:** Done as proposed. `MatchResponse.warnings` lists the problems found with a match and is left out of the
+JSON when empty. `IpscMatchServiceImpl.getMatch` fills it from `ShooterLogRepository.findAllByMatchesId`, and
+`getAllMatches` from one `findAllWithMatches` query rather than one per match; `updateMatch` and `patchMatch` fill it
+when the match stays on the same day, and still refuse a move to another day outside a covering log's dates.
+`ShooterLogHelpers.describeOutsideDates` builds the message from the same `isWithinDates` check, with Mockito service
+tests. `README.md` describes the warnings.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -1575,7 +1638,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | No items currently scoped — #47 closed in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                         |
+| **Now**     | No items currently scoped — #48 and #49 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                         |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath; re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
@@ -1694,6 +1757,11 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
   Gap #46.
 - ✅ Met in v16.3.0: `POST /ipsc/shooter-logs/bulk` creates shooter logs from CSV, each row on its own and checked as a
   single log is, reporting a failed row with the values it supplied, closing Gap #47.
+- ✅ Met in v16.4.0: `PUT` and `PATCH /ipsc/shooter-logs/bulk` replace and update existing shooter logs from CSV, each
+  row on its own, and a bulk competitor row whose club number is an existing competitor's updates and verifies it,
+  closing Gap #48.
+- ✅ Met in v16.4.0: a match outside the dates of a shooter log that covers it is reported in its `warnings` when it is
+  read, and when it is edited without changing day, closing Gap #49.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.
