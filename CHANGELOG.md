@@ -97,6 +97,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscCompetitorServiceImpl.normaliseCsvRequest`:** No longer passes on a competitor ID, as a CSV row carries none.
 
+##### Dependencies
+
+- **`pom.xml`:** `flyway-mysql` is no longer pinned to `13.7.0`, so it takes the `12.4.0` Spring Boot manages. The pin
+  put Flyway 13's MySQL module on the runtime classpath beside the `12.4.0` `flyway-core` that
+  `spring-boot-starter-flyway` brings in, and beside the `12.4.0` Maven plugin, mixing two Flyway majors. All three now
+  share one version, and `mysql-connector-j`, `logback.version` and the Jackson BOM properties stay pinned above
+  Spring Boot's.
+
 ---
 
 ### 🧾 [16.3.0] - 2026-11-10
