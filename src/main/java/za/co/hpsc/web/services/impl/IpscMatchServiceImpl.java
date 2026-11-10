@@ -258,10 +258,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @param shooterLog a shooter log that covers the match.
      */
     protected void addWarningIfOutsideDates(MatchResponse response, IpscMatch match, ShooterLog shooterLog) {
-        String warning = ShooterLogHelpers.describeOutsideDates(match, shooterLog);
-        if (warning != null) {
-            response.getWarnings().add(warning);
-        }
+        ShooterLogHelpers.describeOutsideDates(match, shooterLog).ifPresent(response.getWarnings()::add);
     }
 
     /**

@@ -23,7 +23,7 @@
 
 ## 🧪 Test Plan
 
-- [x] `./mvnw verify -Pcoverage` passes: 1,567 tests, no failures or errors and 3 skipped without MySQL, with 98.36%
+- [x] `./mvnw verify -Pcoverage` passes: 1,569 tests, no failures or errors and 3 skipped without MySQL, with 98.36%
   line and 98.74% branch coverage, above the 97% minimum
 - [x] `CHANGELOG.md`'s `[Unreleased]` section synced against the branch and renamed to `[16.4.0]`
 - [x] All 38 Flyway migrations applied to a throwaway MySQL 8.4 on Flyway `12.4.0`

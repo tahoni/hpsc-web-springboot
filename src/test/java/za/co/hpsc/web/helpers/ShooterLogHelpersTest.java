@@ -7,6 +7,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -114,6 +115,37 @@ class ShooterLogHelpersTest {
         // Act & Assert
         assertTrue(ShooterLogHelpers.isWithinDates(match, shooterLog(null, LocalDate.of(2026, 9, 30))));
         assertTrue(ShooterLogHelpers.isWithinDates(match, shooterLog(LocalDate.of(2026, 9, 1), null)));
+    }
+
+    // describeOutsideDates()
+    @Test
+    void testDescribeOutsideDates_whenTheMatchIsWithinTheLogsDates_thenReturnsEmpty() {
+        // Arrange
+        IpscMatch match = match(1L, LocalDate.of(2026, 9, 12));
+        ShooterLog shooterLog = shooterLog(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30));
+
+        // Act
+        Optional<String> warning = ShooterLogHelpers.describeOutsideDates(match, shooterLog);
+
+        // Assert
+        assertTrue(warning.isEmpty());
+    }
+
+    @Test
+    void testDescribeOutsideDates_whenTheMatchIsOutsideTheLogsDates_thenNamesTheMatchDateAndTheLog() {
+        // Arrange
+        IpscMatch match = match(1L, LocalDate.of(2026, 10, 12));
+        ShooterLog shooterLog = shooterLog(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30));
+        shooterLog.setId(7L);
+
+        // Act
+        Optional<String> warning = ShooterLogHelpers.describeOutsideDates(match, shooterLog);
+
+        // Assert
+        assertTrue(warning.isPresent());
+        assertTrue(warning.get().contains("2026-10-12"));
+        assertTrue(warning.get().contains("2026-09-01 to 2026-09-30"));
+        assertTrue(warning.get().contains("shooter log with ID 7"));
     }
 
     // Helpers

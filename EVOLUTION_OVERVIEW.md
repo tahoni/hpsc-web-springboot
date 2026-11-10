@@ -395,6 +395,6 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 
 **Test Coverage:**
 
-- The suite stands at 1,567 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with new controller, request
+- The suite stands at 1,569 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with new controller, request
   mix-in, service, integration and migration tests for the bulk updates, the competitor update, the match warnings and
   the Flyway migrations on MySQL

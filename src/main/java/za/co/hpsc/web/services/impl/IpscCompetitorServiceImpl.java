@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
@@ -94,15 +95,16 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             rowNumber++;
             CompetitorRequest normalised = normaliseCsvRequest(competitorRequest);
             Competitor newCompetitor = newCompetitor(normalised);
-            Competitor existing = findExistingCompetitor(newCompetitor);
+            Optional<Competitor> existing = findExistingCompetitor(newCompetitor);
             CompetitorBulkResponse result = new CompetitorBulkResponse(rowNumber, "", null);
-            if (existing == null) {
+            if (existing.isEmpty()) {
                 competitors.add(newCompetitor);
             } else {
-                competitorMapper.applyFields(existing, normalised);
-                existing.setIsVerified(true);
-                competitors.add(existing);
-                result.setMessage("Updated and verified the existing competitor with ID " + existing.getId() + ".");
+                Competitor competitor = existing.get();
+                competitorMapper.applyFields(competitor, normalised);
+                competitor.setIsVerified(true);
+                competitors.add(competitor);
+                result.setMessage("Updated and verified the existing competitor with ID " + competitor.getId() + ".");
             }
             results.add(result);
             savedResults.add(result);
@@ -236,16 +238,15 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      * competitor, since neither a name nor an ID number is enough to tell two people apart.
      *
      * @param candidate the competitor built from the row, with its club number already resolved.
-     * @return the existing competitor with its home club and email addresses loaded, or {@code null} if none has the
-     * row's club number and the row so creates a new one.
+     * @return the existing competitor with its home club and email addresses loaded, or empty if none has the row's
+     * club number and the row so creates a new one.
      */
-    protected Competitor findExistingCompetitor(Competitor candidate) {
+    protected Optional<Competitor> findExistingCompetitor(Competitor candidate) {
         if (!hasText(candidate.getClubNumber())) {
-            return null;
+            return Optional.empty();
         }
         return competitorRepository.findByClubNumber(candidate.getClubNumber())
-                .flatMap(found -> competitorRepository.findByIdWithHomeClubAndEmailAddresses(found.getId()))
-                .orElse(null);
+                .flatMap(found -> competitorRepository.findByIdWithHomeClubAndEmailAddresses(found.getId()));
     }
 
     /**

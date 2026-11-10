@@ -167,7 +167,7 @@ own row. Check each result's `success` rather than the status alone, since a `20
 
 ## 🧪 Testing
 
-- `./mvnw verify -Pcoverage` passes: 1,567 tests with no failures or errors, 3 of them skipped because
+- `./mvnw verify -Pcoverage` passes: 1,569 tests with no failures or errors, 3 of them skipped because
   `FlywayMysqlMigrationTest` runs only where `FLYWAY_MYSQL_URL` is set.
 - New tests cover the bulk update mix-in's column binding, `ShooterLogPatchRequest.validate`, the `PUT` and `PATCH`
   bulk controller statuses, `updateShooterLogs` and `patchShooterLogs` with valid and invalid rows, adding and
