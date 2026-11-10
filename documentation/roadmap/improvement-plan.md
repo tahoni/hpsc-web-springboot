@@ -146,8 +146,9 @@ number or a newly met precondition on an existing gap — see the `update-improv
     verifies a competitor by club number)
   - #49 A match outside a covering shooter log's dates is reported only when the log is calculated or the match moves
     day — closed in v16.4.0 (`MatchResponse.warnings` on read and on a same-day edit)
-- **🟡 Partially Completed (0):**
-  - *No gaps are currently partially completed.*
+- **🟡 Partially Completed (1):**
+  - #50 `flyway-mysql` was pinned a major above `flyway-core` and the Maven plugin, mixing two Flyway majors —
+    partially completed in v16.4.0 (pin dropped; the migrations still need a run against MySQL)
 - **⚪ Open (0):**
   - *No gaps are currently open.*
 
@@ -1628,7 +1629,30 @@ A gap moves here when it has at least one **Progress** paragraph (per
 `update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
 but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
 
-*No gaps are currently partially completed.*
+#### 50. `flyway-mysql` was pinned a major above `flyway-core` and the Maven plugin, mixing two Flyway majors — 🟡 Partially completed in v16.4.0
+
+**Evidence:** `pom.xml` pinned the runtime dependency `org.flywaydb:flyway-mysql` to `13.7.0`, while Spring Boot 4.1.2
+manages `flyway.version` at `12.4.0` and so forces `flyway-core`, which `spring-boot-starter-flyway` brings in, to
+`12.4.0`. The `flyway-maven-plugin`'s own `flyway-mysql` dependency already used `${flyway.version}`, with a comment
+saying "A hand-pinned version drifts: Dependabot bumped it to 13.7.0 against the 12.4.0 plugin, mixing two Flyway
+majors", yet the runtime dependency kept the hand-pinned `13.7.0` that the comment warns against. The v16.3.0
+`RELEASE_NOTES.md` Known Issues list the pin only as one of several overrides "set above Spring Boot's managed
+versions", and the Ongoing roadmap row asks for them to be re-checked each release, so nothing tracked the mismatch
+itself.
+
+**Why it matters:** The same shape as Gaps #5 and #26: a hand-set pin that nothing flags. Flyway's modules are
+released together, so a MySQL module from one major beside a core from another can disagree on internal APIs. The
+`test` profile bypasses Flyway on H2, so the one path that runs the MySQL migrations is the one no test exercises, and
+a break there would only show at deployment.
+
+**Proposed improvement:** Drop the `flyway-mysql` version so it takes the one Spring Boot manages, as the Maven
+plugin's copy already does, confirm with `dependency:tree` that core, the MySQL module and the plugin share one
+version, and run the migrations once against a MySQL database before release.
+
+**Progress:** The pin is dropped. `flyway-mysql` no longer carries a `<version>`, so it resolves to the managed
+`12.4.0`, and `dependency:tree` shows it and `flyway-core` both at `12.4.0`, the same as the plugin; the full build
+with coverage passes. The gap stays open on the last step: the `test` profile bypasses Flyway, so the migrations have
+not yet been run against a MySQL database on the aligned version.
 
 ### ⚪ Open
 
@@ -1640,10 +1664,10 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | No items currently scoped — #48 and #49 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                         |
+| **Now**     | No items currently scoped — #50 partially completed in v16.4.0, #48 and #49 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                         |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                  |
-| **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath; re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
+| **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath, and `flyway-mysql` until #50; re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
 ---
 
@@ -1764,6 +1788,8 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
   closing Gap #48.
 - ✅ Met in v16.4.0: a match outside the dates of a shooter log that covers it is reported in its `warnings` when it is
   read, and when it is edited without changing day, closing Gap #49.
+- 🟡 Partly met in v16.4.0: `flyway-mysql` takes the Flyway version Spring Boot manages, so `flyway-core`, the MySQL
+  module and the Maven plugin share one version, Gap #50; the migrations still need a run against MySQL.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.
