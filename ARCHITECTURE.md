@@ -110,6 +110,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     ├───exceptions/             # Exception hierarchy unit tests
     ├───helpers/                # Helper unit tests
     ├───mappers/                # Mapper unit tests
+    ├───migrations/             # Flyway migration test against MySQL (runs only when FLYWAY_MYSQL_URL is set)
     ├───models/                 # DTO / model unit tests
     ├───repositories/           # Repository query and JPA mapping integration tests (H2)
     ├───services/               # Service contract unit tests (Mockito) and integration tests (H2)
@@ -128,7 +129,7 @@ responsibilities:
 |--------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Award Ceremonies**           | Award data and ceremony grouping, processed from CSV                                                                                                                                                                                                                                                       |
 | **Image Gallery**              | Image metadata processing from CSV                                                                                                                                                                                                                                                                         |
-| **IPSC Competitors & Matches** | Full CRUD for competitor and match records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`; a match cannot be rescheduled outside the dates of a shooter log that covers it                                                                                           |
+| **IPSC Competitors & Matches** | Full CRUD for competitor and match records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`; a match cannot be rescheduled outside the dates of a shooter log that covers it, and one already outside them reports it in its `warnings` when read or edited            |
 | **IPSC Match Competitors**     | Full CRUD for a competitor's entry in a match, plus bulk CSV import, via `IpscMatchCompetitorController`                                                                                                                                                                                                   |
 | **IPSC Shooter Results**       | Calculation of a match's ranked results per firearm type, division and competitor category for verified competitors with points, and reading them, via `IpscShooterResultController`                                                                                                                       |
 | **Shooter Logs**               | Full CRUD for shooter logs (a date range and the matches it covers) via `IpscShooterLogController`, and calculation of each competitor's overall rank and percentage per division and competitor category from the log's matches' shooter results, and reading them, via `IpscShooterLogOverallController` |
@@ -430,9 +431,13 @@ Verification is deliberately never defaulted: a row without an `IsVerified` valu
 competitor created through the single-competitor endpoint without one. Such a competitor is excluded from results
 until it is marked verified through `PUT` or `PATCH /ipsc/competitors/{competitorId}`, or, for many at once, through
 `POST /ipsc/competitors/verify`, which takes a list of competitor IDs, verifies each one that exists in a single
-transaction and reports an unknown ID in its own result. The import only creates competitors, so it cannot verify one
-that already exists. The competitor endpoints are the only way to verify anyone: the Match and Match Competitor imports
-below never set `isVerified`.
+transaction and reports an unknown ID in its own result. A row whose club number is an existing competitor's updates that competitor
+with the row's data and verifies it instead of creating another; a row without a club number always creates a
+competitor, as neither a name nor an ID number is enough to tell two people apart. The response lists the created or
+updated competitors and a result for every row.
+Apart from the competitor endpoints, the
+Competitor import is the only way to verify anyone: the Match and Match Competitor imports below never set
+`isVerified`.
 
 ### 📥 Match Bulk CSV Import Flow
 
@@ -496,6 +501,13 @@ Client uploads CSV (Content-Type: text/plain, columns StartDate, EndDate and Mat
 ← JSON response
 ```
 
+`PUT /ipsc/shooter-logs/bulk` and `PATCH /ipsc/shooter-logs/bulk` change existing logs the same way, one row at a time,
+with an added `ShooterLogId` column naming the log; a row without one, or naming an unknown log, is reported as failed.
+Each row is read as a `ShooterLogBulkRequest` and handed to `updateShooterLog`, so both dates are required and an empty
+`MatchIds` clears the log's matches, or to `patchShooterLog`, where a column left empty leaves that field unchanged, a
+non-empty `MatchIds` replaces the log's matches in full, and `AddMatchIds` and `RemoveMatchIds` add and remove matches
+without restating the rest. Both return `200`, or `422` if every row failed.
+
 ---
 
 ## ✅ Quality Attributes
@@ -519,6 +531,7 @@ Client uploads CSV (Content-Type: text/plain, columns StartDate, EndDate and Mat
 | **Security Analysis**     | CodeQL                                                                                                    | Push to any GitFlow branch / PR to `main` / `develop`; weekly schedule                   |
 | **Static Analysis**       | Qodana (`JetBrains/qodana-action`), via `.github/workflows/code_quality.yml`                              | Push to any GitFlow branch / PR to `main` / `develop`; manual dispatch                   |
 | **Build & Tests**         | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                                     | Push / PR to `main` / `develop`; H2 in-memory — no external DB required                  |
+| **Migrations**            | Flyway on MySQL 8.4 (`FlywayMysqlMigrationTest`), via the `migrations` job in `build.yml`                 | Push / PR to `main` / `develop`; a throwaway MySQL service container                     |
 | **Code Coverage**         | JaCoCo, minimum 97% line and branch coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile)   | Enforced automatically as part of the `Build & Tests` gate above                         |
 | **Docker Image**          | `docker/build-push-action` (build only, never pushed), via `.github/workflows/docker.yml`                 | Push / PR to `main` / `develop`                                                          |
 | **Dependency Submission** | `advanced-security/maven-dependency-submission-action`, via `.github/workflows/dependency-submission.yml` | Push to any GitFlow branch; manual dispatch                                              |

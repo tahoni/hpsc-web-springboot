@@ -46,7 +46,7 @@ public interface IpscMatchCompetitorService {
      * fails is reported and skipped while the rest are still created. A row fails when it is missing a required
      * field, has an unrecognised enumerated value, refers to a competitor or match that cannot be found, or
      * duplicates another row, or an existing entry, for the competitor, match and firearm type. The import only
-     * ever creates entries, so a {@code MatchCompetitorId} column is read but ignored.
+     * ever creates entries, so a {@code MatchCompetitorId} column is not read.
      * </p>
      *
      * <p>

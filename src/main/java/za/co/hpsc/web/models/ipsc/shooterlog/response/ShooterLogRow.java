@@ -21,10 +21,16 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 public class ShooterLogRow {
+    /** The identifier of the shooter log to change, for a bulk update row; empty for a row that creates a log. */
+    private String shooterLogId = "";
     private String startDate = "";
     private String endDate = "";
     /** The match identifiers, separated by {@link SystemConstants#ARRAY_SEPARATOR}. */
     private String matchIds = "";
+    /** The identifiers of the matches a bulk partial update row adds, separated like {@link #matchIds}. */
+    private String addMatchIds = "";
+    /** The identifiers of the matches a bulk partial update row removes, separated like {@link #matchIds}. */
+    private String removeMatchIds = "";
 
     /**
      * Describes a request by the values it supplied.

@@ -22,6 +22,7 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponse;
@@ -82,16 +83,38 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         List<CompetitorRequest> competitorRequests = readCompetitors(csvData);
 
         // Every row is validated and built before any is saved, then all are saved in one
-        // transaction, so a bad row leaves none of them persisted.
+        // transaction, so a bad row leaves none of them persisted. A row for a competitor that already exists
+        // updates and verifies that competitor instead of creating another.
         List<Competitor> competitors = new ArrayList<>();
+        // The result of each row; a saved row's competitor is filled in once the row is saved
+        List<CompetitorBulkResponse> results = new ArrayList<>();
+        List<CompetitorBulkResponse> savedResults = new ArrayList<>();
+        int rowNumber = 0;
         for (CompetitorRequest competitorRequest : competitorRequests) {
-            competitors.add(newCompetitor(normaliseCsvRequest(competitorRequest)));
+            rowNumber++;
+            CompetitorRequest normalised = normaliseCsvRequest(competitorRequest);
+            Competitor newCompetitor = newCompetitor(normalised);
+            Competitor existing = findExistingCompetitor(newCompetitor);
+            CompetitorBulkResponse result = new CompetitorBulkResponse(rowNumber, "", null);
+            if (existing == null) {
+                competitors.add(newCompetitor);
+            } else {
+                competitorMapper.applyFields(existing, normalised);
+                existing.setIsVerified(true);
+                competitors.add(existing);
+                result.setMessage("Updated and verified the existing competitor with ID " + existing.getId() + ".");
+            }
+            results.add(result);
+            savedResults.add(result);
         }
 
         List<CompetitorResponse> competitorResponseList = transactionService.saveCompetitors(competitors).stream()
                 .map(this::toResponse)
                 .toList();
-        return new CompetitorResponseHolder(new ArrayList<>(competitorResponseList));
+        for (int i = 0; i < savedResults.size(); i++) {
+            savedResults.get(i).setCompetitor(competitorResponseList.get(i));
+        }
+        return new CompetitorResponseHolder(new ArrayList<>(competitorResponseList), results);
     }
 
     @Override
@@ -208,6 +231,24 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
+     * Finds the competitor a bulk import row refers to: the one with the row's club number, which is unique. A row
+     * without a club number, as every row for a home club other than HPSC's is, never refers to an existing
+     * competitor, since neither a name nor an ID number is enough to tell two people apart.
+     *
+     * @param candidate the competitor built from the row, with its club number already resolved.
+     * @return the existing competitor with its home club and email addresses loaded, or {@code null} if none has the
+     * row's club number and the row so creates a new one.
+     */
+    protected Competitor findExistingCompetitor(Competitor candidate) {
+        if (!hasText(candidate.getClubNumber())) {
+            return null;
+        }
+        return competitorRepository.findByClubNumber(candidate.getClubNumber())
+                .flatMap(found -> competitorRepository.findByIdWithHomeClubAndEmailAddresses(found.getId()))
+                .orElse(null);
+    }
+
+    /**
      * Reads competitor data from a CSV-formatted string and converts it into a list of
      * {@link CompetitorRequest} objects, binding the CSV column headers onto each through
      * {@link CompetitorRequestCsvMixIn}. A header may omit optional columns and unknown columns are ignored.
@@ -244,8 +285,8 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
-     * Normalises a {@link CompetitorRequest} read from a CSV row into a new {@link CompetitorRequest}, dropping any
-     * {@code competitorId}.
+     * Normalises a {@link CompetitorRequest} read from a CSV row into a new {@link CompetitorRequest}, which has no
+     * {@code competitorId} as a CSV row carries none.
      *
      * <p>
      * Every name column and the gender are proper-cased (see {@link za.co.hpsc.web.utils.StringUtil#toProperCase(String)}). The
@@ -261,7 +302,6 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
      */
     protected CompetitorRequest normaliseCsvRequest(@NonNull CompetitorRequest csvRow) {
         return new CompetitorRequest(
-                csvRow.getCompetitorId(),
                 toProperCase(csvRow.getFirstName()),
                 CompetitorHelpers.toSentenceCaseLastName(toProperCase(csvRow.getLastName())),
                 toProperCase(csvRow.getMiddleNames()),

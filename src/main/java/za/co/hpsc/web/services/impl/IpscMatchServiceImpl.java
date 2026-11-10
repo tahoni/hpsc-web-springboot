@@ -35,7 +35,9 @@ import za.co.hpsc.web.services.TransactionService;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 
@@ -95,7 +97,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         LocalDate previousDate = match.getScheduledDate().toLocalDate();
         matchMapper.applyFields(match, request);
         validateWithinShooterLogDates(match, previousDate);
-        return toResponse(transactionService.saveMatch(match));
+        return toResponseWithWarnings(transactionService.saveMatch(match), previousDate);
     }
 
     @Override
@@ -106,19 +108,37 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         matchMapper.applyPatchFields(match, request);
         validateWithinShooterLogDates(match, previousDate);
 
-        return toResponse(transactionService.saveMatch(match));
+        return toResponseWithWarnings(transactionService.saveMatch(match), previousDate);
     }
 
     @Override
     public MatchResponse getMatch(Long matchId) {
-        return toResponse(findMatchOrThrow(matchId));
+        IpscMatch match = findMatchOrThrow(matchId);
+        MatchResponse response = toResponse(match);
+        for (ShooterLog shooterLog : shooterLogRepository.findAllByMatchesId(matchId)) {
+            addWarningIfOutsideDates(response, match, shooterLog);
+        }
+        return response;
     }
 
     @Override
     public List<MatchResponse> getAllMatches() {
-        return ipscMatchRepository.findAllWithClub().stream()
-                .map(this::toResponse)
-                .toList();
+        List<IpscMatch> matches = ipscMatchRepository.findAllWithClub();
+        Map<Long, MatchResponse> responsesById = new LinkedHashMap<>();
+        for (IpscMatch match : matches) {
+            responsesById.put(match.getId(), toResponse(match));
+        }
+
+        // One query for every log's matches, rather than one per match.
+        for (ShooterLog shooterLog : shooterLogRepository.findAllWithMatches()) {
+            for (IpscMatch logMatch : shooterLog.getMatches()) {
+                MatchResponse response = responsesById.get(logMatch.getId());
+                if (response != null) {
+                    addWarningIfOutsideDates(response, logMatch, shooterLog);
+                }
+            }
+        }
+        return new ArrayList<>(responsesById.values());
     }
 
     @Override
@@ -208,6 +228,40 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     protected IpscMatch findMatchOrThrow(Long matchId) {
         return ipscMatchRepository.findByIdWithClub(matchId)
                 .orElseThrow(() -> new NonFatalException("No IPSC match found with ID " + matchId));
+    }
+
+    /**
+     * Maps a saved match to its response, reporting any shooter log it is out of step with. A match that moved to
+     * another day has just been checked against the logs, so only one left on the same day is looked up: an edit that
+     * leaves the date alone is not blocked by a log already out of step, but reports it.
+     *
+     * @param match        the saved match.
+     * @param previousDate the date the match was scheduled for before the edit.
+     * @return the mapped {@link MatchResponse}.
+     */
+    protected MatchResponse toResponseWithWarnings(IpscMatch match, LocalDate previousDate) {
+        MatchResponse response = toResponse(match);
+        if (match.getScheduledDate().toLocalDate().equals(previousDate)) {
+            for (ShooterLog shooterLog : shooterLogRepository.findAllByMatchesId(match.getId())) {
+                addWarningIfOutsideDates(response, match, shooterLog);
+            }
+        }
+        return response;
+    }
+
+    /**
+     * Adds a warning to a match's response if the match is scheduled outside the dates of a shooter log that covers it.
+     * A log already out of step is reported when the match is read rather than refused, so the match stays readable.
+     *
+     * @param response   the response to add the warning to.
+     * @param match      the match the response was built from.
+     * @param shooterLog a shooter log that covers the match.
+     */
+    protected void addWarningIfOutsideDates(MatchResponse response, IpscMatch match, ShooterLog shooterLog) {
+        String warning = ShooterLogHelpers.describeOutsideDates(match, shooterLog);
+        if (warning != null) {
+            response.getWarnings().add(warning);
+        }
     }
 
     /**

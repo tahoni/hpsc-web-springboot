@@ -87,7 +87,8 @@ public class IpscCompetitorController {
      * @param csvData the CSV content as a string containing details about competitors,
      *                formatted according to the expected schema. This parameter is required
      *                and cannot be null.
-     * @return a {@link CompetitorResponseHolder} containing the created competitors.
+     * @return a {@link CompetitorResponseHolder} containing the created or updated competitors and the result of every
+     * row.
      * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
      *                             missing a required field, if a row's gender is unrecognised, or
      *                             if a row's home club is
@@ -100,9 +101,10 @@ public class IpscCompetitorController {
     @PostMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create competitors", description = "Create IPSC competitors in bulk from CSV data. A "
             + "row's club number is required when its home club is HPSC, and is otherwise ignored (forced to "
-            + "null).")
+            + "null). A row whose club number is an existing competitor's updates and verifies that "
+            + "competitor instead of creating another. The response lists the result of every row.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Competitors created.",
+            @ApiResponse(responseCode = "201", description = "Competitors created or updated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = CompetitorResponseHolder.class))),
             @ApiResponse(responseCode = "400", description = "Invalid CSV data provided, a required field is "

@@ -21,6 +21,40 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 16.4.0 (November 10, 2026)
+
+**Theme:** Changing Existing Records in Bulk
+
+**Key Focus:**
+
+- `PUT` and `PATCH /ipsc/shooter-logs/bulk` (`IpscShooterLogController.updateShooterLogs` and `patchShooterLogs`)
+  replace and partially update existing shooter logs from `text/plain` CSV, with a `ShooterLogId` column beside the
+  `StartDate`, `EndDate` and `MatchIds` columns of the bulk create
+- Each row goes through `updateShooterLog` or `patchShooterLog` in its own transaction, so a failed row, such as one
+  with no `ShooterLogId` or an unknown log, is reported with the values it supplied and the rest are still saved; the
+  endpoints answer `200`, or `422` if every row failed
+- `ShooterLogPatchRequest.addMatchIds` and `removeMatchIds`, and the `AddMatchIds` and `RemoveMatchIds` CSV columns,
+  let a `PATCH` add matches to and remove them from a log without restating the rest, while `matchIds` still replaces
+  the list and a match both added and removed is a `400`
+- A bulk competitor import row whose club number is an existing competitor's updates and verifies that competitor
+  instead of creating another, and `CompetitorBulkResponse` in `CompetitorResponseHolder.results` reports each row
+- `MatchResponse.warnings` reports a match outside the dates of a shooter log that covers it when the match is read,
+  and when it is edited without changing its day, built by `ShooterLogHelpers.describeOutsideDates`; the match is
+  still returned and a move to another day outside the dates is still refused
+- The match, competitor and match competitor CSV imports stop reading their own ID column, which was bound but never
+  used, and a file that still has it imports as before
+- `flyway-mysql` is no longer pinned to `13.7.0`, so it takes the `12.4.0` Spring Boot manages and matches
+  `flyway-core` and the Maven plugin; all 38 migrations were applied to a throwaway MySQL 8.4 on it
+- A `migrations` job in `build.yml` runs `FlywayMysqlMigrationTest` against a throwaway `mysql:8.4` service container
+  on every push and pull request, so a migration that MySQL rejects shows before deployment
+- `README.md`, `ARCHITECTURE.md` and the OpenAPI descriptions describe the bulk updates, the competitor update and the
+  match warnings
+- Scoped as `v16.4.0` **MINOR**: the new endpoints and the optional `warnings`, `results` and request fields are
+  backward-compatible additions, and nothing existing breaks
+- Improvement plan: Gaps #48, #49 and #50 are added and closed, leaving all 50 gaps closed and none open
+- The suite stands at 1,567 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
+- Project version bumped to 16.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 16.3.0 (November 10, 2026)
 
 **Theme:** Shooter Log Bulk CSV Import
@@ -339,6 +373,16 @@ Milestones 44 to 50 (versions 10.0.0 to 13.3.0) are archived, unchanged, in
 - A null match ID in a shooter log request is a `400` instead of a `500`
 - Improvement plan Gap #47 is added and closed, so every tracked gap stays closed
 
+### Milestone 59: Changing Existing Records in Bulk (v16.4.0)
+
+- `PUT` and `PATCH /ipsc/shooter-logs/bulk` replace and update existing shooter logs from CSV, each row on its own,
+  and a `PATCH` can add and remove matches
+- A bulk competitor row for an existing club number updates and verifies that competitor, with a result for every row
+- A match outside a covering shooter log's dates reports it in its `warnings` when read or edited
+- `flyway-mysql` follows the Flyway version Spring Boot manages, with the migrations checked against MySQL 8.4
+- A `migrations` CI job runs the Flyway migrations against MySQL 8.4 on every push and pull request
+- Improvement plan Gaps #48, #49 and #50 are added and closed, so every tracked gap stays closed
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -607,7 +651,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   points, stored in a new `ShooterResult` entity and served by one controller. Because that retires the overall and
   club rankings on a match competitor and renames the shooter log `points`, v15.0.0 is the project's seventh
   consecutive MAJOR release, with each breaking change flagged in `CHANGELOG.md` as it landed.
-- **Version 16.x (v16.0.0 – v16.3.0):** Make more of the real match data resolve — the Rifle PCC division is added,
+- **Version 16.x (v16.0.0 – v16.4.0):** Make more of the real match data resolve — the Rifle PCC division is added,
   the semi-auto rifle divisions get names that say what they are, and competitor names match despite trailing
   modified-entry digits and a "TRO" role marker, while a bulk match competitor import is saved or rolled back as one
   unit. Because the renamed divisions change the names a request may use, v16.0.0 is the project's eighth consecutive
@@ -622,6 +666,9 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   and a match competitor import says when a row's competitor is left out of results — as a backward-compatible MINOR
   release. v16.3.0 then gives shooter logs the bulk CSV import the other records already had — each row created on its
   own, a failed row reported with the values it supplied — as a second backward-compatible MINOR release.
+  v16.4.0 then lets those imports change what they created — shooter logs replaced, updated and given or relieved of
+  matches from CSV, a competitor row for an existing club number updating and verifying it, and a match that is out of
+  step with its log saying so when it is read — as a third backward-compatible MINOR release.
 
 ### Initial Phase (v1.0.0)
 
@@ -920,7 +967,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v16.3.0, the following areas are identified for future enhancement:
+Based on the evolution to v16.4.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -931,7 +978,23 @@ The completed-work logs for versions 8.0.0 to 9.1.0 are archived, unchanged, in
 The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 [`documentation/archive/v10-v13/HISTORY_v10-v13.md`](/documentation/archive/v10-v13/HISTORY_v10-v13.md).
 
-### Recently Completed (v16.3.0)
+### Recently Completed (v16.4.0)
+
+- `PUT` and `PATCH /ipsc/shooter-logs/bulk` replace and update shooter logs from CSV through
+  `IpscShooterLogService.updateShooterLogs` and `patchShooterLogs`, each row on its own, answering `422` only when
+  every row failed
+- `ShooterLogPatchRequest.addMatchIds` and `removeMatchIds` add and remove matches on the single and the bulk `PATCH`
+- `IpscCompetitorServiceImpl.createCompetitors` updates and verifies a competitor whose club number a row names, with
+  `CompetitorBulkResponse` and `CompetitorResponseHolder.results` reporting each row
+- `MatchResponse.warnings`, filled by `IpscMatchServiceImpl` and `ShooterLogHelpers.describeOutsideDates`, reports a
+  match outside a covering log's dates
+- The match, competitor and match competitor CSV imports no longer read their own ID column
+- `flyway-mysql` is no longer pinned above the Flyway version Spring Boot manages
+- `FlywayMysqlMigrationTest` and a `migrations` job in `build.yml` run the Flyway migrations against MySQL 8.4 in CI
+- Improvement plan: Gaps #48, #49 and #50 are added and closed, leaving all 50 gaps closed and none open
+- Project version bumped to 16.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v16.3.0)
 
 - `POST /ipsc/shooter-logs/bulk` creates shooter logs from CSV through `IpscShooterLogService.createShooterLogs`, each
   row on its own and checked as a single log is, answering `422` only when every row failed

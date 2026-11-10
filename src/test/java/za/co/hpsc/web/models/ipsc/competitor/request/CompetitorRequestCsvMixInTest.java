@@ -161,7 +161,8 @@ class CompetitorRequestCsvMixInTest {
     }
 
     @Test
-    void testCsvDeserialization_whenCsvHasCompetitorIdColumn_thenBindsIt() throws Exception {
+    void testCsvDeserialization_whenCsvHasCompetitorIdColumn_thenDoesNotReadItAndMapsTheOtherColumns()
+            throws Exception {
         // Arrange
         String csvData = """
                 CompetitorId,FirstName,LastName
@@ -172,7 +173,10 @@ class CompetitorRequestCsvMixInTest {
         List<CompetitorRequest> rows = readRows(csvData);
 
         // Assert
-        assertEquals(7L, rows.getFirst().getCompetitorId());
+        assertEquals(1, rows.size());
+        assertNull(rows.getFirst().getCompetitorId());
+        assertEquals("Jane", rows.getFirst().getFirstName());
+        assertEquals("Doe", rows.getFirst().getLastName());
     }
 
     @Test

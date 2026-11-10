@@ -7,22 +7,34 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 
 /**
- * Jackson mix-in binding {@link MatchCompetitorRequest}'s constructor to the UpperCamelCase column
- * headers used by CSV reading. It is declared with the same signature as
- * {@link MatchCompetitorRequest}'s {@code @JsonCreator}, so its annotations replace that
- * constructor's for CSV reading only. Unknown columns are ignored.
+ * Jackson mix-in binding {@link MatchCompetitorRequest}'s CSV constructor to the UpperCamelCase column
+ * headers used by CSV reading. It disables {@link MatchCompetitorRequest}'s {@code @JsonCreator}, which takes a
+ * {@code matchCompetitorId}, and binds the constructor without one instead, for CSV reading only. Unknown columns are
+ * ignored.
  *
  * <p>
- * A {@code MatchCompetitorId} column is bound as given.
+ * CSV bulk import only ever creates new entries, so a row has no identifier of its own: a
+ * {@code MatchCompetitorId} column is not read. The {@code CompetitorId} and {@code MatchId} columns are, as they name
+ * the competitor and match the entry belongs to.
  * </p>
  *
  * @since 9.1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class MatchCompetitorRequestCsvMixIn {
+    /** The JSON constructor, which takes a {@code matchCompetitorId}, is not used to read CSV. */
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    MatchCompetitorRequestCsvMixIn(Long matchCompetitorId, Long competitorId, String competitorName,
+                                   String competitorNumber, Long matchId, String matchClub,
+                                   String competitorCategory, String firearmType, String division,
+                                   String powerFactor, BigDecimal points, BigDecimal percentage, BigDecimal time,
+                                   BigDecimal percentageOfPossiblePoints, Integer alpha, Integer charlie,
+                                   Integer delta, Integer misses, Integer noPenaltyMisses, Integer noShoots,
+                                   Integer proceduralErrors, Integer additionalPenalties, Boolean isVisitor) {
+    }
+
     @JsonCreator
-    MatchCompetitorRequestCsvMixIn(@JsonProperty("MatchCompetitorId") Long matchCompetitorId,
-                                   @JsonProperty("CompetitorId") Long competitorId,
+    MatchCompetitorRequestCsvMixIn(@JsonProperty("CompetitorId") Long competitorId,
                                    @JsonProperty("Name") String competitorName,
                                    @JsonProperty("Mem #") String competitorNumber,
                                    @JsonProperty(value = "MatchId", required = true) Long matchId,
