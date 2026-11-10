@@ -65,6 +65,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   calculated. The match is still returned, so it stays readable and fixable.
 - **`IpscMatchServiceImpl.updateMatch` and `patchMatch`:** An edit that leaves a match on the same day is still not
   blocked by a shooter log it is already out of step with, but now reports the log in the response's `warnings`.
+- **`ShooterLogHelpers.describeOutsideDates`:** Builds the warning for a match scheduled outside a covering shooter
+  log's dates, from the same `isWithinDates` check the calculation and reschedule paths use, for the match read and
+  edit responses to report.
 - **`IpscCompetitorServiceImpl.createCompetitors`:** A bulk import row whose club number is an existing competitor's now
   updates and verifies that competitor instead of creating another. The competitor takes the row's data, as in a full
   update, and is marked verified. A row without a club number, as every row for a home club other than HPSC's is,
