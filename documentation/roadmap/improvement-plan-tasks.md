@@ -506,6 +506,18 @@ Gap #41)* —
   `IpscShooterLogOverallServiceImpl`
 - [x] State the rule in `README.md`, `ARCHITECTURE.md` and the OpenAPI descriptions — done, with the `400` responses
 
+**Bulk competitor verification and the unverified import message** *(improvement-plan.md → Gap #46)* —
+✅ Closed in v16.2.0
+
+- [x] Add an endpoint that verifies several competitors from their IDs in one transaction — done, as
+  `POST /ipsc/competitors/verify` (`IpscCompetitorController.verifyCompetitors` and
+  `IpscCompetitorService.verifyCompetitors`)
+- [x] Report an unknown ID in its own result instead of failing the others — done, one `CompetitorVerifyResponse` per
+  distinct ID
+- [x] Give a match competitor import row for an unverified competitor a message, keeping the row imported — done, in
+  `IpscMatchCompetitorServiceImpl.createMatchCompetitors`
+- [x] Describe both in `README.md`, `ARCHITECTURE.md` and the OpenAPI text — done
+
 ---
 
 ## 🟡 Partially Completed
