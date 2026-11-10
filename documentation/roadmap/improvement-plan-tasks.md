@@ -561,7 +561,8 @@ Gap #41)* —
   `patchMatch`; a move to another day outside the dates is still refused
 - [x] Share the date check with the calculation and the reschedule — done, `ShooterLogHelpers.describeOutsideDates`
   builds on `isWithinDates`
-- [x] Describe the warnings in `README.md` and the match controller and service OpenAPI text and Javadoc — done
+- [x] Describe the warnings in `README.md`, `ARCHITECTURE.md` and the match controller and service OpenAPI text and
+  Javadoc — done
 
 ---
 

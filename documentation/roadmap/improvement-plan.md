@@ -1619,7 +1619,8 @@ JSON when empty. `IpscMatchServiceImpl.getMatch` fills it from `ShooterLogReposi
 `getAllMatches` from one `findAllWithMatches` query rather than one per match; `updateMatch` and `patchMatch` fill it
 when the match stays on the same day, and still refuse a move to another day outside a covering log's dates.
 `ShooterLogHelpers.describeOutsideDates` builds the message from the same `isWithinDates` check, with Mockito service
-tests. `README.md` and the match controller and service OpenAPI text and Javadoc describe the warnings.
+tests. `README.md`, `ARCHITECTURE.md` and the match controller and service OpenAPI text and Javadoc describe the
+warnings.
 
 ### 🟡 Partially Completed
 
