@@ -72,6 +72,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   bulk import and add its flow diagram.
 - **`improvement-plan.md` and `improvement-plan-tasks.md`:** Gap #47 (shooter logs could only be created one at a time,
   unlike the other bulk-imported records) is added and closed in v16.3.0.
+- **`CHANGELOG.md`:** Link definitions for `[Unreleased]` and every released version, as compare links between
+  consecutive tags, so each `[X.Y.Z]` heading resolves as a link instead of an unresolved reference label.
 
 ---
 
@@ -798,3 +800,13 @@ For issues, feature requests or questions:
 ---
 
 **Last Updated:** 2026-08-25
+
+[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.3.0...HEAD
+[16.3.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.2.0...v16.3.0
+[16.2.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.1.2...v16.2.0
+[16.1.2]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.1.1...v16.1.2
+[16.1.1]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.1.0...v16.1.1
+[16.1.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.0.0...v16.1.0
+[16.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v15.0.0...v16.0.0
+[15.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v14.0.0...v15.0.0
+[14.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v13.3.0...v14.0.0
