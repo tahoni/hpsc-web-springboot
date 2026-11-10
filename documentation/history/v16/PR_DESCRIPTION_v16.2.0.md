@@ -23,7 +23,7 @@
 
 - [x] `./mvnw test` passes: 1,498 tests, no failures, errors or skips
 - [x] `CHANGELOG.md`'s `[Unreleased]` section synced against the branch and renamed to `[16.2.0]`
-- [ ] Run `./mvnw verify -Pcoverage` and confirm coverage stays above the 97% minimum
+    - [x] Run `./mvnw verify -Pcoverage` and confirm coverage stays above the 97% minimum
 - [ ] Post a mix of existing, unknown, repeated and already verified IDs to `POST /ipsc/competitors/verify` and check
   each result
 - [ ] Import match competitors for an unverified competitor and confirm the row is created with the message
