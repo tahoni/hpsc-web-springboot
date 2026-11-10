@@ -34,6 +34,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Tests
+
+- **`FlywayMysqlMigrationTest`:** Runs every Flyway migration against an empty MySQL database through the application's
+  own runtime classpath, and checks that each migration file is applied, none is pending or failed, the application
+  tables exist and the checksums validate. It runs only when `FLYWAY_MYSQL_URL` names the database, with
+  `FLYWAY_MYSQL_USER` and `FLYWAY_MYSQL_PASSWORD`, and is skipped everywhere else, as the `test` profile bypasses Flyway
+  on H2.
+
+##### Tooling
+
+- **`.github/workflows/build.yml`:** A new `migrations` job starts a throwaway `mysql:8.4` service container, the
+  version `docker-compose.yml` runs, and runs `FlywayMysqlMigrationTest` against it on every push and pull request to
+  `main` and `develop`, so a migration that MySQL rejects shows before deployment.
+
+##### Documentation
+
+- **`ARCHITECTURE.md` and `CONTRIBUTING.md`:** List the migrations gate in the CI/CD & Quality Gates table and the
+  gate summary, and the new `migrations/` test directory in the project structure tree.
+
 ---
 
 ### 🧾 [16.4.0] - 2026-11-10

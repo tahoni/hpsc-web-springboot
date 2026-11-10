@@ -110,6 +110,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     ├───exceptions/             # Exception hierarchy unit tests
     ├───helpers/                # Helper unit tests
     ├───mappers/                # Mapper unit tests
+    ├───migrations/             # Flyway migration test against MySQL (runs only when FLYWAY_MYSQL_URL is set)
     ├───models/                 # DTO / model unit tests
     ├───repositories/           # Repository query and JPA mapping integration tests (H2)
     ├───services/               # Service contract unit tests (Mockito) and integration tests (H2)
@@ -530,6 +531,7 @@ without restating the rest. Both return `200`, or `422` if every row failed.
 | **Security Analysis**     | CodeQL                                                                                                    | Push to any GitFlow branch / PR to `main` / `develop`; weekly schedule                   |
 | **Static Analysis**       | Qodana (`JetBrains/qodana-action`), via `.github/workflows/code_quality.yml`                              | Push to any GitFlow branch / PR to `main` / `develop`; manual dispatch                   |
 | **Build & Tests**         | Maven (`./mvnw verify -Pcoverage`), via `.github/workflows/build.yml`                                     | Push / PR to `main` / `develop`; H2 in-memory — no external DB required                  |
+| **Migrations**            | Flyway on MySQL 8.4 (`FlywayMysqlMigrationTest`), via the `migrations` job in `build.yml`                 | Push / PR to `main` / `develop`; a throwaway MySQL service container                     |
 | **Code Coverage**         | JaCoCo, minimum 97% line and branch coverage (`jacoco-maven-plugin`'s `check` goal, `coverage` profile)   | Enforced automatically as part of the `Build & Tests` gate above                         |
 | **Docker Image**          | `docker/build-push-action` (build only, never pushed), via `.github/workflows/docker.yml`                 | Push / PR to `main` / `develop`                                                          |
 | **Dependency Submission** | `advanced-security/maven-dependency-submission-action`, via `.github/workflows/dependency-submission.yml` | Push to any GitFlow branch; manual dispatch                                              |

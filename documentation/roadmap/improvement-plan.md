@@ -1648,8 +1648,9 @@ version, and run the migrations once against a MySQL database before release.
 manages, and `dependency:tree` shows it and `flyway-core` both at `12.4.0`, the same as the Maven plugin. A temporary
 `@SpringBootTest` with Flyway enabled, run through the application's own classpath against a throwaway `mysql:8.4`
 container (8.4.11), applied all 38 migrations from `7.0.0` to `11.12.0` with none pending or failed, on `flyway-core`
-and `flyway-mysql` `12.4.0`; the test and the container were removed afterwards, so nothing in the repository runs the
-migrations against MySQL, and the `test` profile still bypasses Flyway on H2.
+and `flyway-mysql` `12.4.0`; the test and the container were removed afterwards, so at that point nothing in the
+repository ran the migrations against MySQL; the `migrations` job in `build.yml` and `FlywayMysqlMigrationTest` now
+run them against MySQL 8.4 on every push and pull request, while the `test` profile still bypasses Flyway on H2.
 
 ### 🟡 Partially Completed
 
