@@ -5,8 +5,10 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 
 import java.util.List;
 
@@ -61,6 +63,25 @@ public interface IpscCompetitorService {
      */
     CompetitorResponseHolder createCompetitors(String csvData)
             throws ValidationException, NonFatalException, FatalException;
+
+    /**
+     * Marks several IPSC competitors as verified in one call.
+     *
+     * <p>
+     * Every competitor that exists is verified in a single transaction, and one that is already verified is left as it
+     * is. A competitor ID that matches nobody does not fail the request: it is reported in its own result, so the
+     * others are still verified. A repeated ID is handled once.
+     * </p>
+     *
+     * @param request the competitors to verify. Must not be null and must name at least one competitor ID, none of
+     *                them null.
+     * @return a {@link CompetitorVerifyResponseHolder} with one result per distinct competitor ID, in the order first
+     * given, each saying whether the competitor was found and now verified.
+     * @throws ValidationException if the request is null, names no competitor ID, or contains a null one.
+     * @since 16.2.0
+     */
+    CompetitorVerifyResponseHolder verifyCompetitors(CompetitorVerifyRequest request)
+            throws ValidationException;
 
     /**
      * Fully replaces an existing IPSC competitor's fields with those on the request.

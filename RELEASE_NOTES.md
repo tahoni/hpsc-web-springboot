@@ -1,58 +1,50 @@
-# Release Notes – Version 16.1.1
+# Release Notes – Version 16.3.0
 
-**Release Date:** November 8, 2026 **Status:** ✨ Stable
+**Release Date:** November 10, 2026 **Status:** ✨ Stable
 
 ---
 
 ## 🎯 Theme
 
-**Verified-Only Shooter Results**
+**Shooter Log Bulk CSV Import**
 
-Version 16.1.1 is a patch release. Shooter results and a shooter log's overall results now count only verified
-competitors, and a match's results also leave out competitors without points. A result whose competitor stops
-qualifying is removed the next time results are calculated. No endpoint, request or response changes shape, so the
+Version 16.3.0 is a minor release. Competitors, matches and match competitors can each be loaded from CSV, with every
+row reported on its own, but a shooter log could only be created one request at a time. A new endpoint creates shooter
+logs from CSV, one log per row, and checks each row exactly as a single log is checked. A row that fails is reported
+with the values it supplied and the reason, and the rest are still created. Nothing existing changes shape, so the
 release is backward-compatible.
 
 ---
 
 ## ⭐ Key Highlights
 
-### ✅ Who Appears in Results
+### 📥 Bulk Import
 
-- A match's shooter results include only competitors whose `isVerified` is `true` and whose points are above zero. A
-  competitor who is not verified, whose verification was never recorded, or who has null or zero points gets no result
-- Those competitors no longer count towards a group's winner points, so they cannot lower anyone else's percentage
-- A shooter log's overall results include only verified competitors, and the overall of one who is not is removed
+- `POST /ipsc/shooter-logs/bulk` creates shooter logs from `text/plain` CSV data, one log per row, with `StartDate`,
+  `EndDate` and `MatchIds` columns; the match IDs in a row are separated by semicolons
+- Each row is created through `createShooterLog` in its own transaction, so a row needs both dates, an end date not
+  before the start date, and existing matches that are all scheduled within the row's dates
+- The endpoint answers `201` if any row was created, or the CSV had no rows, and `422` if every row failed; blank or
+  unreadable CSV is a `400`
 
-### 🧹 Stale Results
+### 🧾 Per-Row Reporting
 
-- A result whose competitor stops qualifying, such as after their points were cleared or their verification was
-  withdrawn, is deleted on the next calculation
-- Any such stale result also forces a recalculation, so a change made within the five-minute recalculation threshold is
-  not missed
-- `TransactionService.replaceShooterResults` deletes the stale results and saves the recalculated ones in one
-  transaction
+- A failed row comes back as a `ShooterLogBulkResponse` with `success` set to `false`, the reason in `message` and a
+  `ShooterLogRow` holding every value the row supplied, as text
+- A row without a start or end date is reported on its own instead of failing the file, because
+  `ShooterLogRequestCsvMixIn` marks no column as required
 
-### 📖 Documented Rules
+### 🛡️ Null Match IDs
 
-- `README.md` and `ARCHITECTURE.md` state who is included in results, and how a competitor becomes verified: by
-  setting `isVerified` when the competitor is created (the `isVerified` field, or the `IsVerified` CSV column), or
-  through `PUT` or `PATCH /ipsc/competitors/{competitorId}` afterwards
-- The match competitor import still imports an entry for an unverified competitor, but that entry only appears in
-  results once its competitor is verified. Neither it nor the match import verifies anyone
-- The Javadoc on `IpscShooterResultService` and `IpscShooterLogOverallService` and the OpenAPI descriptions on both
-  result controllers describe the same rules
+- `ShooterLogRequest.validate` rejects a null match ID with a `ValidationException`, a `400`; before, it reached the
+  repository and failed with a `500`
 
-### ♻️ Unused Code
+### 📖 Documented Import
 
-- The points filter and "not ranked" note in `IpscShooterResultServiceImpl.rank`, and the null fallback on the winner's
-  points, are removed, since competitors without points are excluded before they are grouped
-- The fallback from a null competitor category to `NONE` in `IpscShooterResultServiceImpl` and
-  `IpscShooterLogOverallServiceImpl`, and the null-safe ordering of a match's scheduled date, are removed, since
-  `competitor_category` and `scheduled_date` are `NOT NULL`
-- The tolerance for a shooter result without a percentage in `IpscShooterLogOverallServiceImpl` is kept and now
-  documented: `percentage_in_log` is a nullable column, so a row inserted by hand or by an earlier version could lack
-  one, and ignoring it keeps one bad row from failing a whole log's calculation
+- `README.md` and `ARCHITECTURE.md` describe the import, and `ARCHITECTURE.md` gains a Shooter Log Bulk CSV Import Flow
+  diagram
+- The Javadoc on `IpscShooterLogService` and the OpenAPI description on `IpscShooterLogController` cover the columns,
+  the per-row behaviour and the `201`, `400`, `422` and `500` responses
 
 ---
 
@@ -60,23 +52,23 @@ release is backward-compatible.
 
 ### Added
 
-- `TransactionService.replaceShooterResults`/`TransactionServiceImpl.replaceShooterResults`
-- Service tests for null, zero and unverified competitors and for deleting a stale result, an integration test that
-  clears a competitor's points between two calculations, and `TransactionService` tests for the new method
+- `IpscShooterLogController.createShooterLogs`, serving `POST /ipsc/shooter-logs/bulk`
+- `IpscShooterLogService.createShooterLogs` and its implementation, with `readShooterLogs` parsing the CSV
+- `ShooterLogRequestCsvMixIn`, binding the CSV column names onto `ShooterLogRequest`
+- `ShooterLogBulkResponse`, `ShooterLogBulkResponseHolder` and `ShooterLogRow`, with `ShooterLogRowTest` and
+  `ShooterLogRequestCsvMixInTest`
+- Controller, service and `@SpringBootTest` integration tests for the import
 
 ### Changed
 
-- `IpscShooterResultServiceImpl.calculateMatchShooterResult` includes only verified competitors with points above zero,
-  and deletes the result of one who no longer qualifies
-- `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` includes only verified competitors
-- `IpscShooterResultServiceImpl.rank` no longer filters on points, and the winner's points no longer fall back to
-  `null`
-- `IpscShooterResultServiceImpl` and `IpscShooterLogOverallServiceImpl` no longer fall back from a null competitor
-  category to `NONE`, and the overall service no longer orders a match's scheduled date null-safely
-- `IpscShooterLogOverallService` and `IpscShooterLogOverallServiceImpl` document why a missing percentage is tolerated
-- `README.md`, `ARCHITECTURE.md`, the `IpscShooterResultService` and `IpscShooterLogOverallService` Javadoc and the
-  controllers' OpenAPI `@Operation` descriptions state who is included in results
-- `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add and close Gaps #43 and #44
+- `ShooterLogRequest.validate` rejects a null match ID with a `ValidationException`
+- `IpscCompetitorService` and `IpscShooterLogServiceImpl` drop an unused import each, with no change in behaviour
+- `README.md`, `ARCHITECTURE.md`, `IpscShooterLogService` and `IpscShooterLogController` describe the import
+- `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add and close Gap #47
+
+### Fixed
+
+Nothing is fixed.
 
 ### Removed
 
@@ -86,23 +78,26 @@ Nothing is removed.
 
 ## 🚀 Migration Guide
 
-No action is needed for callers: no existing endpoint, request or response changes shape. The responses simply omit
-competitors who are not verified or have no points.
+No action is needed: no existing endpoint, request or response changes shape, and there is no schema change.
 
-Competitors created since `V8_7_0` without an `isVerified` value are not verified, so they are left out of shooter
-results and overall results until they are marked verified. `V8_7_0` marked only the competitors that existed at the
-time as verified, and no migration backfills the others. Before deploying, check which competitors should appear in
-results and set `isVerified` for them through `PUT` or `PATCH /ipsc/competitors/{competitorId}`.
+To use the import, post `text/plain` CSV with a header row to `POST /ipsc/shooter-logs/bulk`:
 
-Results that already exist for competitors who do not qualify are deleted the next time their match's results are
-calculated, so recalculate each match's results, or the shooter log's overall results, after verifying competitors.
+```
+StartDate,EndDate,MatchIds
+yyyy-MM-dd,yyyy-MM-dd,0;0
+```
+
+A date must be `yyyy-MM-dd`; a date in another format makes the whole file a `400`, while a missing date or an unknown
+match fails only its own row. Check each result's `success` rather than the status alone, since a `201` can still carry
+failed rows.
 
 ---
 
 ## 📊 Statistics
 
-- **Files Changed:** 18 against `main` before this release's documentation; 602 insertions and 133 deletions
-- **New Source Files:** 0
+- **Files Changed:** 18 against `main` before this release's documentation; 815 insertions and 13 deletions
+- **New Source Files:** 4 (`ShooterLogRequestCsvMixIn`, `ShooterLogBulkResponse`, `ShooterLogBulkResponseHolder` and
+  `ShooterLogRow`), plus two test classes
 - **Renamed Source Files:** 0
 - **Deleted Source Files:** 0
 - **New Dependencies:** 0
@@ -111,35 +106,28 @@ calculated, so recalculate each match's results, or the shooter log's overall re
 
 ## 🧭 Design Notes
 
-- **Verification is never defaulted.** A competitor created without `isVerified` stays unverified, so being verified is
-  always a deliberate act through the competitor endpoints. Defaulting it on import would have made the flag
-  meaningless.
-- **Only `true` counts.** A competitor whose `isVerified` is `false` or `null` is excluded alike, so an unrecorded
-  verification is treated as not verified.
-- **Excluded, not unranked.** Competitors without points used to be saved with a null rank and percentage. They now get
-  no result at all, so a result always means a ranked competitor and a group's winner is always a verified competitor
-  who scored.
-- **Stale results are deleted, not hidden.** A result for a competitor who no longer qualifies is removed in the same
-  transaction that saves the recalculated ones, rather than being filtered out when it is read.
-- **The match competitor import is not stricter.** It still imports an entry for an unverified competitor, so the data
-  is kept and the entry appears in results as soon as its competitor is verified.
-- **Unreachable code is removed, defensive code is kept.** A fallback is removed only when a `NOT NULL` column or the
-  calling code makes it impossible to reach. Null handling on a nullable column, such as a missing percentage, stays
-  and says why, so a bad row degrades one result rather than the whole calculation.
-- **A PATCH.** No contract changes and the one new method is internal, which `AGENTS.md`'s Semantic Versioning rules
-  classify as a backward-compatible fix.
+- **Every row goes through the single-log path.** `createShooterLogs` calls `createShooterLog` for each row, so the
+  date, match and within-the-dates rules are written once and a row cannot be accepted that a single request would
+  refuse.
+- **One bad row does not spoil the file.** Each row is saved in its own transaction, and a failed row is reported and
+  skipped, as the competitor, match and match competitor imports treat theirs.
+- **Nothing is required at the column level.** The mix-in marks no column required, so a missing date is a row failure
+  with its values shown, not a parse error that rejects every row.
+- **`422` only when nothing was created.** A file where some rows succeed is a `201`, so the caller reads each row's
+  result for the failures.
+- **A MINOR.** The new endpoint is an externally visible, backward-compatible addition, which `AGENTS.md`'s Semantic
+  Versioning rules classify as MINOR; the stricter match ID check only turns a `500` into a `400`.
 
 ---
 
 ## 🧪 Testing
 
-- `./mvnw clean verify -Pcoverage` passes: 1,447 tests with no failures, errors or skips.
-- New tests cover null, zero and unverified competitors in the shooter result and overall result services, deleting a
-  stale result when points are cleared or verification is withdrawn, and `TransactionService.replaceShooterResults`
-  including its rollback when the flush fails. The two tests that only covered the removed category fallbacks are
-  removed with them.
-- Overall coverage is 98.91% branch and 98.80% line, above the 97% minimum, and `IpscShooterResultServiceImpl` has
-  no missed lines or branches. The only missed code in the two services is the null guard on a shooter log's matches.
+- `./mvnw verify -Pcoverage` passes: 1,524 tests with no failures, errors or skips.
+- New tests cover `ShooterLogRequestCsvMixIn`'s column binding, `ShooterLogRow`, the null match ID check,
+  `IpscShooterLogController.createShooterLogs` returning `201` and `422`, and `IpscShooterLogService.createShooterLogs`
+  creating good rows, reporting a missing date, an unknown match and a match outside the dates, and rejecting blank or
+  unparseable CSV, in Mockito unit tests and `@SpringBootTest` integration tests.
+- Overall coverage is 99.15% branch and 98.63% line, above the 97% minimum.
 
 ---
 
@@ -147,24 +135,20 @@ calculated, so recalculate each match's results, or the shooter log's overall re
 
 - A `MatchCompetitorId`, `MatchId` or `CompetitorId` column in the match, competitor or match competitor CSV imports,
   is read but never used as the row's own ID, since the imports only create records.
-- Calculating a log's overall results does not re-check its matches' dates; they are enforced when the log is written,
-  so a match rescheduled afterwards is still counted.
-- Shooter logs can only be created one at a time; there is no bulk import for them.
-- The match competitor import does not say that an entry's competitor is unverified, so an entry that never appears in
-  results gives no sign of why.
-- Competitors can only be verified one at a time, and the bulk competitor import only creates competitors, so it
-  cannot verify one that already exists.
-- `pom.xml` still overrides `logback.version`, the Jackson BOM properties and `flyway-mysql`, set above Spring Boot's
-  managed versions.
+- A shooter log already out of step with a match's date is only caught when its overall results are calculated, or when
+  the match moves to another day; it is not reported when either date is left alone.
+- The bulk competitor import only creates competitors, so it cannot verify one that already exists; use
+  `POST /ipsc/competitors/verify` afterwards.
+- The shooter log import only creates logs; there is no way to add matches to, or update, an existing log in bulk.
+- `pom.xml` still overrides `logback.version`, the Jackson BOM properties, `mysql-connector-j` and `flyway-mysql`, set
+  above Spring Boot's managed versions.
 
 ---
 
 ## 🔮 Future Enhancements
 
-- Add a bulk import for shooter logs if creating them one by one proves slow.
-- Re-check a log's matches against its dates when its overall results are calculated, or when a match is rescheduled.
-- Report, or skip, a match competitor import row whose competitor is not verified, and consider a way to verify
-  competitors in bulk.
+- Report a match whose date is outside a covering log's dates when it is read, not only when the log is calculated.
+- Consider updating existing shooter logs, or adding matches to them, from CSV if loading a season by hand proves slow.
 - Drop the remaining dependency pins once Spring Boot manages versions at least as new.
 
 ---
@@ -172,13 +156,12 @@ calculated, so recalculate each match's results, or the shooter log's overall re
 ## 👥 Contributors
 
 - Leoni Lubbinge
-- Claude Code (Claude Sonnet 5.5) — co-author of the release's commits
 
 ---
 
 ## 📝 Notes
 
-Version 16.1.1 limits shooter results and overall results to verified competitors with points, and removes the result of
-one who stops qualifying. It leaves the improvement plan with all 44 gaps closed and none open.
+Version 16.3.0 gives shooter logs the report-and-continue CSV import that competitors, matches and match competitors
+already had. It leaves the improvement plan with all 47 gaps closed and none open.
 
 ---

@@ -22,6 +22,7 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     - [📥 Competitor Bulk CSV Import Flow](#-competitor-bulk-csv-import-flow)
     - [📥 Match Bulk CSV Import Flow](#-match-bulk-csv-import-flow)
     - [📥 Match Competitor Bulk CSV Import Flow](#-match-competitor-bulk-csv-import-flow)
+    - [📥 Shooter Log Bulk CSV Import Flow](#-shooter-log-bulk-csv-import-flow)
 - [✅ Quality Attributes](#-quality-attributes)
 - [🔬 CI/CD & Quality Gates](#-cicd--quality-gates)
 - [🛠️ Development Guidelines](#-development-guidelines)
@@ -127,7 +128,7 @@ responsibilities:
 |--------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Award Ceremonies**           | Award data and ceremony grouping, processed from CSV                                                                                                                                                                                                                                                       |
 | **Image Gallery**              | Image metadata processing from CSV                                                                                                                                                                                                                                                                         |
-| **IPSC Competitors & Matches** | Full CRUD for competitor and match records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`                                                                                                                                                                            |
+| **IPSC Competitors & Matches** | Full CRUD for competitor and match records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`; a match cannot be rescheduled outside the dates of a shooter log that covers it                                                                                           |
 | **IPSC Match Competitors**     | Full CRUD for a competitor's entry in a match, plus bulk CSV import, via `IpscMatchCompetitorController`                                                                                                                                                                                                   |
 | **IPSC Shooter Results**       | Calculation of a match's ranked results per firearm type, division and competitor category for verified competitors with points, and reading them, via `IpscShooterResultController`                                                                                                                       |
 | **Shooter Logs**               | Full CRUD for shooter logs (a date range and the matches it covers) via `IpscShooterLogController`, and calculation of each competitor's overall rank and percentage per division and competitor category from the log's matches' shooter results, and reading them, via `IpscShooterLogOverallController` |
@@ -161,7 +162,7 @@ Handles incoming HTTP requests. Does not contain business logic.
 | `IpscCompetitorController`        | `/ipsc/competitors`                 | IPSC competitor CRUD + bulk CSV import           |
 | `IpscMatchController`             | `/ipsc/matches`                     | IPSC match CRUD + bulk CSV import                |
 | `IpscMatchCompetitorController`   | `/ipsc/match-competitors`           | IPSC match competitor CRUD + bulk CSV import     |
-| `IpscShooterLogController`        | `/ipsc/shooter-logs`                | IPSC shooter log CRUD                            |
+| `IpscShooterLogController`        | `/ipsc/shooter-logs`                | IPSC shooter log CRUD + bulk CSV import          |
 | `IpscShooterResultController`     | `/ipsc/shooter-results`             | IPSC shooter result calculation and reading      |
 | `IpscShooterLogOverallController` | `/ipsc/shooter-log-overall-results` | IPSC shooter log overall calculation and reading |
 
@@ -181,19 +182,19 @@ All controllers:
 
 Contains all business logic.
 
-| Interface                      | Implementation                     | Role                                                                                                                                        |
-|--------------------------------|------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| `AwardService`                 | `AwardServiceImpl`                 | Award CSV processing (deliberately stateless — see below)                                                                                   |
-| `ImageService`                 | `ImageServiceImpl`                 | Image CSV processing (deliberately stateless — see below)                                                                                   |
-| `IpscMatchService`             | `IpscMatchServiceImpl`             | IPSC match CRUD + bulk CSV import                                                                                                           |
-| `IpscCompetitorService`        | `IpscCompetitorServiceImpl`        | IPSC competitor CRUD + bulk CSV import                                                                                                      |
-| `IpscMatchCompetitorService`   | `IpscMatchCompetitorServiceImpl`   | IPSC match competitor CRUD + bulk CSV import                                                                                                |
-| `IpscShooterLogService`        | `IpscShooterLogServiceImpl`        | IPSC shooter log CRUD, with the matches a log covers set by ID                                                                              |
-| `IpscShooterResultService`     | `IpscShooterResultServiceImpl`     | Calculates a match's shooter results (rank and percentage) for verified competitors with points, and reads them                             |
-| `IpscShooterLogOverallService` | `IpscShooterLogOverallServiceImpl` | Calculates a shooter log's overall results (rank and percentage) for verified competitors from its matches' shooter results, and reads them |
-| `IpscEntityCompetitorService`  | `IpscEntityCompetitorServiceImpl`  | Looks up a persisted competitor from the loosely-specified identity in imported data                                                        |
-| `IpscEntityClubService`        | `IpscEntityClubServiceImpl`        | Resolves clubs by code, abbreviation or name; null-safe comparisons of clubs                                                                |
-| `TransactionService`           | `TransactionServiceImpl`           | Commits competitor/match/match competitor/shooter log/shooter result/shooter log overall result writes, each in its own transaction         |
+| Interface                      | Implementation                     | Role                                                                                                                                                                                       |
+|--------------------------------|------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `AwardService`                 | `AwardServiceImpl`                 | Award CSV processing (deliberately stateless — see below)                                                                                                                                  |
+| `ImageService`                 | `ImageServiceImpl`                 | Image CSV processing (deliberately stateless — see below)                                                                                                                                  |
+| `IpscMatchService`             | `IpscMatchServiceImpl`             | IPSC match CRUD + bulk CSV import                                                                                                                                                          |
+| `IpscCompetitorService`        | `IpscCompetitorServiceImpl`        | IPSC competitor CRUD + bulk CSV import                                                                                                                                                     |
+| `IpscMatchCompetitorService`   | `IpscMatchCompetitorServiceImpl`   | IPSC match competitor CRUD + bulk CSV import                                                                                                                                               |
+| `IpscShooterLogService`        | `IpscShooterLogServiceImpl`        | IPSC shooter log CRUD + bulk CSV import, with the matches a log covers set by ID                                                                                                           |
+| `IpscShooterResultService`     | `IpscShooterResultServiceImpl`     | Calculates a match's shooter results (rank and percentage) for verified competitors with points, and reads them                                                                            |
+| `IpscShooterLogOverallService` | `IpscShooterLogOverallServiceImpl` | Calculates a shooter log's overall results (rank and percentage) for verified competitors from its matches' shooter results, refusing a log with a match outside its dates, and reads them |
+| `IpscEntityCompetitorService`  | `IpscEntityCompetitorServiceImpl`  | Looks up a persisted competitor from the loosely-specified identity in imported data                                                                                                       |
+| `IpscEntityClubService`        | `IpscEntityClubServiceImpl`        | Resolves clubs by code, abbreviation or name; null-safe comparisons of clubs                                                                                                               |
+| `TransactionService`           | `TransactionServiceImpl`           | Commits competitor/match/match competitor/shooter log/shooter result/shooter log overall result writes, each in its own transaction                                                        |
 
 > `AwardService.createAwards()`/`ImageService.createImages()` are stateless by design, not an unfinished persistence
 > layer: each parses CSV into response records only, with no repository write — a preview/validation transform
@@ -427,9 +428,11 @@ Client uploads CSV (Content-Type: text/plain)
 A competitor is only included in shooter results and shooter log overall results once its `isVerified` flag is `true`.
 Verification is deliberately never defaulted: a row without an `IsVerified` value is stored with it unset, and so is a
 competitor created through the single-competitor endpoint without one. Such a competitor is excluded from results
-until it is marked verified through `PUT` or `PATCH /ipsc/competitors/{competitorId}`; the import only creates
-competitors, so it cannot verify one that already exists. The competitor endpoints are the only way to verify anyone:
-the Match and Match Competitor imports below never set `isVerified`.
+until it is marked verified through `PUT` or `PATCH /ipsc/competitors/{competitorId}`, or, for many at once, through
+`POST /ipsc/competitors/verify`, which takes a list of competitor IDs, verifies each one that exists in a single
+transaction and reports an unknown ID in its own result. The import only creates competitors, so it cannot verify one
+that already exists. The competitor endpoints are the only way to verify anyone: the Match and Match Competitor imports
+below never set `isVerified`.
 
 ### 📥 Match Bulk CSV Import Flow
 
@@ -470,8 +473,28 @@ Client uploads CSV (Content-Type: text/plain, optional ?club=...)
 ```
 
 The import only looks up existing competitors; it never creates one and never verifies one. A row for a competitor
-who is not verified is still imported as a match competitor, but it is only included in shooter results and shooter log
-overall results once its competitor is verified through the competitor endpoints.
+who is not verified is still imported as a match competitor, with a message on its row saying that it is left out of
+shooter results and shooter log overall results until its competitor is verified through the competitor endpoints.
+
+### 📥 Shooter Log Bulk CSV Import Flow
+
+Handled by `IpscShooterLogController` — each row is its own unit of work, like the match competitor import above: a
+row that fails is reported with the values it supplied and skipped while the rest are still saved:
+
+```
+Client uploads CSV (Content-Type: text/plain, columns StartDate, EndDate and MatchIds)
+    → IpscShooterLogController.createShooterLogs
+        → IpscShooterLogService.createShooterLogs
+            (parses CSV via Jackson CsvMapper into ShooterLogRequest rows; MatchIds are separated by ";")
+            → for each row, on its own:
+                validate (both dates present, end not before start, no null match ID)
+                    → resolve the matches by ID → check each is scheduled within the row's dates
+                    → TransactionService.saveShooterLog (its own transaction)
+                a row that fails any step is reported as failed, with the values it supplied
+        ← ShooterLogBulkResponseHolder (one ShooterLogBulkResponse per row)
+    ← ResponseEntity<...> (201, or 422 if every row failed)
+← JSON response
+```
 
 ---
 

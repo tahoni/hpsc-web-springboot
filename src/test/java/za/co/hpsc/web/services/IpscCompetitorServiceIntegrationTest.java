@@ -22,8 +22,10 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
@@ -721,6 +723,50 @@ class IpscCompetitorServiceIntegrationTest {
             }
             clubRepository.findByName("Test Club").ifPresent(clubRepository::delete);
         }
+    }
+
+    // verifyCompetitors()
+    @Test
+    void testVerifyCompetitors_whenSomeIdsExist_thenVerifiesThemAndReportsTheRest() {
+        // Arrange
+        CompetitorResponse first = ipscCompetitorService.createCompetitor(validRequest("HPSC-VER-001"));
+        CompetitorResponse second = ipscCompetitorService.createCompetitor(validRequest("HPSC-VER-002"));
+        CompetitorVerifyRequest request =
+                new CompetitorVerifyRequest(List.of(first.getCompetitorId(), 999_999L, second.getCompetitorId()));
+
+        // Act
+        CompetitorVerifyResponseHolder holder = assertDoesNotThrow(
+                () -> ipscCompetitorService.verifyCompetitors(request));
+
+        // Assert
+        assertEquals(3, holder.getCompetitorResults().size());
+        assertTrue(holder.getCompetitorResults().get(0).isSuccess());
+        assertFalse(holder.getCompetitorResults().get(1).isSuccess());
+        assertEquals("No competitor found with ID 999999", holder.getCompetitorResults().get(1).getMessage());
+        assertTrue(holder.getCompetitorResults().get(2).isSuccess());
+        assertTrue(ipscCompetitorService.getCompetitor(first.getCompetitorId()).getIsVerified());
+        assertTrue(ipscCompetitorService.getCompetitor(second.getCompetitorId()).getIsVerified());
+    }
+
+    @Test
+    void testVerifyCompetitors_whenCalledTwice_thenReportsTheCompetitorAsAlreadyVerified() {
+        // Arrange
+        CompetitorResponse created = ipscCompetitorService.createCompetitor(validRequest("HPSC-VER-003"));
+        CompetitorVerifyRequest request = new CompetitorVerifyRequest(List.of(created.getCompetitorId()));
+        ipscCompetitorService.verifyCompetitors(request);
+
+        // Act
+        CompetitorVerifyResponseHolder holder = ipscCompetitorService.verifyCompetitors(request);
+
+        // Assert
+        assertEquals("Already verified.", holder.getCompetitorResults().getFirst().getMessage());
+    }
+
+    @Test
+    void testVerifyCompetitors_whenNoIdIsGiven_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class,
+                () -> ipscCompetitorService.verifyCompetitors(new CompetitorVerifyRequest(List.of())));
     }
 
     // Helpers

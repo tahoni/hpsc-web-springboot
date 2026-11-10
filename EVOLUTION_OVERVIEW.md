@@ -239,3 +239,110 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 
 - The suite stands at 1,447 passing tests, with new service tests for null, zero and unverified competitors and for
   stale-result deletion, and a `TransactionService` test for `replaceShooterResults`
+
+
+### Phase 56: Shooter Log Dates Enforced After the Log Is Written (v16.1.2)
+
+**Controllers & Services**
+
+- `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` refuses a log that covers a match outside its dates,
+  and a match updated after the overall results were calculated marks them out of date
+- `IpscMatchServiceImpl.updateMatch` and `patchMatch` refuse moving a match to another day outside the dates of a
+  shooter log that covers it, found through `ShooterLogRepository.findAllByMatchesId`
+- `ShooterLogHelpers` holds the date check once for `IpscShooterLogServiceImpl`, the calculation and the reschedule
+  check, and the unreachable missing-scheduled-date check is removed
+
+**Documentation**
+
+- `README.md` and `ARCHITECTURE.md` state the rule; the service Javadoc and the controllers' OpenAPI descriptions add
+  the `400` responses
+
+**Build & Metadata**
+
+- Improvement plan: Gap #45 is added and closed, leaving all 45 gaps closed and none open
+- Project version bumped to 16.1.2 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Keeping a rule enforced on writing a shooter log true when a match changes afterwards
+
+**Test Coverage:**
+
+- The suite stands at 1,476 passing tests, with new helper, match service and overall service unit and integration
+  tests
+
+
+### Phase 57: Verifying Competitors in Bulk (v16.2.0)
+
+**Controllers & Services**
+
+- `IpscCompetitorController.verifyCompetitors` serves `POST /ipsc/competitors/verify`, and
+  `IpscCompetitorService.verifyCompetitors` verifies every competitor that exists in a single transaction through
+  `TransactionService.saveCompetitors`, reporting an unknown ID, and one already verified, in its own result
+- `IpscMatchCompetitorServiceImpl.createMatchCompetitors` still imports a row whose competitor is not verified, with a
+  message saying the entry is left out of shooter results until the competitor is verified
+
+**Models & Repositories**
+
+- `CompetitorVerifyRequest`, `CompetitorVerifyResponse` and `CompetitorVerifyResponseHolder` carry the request and the
+  per-competitor results
+- `CompetitorRepository.findAllByIdInWithHomeClubAndEmailAddresses` fetch-joins the home clubs and email addresses of
+  several competitors
+
+**Documentation**
+
+- `README.md` and `ARCHITECTURE.md` describe bulk verification and the import message; the service Javadoc and the
+  controllers' OpenAPI descriptions say the same
+
+**Build & Metadata**
+
+- Improvement plan: Gap #46 is added and closed, leaving all 46 gaps closed and none open
+- Project version bumped to 16.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Making the verified-competitor rule workable: verifying many competitors at once, and telling an importer when a row
+  will be left out of results
+
+**Test Coverage:**
+
+- The suite stands at 1,498 passing tests, with new controller, request model, service and integration tests for
+  bulk verification and for the unverified match competitor import message
+
+
+### Phase 58: Shooter Log Bulk CSV Import (v16.3.0)
+
+**Controllers & Services**
+
+- `IpscShooterLogController.createShooterLogs` serves `POST /ipsc/shooter-logs/bulk`, answering `201` if any row was
+  created and `422` if every row failed
+- `IpscShooterLogService.createShooterLogs` reads the CSV and creates each row through `createShooterLog`, in its own
+  transaction, so a row gets the same checks as a single log; a failed row is reported with the values it supplied and
+  the rest are still created
+
+**Models**
+
+- `ShooterLogRequestCsvMixIn` binds the `StartDate`, `EndDate` and `MatchIds` columns onto `ShooterLogRequest` with no
+  column required, so a row without a date is reported on its own
+- `ShooterLogBulkResponse`, `ShooterLogBulkResponseHolder` and `ShooterLogRow` carry the per-row results
+- `ShooterLogRequest.validate` rejects a null match ID with a `400` instead of letting it fail with a `500`
+
+**Documentation**
+
+- `README.md` and `ARCHITECTURE.md` describe the import, and `ARCHITECTURE.md` gains a Shooter Log Bulk CSV Import Flow
+  diagram; the service Javadoc and the controller's OpenAPI description say the same
+
+**Build & Metadata**
+
+- Improvement plan: Gap #47 is added and closed, leaving all 47 gaps closed and none open
+- Project version bumped to 16.3.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Giving shooter logs the per-row, report-and-continue bulk import that competitors, matches and match competitors
+  already had
+
+**Test Coverage:**
+
+- The suite stands at 1,524 passing tests, with new controller, request mix-in, row model, service and integration
+  tests for the import and for the null match ID check

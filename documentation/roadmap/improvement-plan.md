@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (44):**
+- **✅ Completed (47):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -135,6 +135,12 @@ number or a newly met precondition on an existing gap — see the `update-improv
     the rule — closed in v16.1.1 (rules and the manual verification step documented)
   - #44 Javadoc and OpenAPI text still describes shooter results for every competitor, including those now
     excluded — closed in v16.1.1 (Javadoc and OpenAPI descriptions corrected, dead filter removed)
+  - #45 A shooter log's dates were enforced only when the log was written, so a rescheduled match slipped outside
+    them — closed in v16.1.2 (calculation and rescheduling now refuse it)
+  - #46 Verifying competitors takes one request each, and a match competitor import gives no sign that a row is left
+    out of results — closed in v16.2.0 (`POST /ipsc/competitors/verify` and a message on the import row)
+  - #47 Shooter logs can only be created one at a time, unlike the other bulk-imported records — closed in v16.3.0
+    (`POST /ipsc/shooter-logs/bulk`)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
 - **⚪ Open (0):**
@@ -1470,6 +1476,87 @@ ranked" note are removed from `IpscShooterResultServiceImpl.rank`, and the winne
 of a null fallback, since `hasPoints` has already excluded competitors without points; `IpscShooterResultServiceImpl`
 now has no missed branches.
 
+#### 45. A shooter log's dates were enforced only when the log was written, so a rescheduled match slipped outside them — ✅ Closed in v16.1.2
+
+**Evidence:** `IpscShooterLogServiceImpl.validateMatchesWithinDates` refused a match outside a shooter log's start and
+end dates, but only while the log itself was created, replaced or patched. Nothing re-checked it afterwards:
+`IpscMatchServiceImpl.updateMatch` and `patchMatch` moved a match to any date, and
+`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` counted every match the log covered whatever its date. A
+match rescheduled after it was added to a log was therefore still counted in that log's overall results, which no
+document describes as allowed. `isUpToDate` also ignored a match's own `dateUpdated`, so moving a match within the log
+could change which of a competitor's matches is the most recent without the overall results being recalculated.
+
+**Why it matters:** The same shape as Gap #43: a rule the code enforces on one path and the documentation presents as
+always holding. A log's dates are the one thing that defines which matches belong to it, and a match could be moved
+out of step with them without any error, leaving overall results that covered matches outside the log's period.
+
+**Proposed improvement:** Apply the same date rule everywhere it matters: refuse a calculation for a log with a match
+outside its dates, refuse rescheduling a match outside the dates of a log that covers it, and treat a match updated
+after the overall results were calculated as making them out of date. Share one helper between the three checks so
+they cannot drift, and state the rule in `README.md`, `ARCHITECTURE.md` and the OpenAPI descriptions.
+
+**Outcome:** Done as proposed. `ShooterLogHelpers.validateMatchesWithinDates` and `isWithinDates` hold the rule once,
+used by `IpscShooterLogServiceImpl` when a log is written, by
+`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`, which now throws a `400` for a log with a match outside
+its dates, and by `IpscMatchServiceImpl.updateMatch` and `patchMatch`, which refuse moving a match to another day
+outside the dates of a log that covers it, found through the new `ShooterLogRepository.findAllByMatchesId`. A log already out of step does not block edits that leave its match on
+the same day. A match updated after the overall results were calculated now marks them out of date. `README.md`,
+`ARCHITECTURE.md` and the service, controller and OpenAPI text describe the rule and its `400` responses.
+
+#### 46. Verifying competitors takes one request each, and a match competitor import gives no sign that a row is left out of results — ✅ Closed in v16.2.0
+
+**Evidence:** Gap #43 documented that only verified competitors count in shooter results and shooter log overall
+results, and that the only way to verify one is `PUT` or `PATCH /ipsc/competitors/{competitorId}`. That is one request
+per competitor, so verifying the competitors of an imported match or of a whole club meant as many calls as there were
+competitors, each its own transaction. The match competitor import still imported a row for an unverified competitor
+with an empty `message`, the same as a row that would be counted, so `MatchCompetitorBulkResponse` gave no sign that
+the entry would be left out of results until the competitor was verified; `README.md` and `ARCHITECTURE.md` could only
+say so in prose.
+
+**Why it matters:** The same shape as Gap #43, one step on: the rule is documented, but the workflow it forces is
+awkward and its consequence is still silent at the moment it happens. A caller importing a match's competitors sees
+every row succeed and finds out only from the results that some are missing.
+
+**Proposed improvement:** Add an endpoint that verifies several competitors from a list of their IDs in one
+transaction, reporting an unknown ID in its own result instead of failing the others, and give the match competitor
+import row a message when its competitor is not verified, keeping the row imported. Describe both in `README.md`,
+`ARCHITECTURE.md` and the OpenAPI text.
+
+**Outcome:** Done as proposed. `POST /ipsc/competitors/verify` (`IpscCompetitorController.verifyCompetitors`) takes a
+`CompetitorVerifyRequest` of competitor IDs and `IpscCompetitorService.verifyCompetitors` verifies every competitor
+that exists in a single transaction through `TransactionService.saveCompetitors`, leaving one that is already verified
+as it is, and returns one `CompetitorVerifyResponse` per distinct ID, with an unknown ID reported in its own result.
+`CompetitorRepository.findAllByIdInWithHomeClubAndEmailAddresses` loads them in one query. A match competitor import
+row whose competitor is not verified is still imported, but its result now carries a message saying the entry is left
+out of shooter results until the competitor is verified. `README.md`, `ARCHITECTURE.md` and the controller OpenAPI
+text describe both, and the match competitor and match imports still never verify anyone.
+
+#### 47. Shooter logs can only be created one at a time, unlike the other bulk-imported records — ✅ Closed in v16.3.0
+
+**Evidence:** Competitors, matches and match competitors each have a `POST /bulk` CSV import that reports every row on
+its own, but `IpscShooterLogController` had only `POST /ipsc/shooter-logs`, which creates one log. The v16.1.2 and
+v16.2.0 `RELEASE_NOTES.md` Known Issues both say "Shooter logs can only be created one at a time; there is no bulk
+import for them", and their Future Enhancements propose one "if creating them one by one proves slow". No gap tracked
+it, so the goal was stated twice and had no number.
+
+**Why it matters:** The same shape as Gap #8: a bulk-import pattern the other domains share, missing from the
+one that was built last. Loading a season's logs meant one request per log, each carrying its match IDs, with no
+per-row report of what failed.
+
+**Proposed improvement:** Add `POST /ipsc/shooter-logs/bulk`, taking `text/plain` CSV with `StartDate`, `EndDate` and
+`MatchIds` columns, and create each row through the existing `createShooterLog` so it gets the same checks as a single
+log. Report a failed row with the values it supplied and the reason, still create the rest, and answer `422` only when
+every row failed. Document it in `README.md` and `ARCHITECTURE.md`.
+
+**Outcome:** Done as proposed. `IpscShooterLogController.createShooterLogs` serves `POST /ipsc/shooter-logs/bulk` and
+`IpscShooterLogService.createShooterLogs` reads the CSV through `ShooterLogRequestCsvMixIn` and creates each row through
+`createShooterLog`, each in its own transaction, so a row needs both dates, an end not before the start and existing
+matches scheduled within its dates. A failed row comes back as a `ShooterLogBulkResponse` carrying a `ShooterLogRow` of
+the values it supplied, in a `ShooterLogBulkResponseHolder`; the endpoint answers `201` if any row was created and `422`
+if every row failed. `ShooterLogRequest.validate` now rejects a null match ID with a `400` rather than letting it reach
+the repository. `README.md` and `ARCHITECTURE.md` describe the import and show its flow, with Mockito controller and
+service tests, a request mix-in test and `@SpringBootTest` integration tests.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -1488,7 +1575,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | No items currently scoped — #43 and #44 closed in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                                         |
+| **Now**     | No items currently scoped — #47 closed in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                         |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath; re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
@@ -1600,6 +1687,13 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 - ✅ Met in v16.1.1: the Javadoc on `IpscShooterResultService` and `IpscShooterLogOverallService` and the `@Operation`
   descriptions on `IpscShooterResultController` and `IpscShooterLogOverallController` state which competitors are
   included in results, closing Gap #44.
+- ✅ Met in v16.1.2: a shooter log's calculation refuses a match outside the log's dates, and rescheduling a match
+  outside the dates of a log that covers it is refused, closing Gap #45.
+- ✅ Met in v16.2.0: `POST /ipsc/competitors/verify` verifies several competitors in one transaction, and a match
+  competitor import row for an unverified competitor carries a message saying it is left out of results, closing
+  Gap #46.
+- ✅ Met in v16.3.0: `POST /ipsc/shooter-logs/bulk` creates shooter logs from CSV, each row on its own and checked as a
+  single log is, reporting a failed row with the values it supplied, closing Gap #47.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

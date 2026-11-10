@@ -12,10 +12,13 @@ import za.co.hpsc.web.domain.ShooterLog;
 import za.co.hpsc.web.domain.ShooterLogOverall;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogPatchRequest;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogRequest;
+import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogBulkResponse;
+import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogResponse;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
@@ -221,6 +224,44 @@ class IpscShooterLogServiceIntegrationTest {
         assertEquals(LocalDate.of(2026, 10, 1), response.getStartDate());
         assertEquals(LocalDate.of(2026, 10, 31), response.getEndDate());
         assertEquals(List.of(replacement.getId()), response.getMatchIds());
+    }
+
+    // createShooterLogs()
+    @Test
+    void testCreateShooterLogs_whenRowsAreValidAndInvalid_thenCreatesTheValidOnesAndReportsTheRest()
+            throws FatalException {
+        // Arrange
+        IpscMatch match = createMatch("Match A");
+        IpscMatch lateMatch = createMatch("Match B", LocalDate.of(2026, 11, 14));
+        String csvData = String.format("""
+                StartDate,EndDate,MatchIds
+                2026-09-01,2026-09-30,%d
+                2026-09-01,2026-09-30,999999
+                2026-09-01,2026-09-30,%d
+                2026-10-01,2026-10-31,
+                """, match.getId(), lateMatch.getId());
+
+        // Act
+        ShooterLogBulkResponseHolder holder = ipscShooterLogService.createShooterLogs(csvData);
+
+        // Assert
+        List<ShooterLogBulkResponse> results = holder.getShooterLogResults();
+        assertEquals(4, results.size());
+        assertTrue(results.get(0).isSuccess());
+        assertEquals(List.of(match.getId()), results.get(0).getShooterLog().getMatchIds());
+        assertFalse(results.get(1).isSuccess());
+        assertEquals("No IPSC match found with ID 999999", results.get(1).getMessage());
+        assertEquals("999999", results.get(1).getShooterLogRow().getMatchIds());
+        assertFalse(results.get(2).isSuccess());
+        assertTrue(results.get(2).getMessage().contains("outside the shooter log's dates"));
+        assertTrue(results.get(3).isSuccess());
+        assertEquals(2, shooterLogRepository.findAllWithMatches().size());
+    }
+
+    @Test
+    void testCreateShooterLogs_whenCsvIsBlank_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscShooterLogService.createShooterLogs("   "));
     }
 
     // Helpers

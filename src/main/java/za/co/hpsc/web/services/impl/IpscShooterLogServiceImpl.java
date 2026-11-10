@@ -1,13 +1,29 @@
 package za.co.hpsc.web.services.impl;
 
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvReadException;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.validation.constraints.NotBlank;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import za.co.hpsc.web.constants.SystemConstants;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.ShooterLog;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.helpers.ShooterLogHelpers;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogPatchRequest;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogRequest;
+import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogRequestCsvMixIn;
+import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogBulkResponse;
+import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogBulkResponseHolder;
+import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogRow;
 import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogResponse;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
@@ -15,8 +31,10 @@ import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.services.IpscShooterLogService;
 import za.co.hpsc.web.services.TransactionService;
 
-import java.time.LocalDate;
+import java.io.IOException;
 import java.util.*;
+
+import static za.co.hpsc.web.utils.StringUtil.hasText;
 
 /**
  * Default {@link IpscShooterLogService}, validating requests and building {@link ShooterLog}s outside any
@@ -24,6 +42,7 @@ import java.util.*;
  *
  * @since 16.1.0
  */
+@Slf4j
 @Service
 public class IpscShooterLogServiceImpl implements IpscShooterLogService {
     private final ShooterLogRepository shooterLogRepository;
@@ -49,6 +68,27 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
         applyFields(shooterLog, request);
         validateMatchesWithinDates(shooterLog);
         return toResponse(transactionService.saveShooterLog(shooterLog));
+    }
+
+    @Override
+    public ShooterLogBulkResponseHolder createShooterLogs(String csvData) throws FatalException {
+        if (!hasText(csvData)) {
+            log.error("The provided csv data is null or empty.");
+            throw new ValidationException("CSV data cannot be null or blank.");
+        }
+
+        // Each row is saved in its own transaction, so a bad row is reported and skipped without affecting the others
+        List<ShooterLogBulkResponse> shooterLogBulkResponses = new ArrayList<>();
+        for (ShooterLogRequest request : readShooterLogs(csvData)) {
+            try {
+                shooterLogBulkResponses.add(new ShooterLogBulkResponse(true, "", createShooterLog(request), null));
+            } catch (ValidationException | NonFatalException e) {
+                log.warn("Shooter log skipped due to error: {}", e.getMessage());
+                shooterLogBulkResponses.add(new ShooterLogBulkResponse(false, e.getMessage(), null,
+                        new ShooterLogRow(request)));
+            }
+        }
+        return new ShooterLogBulkResponseHolder(shooterLogBulkResponses);
     }
 
     @Override
@@ -127,6 +167,40 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
     }
 
     /**
+     * Reads shooter logs from a CSV-formatted string and converts them into {@link ShooterLogRequest}s, binding the
+     * CSV column headers onto each through {@link ShooterLogRequestCsvMixIn}. A header may omit any column and unknown
+     * columns are ignored, so a row with nothing for a date is reported on its own rather than failing the file.
+     *
+     * @param csvData the CSV data, one shooter log per row, with a header row. Must not be null or blank.
+     * @return the {@link ShooterLogRequest}s parsed from the CSV data, in row order.
+     * @throws ValidationException if the CSV data cannot be parsed, such as a date that is not {@code yyyy-MM-dd}.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     */
+    protected List<ShooterLogRequest> readShooterLogs(@NonNull @NotBlank String csvData) throws FatalException {
+        CsvMapper csvMapper = new CsvMapper();
+        csvMapper.registerModule(new JavaTimeModule());
+        // The columns come from the header row, so the UpperCamelCase names bound by the mix-in are matched directly
+        CsvSchema csvSchema = CsvSchema.emptySchema()
+                .withArrayElementSeparator(SystemConstants.ARRAY_SEPARATOR)
+                .withHeader();
+        csvMapper.addMixIn(ShooterLogRequest.class, ShooterLogRequestCsvMixIn.class);
+
+        try (MappingIterator<ShooterLogRequest> requestMappingIterator =
+                     csvMapper.readerFor(ShooterLogRequest.class)
+                             .with(csvSchema)
+                             .readValues(csvData)) {
+            return requestMappingIterator.readAll();
+
+        } catch (MismatchedInputException | IllegalArgumentException | CsvReadException e) {
+            log.error("Error parsing CSV data: {}", e.getMessage(), e);
+            throw new ValidationException("Invalid CSV data format: " + e.getMessage(), e);
+        } catch (IOException e) {
+            log.error("Error reading CSV data: {}", e.getMessage(), e);
+            throw new FatalException("Error reading CSV data: " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Finds the matches with the given identifiers, in the order given and each once.
      *
      * @param matchIds the identifiers of the matches to find; may be null or empty, and may repeat an identifier.
@@ -161,27 +235,10 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
      *
      * @param shooterLog the shooter log to check; must not be null. A log without a start or end date, or without
      *                   matches, has nothing to check.
-     * @throws ValidationException if a match has no scheduled date, or is scheduled before the log's start date or
-     *                             after its end date.
+     * @throws ValidationException if a match is scheduled before the log's start date or after its end date.
      */
     protected void validateMatchesWithinDates(ShooterLog shooterLog) {
-        if ((shooterLog.getStartDate() == null) || (shooterLog.getEndDate() == null)
-                || (shooterLog.getMatches() == null)) {
-            return;
-        }
-
-        for (IpscMatch match : shooterLog.getMatches()) {
-            if (match.getScheduledDate() == null) {
-                throw new ValidationException("Match with ID " + match.getId()
-                        + " has no scheduled date, so it cannot be checked against the shooter log's dates.");
-            }
-            LocalDate matchDate = match.getScheduledDate().toLocalDate();
-            if (matchDate.isBefore(shooterLog.getStartDate()) || matchDate.isAfter(shooterLog.getEndDate())) {
-                throw new ValidationException("Match with ID " + match.getId() + " is scheduled for " + matchDate
-                        + ", outside the shooter log's dates " + shooterLog.getStartDate() + " to "
-                        + shooterLog.getEndDate() + ".");
-            }
-        }
+        ShooterLogHelpers.validateMatchesWithinDates(shooterLog);
     }
 
     /**
