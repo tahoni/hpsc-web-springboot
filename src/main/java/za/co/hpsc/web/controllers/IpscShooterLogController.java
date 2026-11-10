@@ -173,7 +173,11 @@ public class IpscShooterLogController {
                                     0,yyyy-MM-dd,yyyy-MM-dd,0;0
                                     """)))
             @RequestBody String csvData) throws ValidationException, FatalException {
-        return bulkResponse(ipscShooterLogService.updateShooterLogs(csvData), HttpStatus.OK);
+        ShooterLogBulkResponseHolder holder = ipscShooterLogService.updateShooterLogs(csvData);
+
+        List<ShooterLogBulkResponse> results = holder.getShooterLogResults();
+        boolean allFailed = !results.isEmpty() && results.stream().noneMatch(ShooterLogBulkResponse::isSuccess);
+        return ResponseEntity.status(allFailed ? HttpStatus.UNPROCESSABLE_CONTENT : HttpStatus.OK).body(holder);
     }
 
     /**
@@ -222,21 +226,11 @@ public class IpscShooterLogController {
                                     0,yyyy-MM-dd,,
                                     """)))
             @RequestBody String csvData) throws ValidationException, FatalException {
-        return bulkResponse(ipscShooterLogService.patchShooterLogs(csvData), HttpStatus.OK);
-    }
+        ShooterLogBulkResponseHolder holder = ipscShooterLogService.patchShooterLogs(csvData);
 
-    /**
-     * Builds a bulk import's response: the given status, or {@code 422} when the import had rows and every one failed.
-     *
-     * @param holder  the results of the import.
-     * @param success the status when at least one row succeeded, or there were no rows.
-     * @return the response, with the holder as its body.
-     */
-    private ResponseEntity<ShooterLogBulkResponseHolder> bulkResponse(ShooterLogBulkResponseHolder holder,
-                                                                      HttpStatus success) {
         List<ShooterLogBulkResponse> results = holder.getShooterLogResults();
         boolean allFailed = !results.isEmpty() && results.stream().noneMatch(ShooterLogBulkResponse::isSuccess);
-        return ResponseEntity.status(allFailed ? HttpStatus.UNPROCESSABLE_CONTENT : success).body(holder);
+        return ResponseEntity.status(allFailed ? HttpStatus.UNPROCESSABLE_CONTENT : HttpStatus.OK).body(holder);
     }
 
     /**
