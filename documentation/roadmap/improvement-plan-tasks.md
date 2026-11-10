@@ -541,7 +541,11 @@ Gap #41)* —
 - [x] Apply each row through `updateShooterLog` or `patchShooterLog` in its own transaction — done, a row without a
   `ShooterLogId` is reported as failed
 - [x] Report a failed row with the values it supplied, and answer `422` only when every row failed — done, `200`
-  otherwise, with `ShooterLogRow.shooterLogId` carrying the ID the row named
+  otherwise, with `ShooterLogRow.shooterLogId`, `addMatchIds` and `removeMatchIds` carrying what the row named
+- [x] Let a `PATCH` add matches to and remove them from a log's matches, and a `PUT` replace the match list — done
+  differently: `ShooterLogPatchRequest.addMatchIds` and `removeMatchIds` on the single and the bulk `PATCH`, applied
+  after any `matchIds`, which still replaces the list in full; a match both added and removed is a `400`, and the
+  `PUT` already replaced the list
 - [x] Let a bulk competitor row for an existing competitor update and verify it instead of creating another — done
   differently: matched on the club number only, in `IpscCompetitorServiceImpl.createCompetitors`, as neither an ID
   number nor a full name can tell two people apart
@@ -557,7 +561,7 @@ Gap #41)* —
   `patchMatch`; a move to another day outside the dates is still refused
 - [x] Share the date check with the calculation and the reschedule — done, `ShooterLogHelpers.describeOutsideDates`
   builds on `isWithinDates`
-- [x] Describe the warnings in `README.md` — done
+- [x] Describe the warnings in `README.md` and the match controller and service OpenAPI text and Javadoc — done
 
 ---
 
