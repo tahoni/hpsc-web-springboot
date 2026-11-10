@@ -97,7 +97,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         LocalDate previousDate = match.getScheduledDate().toLocalDate();
         matchMapper.applyFields(match, request);
         validateWithinShooterLogDates(match, previousDate);
-        return toResponse(transactionService.saveMatch(match));
+        return toResponseWithWarnings(transactionService.saveMatch(match), previousDate);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
         matchMapper.applyPatchFields(match, request);
         validateWithinShooterLogDates(match, previousDate);
 
-        return toResponse(transactionService.saveMatch(match));
+        return toResponseWithWarnings(transactionService.saveMatch(match), previousDate);
     }
 
     @Override
@@ -228,6 +228,25 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     protected IpscMatch findMatchOrThrow(Long matchId) {
         return ipscMatchRepository.findByIdWithClub(matchId)
                 .orElseThrow(() -> new NonFatalException("No IPSC match found with ID " + matchId));
+    }
+
+    /**
+     * Maps a saved match to its response, reporting any shooter log it is out of step with. A match that moved to
+     * another day has just been checked against the logs, so only one left on the same day is looked up: an edit that
+     * leaves the date alone is not blocked by a log already out of step, but reports it.
+     *
+     * @param match        the saved match.
+     * @param previousDate the date the match was scheduled for before the edit.
+     * @return the mapped {@link MatchResponse}.
+     */
+    protected MatchResponse toResponseWithWarnings(IpscMatch match, LocalDate previousDate) {
+        MatchResponse response = toResponse(match);
+        if (match.getScheduledDate().toLocalDate().equals(previousDate)) {
+            for (ShooterLog shooterLog : shooterLogRepository.findAllByMatchesId(match.getId())) {
+                addWarningIfOutsideDates(response, match, shooterLog);
+            }
+        }
+        return response;
     }
 
     /**

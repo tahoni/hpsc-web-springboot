@@ -44,6 +44,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchServiceImpl.getMatch` and `getAllMatches`:** A match whose date is outside the dates of a shooter log that
   covers it is now reported in its `warnings` when it is read, rather than only when the log's overall results are
   calculated. The match is still returned, so it stays readable and fixable.
+- **`IpscMatchServiceImpl.updateMatch` and `patchMatch`:** An edit that leaves a match on the same day is still not
+  blocked by a shooter log it is already out of step with, but now reports the log in the response's `warnings`.
 
 #### 🔄 Changed
 

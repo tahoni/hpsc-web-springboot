@@ -135,8 +135,6 @@ failed rows.
 
 - A `MatchCompetitorId`, `MatchId` or `CompetitorId` column in the match, competitor or match competitor CSV imports,
   is read but never used as the row's own ID, since the imports only create records.
-- A shooter log already out of step with a match's date is only caught when its overall results are calculated, or when
-  the match moves to another day; it is not reported when either date is left alone.
 - The bulk competitor import only creates competitors, so it cannot verify one that already exists; use
   `POST /ipsc/competitors/verify` afterwards.
 - The shooter log import only creates logs; there is no way to add matches to, or update, an existing log in bulk.
@@ -147,7 +145,6 @@ failed rows.
 
 ## 🔮 Future Enhancements
 
-- Report a match whose date is outside a covering log's dates when it is read, not only when the log is calculated.
 - Consider updating existing shooter logs, or adding matches to them, from CSV if loading a season by hand proves slow.
 - Drop the remaining dependency pins once Spring Boot manages versions at least as new.
 
