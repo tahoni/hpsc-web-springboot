@@ -428,9 +428,11 @@ Client uploads CSV (Content-Type: text/plain)
 A competitor is only included in shooter results and shooter log overall results once its `isVerified` flag is `true`.
 Verification is deliberately never defaulted: a row without an `IsVerified` value is stored with it unset, and so is a
 competitor created through the single-competitor endpoint without one. Such a competitor is excluded from results
-until it is marked verified through `PUT` or `PATCH /ipsc/competitors/{competitorId}`; the import only creates
-competitors, so it cannot verify one that already exists. The competitor endpoints are the only way to verify anyone:
-the Match and Match Competitor imports below never set `isVerified`.
+until it is marked verified through `PUT` or `PATCH /ipsc/competitors/{competitorId}`, or, for many at once, through
+`POST /ipsc/competitors/verify`, which takes a list of competitor IDs, verifies each one that exists in a single
+transaction and reports an unknown ID in its own result. The import only creates competitors, so it cannot verify one
+that already exists. The competitor endpoints are the only way to verify anyone: the Match and Match Competitor imports
+below never set `isVerified`.
 
 ### 📥 Match Bulk CSV Import Flow
 
@@ -471,8 +473,8 @@ Client uploads CSV (Content-Type: text/plain, optional ?club=...)
 ```
 
 The import only looks up existing competitors; it never creates one and never verifies one. A row for a competitor
-who is not verified is still imported as a match competitor, but it is only included in shooter results and shooter log
-overall results once its competitor is verified through the competitor endpoints.
+who is not verified is still imported as a match competitor, with a message on its row saying that it is left out of
+shooter results and shooter log overall results until its competitor is verified through the competitor endpoints.
 
 ### 📥 Shooter Log Bulk CSV Import Flow
 
