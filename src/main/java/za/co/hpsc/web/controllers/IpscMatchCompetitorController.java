@@ -98,7 +98,8 @@ public class IpscMatchCompetitorController {
             + "from CSV data. Each row is saved on its own, so a row that fails is reported and skipped while the "
             + "rest are still created. Only rows for one club are created, HPSC's own club unless another is asked "
             + "for with the club parameter: those whose match club or whose competitor's home club is that "
-            + "club. Any other row is reported as skipped.")
+            + "club. Any other row is reported as skipped. A row whose competitor is not verified is still created, "
+            + "with a message saying its entry is left out of shooter results until the competitor is verified.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "At least one row was created (or the CSV had no "
                     + "rows). Each row's result says whether it was created and, if not, why — a missing required "

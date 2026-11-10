@@ -12,8 +12,11 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponse;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 import za.co.hpsc.web.services.IpscCompetitorService;
 
 import java.util.List;
@@ -29,6 +32,35 @@ class IpscCompetitorControllerTest {
 
     @InjectMocks
     private IpscCompetitorController ipscCompetitorController;
+
+    // verifyCompetitors()
+    @Test
+    void testVerifyCompetitors_whenServiceSucceeds_thenReturns200WithTheServiceResult()
+            throws ValidationException {
+        // Arrange
+        CompetitorVerifyRequest request = new CompetitorVerifyRequest(List.of(1L, 2L));
+        CompetitorVerifyResponseHolder holder = new CompetitorVerifyResponseHolder(
+                List.of(new CompetitorVerifyResponse(1L, true, "", null),
+                        new CompetitorVerifyResponse(2L, false, "No competitor found with ID 2", null)));
+        when(ipscCompetitorService.verifyCompetitors(request)).thenReturn(holder);
+
+        // Act
+        ResponseEntity<CompetitorVerifyResponseHolder> response = ipscCompetitorController.verifyCompetitors(request);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertSame(holder, response.getBody());
+    }
+
+    @Test
+    void testVerifyCompetitors_whenServiceThrowsValidationException_thenPropagatesIt() throws ValidationException {
+        // Arrange
+        CompetitorVerifyRequest request = new CompetitorVerifyRequest(List.of());
+        when(ipscCompetitorService.verifyCompetitors(request)).thenThrow(new ValidationException("bad"));
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorController.verifyCompetitors(request));
+    }
 
     // createCompetitor()
     @Test

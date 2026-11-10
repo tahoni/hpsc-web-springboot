@@ -21,8 +21,10 @@ public interface IpscShooterLogOverallService {
      * <p>
      * The shooter results of each of the log's matches are brought up to date first, as by
      * {@link IpscShooterResultService#calculateMatchShooterResult(Long)}. Only competitors whose {@code isVerified} is
-     * {@code true} are included; the overall of one who is not, or who no longer has a result, is removed. A
-     * competitor's overall percentage is the
+     * {@code true} are included; the overall of one who is not, or who no longer has a result, is removed. Every
+     * match must be scheduled within the log's start and end dates, both inclusive. That is checked again here, since a
+     * match can be rescheduled after it was added to the log, and nothing is calculated or changed if one is outside
+     * them. A competitor's overall percentage is the
      * average of their best {@code IpscConstants.SHOOTER_LOG_BEST_MATCHES} percentages across the matches they have
      * one in (all of them if they have fewer), to {@code IpscConstants.PERCENTAGE_SCALE} decimal places. Their
      * category and division are those of their most recent match in the log. Competitors are ranked by overall
@@ -41,10 +43,9 @@ public interface IpscShooterLogOverallService {
      * <p>
      * Calculating again updates the existing overall results rather than adding duplicates, and removes those of
      * competitors who no longer have a result in the log, but only when they are out of date: that is, when a
-     * competitor has no overall yet or one calculated before a shooter result was, or the shooter log was updated
-     * after its overall results were calculated. Otherwise, nothing is recalculated and the current overall results
-     * are returned
-     * as they are.
+     * competitor has no overall yet or one calculated before a shooter result was, or the shooter log or one of its
+     * matches was updated after its overall results were calculated. Otherwise, nothing is recalculated and the
+     * current overall results are returned as they are.
      * </p>
      *
      * @param shooterLogId the identifier of the shooter log to calculate overall results for.
@@ -53,6 +54,8 @@ public interface IpscShooterLogOverallService {
      * overall results are empty if the log has no competitors.
      * @throws NonFatalException if no shooter log with {@code shooterLogId} exists, or a match's shooter results
      *                           cannot be calculated.
+     * @throws za.co.hpsc.web.exceptions.ValidationException if a match the log covers is scheduled before its start
+     *                                                      date or after its end date.
      * @since 16.1.0
      */
     ShooterLogOverallResponseHolder calculateShooterLogOverall(Long shooterLogId) throws NonFatalException;

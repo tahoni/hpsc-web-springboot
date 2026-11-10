@@ -143,18 +143,6 @@ class IpscShooterLogServiceTest {
     }
 
     @Test
-    void testCreateShooterLog_whenAMatchHasNoScheduledDate_thenThrowsValidationException() {
-        // Arrange
-        ShooterLogRequest request = new ShooterLogRequest(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30),
-                List.of(10L));
-        when(ipscMatchRepository.findAllById(List.of(10L))).thenReturn(List.of(match(10L, null)));
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscShooterLogService.createShooterLog(request));
-        verifyNoInteractions(transactionService);
-    }
-
-    @Test
     void testCreateShooterLog_whenMatchesAreOnTheStartAndEndDates_thenSavesTheLog() {
         // Arrange
         ShooterLogRequest request = new ShooterLogRequest(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30),

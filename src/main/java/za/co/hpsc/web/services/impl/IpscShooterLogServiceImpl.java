@@ -17,6 +17,7 @@ import za.co.hpsc.web.domain.ShooterLog;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
+import za.co.hpsc.web.helpers.ShooterLogHelpers;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogPatchRequest;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogRequest;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogRequestCsvMixIn;
@@ -235,27 +236,10 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
      *
      * @param shooterLog the shooter log to check; must not be null. A log without a start or end date, or without
      *                   matches, has nothing to check.
-     * @throws ValidationException if a match has no scheduled date, or is scheduled before the log's start date or
-     *                             after its end date.
+     * @throws ValidationException if a match is scheduled before the log's start date or after its end date.
      */
     protected void validateMatchesWithinDates(ShooterLog shooterLog) {
-        if ((shooterLog.getStartDate() == null) || (shooterLog.getEndDate() == null)
-                || (shooterLog.getMatches() == null)) {
-            return;
-        }
-
-        for (IpscMatch match : shooterLog.getMatches()) {
-            if (match.getScheduledDate() == null) {
-                throw new ValidationException("Match with ID " + match.getId()
-                        + " has no scheduled date, so it cannot be checked against the shooter log's dates.");
-            }
-            LocalDate matchDate = match.getScheduledDate().toLocalDate();
-            if (matchDate.isBefore(shooterLog.getStartDate()) || matchDate.isAfter(shooterLog.getEndDate())) {
-                throw new ValidationException("Match with ID " + match.getId() + " is scheduled for " + matchDate
-                        + ", outside the shooter log's dates " + shooterLog.getStartDate() + " to "
-                        + shooterLog.getEndDate() + ".");
-            }
-        }
+        ShooterLogHelpers.validateMatchesWithinDates(shooterLog);
     }
 
     /**

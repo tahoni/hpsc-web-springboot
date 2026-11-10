@@ -21,7 +21,11 @@ import org.jspecify.annotations.Nullable;
 public class MatchCompetitorBulkResponse {
     /** Whether the match competitor was imported successfully. */
     private boolean success = true;
-    /** A message describing the outcome of the import. */
+    /**
+     * A message describing the outcome of the import: empty for a row imported without issue, the reason for a row
+     * that failed or was skipped, and a warning for a row that was imported but whose competitor is not verified, so
+     * the entry is left out of shooter results.
+     */
     private String message = "";
     /** The imported match competitor; {@code null} for a row that failed, whose values are in {@link #matchCompetitorRow}. */
     @Nullable

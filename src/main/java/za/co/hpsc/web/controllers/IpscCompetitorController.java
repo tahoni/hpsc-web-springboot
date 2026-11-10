@@ -21,8 +21,10 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 import za.co.hpsc.web.services.IpscCompetitorService;
 
 import java.util.List;
@@ -125,6 +127,35 @@ public class IpscCompetitorController {
             @RequestBody String csvData)
             throws ValidationException, NonFatalException, FatalException {
         return ResponseEntity.status(HttpStatus.CREATED).body(ipscCompetitorService.createCompetitors(csvData));
+    }
+
+    /**
+     * Marks several IPSC competitors as verified in one call.
+     *
+     * @param request the identifiers of the competitors to verify.
+     * @return a {@link CompetitorVerifyResponseHolder} with one result per distinct competitor ID, each saying whether
+     * the competitor was found and is now verified.
+     * @throws ValidationException if no competitor ID is given, or one of them is null.
+     * @since 16.2.0
+     */
+    @PostMapping(value = "/verify", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Verify competitors", description = "Mark several IPSC competitors as verified, so they "
+            + "are included in shooter results. Each ID that matches a competitor is verified, and one that matches "
+            + "nobody is reported in its own result without failing the others. A competitor who is already "
+            + "verified is left as it is.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Competitors verified; check each result for IDs that "
+                    + "matched no competitor.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = CompetitorVerifyResponseHolder.class))),
+            @ApiResponse(responseCode = "400", description = "No competitor ID was given, or one of them is null.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class)))
+    })
+    ResponseEntity<CompetitorVerifyResponseHolder> verifyCompetitors(
+            @Valid @RequestBody CompetitorVerifyRequest request) throws ValidationException {
+        return ResponseEntity.ok(ipscCompetitorService.verifyCompetitors(request));
     }
 
     /**

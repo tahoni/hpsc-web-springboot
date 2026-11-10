@@ -494,6 +494,30 @@ Gap #41)* —
   them with a comment explaining why they stay as a guard — removed: `rank`'s points filter and note, and the null
   fallback on the winner's points
 
+**Shooter log date enforcement** *(improvement-plan.md → Gap #45)* —
+✅ Closed in v16.1.2
+
+- [x] Refuse a shooter log calculation when a match the log covers is outside its start and end dates — done, in
+  `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`, as a `400`
+- [x] Refuse rescheduling a match outside the dates of a shooter log that covers it — done, in
+  `IpscMatchServiceImpl.updateMatch` and `patchMatch`, only when the match moves to another day
+- [x] Share one date check between the log, the calculation and the reschedule — done, as `ShooterLogHelpers`
+- [x] Treat a match updated after the overall results were calculated as making them out of date — done, in
+  `IpscShooterLogOverallServiceImpl`
+- [x] State the rule in `README.md`, `ARCHITECTURE.md` and the OpenAPI descriptions — done, with the `400` responses
+
+**Bulk competitor verification and the unverified import message** *(improvement-plan.md → Gap #46)* —
+✅ Closed in v16.2.0
+
+- [x] Add an endpoint that verifies several competitors from their IDs in one transaction — done, as
+  `POST /ipsc/competitors/verify` (`IpscCompetitorController.verifyCompetitors` and
+  `IpscCompetitorService.verifyCompetitors`)
+- [x] Report an unknown ID in its own result instead of failing the others — done, one `CompetitorVerifyResponse` per
+  distinct ID
+- [x] Give a match competitor import row for an unverified competitor a message, keeping the row imported — done, in
+  `IpscMatchCompetitorServiceImpl.createMatchCompetitors`
+- [x] Describe both in `README.md`, `ARCHITECTURE.md` and the OpenAPI text — done
+
 ---
 
 ## 🟡 Partially Completed

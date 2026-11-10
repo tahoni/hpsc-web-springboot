@@ -1,58 +1,44 @@
-# Release Notes – Version 16.1.1
+# Release Notes – Version 16.2.0
 
-**Release Date:** November 8, 2026 **Status:** ✨ Stable
+**Release Date:** November 10, 2026 **Status:** ✨ Stable
 
 ---
 
 ## 🎯 Theme
 
-**Verified-Only Shooter Results**
+**Verifying Competitors in Bulk**
 
-Version 16.1.1 is a patch release. Shooter results and a shooter log's overall results now count only verified
-competitors, and a match's results also leave out competitors without points. A result whose competitor stops
-qualifying is removed the next time results are calculated. No endpoint, request or response changes shape, so the
+Version 16.2.0 is a minor release. Shooter results count only verified competitors, but the only way to verify an
+existing one was a `PUT` or `PATCH` per competitor, and a match competitor import gave no sign that a row's competitor
+would be left out of results. A new endpoint verifies several competitors from a list of their IDs in one transaction,
+and an import row for an unverified competitor now carries a message saying so. Nothing existing changes shape, so the
 release is backward-compatible.
 
 ---
 
 ## ⭐ Key Highlights
 
-### ✅ Who Appears in Results
+### ✅ Bulk Verification
 
-- A match's shooter results include only competitors whose `isVerified` is `true` and whose points are above zero. A
-  competitor who is not verified, whose verification was never recorded, or who has null or zero points gets no result
-- Those competitors no longer count towards a group's winner points, so they cannot lower anyone else's percentage
-- A shooter log's overall results include only verified competitors, and the overall of one who is not is removed
+- `POST /ipsc/competitors/verify` marks several competitors as verified from a list of their IDs and returns one result
+  per distinct ID, in the order first given
+- Every competitor that exists is verified in a single transaction through `TransactionService.saveCompetitors`, and one
+  that is already verified is left as it is and reported as such
+- An ID that matches no competitor is reported in its own result and does not fail the others; an empty list, or one
+  containing a null, is refused with a `400`
 
-### 🧹 Stale Results
+### 💬 Say Why a Row Is Left Out
 
-- A result whose competitor stops qualifying, such as after their points were cleared or their verification was
-  withdrawn, is deleted on the next calculation
-- Any such stale result also forces a recalculation, so a change made within the five-minute recalculation threshold is
-  not missed
-- `TransactionService.replaceShooterResults` deletes the stale results and saves the recalculated ones in one
-  transaction
+- A match competitor import row whose competitor is not verified is still imported, but its result now carries a message
+  saying the entry is left out of shooter results until the competitor is verified
+- The message of a row imported without issue stays empty, so existing callers that treat an empty message as success
+  are unaffected
 
-### 📖 Documented Rules
+### 📖 Documented Workflow
 
-- `README.md` and `ARCHITECTURE.md` state who is included in results, and how a competitor becomes verified: by
-  setting `isVerified` when the competitor is created (the `isVerified` field, or the `IsVerified` CSV column), or
-  through `PUT` or `PATCH /ipsc/competitors/{competitorId}` afterwards
-- The match competitor import still imports an entry for an unverified competitor, but that entry only appears in
-  results once its competitor is verified. Neither it nor the match import verifies anyone
-- The Javadoc on `IpscShooterResultService` and `IpscShooterLogOverallService` and the OpenAPI descriptions on both
-  result controllers describe the same rules
-
-### ♻️ Unused Code
-
-- The points filter and "not ranked" note in `IpscShooterResultServiceImpl.rank`, and the null fallback on the winner's
-  points, are removed, since competitors without points are excluded before they are grouped
-- The fallback from a null competitor category to `NONE` in `IpscShooterResultServiceImpl` and
-  `IpscShooterLogOverallServiceImpl`, and the null-safe ordering of a match's scheduled date, are removed, since
-  `competitor_category` and `scheduled_date` are `NOT NULL`
-- The tolerance for a shooter result without a percentage in `IpscShooterLogOverallServiceImpl` is kept and now
-  documented: `percentage_in_log` is a nullable column, so a row inserted by hand or by an earlier version could lack
-  one, and ignoring it keeps one bad row from failing a whole log's calculation
+- `README.md` and `ARCHITECTURE.md` describe verifying competitors in bulk and the message on an import row
+- The Javadoc on `IpscCompetitorService` and `MatchCompetitorBulkResponse`, and the OpenAPI descriptions on
+  `IpscCompetitorController` and `IpscMatchCompetitorController`, say the same
 
 ---
 
@@ -60,23 +46,25 @@ release is backward-compatible.
 
 ### Added
 
-- `TransactionService.replaceShooterResults`/`TransactionServiceImpl.replaceShooterResults`
-- Service tests for null, zero and unverified competitors and for deleting a stale result, an integration test that
-  clears a competitor's points between two calculations, and `TransactionService` tests for the new method
+- `IpscCompetitorController.verifyCompetitors`, serving `POST /ipsc/competitors/verify`
+- `IpscCompetitorService.verifyCompetitors` and its implementation
+- `CompetitorVerifyRequest`, `CompetitorVerifyResponse` and `CompetitorVerifyResponseHolder`
+- `CompetitorRepository.findAllByIdInWithHomeClubAndEmailAddresses`, which fetch-joins the home clubs and email
+  addresses of several competitors
+- Controller, request model, service and `@SpringBootTest` integration tests for bulk verification, and service and
+  integration tests for the unverified match competitor import message
 
 ### Changed
 
-- `IpscShooterResultServiceImpl.calculateMatchShooterResult` includes only verified competitors with points above zero,
-  and deletes the result of one who no longer qualifies
-- `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` includes only verified competitors
-- `IpscShooterResultServiceImpl.rank` no longer filters on points, and the winner's points no longer fall back to
-  `null`
-- `IpscShooterResultServiceImpl` and `IpscShooterLogOverallServiceImpl` no longer fall back from a null competitor
-  category to `NONE`, and the overall service no longer orders a match's scheduled date null-safely
-- `IpscShooterLogOverallService` and `IpscShooterLogOverallServiceImpl` document why a missing percentage is tolerated
-- `README.md`, `ARCHITECTURE.md`, the `IpscShooterResultService` and `IpscShooterLogOverallService` Javadoc and the
-  controllers' OpenAPI `@Operation` descriptions state who is included in results
-- `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add and close Gaps #43 and #44
+- `IpscMatchCompetitorServiceImpl.createMatchCompetitors` gives a row whose competitor is not verified a message, and
+  still imports it
+- `README.md`, `ARCHITECTURE.md`, `IpscCompetitorService`, `IpscCompetitorController`,
+  `IpscMatchCompetitorController` and `MatchCompetitorBulkResponse` describe both
+- `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add and close Gap #46
+
+### Fixed
+
+Nothing is fixed.
 
 ### Removed
 
@@ -86,23 +74,19 @@ Nothing is removed.
 
 ## 🚀 Migration Guide
 
-No action is needed for callers: no existing endpoint, request or response changes shape. The responses simply omit
-competitors who are not verified or have no points.
+No action is needed: no existing endpoint, request or response changes shape, and there is no schema change.
 
-Competitors created since `V8_7_0` without an `isVerified` value are not verified, so they are left out of shooter
-results and overall results until they are marked verified. `V8_7_0` marked only the competitors that existed at the
-time as verified, and no migration backfills the others. Before deploying, check which competitors should appear in
-results and set `isVerified` for them through `PUT` or `PATCH /ipsc/competitors/{competitorId}`.
-
-Results that already exist for competitors who do not qualify are deleted the next time their match's results are
-calculated, so recalculate each match's results, or the shooter log's overall results, after verifying competitors.
+The one visible difference is that the `message` of a match competitor import row can now be non-empty for a row that
+succeeded. A caller that treats any non-empty `message` as a failure should check `success` instead; a row for an
+unverified competitor has `success` set to `true` and a message beginning "Imported, but".
 
 ---
 
 ## 📊 Statistics
 
-- **Files Changed:** 18 against `main` before this release's documentation; 602 insertions and 133 deletions
-- **New Source Files:** 0
+- **Files Changed:** 19 against `main` before this release's documentation; 632 insertions and 11 deletions
+- **New Source Files:** 3 (`CompetitorVerifyRequest`, `CompetitorVerifyResponse` and `CompetitorVerifyResponseHolder`),
+  plus the request's test class
 - **Renamed Source Files:** 0
 - **Deleted Source Files:** 0
 - **New Dependencies:** 0
@@ -111,35 +95,26 @@ calculated, so recalculate each match's results, or the shooter log's overall re
 
 ## 🧭 Design Notes
 
-- **Verification is never defaulted.** A competitor created without `isVerified` stays unverified, so being verified is
-  always a deliberate act through the competitor endpoints. Defaulting it on import would have made the flag
-  meaningless.
-- **Only `true` counts.** A competitor whose `isVerified` is `false` or `null` is excluded alike, so an unrecorded
-  verification is treated as not verified.
-- **Excluded, not unranked.** Competitors without points used to be saved with a null rank and percentage. They now get
-  no result at all, so a result always means a ranked competitor and a group's winner is always a verified competitor
-  who scored.
-- **Stale results are deleted, not hidden.** A result for a competitor who no longer qualifies is removed in the same
-  transaction that saves the recalculated ones, rather than being filtered out when it is read.
-- **The match competitor import is not stricter.** It still imports an entry for an unverified competitor, so the data
-  is kept and the entry appears in results as soon as its competitor is verified.
-- **Unreachable code is removed, defensive code is kept.** A fallback is removed only when a `NOT NULL` column or the
-  calling code makes it impossible to reach. Null handling on a nullable column, such as a missing percentage, stays
-  and says why, so a bad row degrades one result rather than the whole calculation.
-- **A PATCH.** No contract changes and the one new method is internal, which `AGENTS.md`'s Semantic Versioning rules
-  classify as a backward-compatible fix.
+- **Verification stays deliberate.** Nothing defaults `isVerified` to `true`, and neither import verifies anyone; the
+  new endpoint only makes the existing manual step cheaper for many competitors.
+- **One bad ID does not spoil the batch.** An unknown ID is a result, not an error, so a list with one stale ID still
+  verifies the rest, as the bulk imports treat a failed row.
+- **One transaction.** The competitors are written together through `TransactionService.saveCompetitors`, so the batch
+  commits or rolls back as one unit, and only competitors that are not already verified are written.
+- **A warning, not a refusal.** A row for an unverified competitor is still imported, because the entry is correct and
+  will count once the competitor is verified; the message tells the caller why it is not in results yet.
+- **A MINOR.** The new endpoint is an externally visible, backward-compatible addition, which `AGENTS.md`'s Semantic
+  Versioning rules classify as MINOR.
 
 ---
 
 ## 🧪 Testing
 
-- `./mvnw clean verify -Pcoverage` passes: 1,447 tests with no failures, errors or skips.
-- New tests cover null, zero and unverified competitors in the shooter result and overall result services, deleting a
-  stale result when points are cleared or verification is withdrawn, and `TransactionService.replaceShooterResults`
-  including its rollback when the flush fails. The two tests that only covered the removed category fallbacks are
-  removed with them.
-- Overall coverage is 98.91% branch and 98.80% line, above the 97% minimum, and `IpscShooterResultServiceImpl` has
-  no missed lines or branches. The only missed code in the two services is the null guard on a shooter log's matches.
+- `./mvnw test` passes: 1,498 tests with no failures or errors.
+- New tests cover `CompetitorVerifyRequest`'s validation, `IpscCompetitorController.verifyCompetitors`, and
+  `IpscCompetitorService.verifyCompetitors` verifying, reporting an unknown ID, leaving an already verified competitor
+  as it is and de-duplicating a repeated ID, in Mockito unit tests and `@SpringBootTest` integration tests, plus the
+  message on a match competitor import row for an unverified competitor.
 
 ---
 
@@ -147,24 +122,20 @@ calculated, so recalculate each match's results, or the shooter log's overall re
 
 - A `MatchCompetitorId`, `MatchId` or `CompetitorId` column in the match, competitor or match competitor CSV imports,
   is read but never used as the row's own ID, since the imports only create records.
-- Calculating a log's overall results does not re-check its matches' dates; they are enforced when the log is written,
-  so a match rescheduled afterwards is still counted.
+- A shooter log already out of step with a match's date is only caught when its overall results are calculated, or when
+  the match moves to another day; it is not reported when either date is left alone.
 - Shooter logs can only be created one at a time; there is no bulk import for them.
-- The match competitor import does not say that an entry's competitor is unverified, so an entry that never appears in
-  results gives no sign of why.
-- Competitors can only be verified one at a time, and the bulk competitor import only creates competitors, so it
-  cannot verify one that already exists.
-- `pom.xml` still overrides `logback.version`, the Jackson BOM properties and `flyway-mysql`, set above Spring Boot's
-  managed versions.
+- The bulk competitor import only creates competitors, so it cannot verify one that already exists; use
+  `POST /ipsc/competitors/verify` afterwards.
+- `pom.xml` still overrides `logback.version`, the Jackson BOM properties, `mysql-connector-j` and `flyway-mysql`, set
+  above Spring Boot's managed versions.
 
 ---
 
 ## 🔮 Future Enhancements
 
 - Add a bulk import for shooter logs if creating them one by one proves slow.
-- Re-check a log's matches against its dates when its overall results are calculated, or when a match is rescheduled.
-- Report, or skip, a match competitor import row whose competitor is not verified, and consider a way to verify
-  competitors in bulk.
+- Report a match whose date is outside a covering log's dates when it is read, not only when the log is calculated.
 - Drop the remaining dependency pins once Spring Boot manages versions at least as new.
 
 ---
@@ -172,13 +143,13 @@ calculated, so recalculate each match's results, or the shooter log's overall re
 ## 👥 Contributors
 
 - Leoni Lubbinge
-- Claude Code (Claude Sonnet 5.5) — co-author of the release's commits
 
 ---
 
 ## 📝 Notes
 
-Version 16.1.1 limits shooter results and overall results to verified competitors with points, and removes the result of
-one who stops qualifying. It leaves the improvement plan with all 44 gaps closed and none open.
+Version 16.2.0 makes the verified-competitor rule practical to work with: one request verifies many competitors, and a
+match competitor import says when a row's competitor is left out of results. It leaves the improvement plan with all 46
+gaps closed and none open.
 
 ---
