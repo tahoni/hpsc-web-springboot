@@ -21,6 +21,22 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 16.4.1 (November 10, 2026)
+
+**Theme:** Making an Absent Home Club Explicit
+
+**Key Focus:**
+
+- `IpscMatchCompetitorServiceImpl.resolveCompetitorHomeClub` returns an `Optional<ClubIdentifier>`, empty when the
+  competitor has no home club or the home club has no identifier, instead of `null`
+- `isForClub` passes the value on through the null-safe `isSameClub`, so which rows the import counts as the club's
+  does not change
+- Scoped as `v16.4.1` **PATCH**: an internal refactor of a protected method that changes no endpoint, request,
+  response or configuration
+- Improvement plan: no gap is added, closed or progressed, and all 50 gaps stay closed with none open
+- The suite stands at 1,569 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
+- Project version bumped to 16.4.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 16.4.0 (November 10, 2026)
 
 **Theme:** Changing Existing Records in Bulk
@@ -383,6 +399,12 @@ Milestones 44 to 50 (versions 10.0.0 to 13.3.0) are archived, unchanged, in
 - A `migrations` CI job runs the Flyway migrations against MySQL 8.4 on every push and pull request
 - Improvement plan Gaps #48, #49 and #50 are added and closed, so every tracked gap stays closed
 
+### Milestone 60: Making an Absent Home Club Explicit (v16.4.1)
+
+- `IpscMatchCompetitorServiceImpl.resolveCompetitorHomeClub` returns an `Optional<ClubIdentifier>` rather than `null`,
+  with the rows the import counts as the club's unchanged
+- No improvement plan gap is added or closed, so every tracked gap stays closed
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -651,7 +673,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   points, stored in a new `ShooterResult` entity and served by one controller. Because that retires the overall and
   club rankings on a match competitor and renames the shooter log `points`, v15.0.0 is the project's seventh
   consecutive MAJOR release, with each breaking change flagged in `CHANGELOG.md` as it landed.
-- **Version 16.x (v16.0.0 – v16.4.0):** Make more of the real match data resolve — the Rifle PCC division is added,
+- **Version 16.x (v16.0.0 – v16.4.1):** Make more of the real match data resolve — the Rifle PCC division is added,
   the semi-auto rifle divisions get names that say what they are, and competitor names match despite trailing
   modified-entry digits and a "TRO" role marker, while a bulk match competitor import is saved or rolled back as one
   unit. Because the renamed divisions change the names a request may use, v16.0.0 is the project's eighth consecutive
@@ -668,7 +690,9 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   own, a failed row reported with the values it supplied — as a second backward-compatible MINOR release.
   v16.4.0 then lets those imports change what they created — shooter logs replaced, updated and given or relieved of
   matches from CSV, a competitor row for an existing club number updating and verifying it, and a match that is out of
-  step with its log saying so when it is read — as a third backward-compatible MINOR release.
+  step with its log saying so when it is read — as a third backward-compatible MINOR release. v16.4.1 then makes a
+  competitor's missing home club explicit in the import's club check by returning an `Optional` — as a PATCH release
+  that changes no contract.
 
 ### Initial Phase (v1.0.0)
 
@@ -967,7 +991,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v16.4.0, the following areas are identified for future enhancement:
+Based on the evolution to v16.4.1, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -978,7 +1002,14 @@ The completed-work logs for versions 8.0.0 to 9.1.0 are archived, unchanged, in
 The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 [`documentation/archive/v10-v13/HISTORY_v10-v13.md`](/documentation/archive/v10-v13/HISTORY_v10-v13.md).
 
-### Recently Completed (v16.4.0)
+### Recently Completed (v16.4.1)
+
+- `IpscMatchCompetitorServiceImpl.resolveCompetitorHomeClub` returns an `Optional<ClubIdentifier>`, empty when the
+  competitor has no home club or the home club has no identifier, instead of `null`
+- Improvement plan: no gap is added or closed, leaving all 50 gaps closed and none open
+- Project version bumped to 16.4.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v16.4.0)
 
 - `PUT` and `PATCH /ipsc/shooter-logs/bulk` replace and update shooter logs from CSV through
   `IpscShooterLogService.updateShooterLogs` and `patchShooterLogs`, each row on its own, answering `422` only when
