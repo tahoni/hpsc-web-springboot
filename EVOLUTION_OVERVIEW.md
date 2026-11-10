@@ -270,3 +270,41 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 
 - The suite stands at 1,476 passing tests, with new helper, match service and overall service unit and integration
   tests
+
+
+### Phase 57: Verifying Competitors in Bulk (v16.2.0)
+
+**Controllers & Services**
+
+- `IpscCompetitorController.verifyCompetitors` serves `POST /ipsc/competitors/verify`, and
+  `IpscCompetitorService.verifyCompetitors` verifies every competitor that exists in a single transaction through
+  `TransactionService.saveCompetitors`, reporting an unknown ID, and one already verified, in its own result
+- `IpscMatchCompetitorServiceImpl.createMatchCompetitors` still imports a row whose competitor is not verified, with a
+  message saying the entry is left out of shooter results until the competitor is verified
+
+**Models & Repositories**
+
+- `CompetitorVerifyRequest`, `CompetitorVerifyResponse` and `CompetitorVerifyResponseHolder` carry the request and the
+  per-competitor results
+- `CompetitorRepository.findAllByIdInWithHomeClubAndEmailAddresses` fetch-joins the home clubs and email addresses of
+  several competitors
+
+**Documentation**
+
+- `README.md` and `ARCHITECTURE.md` describe bulk verification and the import message; the service Javadoc and the
+  controllers' OpenAPI descriptions say the same
+
+**Build & Metadata**
+
+- Improvement plan: Gap #46 is added and closed, leaving all 46 gaps closed and none open
+- Project version bumped to 16.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Making the verified-competitor rule workable: verifying many competitors at once, and telling an importer when a row
+  will be left out of results
+
+**Test Coverage:**
+
+- The suite stands at 1,498 passing tests, with new controller, request model, service and integration tests for
+  bulk verification and for the unverified match competitor import message

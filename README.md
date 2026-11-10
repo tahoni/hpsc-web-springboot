@@ -45,11 +45,13 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
 A competitor is verified when `isVerified` is `true`; it is left unset when a competitor is created without it. Only
 the competitor endpoints can verify a competitor: set it when creating one (the `isVerified` field of
 `POST /ipsc/competitors`, or the `IsVerified` column of `POST /ipsc/competitors/bulk`) or mark an existing competitor
-verified with `PUT` or `PATCH /ipsc/competitors/{competitorId}`.
+verified with `PUT` or `PATCH /ipsc/competitors/{competitorId}`. To verify many existing competitors at once, post
+their IDs to `POST /ipsc/competitors/verify`: each ID that matches a competitor is verified, and one that matches
+nobody is reported in its own result without failing the others.
 
 The match competitor and match bulk CSV imports never verify anyone. The match competitor import still imports an
 entry for an unverified competitor, but that entry is only included in shooter results and shooter log overall results
-once its competitor is verified.
+once its competitor is verified, and its row in the import's response carries a message saying so.
 
 The application emphasises structured data processing and validation, with MySQL-backed persistence via Spring Data JPA
 and Hibernate.

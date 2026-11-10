@@ -506,12 +506,45 @@ class IpscMatchCompetitorServiceIntegrationTest {
         assertThrows(NonFatalException.class, () -> ipscMatchCompetitorService.deleteMatchCompetitor(999_999L));
     }
 
+    @Test
+    void testCreateMatchCompetitors_whenCompetitorIsNotVerified_thenImportsTheRowWithAWarningMessage()
+            throws Exception {
+        // Arrange
+        Competitor verified = createCompetitor("HPSC-MC-VER");
+        Competitor unverified = createCompetitor("HPSC-MC-UNV", false);
+        IpscMatch match = createMatch();
+        String csvData = String.format("""
+                CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
+                %d,%d,HPSC,Junior,Handgun,Open,Major
+                %d,%d,HPSC,Junior,Handgun,Open,Major
+                """, verified.getId(), match.getId(), unverified.getId(), match.getId());
+
+        // Act
+        MatchCompetitorBulkResponseHolder holder =
+                ipscMatchCompetitorService.createMatchCompetitors(csvData, null);
+
+        // Assert
+        MatchCompetitorBulkResponse verifiedResult = holder.getMatchCompetitorResults().get(0);
+        MatchCompetitorBulkResponse unverifiedResult = holder.getMatchCompetitorResults().get(1);
+        assertTrue(verifiedResult.isSuccess());
+        assertEquals("", verifiedResult.getMessage());
+        assertTrue(unverifiedResult.isSuccess());
+        assertNotNull(unverifiedResult.getMatchCompetitor());
+        assertTrue(unverifiedResult.getMessage().contains("competitor with ID " + unverified.getId()
+                + " is not verified"));
+    }
+
     // Helpers
     private Competitor createCompetitor(String clubNumber) {
+        return createCompetitor(clubNumber, true);
+    }
+
+    private Competitor createCompetitor(String clubNumber, Boolean isVerified) {
         Competitor competitor = new Competitor();
         competitor.setFirstName("Jane");
         competitor.setLastName("Doe");
         competitor.setClubNumber(clubNumber);
+        competitor.setIsVerified(isVerified);
         return competitorRepository.save(competitor);
     }
 
