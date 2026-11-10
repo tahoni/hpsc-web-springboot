@@ -398,3 +398,25 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 - The suite stands at 1,569 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with new controller, request
   mix-in, service, integration and migration tests for the bulk updates, the competitor update, the match warnings and
   the Flyway migrations on MySQL
+
+### Phase 60: Making an Absent Home Club Explicit (v16.4.1)
+
+**Services**
+
+- `IpscMatchCompetitorServiceImpl.resolveCompetitorHomeClub` returns an `Optional<ClubIdentifier>`, empty when the
+  competitor has no home club or the home club has no identifier, instead of `null`; `isForClub` passes the value on
+  through the null-safe `isSameClub`, so which rows the import counts as the club's does not change
+
+**Build & Metadata**
+
+- Improvement plan: no gap is added or closed, leaving all 50 gaps closed and none open
+- Project version bumped to 16.4.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Replacing a `null` return with an `Optional` so the absent case is part of the method's type
+
+**Test Coverage:**
+
+- The suite stands at 1,569 tests, three skipped unless `FLYWAY_MYSQL_URL` is set; the existing
+  `IpscMatchCompetitorServiceImplTest` cases for the home club were updated for the `Optional`
