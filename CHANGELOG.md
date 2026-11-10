@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 16.2.0](#-1620---2026-11-10) ← Current
+- [🧾 Version 16.3.0](#-1630---2026-11-10) ← Current
+- [🧾 Version 16.2.0](#-1620---2026-11-10)
 - [🧾 Version 16.1.2](#-1612---2026-11-09)
 - [🧾 Version 16.1.1](#-1611---2026-11-08)
 - [🧾 Version 16.1.0](#-1610---2026-11-08)
@@ -31,6 +32,55 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [16.3.0] - 2026-11-10
+
+#### ➕ Added
+
+##### Controllers
+
+- **`IpscShooterLogController.createShooterLogs`:** New `POST /ipsc/shooter-logs/bulk` creates shooter logs from CSV
+  data, one log per row with `StartDate`, `EndDate` and `MatchIds` columns, the match IDs separated by semicolons. Each
+  row is saved on its own: a failed row is reported with the values it supplied and the reason, and the rest are still
+  created. It returns `201` if any row was created and `422` if every row failed.
+
+##### Services
+
+- **`IpscShooterLogService.createShooterLogs`:** Reads the CSV and creates each row through `createShooterLog`, so a row
+  gets the same checks as a single log: both dates present, the end not before the start, every match existing and
+  every match scheduled within the row's dates.
+
+##### Models
+
+- **`ShooterLogRequestCsvMixIn`:** Binds the CSV column names onto `ShooterLogRequest`. No column is required, so a row
+  without a date is reported on its own instead of failing the file.
+- **`ShooterLogBulkResponse`, `ShooterLogBulkResponseHolder` and `ShooterLogRow`:** The per-row results of an import,
+  with a failed row's values as text.
+
+#### 🔄 Changed
+
+##### Services
+
+- **`IpscCompetitorService` and `IpscShooterLogServiceImpl`:** Remove an unused import each, `CompetitorVerifyResponse`
+  and `java.time.LocalDate`, with no change in behaviour.
+
+##### Models
+
+- **`ShooterLogRequest.validate`:** Rejects a null match ID with a `ValidationException`, a `400`, where it previously
+  reached the repository and failed with a `500`.
+
+##### Documentation
+
+- **`README.md`, `ARCHITECTURE.md`, `IpscShooterLogService` and `IpscShooterLogController`:** Describe the shooter log
+  bulk import and add its flow diagram.
+- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Gap #47 (shooter logs could only be created one at a time,
+  unlike the other bulk-imported records) is added and closed in v16.3.0.
+- **`CHANGELOG.md`:** Link definitions for `[Unreleased]` and every released version, as compare links between
+  consecutive tags, so each `[X.Y.Z]` heading resolves as a link instead of an unresolved reference label.
+- **`AGENTS.md` and the `prep-version-release` skill:** The Release Checklist and the skill now add each release's link
+  definition and move `[Unreleased]` forward, so the headings keep resolving.
 
 ---
 
@@ -757,3 +807,13 @@ For issues, feature requests or questions:
 ---
 
 **Last Updated:** 2026-08-25
+
+[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.3.0...HEAD
+[16.3.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.2.0...v16.3.0
+[16.2.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.1.2...v16.2.0
+[16.1.2]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.1.1...v16.1.2
+[16.1.1]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.1.0...v16.1.1
+[16.1.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.0.0...v16.1.0
+[16.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v15.0.0...v16.0.0
+[15.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v14.0.0...v15.0.0
+[14.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v13.3.0...v14.0.0
