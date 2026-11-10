@@ -27,6 +27,10 @@ public class ShooterLogRow {
     private String endDate = "";
     /** The match identifiers, separated by {@link SystemConstants#ARRAY_SEPARATOR}. */
     private String matchIds = "";
+    /** The identifiers of the matches a bulk partial update row adds, separated like {@link #matchIds}. */
+    private String addMatchIds = "";
+    /** The identifiers of the matches a bulk partial update row removes, separated like {@link #matchIds}. */
+    private String removeMatchIds = "";
 
     /**
      * Describes a request by the values it supplied.

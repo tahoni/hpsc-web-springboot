@@ -184,7 +184,8 @@ public class IpscShooterLogController {
      * Partially updates shooter logs in bulk from CSV data.
      *
      * @param csvData the CSV data, one shooter log per row, with a header row of {@code ShooterLogId} and any of
-     *                {@code StartDate}, {@code EndDate} and {@code MatchIds}.
+     *                {@code StartDate}, {@code EndDate}, {@code MatchIds}, {@code AddMatchIds} and
+     *                {@code RemoveMatchIds}.
      * @return a {@link ShooterLogBulkResponseHolder} with one result per row: {@code 200} if at least one row was
      * updated, or {@code 422} if every row failed.
      * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
@@ -195,9 +196,10 @@ public class IpscShooterLogController {
     @Operation(summary = "Update shooter logs", description = "Partially update existing shooter logs in bulk from "
             + "CSV data: each row is the ID of the log and any of a start date, an end date and the IDs of the "
             + "matches the log covers, separated by semicolons. A column left empty leaves that field unchanged, and "
-            + "a non-empty list of matches replaces the log's matches in full. Each row is saved on its own, so a "
-            + "row that fails is reported with the values it supplied and the reason while the rest are still "
-            + "updated.")
+            + "a non-empty list of matches replaces the log's matches in full. The AddMatchIds and RemoveMatchIds "
+            + "columns add and remove matches without restating the rest, after any replacement. Each row is saved "
+            + "on its own, so a row that fails is reported with the values it supplied and the reason while the "
+            + "rest are still updated.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "At least one row was updated (or the CSV had no "
                     + "rows). Each row's result says whether it was updated and, if not, why: a missing log ID, "
@@ -222,8 +224,8 @@ public class IpscShooterLogController {
                     content = @Content(mediaType = "text/plain",
                             schema = @Schema(implementation = String.class),
                             examples = @ExampleObject("""
-                                    ShooterLogId,StartDate,EndDate,MatchIds
-                                    0,yyyy-MM-dd,,
+                                    ShooterLogId,StartDate,EndDate,MatchIds,AddMatchIds,RemoveMatchIds
+                                    0,yyyy-MM-dd,,,0;0,0;0
                                     """)))
             @RequestBody String csvData) throws ValidationException, FatalException {
         ShooterLogBulkResponseHolder holder = ipscShooterLogService.patchShooterLogs(csvData);
@@ -247,7 +249,7 @@ public class IpscShooterLogController {
     @PutMapping(value = "/{shooterLogId}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Replace shooter log", description = "Fully replace an existing shooter log's dates and "
-            + "matches.")
+            + "matches: the supplied list of match IDs becomes the log's match list, and an empty one clears it.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Shooter log replaced.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -268,26 +270,29 @@ public class IpscShooterLogController {
     }
 
     /**
-     * Partially updates an existing shooter log, applying only the non-null fields on the request.
+     * Partially updates an existing shooter log, applying only the non-null fields on the request. A
+     * {@code matchIds} replaces the log's matches in full, while {@code addMatchIds} and {@code removeMatchIds} add
+     * and remove matches without restating the rest.
      *
      * @param shooterLogId the identifier of the shooter log to update.
      * @param request      the fields to change; any field left {@code null} is left unchanged.
      * @return the updated {@link ShooterLogResponse}.
-     * @throws ValidationException if the log's end date would end up before its start date, or a match would
-     *                             be scheduled outside its dates.
+     * @throws ValidationException if the log's end date would end up before its start date, a match would
+     *                             be scheduled outside its dates, or a match is both added and removed.
      * @throws NonFatalException   if no shooter log with {@code shooterLogId} exists, or a match cannot be found.
      * @since 16.1.0
      */
     @PatchMapping(value = "/{shooterLogId}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update shooter log", description = "Partially update an existing shooter log; only "
-            + "non-null fields are applied, and a supplied list of match IDs replaces the log's matches.")
+            + "non-null fields are applied. A supplied list of match IDs replaces the log's matches, while lists "
+            + "of match IDs to add and to remove change them without restating the rest, after any replacement.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Shooter log updated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ShooterLogResponse.class))),
-            @ApiResponse(responseCode = "400", description = "The end date would be before the start date, or a "
-                    + "match would be scheduled outside the log's dates.",
+            @ApiResponse(responseCode = "400", description = "The end date would be before the start date, a "
+                    + "match would be scheduled outside the log's dates, or a match is both added and removed.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "No shooter log with this ID, or a match, could be "

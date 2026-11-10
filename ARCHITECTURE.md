@@ -503,8 +503,9 @@ Client uploads CSV (Content-Type: text/plain, columns StartDate, EndDate and Mat
 `PUT /ipsc/shooter-logs/bulk` and `PATCH /ipsc/shooter-logs/bulk` change existing logs the same way, one row at a time,
 with an added `ShooterLogId` column naming the log; a row without one, or naming an unknown log, is reported as failed.
 Each row is read as a `ShooterLogBulkRequest` and handed to `updateShooterLog`, so both dates are required and an empty
-`MatchIds` clears the log's matches, or to `patchShooterLog`, where a column left empty leaves that field unchanged and a
-non-empty `MatchIds` replaces the log's matches in full. Both return `200`, or `422` if every row failed.
+`MatchIds` clears the log's matches, or to `patchShooterLog`, where a column left empty leaves that field unchanged, a
+non-empty `MatchIds` replaces the log's matches in full, and `AddMatchIds` and `RemoveMatchIds` add and remove matches
+without restating the rest. Both return `200`, or `422` if every row failed.
 
 ---
 

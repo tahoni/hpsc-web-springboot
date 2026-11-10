@@ -16,7 +16,8 @@ import java.util.List;
  * <p>
  * No column is marked required, so a row without a {@code ShooterLogId}, or without a date a replacement needs, is
  * reported on its own rather than failing the whole file. {@code MatchIds} holds the identifiers of the matches the log
- * covers, separated by {@link za.co.hpsc.web.constants.SystemConstants#ARRAY_SEPARATOR}.
+ * covers, and {@code AddMatchIds} and {@code RemoveMatchIds} those a partial update adds and removes, each separated
+ * by {@link za.co.hpsc.web.constants.SystemConstants#ARRAY_SEPARATOR}.
  * </p>
  *
  * @since 16.4.0
@@ -28,6 +29,8 @@ public abstract class ShooterLogBulkRequestCsvMixIn {
             @JsonProperty("ShooterLogId") Long shooterLogId,
             @JsonProperty("StartDate") @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT) LocalDate startDate,
             @JsonProperty("EndDate") @JsonFormat(pattern = IpscConstants.IPSC_INPUT_DATE_FORMAT) LocalDate endDate,
-            @JsonProperty("MatchIds") List<Long> matchIds) {
+            @JsonProperty("MatchIds") List<Long> matchIds,
+            @JsonProperty("AddMatchIds") List<Long> addMatchIds,
+            @JsonProperty("RemoveMatchIds") List<Long> removeMatchIds) {
     }
 }

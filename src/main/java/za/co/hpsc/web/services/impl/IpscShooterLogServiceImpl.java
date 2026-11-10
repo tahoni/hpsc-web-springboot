@@ -107,6 +107,8 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
             patchRequest.setEndDate(row.getEndDate());
             // A CSV cell cannot tell an empty list from an omitted one, so an empty one leaves the matches unchanged
             patchRequest.setMatchIds((row.getMatchIds() == null || row.getMatchIds().isEmpty()) ? null : row.getMatchIds());
+            patchRequest.setAddMatchIds(row.getAddMatchIds());
+            patchRequest.setRemoveMatchIds(row.getRemoveMatchIds());
             return patchShooterLog(shooterLogId, patchRequest);
         }, false);
     }
@@ -123,6 +125,7 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
 
     @Override
     public ShooterLogResponse patchShooterLog(Long shooterLogId, ShooterLogPatchRequest request) {
+        request.validate();
         ShooterLog shooterLog = findShooterLogOrThrow(shooterLogId);
 
         if (request.getStartDate() != null) {
@@ -137,6 +140,10 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
         }
         if (request.getMatchIds() != null) {
             shooterLog.setMatches(resolveMatches(request.getMatchIds()));
+        }
+        if (hasIds(request.getAddMatchIds()) || hasIds(request.getRemoveMatchIds())) {
+            shooterLog.setMatches(adjustMatches(shooterLog.getMatches(), request.getAddMatchIds(),
+                    request.getRemoveMatchIds()));
         }
         validateMatchesWithinDates(shooterLog);
         return toResponse(transactionService.saveShooterLog(shooterLog));
@@ -171,6 +178,56 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
             throw new ValidationException("Shooter log with ID " + shooterLogId
                     + " cannot be deleted: it is referenced by other records.", e);
         }
+    }
+
+    /**
+     * Whether a list of identifiers has any.
+     *
+     * @param ids the identifiers; may be null.
+     * @return {@code true} if the list is neither null nor empty.
+     */
+    private static boolean hasIds(List<Long> ids) {
+        return (ids != null) && !ids.isEmpty();
+    }
+
+    /**
+     * Writes identifiers as text, separated by {@link SystemConstants#ARRAY_SEPARATOR}.
+     *
+     * @param ids the identifiers; may be null.
+     * @return the identifiers as text, empty if there are none.
+     */
+    private static String joinIds(List<Long> ids) {
+        return (ids == null) ? "" : ids.stream().map(String::valueOf).collect(java.util.stream.Collectors.joining(
+                SystemConstants.ARRAY_SEPARATOR));
+    }
+
+    /**
+     * Adds and removes matches on a shooter log's current matches, keeping their order: a match already covered is
+     * not added again, and one that is not covered is ignored when removed.
+     *
+     * @param current        the matches the log covers now; may be null.
+     * @param addMatchIds    the identifiers of the matches to add; may be null or empty.
+     * @param removeMatchIds the identifiers of the matches to remove; may be null or empty.
+     * @return the adjusted matches, as a new modifiable list.
+     * @throws NonFatalException if a match to add does not exist.
+     */
+    protected List<IpscMatch> adjustMatches(List<IpscMatch> current, List<Long> addMatchIds,
+                                            List<Long> removeMatchIds) {
+        List<IpscMatch> adjusted = new ArrayList<>((current == null) ? List.of() : current);
+        if (hasIds(addMatchIds)) {
+            Set<Long> covered = new HashSet<>();
+            adjusted.forEach(match -> covered.add(match.getId()));
+            for (IpscMatch match : resolveMatches(addMatchIds)) {
+                if (covered.add(match.getId())) {
+                    adjusted.add(match);
+                }
+            }
+        }
+        if (hasIds(removeMatchIds)) {
+            Set<Long> removed = new HashSet<>(removeMatchIds);
+            adjusted.removeIf(match -> removed.contains(match.getId()));
+        }
+        return adjusted;
     }
 
     /**
@@ -210,6 +267,8 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
                 log.warn("Shooter log {} skipped due to error: {}", replace ? "replacement" : "update", e.getMessage());
                 ShooterLogRow shooterLogRow = new ShooterLogRow(row);
                 shooterLogRow.setShooterLogId(Objects.toString(row.getShooterLogId(), ""));
+                shooterLogRow.setAddMatchIds(joinIds(row.getAddMatchIds()));
+                shooterLogRow.setRemoveMatchIds(joinIds(row.getRemoveMatchIds()));
                 shooterLogBulkResponses.add(new ShooterLogBulkResponse(false, e.getMessage(), null, shooterLogRow));
             }
         }

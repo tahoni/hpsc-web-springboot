@@ -33,6 +33,29 @@ class ShooterLogBulkRequestCsvMixInTest {
     }
 
     @Test
+    void testCsvDeserialization_whenAddAndRemoveMatchIdsAreGiven_thenMapsThem() throws Exception {
+        // Act
+        ShooterLogBulkRequest row = readRows("ShooterLogId,AddMatchIds,RemoveMatchIds\n4,10;11,12\n").getFirst();
+
+        // Assert
+        assertEquals(List.of(10L, 11L), row.getAddMatchIds());
+        assertEquals(List.of(12L), row.getRemoveMatchIds());
+    }
+
+    @Test
+    void testCsvDeserialization_whenAddAndRemoveMatchIdsAreEmptyOrOmitted_thenLeavesThemEmpty() throws Exception {
+        // Act
+        ShooterLogBulkRequest empty = readRows("ShooterLogId,AddMatchIds,RemoveMatchIds\n4,,\n").getFirst();
+        ShooterLogBulkRequest omitted = readRows("ShooterLogId\n4\n").getFirst();
+
+        // Assert
+        assertTrue(empty.getAddMatchIds().isEmpty());
+        assertTrue(empty.getRemoveMatchIds().isEmpty());
+        assertTrue(omitted.getAddMatchIds().isEmpty());
+        assertTrue(omitted.getRemoveMatchIds().isEmpty());
+    }
+
+    @Test
     void testCsvDeserialization_whenColumnsAreEmptyOrOmitted_thenLeavesThemNullOrEmpty() throws Exception {
         // Act
         ShooterLogBulkRequest empty = readRows("ShooterLogId,StartDate,EndDate,MatchIds\n,,,\n").getFirst();

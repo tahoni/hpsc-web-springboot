@@ -76,11 +76,13 @@ public interface IpscShooterLogService {
      * Partially updates a batch of existing shooter logs from CSV data.
      *
      * <p>
-     * Each row is a log's {@code ShooterLogId} and any of {@code StartDate}, {@code EndDate} and {@code MatchIds}, and
-     * updates the log by the same rules as {@link #patchShooterLog(Long, ShooterLogPatchRequest)}. A column left empty
-     * leaves that field unchanged, so a non-empty {@code MatchIds} replaces the log's matches in full, and clearing them
-     * takes a replacement instead. Each row is saved on its own, so a row that fails is reported with the values it
-     * supplied and the reason while the rest are still updated.
+     * Each row is a log's {@code ShooterLogId} and any of {@code StartDate}, {@code EndDate}, {@code MatchIds},
+     * {@code AddMatchIds} and {@code RemoveMatchIds}, and updates the log by the same rules as
+     * {@link #patchShooterLog(Long, ShooterLogPatchRequest)}. A column left empty leaves that field unchanged, so a
+     * non-empty {@code MatchIds} replaces the log's matches in full, {@code AddMatchIds} and {@code RemoveMatchIds} add
+     * and remove matches without restating the rest, and clearing them all takes a replacement instead. Each row is
+     * saved on its own, so a row that fails is reported with the values it supplied and the reason while the rest are
+     * still updated.
      * </p>
      *
      * @param csvData the CSV data, one shooter log per row, with a header row. Must not be null or blank.
@@ -107,14 +109,16 @@ public interface IpscShooterLogService {
             throws ValidationException, NonFatalException;
 
     /**
-     * Partially updates an existing shooter log, applying only the non-null fields on the request. The matches
-     * the log ends up covering, whether changed or not, must all be scheduled within its resulting dates.
+     * Partially updates an existing shooter log, applying only the non-null fields on the request. A {@code matchIds}
+     * replaces the log's matches in full, while {@code addMatchIds} and {@code removeMatchIds} add and remove matches
+     * without restating the rest, applied after any {@code matchIds}. The matches the log ends up covering, whether
+     * changed or not, must all be scheduled within its resulting dates.
      *
      * @param shooterLogId the identifier of the shooter log to update.
      * @param request      the fields to change; any field left {@code null} is left unchanged.
      * @return the updated shooter log.
-     * @throws ValidationException if the log's end date would end up before its start date, or a match would be
-     *                             scheduled outside its dates.
+     * @throws ValidationException if the log's end date would end up before its start date, a match would be
+     *                             scheduled outside its dates, or a match is both added and removed.
      * @throws NonFatalException   if no shooter log with {@code shooterLogId} exists, or a match in the request does
      *                             not exist.
      * @since 16.1.0

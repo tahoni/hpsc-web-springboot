@@ -1587,13 +1587,14 @@ row.
 through `ShooterLogBulkRequestCsvMixIn` and applying it through `updateShooterLog` or `patchShooterLog` in its own
 transaction; a row without a `ShooterLogId`, or naming an unknown log, is reported with the values it supplied, and
 the endpoints answer `200`, or `422` if every row failed. In a bulk `PATCH` an empty column leaves that field
-unchanged, so a non-empty `MatchIds` replaces the log's matches but cannot add to them, and clearing them takes a bulk
-`PUT`. `IpscCompetitorServiceImpl.createCompetitors` now matches a row only on its club number, the one unique
-identifier, through `CompetitorRepository.findByClubNumber`: neither an ID number nor a full name can tell two people
-apart, so a row without a club number always creates a competitor. A matched competitor takes the row's data and is
-marked verified, and `CompetitorResponseHolder.results` carries a `CompetitorBulkResponse` for every row.
-`ARCHITECTURE.md` describes both, with Mockito controller tests, a mix-in test and `@SpringBootTest` integration
-tests.
+unchanged, so a non-empty `MatchIds` replaces the log's matches, `AddMatchIds` and `RemoveMatchIds` add and remove
+matches without restating the rest (as `addMatchIds` and `removeMatchIds` do on `ShooterLogPatchRequest`), and
+clearing them all takes a bulk `PUT`. `IpscCompetitorServiceImpl.createCompetitors` now matches a row only on its club
+number, the one unique identifier, through `CompetitorRepository.findByClubNumber`: neither an ID number nor a full
+name can tell two people apart, so a row without a club number always creates a competitor. A matched competitor takes
+the row's data and is marked verified, and `CompetitorResponseHolder.results` carries a `CompetitorBulkResponse` for
+every row. `ARCHITECTURE.md` describes both, with Mockito controller tests, a mix-in test and `@SpringBootTest`
+integration tests.
 
 #### 49. A match outside a covering shooter log's dates is reported only when the log is calculated or the match moves day — ✅ Closed in v16.4.0
 

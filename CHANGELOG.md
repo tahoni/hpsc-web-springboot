@@ -45,6 +45,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Models
 
+- **`ShooterLogPatchRequest.addMatchIds` and `removeMatchIds`:** Add matches to, and remove them from, a shooter log's
+  current matches without restating the rest, applied after any `matchIds`, which still replaces them in full. Nothing
+  is looked up by `validate()`, which refuses a null ID or a match that is both added and removed.
 - **`ShooterLogBulkRequest` and `ShooterLogBulkRequestCsvMixIn`:** A CSV row of a bulk shooter log update: a
   `ShooterLogRequest` that also carries the `ShooterLogId` of the log to change.
 - **`ShooterLogRow.shooterLogId`:** The `ShooterLogId` a failed bulk update row supplied; empty for a row that creates
@@ -59,7 +62,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`IpscShooterLogService.updateShooterLogs` and `patchShooterLogs`:** Replace or partially update shooter logs from
   CSV, each row through `updateShooterLog` or `patchShooterLog` in its own transaction. A bulk partial update treats an
-  empty date or `MatchIds` column as unchanged, so clearing a log's matches takes a bulk replacement.
+  empty date or `MatchIds` column as unchanged, so clearing a log's matches takes a bulk replacement, and adds and
+  removes matches through its `AddMatchIds` and `RemoveMatchIds` columns.
+- **`IpscShooterLogService.patchShooterLog`:** Now adds the matches in `addMatchIds` and removes those in
+  `removeMatchIds` from the log's current matches, ignoring one already covered when adding and one not covered when
+  removing, then checks every match the log ends up with against its dates as before. An unknown match to add is a
+  `404`, and a match both added and removed is a `400`.
 - **`IpscMatchServiceImpl.getMatch` and `getAllMatches`:** A match whose date is outside the dates of a shooter log that
   covers it is now reported in its `warnings` when it is read, rather than only when the log's overall results are
   calculated. The match is still returned, so it stays readable and fixable.

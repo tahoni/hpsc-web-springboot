@@ -264,6 +264,96 @@ class IpscShooterLogServiceIntegrationTest {
         assertThrows(ValidationException.class, () -> ipscShooterLogService.createShooterLogs("   "));
     }
 
+    @Test
+    void testPatchShooterLog_whenMatchesAreAdded_thenKeepsTheExistingOnesAndAddsTheNewOnce() {
+        // Arrange
+        IpscMatch existing = createMatch("Match A");
+        IpscMatch added = createMatch("Match B", LocalDate.of(2026, 9, 20));
+        ShooterLog shooterLog = createShooterLog(existing);
+        ShooterLogPatchRequest request = new ShooterLogPatchRequest();
+        request.setAddMatchIds(List.of(added.getId(), existing.getId(), added.getId()));
+
+        // Act
+        ShooterLogResponse response = ipscShooterLogService.patchShooterLog(shooterLog.getId(), request);
+
+        // Assert
+        assertEquals(List.of(existing.getId(), added.getId()), response.getMatchIds());
+    }
+
+    @Test
+    void testPatchShooterLog_whenMatchesAreRemoved_thenDropsThemAndIgnoresOnesTheLogDoesNotCover() {
+        // Arrange
+        IpscMatch kept = createMatch("Match A");
+        IpscMatch removed = createMatch("Match B");
+        IpscMatch notCovered = createMatch("Match C");
+        ShooterLog shooterLog = createShooterLog(kept, removed);
+        ShooterLogPatchRequest request = new ShooterLogPatchRequest();
+        request.setRemoveMatchIds(List.of(removed.getId(), notCovered.getId()));
+
+        // Act
+        ShooterLogResponse response = ipscShooterLogService.patchShooterLog(shooterLog.getId(), request);
+
+        // Assert
+        assertEquals(List.of(kept.getId()), response.getMatchIds());
+    }
+
+    @Test
+    void testPatchShooterLog_whenMatchIdsAreReplacedAndAddedAndRemoved_thenAppliesThemInThatOrder() {
+        // Arrange
+        IpscMatch original = createMatch("Match A");
+        IpscMatch replacement = createMatch("Match B");
+        IpscMatch added = createMatch("Match C");
+        ShooterLog shooterLog = createShooterLog(original);
+        ShooterLogPatchRequest request = new ShooterLogPatchRequest();
+        request.setMatchIds(List.of(replacement.getId()));
+        request.setAddMatchIds(List.of(added.getId()));
+        request.setRemoveMatchIds(List.of(replacement.getId()));
+
+        // Act
+        ShooterLogResponse response = ipscShooterLogService.patchShooterLog(shooterLog.getId(), request);
+
+        // Assert
+        assertEquals(List.of(added.getId()), response.getMatchIds());
+    }
+
+    @Test
+    void testPatchShooterLog_whenAMatchIsBothAddedAndRemoved_thenThrowsValidationException() {
+        // Arrange
+        ShooterLog shooterLog = createShooterLog(createMatch("Match A"));
+        ShooterLogPatchRequest request = new ShooterLogPatchRequest();
+        request.setAddMatchIds(List.of(7L));
+        request.setRemoveMatchIds(List.of(7L));
+
+        // Act & Assert
+        assertThrows(ValidationException.class,
+                () -> ipscShooterLogService.patchShooterLog(shooterLog.getId(), request));
+    }
+
+    @Test
+    void testPatchShooterLog_whenAnAddedMatchDoesNotExist_thenThrowsNonFatalException() {
+        // Arrange
+        ShooterLog shooterLog = createShooterLog(createMatch("Match A"));
+        ShooterLogPatchRequest request = new ShooterLogPatchRequest();
+        request.setAddMatchIds(List.of(999_999L));
+
+        // Act & Assert
+        assertThrows(NonFatalException.class,
+                () -> ipscShooterLogService.patchShooterLog(shooterLog.getId(), request));
+    }
+
+    @Test
+    void testPatchShooterLog_whenAnAddedMatchIsOutsideTheLogsDates_thenThrowsValidationException() {
+        // Arrange
+        IpscMatch late = createMatch("Match B", LocalDate.of(2026, 11, 14));
+        ShooterLog shooterLog = createShooterLog(createMatch("Match A"));
+        ShooterLogPatchRequest request = new ShooterLogPatchRequest();
+        request.setAddMatchIds(List.of(late.getId()));
+
+        // Act & Assert
+        assertThrows(ValidationException.class,
+                () -> ipscShooterLogService.patchShooterLog(shooterLog.getId(), request));
+    }
+
     // updateShooterLogs()
     @Test
     void testUpdateShooterLogs_whenRowsAreValidAndInvalid_thenReplacesTheValidOnesAndReportsTheRest()
@@ -389,6 +479,42 @@ class IpscShooterLogServiceIntegrationTest {
         assertEquals("Shooter log ID is required.", results.get(1).getMessage());
         assertEquals("Shooter log end date cannot be before its start date.", results.get(2).getMessage());
         assertTrue(results.get(3).getMessage().contains("outside the shooter log's dates"));
+    }
+
+    @Test
+    void testPatchShooterLogs_whenAddAndRemoveMatchIdsAreGiven_thenAddsAndRemovesThem() throws FatalException {
+        // Arrange
+        IpscMatch kept = createMatch("Match A");
+        IpscMatch removed = createMatch("Match B");
+        IpscMatch added = createMatch("Match C", LocalDate.of(2026, 9, 20));
+        ShooterLog shooterLog = createShooterLog(kept, removed);
+        String csvData = String.format("ShooterLogId,AddMatchIds,RemoveMatchIds%n%d,%d,%d%n",
+                shooterLog.getId(), added.getId(), removed.getId());
+
+        // Act
+        ShooterLogBulkResponseHolder holder = ipscShooterLogService.patchShooterLogs(csvData);
+
+        // Assert
+        ShooterLogBulkResponse result = holder.getShooterLogResults().getFirst();
+        assertTrue(result.isSuccess());
+        assertEquals(List.of(kept.getId(), added.getId()), result.getShooterLog().getMatchIds());
+    }
+
+    @Test
+    void testPatchShooterLogs_whenAMatchIsBothAddedAndRemoved_thenReportsTheRowWithItsValues() throws FatalException {
+        // Arrange
+        ShooterLog shooterLog = createShooterLog(createMatch("Match A"));
+        String csvData = String.format("ShooterLogId,AddMatchIds,RemoveMatchIds%n%d,7;8,8;9%n", shooterLog.getId());
+
+        // Act
+        ShooterLogBulkResponseHolder holder = ipscShooterLogService.patchShooterLogs(csvData);
+
+        // Assert
+        ShooterLogBulkResponse result = holder.getShooterLogResults().getFirst();
+        assertFalse(result.isSuccess());
+        assertTrue(result.getMessage().contains("both added and removed"));
+        assertEquals("7;8", result.getShooterLogRow().getAddMatchIds());
+        assertEquals("8;9", result.getShooterLogRow().getRemoveMatchIds());
     }
 
     @Test
