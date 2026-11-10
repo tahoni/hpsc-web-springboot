@@ -308,3 +308,41 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 
 - The suite stands at 1,498 passing tests, with new controller, request model, service and integration tests for
   bulk verification and for the unverified match competitor import message
+
+
+### Phase 58: Shooter Log Bulk CSV Import (v16.3.0)
+
+**Controllers & Services**
+
+- `IpscShooterLogController.createShooterLogs` serves `POST /ipsc/shooter-logs/bulk`, answering `201` if any row was
+  created and `422` if every row failed
+- `IpscShooterLogService.createShooterLogs` reads the CSV and creates each row through `createShooterLog`, in its own
+  transaction, so a row gets the same checks as a single log; a failed row is reported with the values it supplied and
+  the rest are still created
+
+**Models**
+
+- `ShooterLogRequestCsvMixIn` binds the `StartDate`, `EndDate` and `MatchIds` columns onto `ShooterLogRequest` with no
+  column required, so a row without a date is reported on its own
+- `ShooterLogBulkResponse`, `ShooterLogBulkResponseHolder` and `ShooterLogRow` carry the per-row results
+- `ShooterLogRequest.validate` rejects a null match ID with a `400` instead of letting it fail with a `500`
+
+**Documentation**
+
+- `README.md` and `ARCHITECTURE.md` describe the import, and `ARCHITECTURE.md` gains a Shooter Log Bulk CSV Import Flow
+  diagram; the service Javadoc and the controller's OpenAPI description say the same
+
+**Build & Metadata**
+
+- Improvement plan: Gap #47 is added and closed, leaving all 47 gaps closed and none open
+- Project version bumped to 16.3.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Giving shooter logs the per-row, report-and-continue bulk import that competitors, matches and match competitors
+  already had
+
+**Test Coverage:**
+
+- The suite stands at 1,524 passing tests, with new controller, request mix-in, row model, service and integration
+  tests for the import and for the null match ID check

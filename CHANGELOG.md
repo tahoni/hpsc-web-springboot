@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 16.2.0](#-1620---2026-11-10) ← Current
+- [🧾 Version 16.3.0](#-1630---2026-11-10) ← Current
+- [🧾 Version 16.2.0](#-1620---2026-11-10)
 - [🧾 Version 16.1.2](#-1612---2026-11-09)
 - [🧾 Version 16.1.1](#-1611---2026-11-08)
 - [🧾 Version 16.1.0](#-1610---2026-11-08)
@@ -31,6 +32,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [16.3.0] - 2026-11-10
 
 #### ➕ Added
 
@@ -65,6 +70,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`README.md`, `ARCHITECTURE.md`, `IpscShooterLogService` and `IpscShooterLogController`:** Describe the shooter log
   bulk import and add its flow diagram.
+- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Gap #47 (shooter logs could only be created one at a time,
+  unlike the other bulk-imported records) is added and closed in v16.3.0.
 
 ---
 

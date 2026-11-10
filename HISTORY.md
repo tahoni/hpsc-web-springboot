@@ -21,6 +21,32 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 16.3.0 (November 10, 2026)
+
+**Theme:** Shooter Log Bulk CSV Import
+
+**Key Focus:**
+
+- `POST /ipsc/shooter-logs/bulk` (`IpscShooterLogController.createShooterLogs`) creates shooter logs from `text/plain`
+  CSV data, one log per row with `StartDate`, `EndDate` and `MatchIds` columns, the match IDs separated by semicolons
+- `IpscShooterLogService.createShooterLogs` creates each row through `createShooterLog`, in its own transaction, so a
+  row gets the same checks as a single log: both dates present, the end not before the start, every match existing and
+  every match scheduled within the row's dates
+- A failed row is reported with the values it supplied and the reason, and the rest are still created; the endpoint
+  answers `201` if any row was created and `422` if every row failed
+- `ShooterLogRequestCsvMixIn` binds the CSV columns onto `ShooterLogRequest` with no column required, so a row without a
+  date is reported on its own instead of failing the file; `ShooterLogBulkResponse`, `ShooterLogBulkResponseHolder` and
+  `ShooterLogRow` carry the per-row results
+- `ShooterLogRequest.validate` rejects a null match ID with a `ValidationException`, a `400`, where it previously
+  reached the repository and failed with a `500`
+- `README.md`, `ARCHITECTURE.md`, the service Javadoc and the OpenAPI descriptions describe the import, and
+  `ARCHITECTURE.md` gains a Shooter Log Bulk CSV Import Flow diagram
+- Scoped as `v16.3.0` **MINOR**: the new endpoint is a backward-compatible addition, and the stricter match ID check
+  only turns a `500` into a `400`
+- Improvement plan: Gap #47 is added and closed, leaving all 47 gaps closed and none open
+- The suite stands at 1,524 passing tests
+- Project version bumped to 16.3.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 16.2.0 (November 10, 2026)
 
 **Theme:** Verifying Competitors in Bulk
@@ -305,6 +331,14 @@ Milestones 44 to 50 (versions 10.0.0 to 13.3.0) are archived, unchanged, in
   results until the competitor is verified
 - Improvement plan Gap #46 is added and closed, so every tracked gap stays closed
 
+### Milestone 58: Shooter Log Bulk CSV Import (v16.3.0)
+
+- `POST /ipsc/shooter-logs/bulk` creates shooter logs from CSV, each row on its own and checked as a single log is
+- A failed row is reported with the values it supplied while the rest are still created, and the endpoint answers `422`
+  only when every row failed
+- A null match ID in a shooter log request is a `400` instead of a `500`
+- Improvement plan Gap #47 is added and closed, so every tracked gap stays closed
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -573,7 +607,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   points, stored in a new `ShooterResult` entity and served by one controller. Because that retires the overall and
   club rankings on a match competitor and renames the shooter log `points`, v15.0.0 is the project's seventh
   consecutive MAJOR release, with each breaking change flagged in `CHANGELOG.md` as it landed.
-- **Version 16.x (v16.0.0 – v16.2.0):** Make more of the real match data resolve — the Rifle PCC division is added,
+- **Version 16.x (v16.0.0 – v16.3.0):** Make more of the real match data resolve — the Rifle PCC division is added,
   the semi-auto rifle divisions get names that say what they are, and competitor names match despite trailing
   modified-entry digits and a "TRO" role marker, while a bulk match competitor import is saved or rolled back as one
   unit. Because the renamed divisions change the names a request may use, v16.0.0 is the project's eighth consecutive
@@ -586,7 +620,8 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   written — a match can no longer be rescheduled outside them, and a calculation refuses one that is — as a PATCH
   release that adds no contract. v16.2.0 then makes verifying those competitors practical — one request verifies many,
   and a match competitor import says when a row's competitor is left out of results — as a backward-compatible MINOR
-  release.
+  release. v16.3.0 then gives shooter logs the bulk CSV import the other records already had — each row created on its
+  own, a failed row reported with the values it supplied — as a second backward-compatible MINOR release.
 
 ### Initial Phase (v1.0.0)
 
@@ -885,7 +920,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v16.2.0, the following areas are identified for future enhancement:
+Based on the evolution to v16.3.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -896,7 +931,17 @@ The completed-work logs for versions 8.0.0 to 9.1.0 are archived, unchanged, in
 The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 [`documentation/archive/v10-v13/HISTORY_v10-v13.md`](/documentation/archive/v10-v13/HISTORY_v10-v13.md).
 
-### Recently Completed (v16.2.0)
+### Recently Completed (v16.3.0)
+
+- `POST /ipsc/shooter-logs/bulk` creates shooter logs from CSV through `IpscShooterLogService.createShooterLogs`, each
+  row on its own and checked as a single log is, answering `422` only when every row failed
+- `ShooterLogRequestCsvMixIn`, `ShooterLogBulkResponse`, `ShooterLogBulkResponseHolder` and `ShooterLogRow` support it,
+  and a failed row is reported with the values it supplied
+- `ShooterLogRequest.validate` rejects a null match ID with a `400`
+- Improvement plan: Gap #47 is added and closed, leaving all 47 gaps closed and none open
+- Project version bumped to 16.3.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v16.2.0)
 
 - `POST /ipsc/competitors/verify` verifies several competitors in one transaction through
   `IpscCompetitorService.verifyCompetitors`, reporting an ID that matches nobody in its own result
