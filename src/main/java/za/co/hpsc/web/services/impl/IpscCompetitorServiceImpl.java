@@ -21,8 +21,11 @@ import za.co.hpsc.web.mappers.CompetitorMapper;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestCsvMixIn;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponse;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
@@ -31,7 +34,11 @@ import za.co.hpsc.web.services.TransactionService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 import static za.co.hpsc.web.utils.StringUtil.toProperCase;
@@ -85,6 +92,50 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                 .map(this::toResponse)
                 .toList();
         return new CompetitorResponseHolder(new ArrayList<>(competitorResponseList));
+    }
+
+    @Override
+    public CompetitorVerifyResponseHolder verifyCompetitors(CompetitorVerifyRequest request) {
+        if (request == null) {
+            throw new ValidationException("Competitor verification request cannot be null.");
+        }
+        request.validate();
+
+        List<Long> competitorIds = request.getCompetitorIds().stream().distinct().toList();
+        Map<Long, Competitor> competitorsById = new HashMap<>();
+        for (Competitor competitor : competitorRepository.findAllByIdInWithHomeClubAndEmailAddresses(competitorIds)) {
+            competitorsById.put(competitor.getId(), competitor);
+        }
+
+        // Only competitors that are not already verified are written, all in one transaction
+        List<Competitor> toVerify = new ArrayList<>();
+        for (Long competitorId : competitorIds) {
+            Competitor competitor = competitorsById.get(competitorId);
+            if ((competitor != null) && !Boolean.TRUE.equals(competitor.getIsVerified())) {
+                competitor.setIsVerified(true);
+                toVerify.add(competitor);
+            }
+        }
+        Set<Long> verifiedNow = new HashSet<>();
+        if (!toVerify.isEmpty()) {
+            for (Competitor saved : transactionService.saveCompetitors(toVerify)) {
+                competitorsById.put(saved.getId(), saved);
+                verifiedNow.add(saved.getId());
+            }
+        }
+
+        List<CompetitorVerifyResponse> results = new ArrayList<>();
+        for (Long competitorId : competitorIds) {
+            Competitor competitor = competitorsById.get(competitorId);
+            if (competitor == null) {
+                results.add(new CompetitorVerifyResponse(competitorId, false,
+                        "No competitor found with ID " + competitorId, null));
+            } else {
+                String message = verifiedNow.contains(competitorId) ? "" : "Already verified.";
+                results.add(new CompetitorVerifyResponse(competitorId, true, message, toResponse(competitor)));
+            }
+        }
+        return new CompetitorVerifyResponseHolder(results);
     }
 
     @Override

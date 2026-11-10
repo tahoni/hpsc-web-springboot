@@ -1065,6 +1065,67 @@ public class IpscMatchCompetitorServiceTest {
         assertInstanceOf(DataIntegrityViolationException.class, exception.getCause());
     }
 
+    // createMatchCompetitors(): rows whose competitor is not verified
+    @Test
+    void testCreateMatchCompetitors_whenCompetitorIsNotVerified_thenImportsItWithAWarningMessage() throws Exception {
+        // Arrange
+        Competitor unverified = competitor(1L);
+        unverified.setIsVerified(false);
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(unverified));
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match(2L)));
+        when(matchCompetitorRepository.save(any(MatchCompetitor.class))).thenAnswer(invocation -> {
+            MatchCompetitor saved = invocation.getArgument(0);
+            saved.setId(5L);
+            return saved;
+        });
+
+        // Act
+        MatchCompetitorBulkResponse result = ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV)
+                .getMatchCompetitorResults().getFirst();
+
+        // Assert
+        assertTrue(result.isSuccess());
+        assertNotNull(result.getMatchCompetitor());
+        assertEquals("Imported, but competitor with ID 1 is not verified, so this entry is left out of shooter "
+                + "results until the competitor is verified.", result.getMessage());
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenCompetitorVerificationIsNotRecorded_thenImportsItWithAWarningMessage()
+            throws Exception {
+        // Arrange
+        Competitor unrecorded = competitor(1L);
+        unrecorded.setIsVerified(null);
+        when(competitorRepository.findById(1L)).thenReturn(Optional.of(unrecorded));
+        when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match(2L)));
+        when(matchCompetitorRepository.save(any(MatchCompetitor.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        MatchCompetitorBulkResponse result = ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV)
+                .getMatchCompetitorResults().getFirst();
+
+        // Assert
+        assertTrue(result.isSuccess());
+        assertTrue(result.getMessage().contains("is not verified"));
+    }
+
+    @Test
+    void testCreateMatchCompetitors_whenCompetitorIsVerified_thenImportsItWithoutAMessage() throws Exception {
+        // Arrange
+        stubCompetitorAndMatch();
+        when(matchCompetitorRepository.save(any(MatchCompetitor.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        MatchCompetitorBulkResponse result = ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV)
+                .getMatchCompetitorResults().getFirst();
+
+        // Assert
+        assertTrue(result.isSuccess());
+        assertEquals("", result.getMessage());
+    }
+
     // Helpers
     private void stubCompetitorAndMatch() {
         when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor(1L)));
@@ -1088,6 +1149,7 @@ public class IpscMatchCompetitorServiceTest {
     private Competitor competitor(Long id) {
         Competitor competitor = new Competitor();
         competitor.setId(id);
+        competitor.setIsVerified(true);
         return competitor;
     }
 

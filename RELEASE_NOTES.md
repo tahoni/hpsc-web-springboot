@@ -1,50 +1,44 @@
-# Release Notes – Version 16.1.2
+# Release Notes – Version 16.2.0
 
-**Release Date:** November 9, 2026 **Status:** ✨ Stable
+**Release Date:** November 10, 2026 **Status:** ✨ Stable
 
 ---
 
 ## 🎯 Theme
 
-**Shooter Log Dates Enforced After the Log Is Written**
+**Verifying Competitors in Bulk**
 
-Version 16.1.2 is a patch release. A shooter log's start and end dates were enforced only while the log itself was
-written, so a match rescheduled afterwards was still counted in the log's overall results. The overall calculation now
-refuses a log with a match outside its dates, rescheduling a match outside the dates of a log that covers it is refused,
-and a match updated after the overall results were calculated marks them out of date. No endpoint, request or response
-changes shape, so the release is backward-compatible.
+Version 16.2.0 is a minor release. Shooter results count only verified competitors, but the only way to verify an
+existing one was a `PUT` or `PATCH` per competitor, and a match competitor import gave no sign that a row's competitor
+would be left out of results. A new endpoint verifies several competitors from a list of their IDs in one transaction,
+and an import row for an unverified competitor now carries a message saying so. Nothing existing changes shape, so the
+release is backward-compatible.
 
 ---
 
 ## ⭐ Key Highlights
 
-### 📆 Dates Checked When the Calculation Runs
+### ✅ Bulk Verification
 
-- `POST /ipsc/shooter-log-overall-results/logs/{shooterLogId}` throws a `ValidationException`, a `400`, if a match
-  the shooter log covers is scheduled outside the log's start and end dates, both inclusive, and calculates and changes
-  nothing
-- A match updated after the overall results were calculated now marks them out of date, because moving a match within
-  the log can change which of a competitor's matches is the most recent
+- `POST /ipsc/competitors/verify` marks several competitors as verified from a list of their IDs and returns one result
+  per distinct ID, in the order first given
+- Every competitor that exists is verified in a single transaction through `TransactionService.saveCompetitors`, and one
+  that is already verified is left as it is and reported as such
+- An ID that matches no competitor is reported in its own result and does not fail the others; an empty list, or one
+  containing a null, is refused with a `400`
 
-### 🔒 Dates Checked When a Match Moves
+### 💬 Say Why a Row Is Left Out
 
-- `PUT` and `PATCH /ipsc/matches/{matchId}` throw a `ValidationException`, a `400`, if the new date puts the match
-  outside the dates of a shooter log that covers it, and the message names the log
-- The check only runs when the match moves to another day, so a log already out of step does not block unrelated edits
-  to its match
+- A match competitor import row whose competitor is not verified is still imported, but its result now carries a message
+  saying the entry is left out of shooter results until the competitor is verified
+- The message of a row imported without issue stays empty, so existing callers that treat an empty message as success
+  are unaffected
 
-### ♻️ One Shared Check
+### 📖 Documented Workflow
 
-- `ShooterLogHelpers.validateMatchesWithinDates` and `isWithinDates` hold the date rule once, used when a log is
-  written, when its overall results are calculated and when a match is rescheduled, so the three cannot drift
-- The check for a match with no scheduled date is removed, since `ipsc_match.scheduled_date` is `NOT NULL`
-
-### 📖 Documented Rules
-
-- `README.md` and `ARCHITECTURE.md` state that a calculation is refused for a match outside the log's dates, and that
-  rescheduling a match outside the dates of a log that covers it is refused
-- The Javadoc on `IpscShooterLogOverallService` and `IpscMatchService`, and the OpenAPI descriptions on both
-  controllers, describe the rule, with the `400` responses added to the calculate, `PUT` and `PATCH` endpoints
+- `README.md` and `ARCHITECTURE.md` describe verifying competitors in bulk and the message on an import row
+- The Javadoc on `IpscCompetitorService` and `MatchCompetitorBulkResponse`, and the OpenAPI descriptions on
+  `IpscCompetitorController` and `IpscMatchCompetitorController`, say the same
 
 ---
 
@@ -52,25 +46,25 @@ changes shape, so the release is backward-compatible.
 
 ### Added
 
-- `ShooterLogRepository.findAllByMatchesId`, which finds the shooter logs that cover a match
-- `ShooterLogHelpers` and `ShooterLogHelpersTest`
-- Unit and integration tests for the overall calculation's date check, the match reschedule check and the out-of-date
-  rule for an updated match
+- `IpscCompetitorController.verifyCompetitors`, serving `POST /ipsc/competitors/verify`
+- `IpscCompetitorService.verifyCompetitors` and its implementation
+- `CompetitorVerifyRequest`, `CompetitorVerifyResponse` and `CompetitorVerifyResponseHolder`
+- `CompetitorRepository.findAllByIdInWithHomeClubAndEmailAddresses`, which fetch-joins the home clubs and email
+  addresses of several competitors
+- Controller, request model, service and `@SpringBootTest` integration tests for bulk verification, and service and
+  integration tests for the unverified match competitor import message
 
 ### Changed
 
-- `IpscShooterLogServiceImpl.validateMatchesWithinDates` no longer checks for a match with no scheduled date, and the
-  three tests that only covered it are removed; the check now lives in `ShooterLogHelpers`
-- `README.md`, `ARCHITECTURE.md`, the `IpscShooterLogOverallService` and `IpscMatchService` Javadoc and the controllers'
-  OpenAPI descriptions state the date rule and its `400` responses
-- `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add and close Gap #45
+- `IpscMatchCompetitorServiceImpl.createMatchCompetitors` gives a row whose competitor is not verified a message, and
+  still imports it
+- `README.md`, `ARCHITECTURE.md`, `IpscCompetitorService`, `IpscCompetitorController`,
+  `IpscMatchCompetitorController` and `MatchCompetitorBulkResponse` describe both
+- `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add and close Gap #46
 
 ### Fixed
 
-- `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` refuses a log with a match outside its dates, and a
-  match updated after the overall results were calculated marks them out of date
-- `IpscMatchServiceImpl.updateMatch` and `patchMatch` refuse moving a match outside the dates of a shooter log that
-  covers it
+Nothing is fixed.
 
 ### Removed
 
@@ -80,21 +74,19 @@ Nothing is removed.
 
 ## 🚀 Migration Guide
 
-No action is needed for callers: no existing endpoint, request or response changes shape, and there is no schema
-change. The only difference is that two requests that used to succeed are now refused with a `400`: calculating the
-overall results of a shooter log that covers a match outside its dates, and moving a match to a day outside the dates of
-a shooter log that covers it.
+No action is needed: no existing endpoint, request or response changes shape, and there is no schema change.
 
-A shooter log that already has a match outside its dates cannot be calculated until it is put right, either by
-changing the log's dates through `PUT` or `PATCH /ipsc/shooter-logs/{shooterLogId}` or by moving the match back. A
-match in that state can still be edited, as long as it stays on the same day.
+The one visible difference is that the `message` of a match competitor import row can now be non-empty for a row that
+succeeded. A caller that treats any non-empty `message` as a failure should check `success` instead; a row for an
+unverified competitor has `success` set to `true` and a message beginning "Imported, but".
 
 ---
 
 ## 📊 Statistics
 
-- **Files Changed:** 19 against `main` before this release's documentation; 757 insertions and 85 deletions
-- **New Source Files:** 1 (`ShooterLogHelpers`), plus its test class
+- **Files Changed:** 19 against `main` before this release's documentation; 632 insertions and 11 deletions
+- **New Source Files:** 3 (`CompetitorVerifyRequest`, `CompetitorVerifyResponse` and `CompetitorVerifyResponseHolder`),
+  plus the request's test class
 - **Renamed Source Files:** 0
 - **Deleted Source Files:** 0
 - **New Dependencies:** 0
@@ -103,30 +95,26 @@ match in that state can still be edited, as long as it stays on the same day.
 
 ## 🧭 Design Notes
 
-- **The rule is checked where it can be broken.** A log's dates define which matches belong to it, so they are checked
-  when the log is written, when a match moves and when the results are calculated, rather than trusting that the
-  earlier check still holds.
-- **Rescheduling is refused, not repaired.** A match is never silently removed from a log, or the log's dates widened,
-  to make a new date fit. The caller gets a `400` naming the log and decides.
-- **Only a move to another day is checked.** A match that stays on its day skips the check, so a log already left out of
-  step does not block unrelated edits to its match, and it is still caught when the log is calculated.
-- **A moved match makes the results stale.** Moving a match within the log can change which of a competitor's matches
-  is the most recent, so a match updated after the overall results were calculated marks them out of date.
-- **One helper.** `ShooterLogHelpers` is shared by the log, the calculation and the reschedule check, so the inclusive
-  start and end comparison is written once.
-- **A PATCH.** No contract changes and the one new repository method is internal, which `AGENTS.md`'s Semantic
-  Versioning rules classify as a backward-compatible fix.
+- **Verification stays deliberate.** Nothing defaults `isVerified` to `true`, and neither import verifies anyone; the
+  new endpoint only makes the existing manual step cheaper for many competitors.
+- **One bad ID does not spoil the batch.** An unknown ID is a result, not an error, so a list with one stale ID still
+  verifies the rest, as the bulk imports treat a failed row.
+- **One transaction.** The competitors are written together through `TransactionService.saveCompetitors`, so the batch
+  commits or rolls back as one unit, and only competitors that are not already verified are written.
+- **A warning, not a refusal.** A row for an unverified competitor is still imported, because the entry is correct and
+  will count once the competitor is verified; the message tells the caller why it is not in results yet.
+- **A MINOR.** The new endpoint is an externally visible, backward-compatible addition, which `AGENTS.md`'s Semantic
+  Versioning rules classify as MINOR.
 
 ---
 
 ## 🧪 Testing
 
-- `./mvnw verify -Pcoverage` passes: 1,476 tests with no failures, errors or skips.
-- New tests cover `ShooterLogHelpers`, the overall calculation refusing a match outside the log's dates (inclusive at
-  both ends) and treating an updated match as making the results out of date, and `updateMatch` and `patchMatch`
-  refusing a move outside a covering log's dates while allowing one that stays on the same day, in Mockito unit tests
-  and `@SpringBootTest` integration tests. The three tests that only covered the removed missing-date check are removed.
-- Overall coverage is 99.09% branch and 98.81% line, above the 97% minimum.
+- `./mvnw test` passes: 1,498 tests with no failures or errors.
+- New tests cover `CompetitorVerifyRequest`'s validation, `IpscCompetitorController.verifyCompetitors`, and
+  `IpscCompetitorService.verifyCompetitors` verifying, reporting an unknown ID, leaving an already verified competitor
+  as it is and de-duplicating a repeated ID, in Mockito unit tests and `@SpringBootTest` integration tests, plus the
+  message on a match competitor import row for an unverified competitor.
 
 ---
 
@@ -137,10 +125,8 @@ match in that state can still be edited, as long as it stays on the same day.
 - A shooter log already out of step with a match's date is only caught when its overall results are calculated, or when
   the match moves to another day; it is not reported when either date is left alone.
 - Shooter logs can only be created one at a time; there is no bulk import for them.
-- The match competitor import does not say that an entry's competitor is unverified, so an entry that never appears in
-  results gives no sign of why.
-- Competitors can only be verified one at a time, and the bulk competitor import only creates competitors, so it
-  cannot verify one that already exists.
+- The bulk competitor import only creates competitors, so it cannot verify one that already exists; use
+  `POST /ipsc/competitors/verify` afterwards.
 - `pom.xml` still overrides `logback.version`, the Jackson BOM properties, `mysql-connector-j` and `flyway-mysql`, set
   above Spring Boot's managed versions.
 
@@ -150,8 +136,6 @@ match in that state can still be edited, as long as it stays on the same day.
 
 - Add a bulk import for shooter logs if creating them one by one proves slow.
 - Report a match whose date is outside a covering log's dates when it is read, not only when the log is calculated.
-- Report, or skip, a match competitor import row whose competitor is not verified, and consider a way to verify
-  competitors in bulk.
 - Drop the remaining dependency pins once Spring Boot manages versions at least as new.
 
 ---
@@ -159,13 +143,13 @@ match in that state can still be edited, as long as it stays on the same day.
 ## 👥 Contributors
 
 - Leoni Lubbinge
-- Claude Code (Claude Sonnet 5.5) — co-author of the release's commits
 
 ---
 
 ## 📝 Notes
 
-Version 16.1.2 keeps a shooter log's dates true after the log is written: a calculation refuses a match outside them and
-a match can no longer be rescheduled outside them. It leaves the improvement plan with all 45 gaps closed and none open.
+Version 16.2.0 makes the verified-competitor rule practical to work with: one request verifies many competitors, and a
+match competitor import says when a row's competitor is left out of results. It leaves the improvement plan with all 46
+gaps closed and none open.
 
 ---

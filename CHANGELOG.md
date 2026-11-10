@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 16.1.2](#-1612---2026-11-09) ← Current
+- [🧾 Version 16.2.0](#-1620---2026-11-10) ← Current
+- [🧾 Version 16.1.2](#-1612---2026-11-09)
 - [🧾 Version 16.1.1](#-1611---2026-11-08)
 - [🧾 Version 16.1.0](#-1610---2026-11-08)
 - [🧾 Version 16.0.0](#-1600---2026-10-31)
@@ -30,6 +31,49 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [16.2.0] - 2026-11-10
+
+#### ➕ Added
+
+##### Controllers
+
+- **`IpscCompetitorController.verifyCompetitors`:** New `POST /ipsc/competitors/verify` marks several competitors as
+  verified from a list of their IDs, returning one result per distinct ID. Each ID that matches a competitor is
+  verified, and one that matches nobody is reported in its own result instead of failing the others.
+
+##### Services
+
+- **`IpscCompetitorService.verifyCompetitors`:** Verifies every competitor that exists in a single transaction through
+  `TransactionService.saveCompetitors`, leaving one that is already verified as it is and reporting it as such.
+
+##### Models
+
+- **`CompetitorVerifyRequest`, `CompetitorVerifyResponse` and `CompetitorVerifyResponseHolder`:** The request carrying
+  the competitor IDs, and the per-competitor results of a bulk verification.
+
+##### Repositories
+
+- **`CompetitorRepository.findAllByIdInWithHomeClubAndEmailAddresses`:** Fetch-joins the home club and email addresses
+  of several competitors, so their responses can be mapped outside a transaction.
+
+#### 🔄 Changed
+
+##### Services
+
+- **`IpscMatchCompetitorServiceImpl.createMatchCompetitors`:** A row whose competitor is not verified is still
+  imported, but its result now carries a message saying the entry is left out of shooter results until the competitor
+  is verified. The message of a successfully imported row was always empty before.
+
+##### Documentation
+
+- **`README.md`, `ARCHITECTURE.md`, `IpscCompetitorService`, `IpscCompetitorController`,
+  `IpscMatchCompetitorController` and `MatchCompetitorBulkResponse`:** Describe verifying competitors in bulk and the
+  message on a match competitor import row whose competitor is not verified.
+- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Gap #46 (verifying competitors took one request each, and
+  a match competitor import gave no sign that a row is left out of results) is added and closed in v16.2.0.
 
 ---
 

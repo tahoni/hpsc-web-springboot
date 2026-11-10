@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (45):**
+- **✅ Completed (46):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -137,6 +137,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
     excluded — closed in v16.1.1 (Javadoc and OpenAPI descriptions corrected, dead filter removed)
   - #45 A shooter log's dates were enforced only when the log was written, so a rescheduled match slipped outside
     them — closed in v16.1.2 (calculation and rescheduling now refuse it)
+  - #46 Verifying competitors takes one request each, and a match competitor import gives no sign that a row is left
+    out of results — closed in v16.2.0 (`POST /ipsc/competitors/verify` and a message on the import row)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
 - **⚪ Open (0):**
@@ -1499,6 +1501,34 @@ outside the dates of a log that covers it, found through the new `ShooterLogRepo
 the same day. A match updated after the overall results were calculated now marks them out of date. `README.md`,
 `ARCHITECTURE.md` and the service, controller and OpenAPI text describe the rule and its `400` responses.
 
+#### 46. Verifying competitors takes one request each, and a match competitor import gives no sign that a row is left out of results — ✅ Closed in v16.2.0
+
+**Evidence:** Gap #43 documented that only verified competitors count in shooter results and shooter log overall
+results, and that the only way to verify one is `PUT` or `PATCH /ipsc/competitors/{competitorId}`. That is one request
+per competitor, so verifying the competitors of an imported match or of a whole club meant as many calls as there were
+competitors, each its own transaction. The match competitor import still imported a row for an unverified competitor
+with an empty `message`, the same as a row that would be counted, so `MatchCompetitorBulkResponse` gave no sign that
+the entry would be left out of results until the competitor was verified; `README.md` and `ARCHITECTURE.md` could only
+say so in prose.
+
+**Why it matters:** The same shape as Gap #43, one step on: the rule is documented, but the workflow it forces is
+awkward and its consequence is still silent at the moment it happens. A caller importing a match's competitors sees
+every row succeed and finds out only from the results that some are missing.
+
+**Proposed improvement:** Add an endpoint that verifies several competitors from a list of their IDs in one
+transaction, reporting an unknown ID in its own result instead of failing the others, and give the match competitor
+import row a message when its competitor is not verified, keeping the row imported. Describe both in `README.md`,
+`ARCHITECTURE.md` and the OpenAPI text.
+
+**Outcome:** Done as proposed. `POST /ipsc/competitors/verify` (`IpscCompetitorController.verifyCompetitors`) takes a
+`CompetitorVerifyRequest` of competitor IDs and `IpscCompetitorService.verifyCompetitors` verifies every competitor
+that exists in a single transaction through `TransactionService.saveCompetitors`, leaving one that is already verified
+as it is, and returns one `CompetitorVerifyResponse` per distinct ID, with an unknown ID reported in its own result.
+`CompetitorRepository.findAllByIdInWithHomeClubAndEmailAddresses` loads them in one query. A match competitor import
+row whose competitor is not verified is still imported, but its result now carries a message saying the entry is left
+out of shooter results until the competitor is verified. `README.md`, `ARCHITECTURE.md` and the controller OpenAPI
+text describe both, and the match competitor and match imports still never verify anyone.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -1517,7 +1547,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | No items currently scoped — #45 closed in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                         |
+| **Now**     | No items currently scoped — #46 closed in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                         |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath; re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
@@ -1631,6 +1661,9 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
   included in results, closing Gap #44.
 - ✅ Met in v16.1.2: a shooter log's calculation refuses a match outside the log's dates, and rescheduling a match
   outside the dates of a log that covers it is refused, closing Gap #45.
+- ✅ Met in v16.2.0: `POST /ipsc/competitors/verify` verifies several competitors in one transaction, and a match
+  competitor import row for an unverified competitor carries a message saying it is left out of results, closing
+  Gap #46.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

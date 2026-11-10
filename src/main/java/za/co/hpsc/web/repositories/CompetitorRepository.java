@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import za.co.hpsc.web.domain.Competitor;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,4 +33,9 @@ public interface CompetitorRepository extends JpaRepository<Competitor, Long> {
 
     @Query("select c from Competitor c left join fetch c.homeClub left join fetch c.emailAddresses")
     List<Competitor> findAllWithHomeClubAndEmailAddresses();
+
+    // Fetch-joins the same associations for several competitors, such as those verified in bulk.
+    @Query("select distinct c from Competitor c left join fetch c.homeClub left join fetch c.emailAddresses "
+            + "where c.id in :ids")
+    List<Competitor> findAllByIdInWithHomeClubAndEmailAddresses(@Param("ids") Collection<Long> ids);
 }

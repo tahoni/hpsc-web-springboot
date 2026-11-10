@@ -17,7 +17,10 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.mappers.CompetitorMapper;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
+import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponse;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
@@ -944,6 +947,121 @@ public class IpscCompetitorServiceTest {
         // Assert
         assertEquals(ClubIdentifier.SOSC, updated.getHomeClub());
         assertNull(updated.getClubNumber());
+    }
+
+    // verifyCompetitors()
+    @Test
+    void testVerifyCompetitors_whenCompetitorsExist_thenVerifiesEachAndReportsThem() {
+        // Arrange
+        Competitor first = newCompetitor(1L);
+        Competitor second = newCompetitor(2L);
+        second.setIsVerified(false);
+        when(competitorRepository.findAllByIdInWithHomeClubAndEmailAddresses(List.of(1L, 2L)))
+                .thenReturn(List.of(first, second));
+        when(competitorRepository.save(any(Competitor.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        CompetitorVerifyRequest request = new CompetitorVerifyRequest(List.of(1L, 2L));
+
+        // Act
+        CompetitorVerifyResponseHolder holder =
+                assertDoesNotThrow(() -> ipscCompetitorService.verifyCompetitors(request));
+
+        // Assert
+        List<CompetitorVerifyResponse> results = holder.getCompetitorResults();
+        assertEquals(2, results.size());
+        assertEquals(1L, results.get(0).getCompetitorId());
+        assertEquals(2L, results.get(1).getCompetitorId());
+        for (CompetitorVerifyResponse result : results) {
+            assertTrue(result.isSuccess());
+            assertEquals("", result.getMessage());
+            assertTrue(result.getCompetitor().getIsVerified());
+        }
+        verify(competitorRepository, times(2)).save(any(Competitor.class));
+    }
+
+    @Test
+    void testVerifyCompetitors_whenCompetitorIsAlreadyVerified_thenLeavesItAndDoesNotSaveIt() {
+        // Arrange
+        Competitor verified = newCompetitor(1L);
+        verified.setIsVerified(true);
+        when(competitorRepository.findAllByIdInWithHomeClubAndEmailAddresses(List.of(1L)))
+                .thenReturn(List.of(verified));
+
+        // Act
+        CompetitorVerifyResponseHolder holder = assertDoesNotThrow(
+                () -> ipscCompetitorService.verifyCompetitors(new CompetitorVerifyRequest(List.of(1L))));
+
+        // Assert
+        CompetitorVerifyResponse result = holder.getCompetitorResults().getFirst();
+        assertTrue(result.isSuccess());
+        assertEquals("Already verified.", result.getMessage());
+        assertTrue(result.getCompetitor().getIsVerified());
+        verify(competitorRepository, never()).save(any(Competitor.class));
+    }
+
+    @Test
+    void testVerifyCompetitors_whenAnIdMatchesNoCompetitor_thenReportsItAndStillVerifiesTheOthers() {
+        // Arrange
+        Competitor existing = newCompetitor(1L);
+        when(competitorRepository.findAllByIdInWithHomeClubAndEmailAddresses(List.of(1L, 99L)))
+                .thenReturn(List.of(existing));
+        when(competitorRepository.save(any(Competitor.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        CompetitorVerifyResponseHolder holder = assertDoesNotThrow(
+                () -> ipscCompetitorService.verifyCompetitors(new CompetitorVerifyRequest(List.of(1L, 99L))));
+
+        // Assert
+        CompetitorVerifyResponse found = holder.getCompetitorResults().get(0);
+        CompetitorVerifyResponse missing = holder.getCompetitorResults().get(1);
+        assertTrue(found.isSuccess());
+        assertTrue(found.getCompetitor().getIsVerified());
+        assertFalse(missing.isSuccess());
+        assertEquals(99L, missing.getCompetitorId());
+        assertEquals("No competitor found with ID 99", missing.getMessage());
+        assertNull(missing.getCompetitor());
+    }
+
+    @Test
+    void testVerifyCompetitors_whenAnIdIsRepeated_thenHandlesItOnce() {
+        // Arrange
+        when(competitorRepository.findAllByIdInWithHomeClubAndEmailAddresses(List.of(1L, 2L)))
+                .thenReturn(List.of(newCompetitor(1L), newCompetitor(2L)));
+        when(competitorRepository.save(any(Competitor.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        CompetitorVerifyResponseHolder holder = assertDoesNotThrow(
+                () -> ipscCompetitorService.verifyCompetitors(new CompetitorVerifyRequest(List.of(1L, 1L, 2L, 1L))));
+
+        // Assert
+        assertEquals(2, holder.getCompetitorResults().size());
+        verify(competitorRepository, times(2)).save(any(Competitor.class));
+    }
+
+    @Test
+    void testVerifyCompetitors_whenRequestIsNull_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorService.verifyCompetitors(null));
+        verifyNoInteractions(competitorRepository);
+    }
+
+    @Test
+    void testVerifyCompetitors_whenNoIdIsGiven_thenThrowsValidationException() {
+        // Act & Assert
+        assertThrows(ValidationException.class,
+                () -> ipscCompetitorService.verifyCompetitors(new CompetitorVerifyRequest(List.of())));
+        assertThrows(ValidationException.class,
+                () -> ipscCompetitorService.verifyCompetitors(new CompetitorVerifyRequest(null)));
+        verifyNoInteractions(competitorRepository);
+    }
+
+    @Test
+    void testVerifyCompetitors_whenAnIdIsNull_thenThrowsValidationException() {
+        // Arrange
+        CompetitorVerifyRequest request = new CompetitorVerifyRequest(java.util.Arrays.asList(1L, null));
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscCompetitorService.verifyCompetitors(request));
+        verifyNoInteractions(competitorRepository);
     }
 
     // Helpers

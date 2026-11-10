@@ -21,6 +21,30 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 16.2.0 (November 10, 2026)
+
+**Theme:** Verifying Competitors in Bulk
+
+**Key Focus:**
+
+- `POST /ipsc/competitors/verify` (`IpscCompetitorController.verifyCompetitors`) marks several competitors as verified
+  from a list of their IDs and returns one `CompetitorVerifyResponse` per distinct ID; an ID that matches nobody is
+  reported in its own result instead of failing the others
+- `IpscCompetitorService.verifyCompetitors` verifies every competitor that exists in a single transaction through
+  `TransactionService.saveCompetitors`, leaving one that is already verified as it is and reporting it as such
+- `CompetitorVerifyRequest`, `CompetitorVerifyResponse` and `CompetitorVerifyResponseHolder` carry the request and the
+  per-competitor results, and `CompetitorRepository.findAllByIdInWithHomeClubAndEmailAddresses` fetch-joins the
+  competitors' home clubs and email addresses so their responses map outside a transaction
+- A match competitor import row whose competitor is not verified is still imported, but its result now carries a message
+  saying the entry is left out of shooter results until the competitor is verified; the message of an imported row was
+  always empty before
+- `README.md`, `ARCHITECTURE.md`, the service Javadoc and the controllers' OpenAPI descriptions describe both
+- Scoped as `v16.2.0` **MINOR**: the new endpoint is a backward-compatible addition, and the message only fills a
+  response field that already existed
+- Improvement plan: Gap #46 is added and closed, leaving all 46 gaps closed and none open
+- The suite stands at 1,498 passing tests
+- Project version bumped to 16.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 16.1.2 (November 9, 2026)
 
 **Theme:** Shooter Log Dates Enforced After the Log Is Written
@@ -272,6 +296,14 @@ Milestones 44 to 50 (versions 10.0.0 to 13.3.0) are archived, unchanged, in
 - A match updated after the overall results were calculated marks them out of date
 - One shared date check serves the log, the calculation and the reschedule
 - Improvement plan Gap #45 is added and closed, so every tracked gap stays closed
+
+### Milestone 57: Verifying Competitors in Bulk (v16.2.0)
+
+- `POST /ipsc/competitors/verify` verifies several competitors in one transaction, reporting an unknown ID in its own
+  result
+- A match competitor import row for an unverified competitor is still imported, with a message saying it is left out of
+  results until the competitor is verified
+- Improvement plan Gap #46 is added and closed, so every tracked gap stays closed
 
 ---
 
@@ -541,7 +573,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   points, stored in a new `ShooterResult` entity and served by one controller. Because that retires the overall and
   club rankings on a match competitor and renames the shooter log `points`, v15.0.0 is the project's seventh
   consecutive MAJOR release, with each breaking change flagged in `CHANGELOG.md` as it landed.
-- **Version 16.x (v16.0.0 – v16.1.2):** Make more of the real match data resolve — the Rifle PCC division is added,
+- **Version 16.x (v16.0.0 – v16.2.0):** Make more of the real match data resolve — the Rifle PCC division is added,
   the semi-auto rifle divisions get names that say what they are, and competitor names match despite trailing
   modified-entry digits and a "TRO" role marker, while a bulk match competitor import is saved or rolled back as one
   unit. Because the renamed divisions change the names a request may use, v16.0.0 is the project's eighth consecutive
@@ -552,7 +584,9 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   tightens who those results count — only verified competitors with points, with the result of one who stops
   qualifying removed — as a PATCH release that changes no contract. v16.1.2 then keeps a log's dates true after it is
   written — a match can no longer be rescheduled outside them, and a calculation refuses one that is — as a PATCH
-  release that adds no contract.
+  release that adds no contract. v16.2.0 then makes verifying those competitors practical — one request verifies many,
+  and a match competitor import says when a row's competitor is left out of results — as a backward-compatible MINOR
+  release.
 
 ### Initial Phase (v1.0.0)
 
@@ -851,7 +885,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v16.1.2, the following areas are identified for future enhancement:
+Based on the evolution to v16.2.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -862,7 +896,18 @@ The completed-work logs for versions 8.0.0 to 9.1.0 are archived, unchanged, in
 The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 [`documentation/archive/v10-v13/HISTORY_v10-v13.md`](/documentation/archive/v10-v13/HISTORY_v10-v13.md).
 
-### Recently Completed (v16.1.2)
+### Recently Completed (v16.2.0)
+
+- `POST /ipsc/competitors/verify` verifies several competitors in one transaction through
+  `IpscCompetitorService.verifyCompetitors`, reporting an ID that matches nobody in its own result
+- `CompetitorVerifyRequest`, `CompetitorVerifyResponse`, `CompetitorVerifyResponseHolder` and
+  `CompetitorRepository.findAllByIdInWithHomeClubAndEmailAddresses` support it
+- A match competitor import row whose competitor is not verified carries a message saying it is left out of shooter
+  results until the competitor is verified
+- Improvement plan: Gap #46 is added and closed, leaving all 46 gaps closed and none open
+- Project version bumped to 16.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v16.1.2)
 
 - A shooter log's overall calculation refuses a match outside the log's dates, and rescheduling a match outside the
   dates of a shooter log that covers it is refused, both with a `400`
