@@ -34,6 +34,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Services
+
+- **`IpscMatchCompetitorServiceImpl.resolveCompetitorHomeClub`:** Returns an `Optional<ClubIdentifier>`, empty when the
+  competitor has no home club or the home club has no identifier, instead of `null`. `isForClub` passes the value on
+  through the null-safe `isSameClub`, so which rows the import counts as the club's does not change.
+
 ---
 
 ### 🧾 [16.4.0] - 2026-11-10
