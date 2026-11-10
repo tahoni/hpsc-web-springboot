@@ -108,7 +108,7 @@ class IpscMatchCompetitorServiceImplTest {
                 .thenReturn(Optional.of(competitorWithHomeClub(ClubIdentifier.HPSC)));
 
         // Act & Assert
-        assertEquals(ClubIdentifier.HPSC, matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
+        assertEquals(Optional.of(ClubIdentifier.HPSC), matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
     }
 
     @Test
@@ -120,12 +120,12 @@ class IpscMatchCompetitorServiceImplTest {
                 .thenReturn(Optional.of(competitorWithHomeClub(ClubIdentifier.SOSC)));
 
         // Act & Assert
-        assertEquals(ClubIdentifier.SOSC, matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
+        assertEquals(Optional.of(ClubIdentifier.SOSC), matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
         verifyNoInteractions(ipscEntityCompetitorService);
     }
 
     @Test
-    void testResolveCompetitorHomeClub_whenCompetitorHasNoHomeClub_thenReturnsNull() {
+    void testResolveCompetitorHomeClub_whenCompetitorHasNoHomeClub_thenReturnsEmpty() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
@@ -133,11 +133,11 @@ class IpscMatchCompetitorServiceImplTest {
                 .thenReturn(Optional.of(new Competitor()));
 
         // Act & Assert
-        assertNull(matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
+        assertTrue(matchCompetitorServiceImpl.resolveCompetitorHomeClub(request).isEmpty());
     }
 
     @Test
-    void testResolveCompetitorHomeClub_whenHomeClubHasNoIdentifier_thenReturnsNull() {
+    void testResolveCompetitorHomeClub_whenHomeClubHasNoIdentifier_thenReturnsEmpty() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();
         request.setCompetitorNumber("7001");
@@ -146,7 +146,7 @@ class IpscMatchCompetitorServiceImplTest {
         when(ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("7001", null)).thenReturn(Optional.of(competitor));
 
         // Act & Assert
-        assertNull(matchCompetitorServiceImpl.resolveCompetitorHomeClub(request));
+        assertTrue(matchCompetitorServiceImpl.resolveCompetitorHomeClub(request).isEmpty());
     }
 
     @Test

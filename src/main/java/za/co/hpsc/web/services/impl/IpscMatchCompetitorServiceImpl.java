@@ -8,7 +8,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +37,7 @@ import za.co.hpsc.web.services.TransactionService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 
@@ -325,7 +325,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
 
         // Test the competitor's home club against the target club
         try {
-            return ipscEntityClubService.isSameClub(resolveCompetitorHomeClub(request), targetClub);
+            return ipscEntityClubService.isSameClub(resolveCompetitorHomeClub(request).orElse(null), targetClub);
         } catch (ValidationException | NonFatalException e) {
             return false;
         }
@@ -337,21 +337,20 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * <p>
      * The counterpart of {@link MatchCompetitorMapper#resolveMatchClub(String)} for the competitor's own club rather than the club they
      * represented at the match: the competitor is resolved as by {@link MatchCompetitorMapper#resolveCompetitor(Long, String, String)},
-     * and their home club's identifier is returned, or {@code null} when they have no home club.
+     * and their home club's identifier is returned, or empty when they have no home club.
      * </p>
      *
      * @param request the request whose competitor is to be resolved, by ID, or else by number and name.
-     * @return the {@link ClubIdentifier} of the competitor's home club, or {@code null} if the competitor has no
-     * home club, or the home club has no identifier.
+     * @return the {@link ClubIdentifier} of the competitor's home club, or empty if the competitor has no home club,
+     * or the home club has no identifier.
      * @throws ValidationException if the request's competitor ID, number and name are all null or blank, or if more
      *                             than one competitor matches the number and name.
      * @throws NonFatalException   if no competitor matches.
      */
-    protected @Nullable ClubIdentifier resolveCompetitorHomeClub(MatchCompetitorRequest request) {
+    protected Optional<ClubIdentifier> resolveCompetitorHomeClub(MatchCompetitorRequest request) {
         Competitor competitor = matchCompetitorMapper.resolveCompetitor(request.getCompetitorId(), request.getCompetitorNumber(),
                 request.getCompetitorName());
-        Club homeClub = competitor.getHomeClub();
-        return (homeClub == null) ? null : homeClub.getIdentifier();
+        return Optional.ofNullable(competitor.getHomeClub()).map(Club::getIdentifier);
     }
 
     /**
