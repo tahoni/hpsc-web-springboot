@@ -38,6 +38,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Models
 
 - **`MatchResponse.warnings`:** Lists the problems found with a match when it is read, left out of the JSON when empty.
+- **`CompetitorBulkResponse`:** The result of one row of the bulk competitor import: its row number, whether it was
+  imported, a message and the competitor it created or updated, which is `null` for a skipped row.
+- **`CompetitorResponseHolder.results`:** Holds a `CompetitorBulkResponse` for every row of the bulk competitor import,
+  in CSV order, so a skipped row is reported in the response as well as logged. `competitors` is unchanged.
+
+##### Controllers
+
+- **`IpscCompetitorController.createCompetitors`:** `POST /ipsc/competitors/bulk` now returns `422`, with the same body,
+  when every row of a non-empty CSV was skipped, as the match competitor import does when every row fails.
 
 ##### Services
 
@@ -49,8 +58,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscCompetitorServiceImpl.createCompetitors`:** A bulk import row for a competitor that already exists now updates
   and verifies that competitor instead of creating another. A row is matched through
   `IpscEntityCompetitorService.findCompetitorByIdentifierAndFullName`, by its club number or, when it has none, its ID
-  number, and by its full name, so a row with neither is still matched on its name; one that matches several
-  competitors is refused. The matched competitor takes the row's data, as in a full update, and is marked verified.
+  number, and by its full name. A row matched on its full name alone is skipped with a logged warning, as in the match
+  competitor import, since a name cannot tell two people apart; one that matches several competitors is refused. The
+  matched competitor takes the row's data, as in a full update, and is marked verified.
 
 #### 🔄 Changed
 

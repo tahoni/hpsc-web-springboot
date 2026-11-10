@@ -330,6 +330,11 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals(List.of("jane@example.com"), updated.getEmailAddresses());
         assertEquals(Boolean.TRUE, updated.getIsVerified());
         assertEquals(countBefore, competitorRepository.count());
+        assertEquals(1, holder.getResults().size());
+        assertEquals(1, holder.getResults().getFirst().getRowNumber());
+        assertTrue(holder.getResults().getFirst().isSuccess());
+        assertTrue(holder.getResults().getFirst().getMessage().contains("ID " + existing.getCompetitorId()));
+        assertSame(updated, holder.getResults().getFirst().getCompetitor());
     }
 
     @Test
@@ -354,7 +359,7 @@ class IpscCompetitorServiceIntegrationTest {
     }
 
     @Test
-    void testCreateCompetitors_whenRowHasNoIdentifierButItsFullNameMatchesAnExistingCompetitor_thenUpdatesAndVerifiesIt() {
+    void testCreateCompetitors_whenRowHasNoIdentifierButItsFullNameMatchesAnExistingCompetitor_thenSkipsTheRowAndLeavesTheCompetitorUnchanged() {
         // Arrange
         createClub("Other Club", ClubIdentifier.SOSC);
         CompetitorRequest request = validRequest(null);
@@ -367,8 +372,13 @@ class IpscCompetitorServiceIntegrationTest {
         CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
-        assertEquals(existing.getCompetitorId(), holder.getCompetitors().getFirst().getCompetitorId());
-        assertEquals(Boolean.TRUE, holder.getCompetitors().getFirst().getIsVerified());
+        assertTrue(holder.getCompetitors().isEmpty());
+        assertEquals(1, holder.getResults().size());
+        assertEquals(1, holder.getResults().getFirst().getRowNumber());
+        assertFalse(holder.getResults().getFirst().isSuccess());
+        assertNull(holder.getResults().getFirst().getCompetitor());
+        assertTrue(holder.getResults().getFirst().getMessage().contains("ID " + existing.getCompetitorId()));
+        assertNotEquals(Boolean.TRUE, ipscCompetitorService.getCompetitor(existing.getCompetitorId()).getIsVerified());
         assertEquals(countBefore, competitorRepository.count());
     }
 
@@ -406,6 +416,9 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals("HPSC-002", holder.getCompetitors().get(0).getClubNumber());
         assertNotEquals(existing.getCompetitorId(), holder.getCompetitors().get(0).getCompetitorId());
         assertEquals(existing.getCompetitorId(), holder.getCompetitors().get(1).getCompetitorId());
+        assertEquals(List.of(1, 2), holder.getResults().stream().map(result -> result.getRowNumber()).toList());
+        assertEquals("", holder.getResults().get(0).getMessage());
+        assertSame(holder.getCompetitors().get(0), holder.getResults().get(0).getCompetitor());
     }
 
     @Test

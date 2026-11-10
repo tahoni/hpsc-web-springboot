@@ -22,6 +22,7 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponse;
@@ -89,23 +90,45 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         // transaction, so a bad row leaves none of them persisted. A row for a competitor that already exists
         // updates and verifies that competitor instead of creating another.
         List<Competitor> competitors = new ArrayList<>();
+        // The result of each row; a saved row's competitor is filled in once the row is saved
+        List<CompetitorBulkResponse> results = new ArrayList<>();
+        List<CompetitorBulkResponse> savedResults = new ArrayList<>();
+        int rowNumber = 0;
         for (CompetitorRequest competitorRequest : competitorRequests) {
+            rowNumber++;
             CompetitorRequest normalised = normaliseCsvRequest(competitorRequest);
             Competitor newCompetitor = newCompetitor(normalised);
             Competitor existing = findExistingCompetitor(newCompetitor);
+            if ((existing != null) && !isIdentifiedBy(existing, newCompetitor)) {
+                // Matched on its name alone, which is not enough to tell two people with the same name apart
+                String message = "Skipped: " + newCompetitor.getFirstName() + " " + newCompetitor.getLastName()
+                        + " has no club number or ID number matching the existing competitor with ID "
+                        + existing.getId() + ", and a full name alone cannot tell two people apart.";
+                log.warn("Competitor skipped due to a full name match only: {}", message);
+                results.add(new CompetitorBulkResponse(rowNumber, false, message, null));
+                continue;
+            }
+
+            CompetitorBulkResponse result = new CompetitorBulkResponse(rowNumber, true, "", null);
             if (existing == null) {
                 competitors.add(newCompetitor);
             } else {
                 competitorMapper.applyFields(existing, normalised);
                 existing.setIsVerified(true);
                 competitors.add(existing);
+                result.setMessage("Updated and verified the existing competitor with ID " + existing.getId() + ".");
             }
+            results.add(result);
+            savedResults.add(result);
         }
 
         List<CompetitorResponse> competitorResponseList = transactionService.saveCompetitors(competitors).stream()
                 .map(this::toResponse)
                 .toList();
-        return new CompetitorResponseHolder(new ArrayList<>(competitorResponseList));
+        for (int i = 0; i < savedResults.size(); i++) {
+            savedResults.get(i).setCompetitor(competitorResponseList.get(i));
+        }
+        return new CompetitorResponseHolder(new ArrayList<>(competitorResponseList), results);
     }
 
     @Override
@@ -243,6 +266,19 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             // No competitor matched, so the row creates a new one
             return null;
         }
+    }
+
+    /**
+     * Whether an existing competitor shares a club number or ID number with a bulk import row, rather than having been
+     * matched on its full name alone.
+     *
+     * @param existing  the existing competitor the row was matched to.
+     * @param candidate the competitor built from the row.
+     * @return {@code true} if the club numbers or the ID numbers are the same, and neither is blank.
+     */
+    protected boolean isIdentifiedBy(Competitor existing, Competitor candidate) {
+        return (hasText(candidate.getClubNumber()) && candidate.getClubNumber().equals(existing.getClubNumber()))
+                || (hasText(candidate.getIdNumber()) && candidate.getIdNumber().equals(existing.getIdNumber()));
     }
 
     /**

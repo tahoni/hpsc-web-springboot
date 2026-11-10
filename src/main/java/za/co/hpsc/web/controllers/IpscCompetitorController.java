@@ -22,6 +22,7 @@ import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
@@ -87,7 +88,8 @@ public class IpscCompetitorController {
      * @param csvData the CSV content as a string containing details about competitors,
      *                formatted according to the expected schema. This parameter is required
      *                and cannot be null.
-     * @return a {@link CompetitorResponseHolder} containing the created competitors.
+     * @return a {@link CompetitorResponseHolder} containing the created or updated competitors and the result of every
+     * row, with status {@code 201} unless every row was skipped, in which case it is {@code 422}.
      * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
      *                             missing a required field, if a row's gender is unrecognised, or
      *                             if a row's home club is
@@ -101,9 +103,15 @@ public class IpscCompetitorController {
     @Operation(summary = "Create competitors", description = "Create IPSC competitors in bulk from CSV data. A "
             + "row's club number is required when its home club is HPSC, and is otherwise ignored (forced to "
             + "null). A row that matches an existing competitor by club number (or ID number when it has "
-            + "no club number) and full name updates and verifies that competitor instead of creating another.")
+            + "no club number) and full name updates and verifies that competitor instead of creating another. A row that matches an existing "
+            + "competitor on its full name alone is skipped, with a warning logged and reported in the "
+            + "response's per-row results.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Competitors created or updated.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = CompetitorResponseHolder.class))),
+            @ApiResponse(responseCode = "422", description = "The CSV was readable but every row was skipped. "
+                    + "The body lists each row's result and the reason it was skipped.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = CompetitorResponseHolder.class))),
             @ApiResponse(responseCode = "400", description = "Invalid CSV data provided, a required field is "
@@ -128,7 +136,11 @@ public class IpscCompetitorController {
                                     """)))
             @RequestBody String csvData)
             throws ValidationException, NonFatalException, FatalException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(ipscCompetitorService.createCompetitors(csvData));
+        CompetitorResponseHolder holder = ipscCompetitorService.createCompetitors(csvData);
+
+        List<CompetitorBulkResponse> results = holder.getResults();
+        boolean allFailed = !results.isEmpty() && results.stream().noneMatch(CompetitorBulkResponse::isSuccess);
+        return ResponseEntity.status(allFailed ? HttpStatus.UNPROCESSABLE_CONTENT : HttpStatus.CREATED).body(holder);
     }
 
     /**
