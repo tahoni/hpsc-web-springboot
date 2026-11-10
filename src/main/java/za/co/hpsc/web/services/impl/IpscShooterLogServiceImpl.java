@@ -18,6 +18,8 @@ import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.helpers.ShooterLogHelpers;
+import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogBulkRequest;
+import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogBulkRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogPatchRequest;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogRequest;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogRequestCsvMixIn;
@@ -33,6 +35,7 @@ import za.co.hpsc.web.services.TransactionService;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.BiFunction;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
 
@@ -89,6 +92,23 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
             }
         }
         return new ShooterLogBulkResponseHolder(shooterLogBulkResponses);
+    }
+
+    @Override
+    public ShooterLogBulkResponseHolder updateShooterLogs(String csvData) throws FatalException {
+        return updateRows(csvData, this::updateShooterLog);
+    }
+
+    @Override
+    public ShooterLogBulkResponseHolder patchShooterLogs(String csvData) throws FatalException {
+        return updateRows(csvData, (shooterLogId, row) -> {
+            ShooterLogPatchRequest patchRequest = new ShooterLogPatchRequest();
+            patchRequest.setStartDate(row.getStartDate());
+            patchRequest.setEndDate(row.getEndDate());
+            // A CSV cell cannot tell an empty list from an omitted one, so an empty one leaves the matches unchanged
+            patchRequest.setMatchIds((row.getMatchIds() == null || row.getMatchIds().isEmpty()) ? null : row.getMatchIds());
+            return patchShooterLog(shooterLogId, patchRequest);
+        }, false);
     }
 
     @Override
@@ -154,6 +174,49 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
     }
 
     /**
+     * Applies each row of a bulk update CSV to the shooter log it names, each in its own transaction, so a bad row is
+     * reported and skipped without affecting the others.
+     *
+     * @param csvData the CSV data, one shooter log per row, with a header row. Must not be null or blank.
+     * @param update  applies a row to the shooter log with the given identifier.
+     * @return one result per row, in CSV order.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     */
+    protected ShooterLogBulkResponseHolder updateRows(String csvData,
+                                                      BiFunction<Long, ShooterLogBulkRequest, ShooterLogResponse> update)
+            throws FatalException {
+        return updateRows(csvData, update, true);
+    }
+
+    private ShooterLogBulkResponseHolder updateRows(String csvData,
+                                                    BiFunction<Long, ShooterLogBulkRequest, ShooterLogResponse> update,
+                                                    boolean replace) throws FatalException {
+        if (!hasText(csvData)) {
+            log.error("The provided csv data is null or empty.");
+            throw new ValidationException("CSV data cannot be null or blank.");
+        }
+
+        List<ShooterLogBulkResponse> shooterLogBulkResponses = new ArrayList<>();
+        for (ShooterLogBulkRequest row : readRows(csvData, ShooterLogBulkRequest.class,
+                ShooterLogBulkRequestCsvMixIn.class)) {
+            try {
+                if (row.getShooterLogId() == null) {
+                    throw new ValidationException("Shooter log ID is required.");
+                }
+                shooterLogBulkResponses.add(
+                        new ShooterLogBulkResponse(true, "", update.apply(row.getShooterLogId(), row), null));
+            } catch (ValidationException | NonFatalException e) {
+                log.warn("Shooter log {} skipped due to error: {}", replace ? "replacement" : "update", e.getMessage());
+                ShooterLogRow shooterLogRow = new ShooterLogRow(row);
+                shooterLogRow.setShooterLogId(Objects.toString(row.getShooterLogId(), ""));
+                shooterLogBulkResponses.add(new ShooterLogBulkResponse(false, e.getMessage(), null, shooterLogRow));
+            }
+        }
+        return new ShooterLogBulkResponseHolder(shooterLogBulkResponses);
+    }
+
+    /**
      * Copies a request's dates onto a shooter log and replaces its matches with the ones the request names.
      *
      * @param shooterLog the shooter log to populate; must not be null.
@@ -177,18 +240,33 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      */
     protected List<ShooterLogRequest> readShooterLogs(@NonNull @NotBlank String csvData) throws FatalException {
+        return readRows(csvData, ShooterLogRequest.class, ShooterLogRequestCsvMixIn.class);
+    }
+
+    /**
+     * Reads rows from a CSV-formatted string, binding the CSV column headers onto each through a mix-in.
+     *
+     * @param csvData the CSV data, one row per shooter log, with a header row. Must not be null or blank.
+     * @param type    the type to read each row as.
+     * @param mixIn   the mix-in binding {@code type}'s constructor to the column headers.
+     * @param <T>     the row type.
+     * @return the rows parsed from the CSV data, in row order.
+     * @throws ValidationException if the CSV data cannot be parsed, such as a date that is not {@code yyyy-MM-dd}.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     */
+    private <T extends ShooterLogRequest> List<T> readRows(String csvData, Class<T> type, Class<?> mixIn)
+            throws FatalException {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.registerModule(new JavaTimeModule());
         // The columns come from the header row, so the UpperCamelCase names bound by the mix-in are matched directly
         CsvSchema csvSchema = CsvSchema.emptySchema()
                 .withArrayElementSeparator(SystemConstants.ARRAY_SEPARATOR)
                 .withHeader();
-        csvMapper.addMixIn(ShooterLogRequest.class, ShooterLogRequestCsvMixIn.class);
+        csvMapper.addMixIn(type, mixIn);
 
-        try (MappingIterator<ShooterLogRequest> requestMappingIterator =
-                     csvMapper.readerFor(ShooterLogRequest.class)
-                             .with(csvSchema)
-                             .readValues(csvData)) {
+        try (MappingIterator<T> requestMappingIterator = csvMapper.readerFor(type)
+                .with(csvSchema)
+                .readValues(csvData)) {
             return requestMappingIterator.readAll();
 
         } catch (MismatchedInputException | IllegalArgumentException | CsvReadException e) {

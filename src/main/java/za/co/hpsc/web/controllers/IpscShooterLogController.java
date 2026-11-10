@@ -129,6 +129,117 @@ public class IpscShooterLogController {
     }
 
     /**
+     * Replaces shooter logs in bulk from CSV data.
+     *
+     * @param csvData the CSV data, one shooter log per row, with a header row of {@code ShooterLogId},
+     *                {@code StartDate}, {@code EndDate} and {@code MatchIds}.
+     * @return a {@link ShooterLogBulkResponseHolder} with one result per row: {@code 200} if at least one row was
+     * replaced, or {@code 422} if every row failed.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     * @since 16.4.0
+     */
+    @PutMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Replace shooter logs", description = "Fully replace existing shooter logs in bulk from CSV "
+            + "data: each row is the ID of the log, a start date, an end date and the IDs of the matches the log "
+            + "covers, separated by semicolons. An empty list of matches clears the log's matches. Each row is saved "
+            + "on its own, so a row that fails is reported with the values it supplied and the reason while the rest "
+            + "are still replaced.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "At least one row was replaced (or the CSV had no "
+                    + "rows). Each row's result says whether it was replaced and, if not, why: a missing log ID, "
+                    + "an unknown log or match, a missing date, an end date before the start date, or a match "
+                    + "outside the row's dates.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ShooterLogBulkResponseHolder.class))),
+            @ApiResponse(responseCode = "400", description = "The CSV data is blank or cannot be parsed.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "422", description = "The CSV was readable but no row could be replaced. "
+                    + "The body lists each row's result and the reason it failed.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ShooterLogBulkResponseHolder.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error occurred while reading the "
+                    + "CSV data.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class)))
+    })
+    ResponseEntity<ShooterLogBulkResponseHolder> updateShooterLogs(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(mediaType = "text/plain",
+                            schema = @Schema(implementation = String.class),
+                            examples = @ExampleObject("""
+                                    ShooterLogId,StartDate,EndDate,MatchIds
+                                    0,yyyy-MM-dd,yyyy-MM-dd,0;0
+                                    """)))
+            @RequestBody String csvData) throws ValidationException, FatalException {
+        return bulkResponse(ipscShooterLogService.updateShooterLogs(csvData), HttpStatus.OK);
+    }
+
+    /**
+     * Partially updates shooter logs in bulk from CSV data.
+     *
+     * @param csvData the CSV data, one shooter log per row, with a header row of {@code ShooterLogId} and any of
+     *                {@code StartDate}, {@code EndDate} and {@code MatchIds}.
+     * @return a {@link ShooterLogBulkResponseHolder} with one result per row: {@code 200} if at least one row was
+     * updated, or {@code 422} if every row failed.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     * @since 16.4.0
+     */
+    @PatchMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Update shooter logs", description = "Partially update existing shooter logs in bulk from "
+            + "CSV data: each row is the ID of the log and any of a start date, an end date and the IDs of the "
+            + "matches the log covers, separated by semicolons. A column left empty leaves that field unchanged, and "
+            + "a non-empty list of matches replaces the log's matches in full. Each row is saved on its own, so a "
+            + "row that fails is reported with the values it supplied and the reason while the rest are still "
+            + "updated.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "At least one row was updated (or the CSV had no "
+                    + "rows). Each row's result says whether it was updated and, if not, why: a missing log ID, "
+                    + "an unknown log or match, an end date before the start date, or a match outside the log's "
+                    + "dates.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ShooterLogBulkResponseHolder.class))),
+            @ApiResponse(responseCode = "400", description = "The CSV data is blank or cannot be parsed.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "422", description = "The CSV was readable but no row could be updated. "
+                    + "The body lists each row's result and the reason it failed.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ShooterLogBulkResponseHolder.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error occurred while reading the "
+                    + "CSV data.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class)))
+    })
+    ResponseEntity<ShooterLogBulkResponseHolder> patchShooterLogs(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(mediaType = "text/plain",
+                            schema = @Schema(implementation = String.class),
+                            examples = @ExampleObject("""
+                                    ShooterLogId,StartDate,EndDate,MatchIds
+                                    0,yyyy-MM-dd,,
+                                    """)))
+            @RequestBody String csvData) throws ValidationException, FatalException {
+        return bulkResponse(ipscShooterLogService.patchShooterLogs(csvData), HttpStatus.OK);
+    }
+
+    /**
+     * Builds a bulk import's response: the given status, or {@code 422} when the import had rows and every one failed.
+     *
+     * @param holder  the results of the import.
+     * @param success the status when at least one row succeeded, or there were no rows.
+     * @return the response, with the holder as its body.
+     */
+    private ResponseEntity<ShooterLogBulkResponseHolder> bulkResponse(ShooterLogBulkResponseHolder holder,
+                                                                      HttpStatus success) {
+        List<ShooterLogBulkResponse> results = holder.getShooterLogResults();
+        boolean allFailed = !results.isEmpty() && results.stream().noneMatch(ShooterLogBulkResponse::isSuccess);
+        return ResponseEntity.status(allFailed ? HttpStatus.UNPROCESSABLE_CONTENT : success).body(holder);
+    }
+
+    /**
      * Fully replaces an existing shooter log's dates and matches with those on the request.
      *
      * @param shooterLogId the identifier of the shooter log to replace.

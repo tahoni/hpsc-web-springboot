@@ -53,6 +53,45 @@ public interface IpscShooterLogService {
     ShooterLogBulkResponseHolder createShooterLogs(String csvData) throws ValidationException, FatalException;
 
     /**
+     * Replaces a batch of existing shooter logs from CSV data.
+     *
+     * <p>
+     * Each row is a log's {@code ShooterLogId}, {@code StartDate}, {@code EndDate} and {@code MatchIds}, the identifiers
+     * of the matches it covers separated by {@code ;}, and replaces the log by the same rules as
+     * {@link #updateShooterLog(Long, ShooterLogRequest)}, so both dates are required and an empty {@code MatchIds}
+     * clears the log's matches. Each row is saved on its own, so a row that fails, such as one with no
+     * {@code ShooterLogId}, an unknown log or match, or a match outside its dates, is reported with the values it
+     * supplied and the reason while the rest are still replaced.
+     * </p>
+     *
+     * @param csvData the CSV data, one shooter log per row, with a header row. Must not be null or blank.
+     * @return a {@link ShooterLogBulkResponseHolder} with one result per row, in the same order as the CSV rows.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     * @since 16.4.0
+     */
+    ShooterLogBulkResponseHolder updateShooterLogs(String csvData) throws ValidationException, FatalException;
+
+    /**
+     * Partially updates a batch of existing shooter logs from CSV data.
+     *
+     * <p>
+     * Each row is a log's {@code ShooterLogId} and any of {@code StartDate}, {@code EndDate} and {@code MatchIds}, and
+     * updates the log by the same rules as {@link #patchShooterLog(Long, ShooterLogPatchRequest)}. A column left empty
+     * leaves that field unchanged, so a non-empty {@code MatchIds} replaces the log's matches in full, and clearing them
+     * takes a replacement instead. Each row is saved on its own, so a row that fails is reported with the values it
+     * supplied and the reason while the rest are still updated.
+     * </p>
+     *
+     * @param csvData the CSV data, one shooter log per row, with a header row. Must not be null or blank.
+     * @return a {@link ShooterLogBulkResponseHolder} with one result per row, in the same order as the CSV rows.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
+     * @throws FatalException      if an I/O error occurs while reading the CSV data.
+     * @since 16.4.0
+     */
+    ShooterLogBulkResponseHolder patchShooterLogs(String csvData) throws ValidationException, FatalException;
+
+    /**
      * Replaces an existing shooter log's dates and matches with those on the request.
      *
      * @param shooterLogId the identifier of the shooter log to replace.

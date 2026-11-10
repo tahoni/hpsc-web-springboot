@@ -35,8 +35,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ➕ Added
 
+##### Controllers
+
+- **`IpscShooterLogController.updateShooterLogs` and `patchShooterLogs`:** New `PUT /ipsc/shooter-logs/bulk` and
+  `PATCH /ipsc/shooter-logs/bulk` endpoints, taking `text/plain` CSV with a `ShooterLogId` column and the same
+  `StartDate`, `EndDate` and `MatchIds` columns as the bulk create. Each row is saved on its own, so a row that fails
+  is reported with the values it supplied and the reason while the rest are still saved. They return `200`, or `422`
+  if every row failed.
+
 ##### Models
 
+- **`ShooterLogBulkRequest` and `ShooterLogBulkRequestCsvMixIn`:** A CSV row of a bulk shooter log update: a
+  `ShooterLogRequest` that also carries the `ShooterLogId` of the log to change.
+- **`ShooterLogRow.shooterLogId`:** The `ShooterLogId` a failed bulk update row supplied; empty for a row that creates
+  a log.
 - **`MatchResponse.warnings`:** Lists the problems found with a match when it is read, left out of the JSON when empty.
 - **`CompetitorBulkResponse`:** The result of one row of the bulk competitor import: its row number, a message and
   the competitor it created or updated.
@@ -45,6 +57,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Services
 
+- **`IpscShooterLogService.updateShooterLogs` and `patchShooterLogs`:** Replace or partially update shooter logs from
+  CSV, each row through `updateShooterLog` or `patchShooterLog` in its own transaction. A bulk partial update treats an
+  empty date or `MatchIds` column as unchanged, so clearing a log's matches takes a bulk replacement.
 - **`IpscMatchServiceImpl.getMatch` and `getAllMatches`:** A match whose date is outside the dates of a shooter log that
   covers it is now reported in its `warnings` when it is read, rather than only when the log's overall results are
   calculated. The match is still returned, so it stays readable and fixable.
