@@ -100,15 +100,15 @@ public class IpscCompetitorController {
     @PostMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create competitors", description = "Create IPSC competitors in bulk from CSV data. A "
             + "row's club number is required when its home club is HPSC, and is otherwise ignored (forced to "
-            + "null). A row whose club number, or ID number when it has no club number, matches an existing "
-            + "competitor updates and verifies that competitor instead of creating another.")
+            + "null). A row that matches an existing competitor by club number (or ID number when it has "
+            + "no club number) and full name updates and verifies that competitor instead of creating another.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Competitors created or updated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = CompetitorResponseHolder.class))),
             @ApiResponse(responseCode = "400", description = "Invalid CSV data provided, a required field is "
                     + "missing, the gender is unrecognised, a row's home club is HPSC without a club number, or "
-                    + "a row's ID number belongs to several competitors.",
+                    + "a row matches several existing competitors.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "A row's named home club could not be found.",

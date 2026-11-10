@@ -354,6 +354,25 @@ class IpscCompetitorServiceIntegrationTest {
     }
 
     @Test
+    void testCreateCompetitors_whenRowHasNoIdentifierButItsFullNameMatchesAnExistingCompetitor_thenUpdatesAndVerifiesIt() {
+        // Arrange
+        createClub("Other Club", ClubIdentifier.SOSC);
+        CompetitorRequest request = validRequest(null);
+        request.setHomeClub("Other Club");
+        CompetitorResponse existing = ipscCompetitorService.createCompetitor(request);
+        long countBefore = competitorRepository.count();
+        String csvData = CSV_HEADER + "Jane,Doe,,,,,Other Club,,,,,,jane@example.com,true,false\n";
+
+        // Act
+        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertEquals(existing.getCompetitorId(), holder.getCompetitors().getFirst().getCompetitorId());
+        assertEquals(Boolean.TRUE, holder.getCompetitors().getFirst().getIsVerified());
+        assertEquals(countBefore, competitorRepository.count());
+    }
+
+    @Test
     void testCreateCompetitors_whenIdNumberBelongsToSeveralCompetitors_thenThrowsValidationException() {
         // Arrange
         createClub("Other Club", ClubIdentifier.SOSC);

@@ -47,15 +47,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscMatchServiceImpl.updateMatch` and `patchMatch`:** An edit that leaves a match on the same day is still not
   blocked by a shooter log it is already out of step with, but now reports the log in the response's `warnings`.
 - **`IpscCompetitorServiceImpl.createCompetitors`:** A bulk import row for a competitor that already exists now updates
-  and verifies that competitor instead of creating another. A row matches the competitor with its club number or, when
-  it has none, its ID number; an ID number shared by several competitors is refused. The matched competitor takes the
-  row's data, as in a full update, and is marked verified.
-
-##### Repositories
-
-- **`CompetitorRepository`:** New `findByClubNumberWithHomeClubAndEmailAddresses` and
-  `findAllByIdNumberWithHomeClubAndEmailAddresses`, which fetch the home club and email addresses of the competitor a
-  bulk import row names.
+  and verifies that competitor instead of creating another. A row is matched through
+  `IpscEntityCompetitorService.findCompetitorByIdentifierAndFullName`, by its club number or, when it has none, its ID
+  number, and by its full name, so a row with neither is still matched on its name; one that matches several
+  competitors is refused. The matched competitor takes the row's data, as in a full update, and is marked verified.
 
 #### 🔄 Changed
 

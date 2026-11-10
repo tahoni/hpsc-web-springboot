@@ -34,16 +34,6 @@ public interface CompetitorRepository extends JpaRepository<Competitor, Long> {
     @Query("select c from Competitor c left join fetch c.homeClub left join fetch c.emailAddresses")
     List<Competitor> findAllWithHomeClubAndEmailAddresses();
 
-    // Fetch-join the same associations for the competitor a bulk import row names, so it can be updated outside a
-    // transaction.
-    @Query("select distinct c from Competitor c left join fetch c.homeClub left join fetch c.emailAddresses "
-            + "where c.clubNumber = :clubNumber")
-    Optional<Competitor> findByClubNumberWithHomeClubAndEmailAddresses(@Param("clubNumber") String clubNumber);
-
-    @Query("select distinct c from Competitor c left join fetch c.homeClub left join fetch c.emailAddresses "
-            + "where c.idNumber = :idNumber")
-    List<Competitor> findAllByIdNumberWithHomeClubAndEmailAddresses(@Param("idNumber") String idNumber);
-
     // Fetch-joins the same associations for several competitors, such as those verified in bulk.
     @Query("select distinct c from Competitor c left join fetch c.homeClub left join fetch c.emailAddresses "
             + "where c.id in :ids")

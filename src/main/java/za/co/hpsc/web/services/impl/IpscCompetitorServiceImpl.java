@@ -30,6 +30,7 @@ import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.services.IpscCompetitorService;
+import za.co.hpsc.web.services.IpscEntityCompetitorService;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.io.IOException;
@@ -51,17 +52,20 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     private final ShooterLogOverallRepository shooterLogOverallRepository;
 
     private final CompetitorMapper competitorMapper;
+    private final IpscEntityCompetitorService ipscEntityCompetitorService;
     private final TransactionService transactionService;
 
     public IpscCompetitorServiceImpl(CompetitorRepository competitorRepository,
                                      MatchCompetitorRepository matchCompetitorRepository,
                                      ShooterLogOverallRepository shooterLogOverallRepository,
                                      CompetitorMapper competitorMapper,
+                                     IpscEntityCompetitorService ipscEntityCompetitorService,
                                      TransactionService transactionService) {
         this.competitorRepository = competitorRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.shooterLogOverallRepository = shooterLogOverallRepository;
         this.competitorMapper = competitorMapper;
+        this.ipscEntityCompetitorService = ipscEntityCompetitorService;
         this.transactionService = transactionService;
     }
 
@@ -218,28 +222,27 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
-     * Finds the competitor a bulk import row refers to: the one with the row's club number or, when the row has no club
-     * number, the one with its ID number.
+     * Finds the competitor a bulk import row refers to, through
+     * {@link IpscEntityCompetitorService#findCompetitorByIdentifierAndFullName(String, String)}: by the row's club
+     * number or, when it has none, its ID number, and by its full name when it has neither or the identifier narrows
+     * nothing down.
      *
      * @param candidate the competitor built from the row, with its club number already resolved.
-     * @return the existing competitor, or {@code null} if the row names none and so creates a new one.
-     * @throws ValidationException if the row has no club number and its ID number belongs to several competitors.
+     * @return the existing competitor with its home club and email addresses loaded, or {@code null} if none matches
+     * and the row so creates a new one.
+     * @throws ValidationException if the row matches several competitors.
      */
     protected Competitor findExistingCompetitor(Competitor candidate) {
-        if (hasText(candidate.getClubNumber())) {
-            return competitorRepository.findByClubNumberWithHomeClubAndEmailAddresses(candidate.getClubNumber())
+        String identifier = hasText(candidate.getClubNumber()) ? candidate.getClubNumber() : candidate.getIdNumber();
+        String fullName = candidate.getFirstName() + " " + candidate.getLastName();
+        try {
+            return ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName(identifier, fullName)
+                    .flatMap(found -> competitorRepository.findByIdWithHomeClubAndEmailAddresses(found.getId()))
                     .orElse(null);
+        } catch (NonFatalException e) {
+            // No competitor matched, so the row creates a new one
+            return null;
         }
-        if (hasText(candidate.getIdNumber())) {
-            List<Competitor> matches = competitorRepository
-                    .findAllByIdNumberWithHomeClubAndEmailAddresses(candidate.getIdNumber());
-            if (matches.size() > 1) {
-                throw new ValidationException("ID number " + candidate.getIdNumber() + " belongs to "
-                        + matches.size() + " competitors, so the row cannot be matched to one of them.");
-            }
-            return matches.isEmpty() ? null : matches.get(0);
-        }
-        return null;
     }
 
     /**

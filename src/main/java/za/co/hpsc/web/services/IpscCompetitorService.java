@@ -42,9 +42,10 @@ public interface IpscCompetitorService {
      * Creates a batch of new IPSC competitors from CSV data, updating and verifying any that already exist.
      *
      * <p>
-     * A row refers to an existing competitor when its club number matches one or, when it has no club number, its ID
-     * number does. That competitor takes the row's data, as in a full update, and is marked verified rather than a
-     * second one being created. A row whose ID number belongs to several competitors is refused.
+     * A row refers to an existing competitor when {@link IpscEntityCompetitorService#findCompetitorByIdentifierAndFullName}
+     * finds one from its club number or, when it has no club number, its ID number, and from its full name. That
+     * competitor takes the row's data, as in a full update, and is marked verified rather than a second one being
+     * created. A row that matches several competitors is refused.
      * </p>
      *
      * <p>
@@ -62,8 +63,7 @@ public interface IpscCompetitorService {
      *                             missing a required field, if a row's gender doesn't match a
      *                             known {@link za.co.hpsc.web.enums.Gender}, or if a row's home
      *                             club is {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
-     *                             without a club number, or if a row without a club number has an ID number shared by
-     *                             several competitors.
+     *                             without a club number, or if a row matches several existing competitors.
      * @throws NonFatalException   if a row's named home club cannot be found.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      * @since 8.0.0
