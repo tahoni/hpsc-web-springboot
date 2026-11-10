@@ -61,6 +61,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### Services
+
+- **`IpscCompetitorService` and `IpscShooterLogServiceImpl`:** Remove an unused import each, `CompetitorVerifyResponse`
+  and `java.time.LocalDate`, with no change in behaviour.
+
 ##### Models
 
 - **`ShooterLogRequest.validate`:** Rejects a null match ID with a `ValidationException`, a `400`, where it previously

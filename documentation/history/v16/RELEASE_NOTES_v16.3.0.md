@@ -62,6 +62,7 @@ release is backward-compatible.
 ### Changed
 
 - `ShooterLogRequest.validate` rejects a null match ID with a `ValidationException`
+- `IpscCompetitorService` and `IpscShooterLogServiceImpl` drop an unused import each, with no change in behaviour
 - `README.md`, `ARCHITECTURE.md`, `IpscShooterLogService` and `IpscShooterLogController` describe the import
 - `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add and close Gap #47
 
@@ -94,7 +95,7 @@ failed rows.
 
 ## 📊 Statistics
 
-- **Files Changed:** 17 against `main` before this release's documentation; 815 insertions and 11 deletions
+- **Files Changed:** 18 against `main` before this release's documentation; 815 insertions and 13 deletions
 - **New Source Files:** 4 (`ShooterLogRequestCsvMixIn`, `ShooterLogBulkResponse`, `ShooterLogBulkResponseHolder` and
   `ShooterLogRow`), plus two test classes
 - **Renamed Source Files:** 0

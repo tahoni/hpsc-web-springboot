@@ -8,7 +8,6 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
-import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 
 import java.util.List;

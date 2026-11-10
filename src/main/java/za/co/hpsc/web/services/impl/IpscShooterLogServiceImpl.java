@@ -32,7 +32,6 @@ import za.co.hpsc.web.services.IpscShooterLogService;
 import za.co.hpsc.web.services.TransactionService;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.*;
 
 import static za.co.hpsc.web.utils.StringUtil.hasText;
