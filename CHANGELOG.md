@@ -74,6 +74,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   unlike the other bulk-imported records) is added and closed in v16.3.0.
 - **`CHANGELOG.md`:** Link definitions for `[Unreleased]` and every released version, as compare links between
   consecutive tags, so each `[X.Y.Z]` heading resolves as a link instead of an unresolved reference label.
+- **`AGENTS.md` and the `prep-version-release` skill:** The Release Checklist and the skill now add each release's link
+  definition and move `[Unreleased]` forward, so the headings keep resolving.
 
 ---
 
