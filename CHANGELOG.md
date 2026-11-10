@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 16.3.0](#-1630---2026-11-10) ← Current
+- [🧾 Version 16.4.0](#-1640---2026-11-10) ← Current
+- [🧾 Version 16.3.0](#-1630---2026-11-10)
 - [🧾 Version 16.2.0](#-1620---2026-11-10)
 - [🧾 Version 16.1.2](#-1612---2026-11-09)
 - [🧾 Version 16.1.1](#-1611---2026-11-08)
@@ -33,15 +34,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+---
+
+### 🧾 [16.4.0] - 2026-11-10
+
 #### ➕ Added
 
 ##### Controllers
 
 - **`IpscShooterLogController.updateShooterLogs` and `patchShooterLogs`:** New `PUT /ipsc/shooter-logs/bulk` and
   `PATCH /ipsc/shooter-logs/bulk` endpoints, taking `text/plain` CSV with a `ShooterLogId` column and the same
-  `StartDate`, `EndDate` and `MatchIds` columns as the bulk create. Each row is saved on its own, so a row that fails
-  is reported with the values it supplied and the reason while the rest are still saved. They return `200`, or `422`
-  if every row failed.
+  `StartDate`, `EndDate` and `MatchIds` columns as the bulk create, plus `AddMatchIds` and `RemoveMatchIds` columns
+  that the `PATCH` applies. Each row is saved on its own, so a row that fails is reported with the values it supplied
+  and the reason while the rest are still saved. They return `200`, or `422` if every row failed.
 
 ##### Models
 
@@ -49,9 +54,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   current matches without restating the rest, applied after any `matchIds`, which still replaces them in full. Nothing
   is looked up by `validate()`, which refuses a null ID or a match that is both added and removed.
 - **`ShooterLogBulkRequest` and `ShooterLogBulkRequestCsvMixIn`:** A CSV row of a bulk shooter log update: a
-  `ShooterLogRequest` that also carries the `ShooterLogId` of the log to change.
-- **`ShooterLogRow.shooterLogId`:** The `ShooterLogId` a failed bulk update row supplied; empty for a row that creates
-  a log.
+  `ShooterLogRequest` that also carries the `ShooterLogId` of the log to change and the `addMatchIds` and
+  `removeMatchIds` a bulk partial update applies.
+- **`ShooterLogRow.shooterLogId`, `addMatchIds` and `removeMatchIds`:** The `ShooterLogId` and the matches to add and
+  remove that a failed bulk update row supplied; empty for a row that creates a log.
 - **`MatchResponse.warnings`:** Lists the problems found with a match when it is read, left out of the JSON when empty.
 - **`CompetitorBulkResponse`:** The result of one row of the bulk competitor import: its row number, a message and
   the competitor it created or updated.
@@ -83,6 +89,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### Controllers
+
+- **`IpscCompetitorController.createCompetitors` and `IpscMatchController`:** The OpenAPI descriptions now say that a
+  bulk competitor row for an existing competitor updates and verifies it, and that a match outside the dates of a
+  shooter log that covers it carries a message in its `warnings` when it is read or edited.
+
 ##### Models
 
 - **`MatchRequestCsvMixIn`, `CompetitorRequestCsvMixIn` and `MatchCompetitorRequestCsvMixIn`:** The bulk CSV imports no
@@ -104,6 +116,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `spring-boot-starter-flyway` brings in, and beside the `12.4.0` Maven plugin, mixing two Flyway majors. All three now
   share one version, and `mysql-connector-j`, `logback.version` and the Jackson BOM properties stay pinned above
   Spring Boot's.
+
+##### Documentation
+
+- **`README.md` and `ARCHITECTURE.md`:** Describe the bulk shooter log replace and update with its add and remove
+  columns, the bulk competitor import updating and verifying a competitor by club number, and the match `warnings`.
+- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Add Gaps #48, #49 and #50, each closed in this release, to
+  the plan and its task list.
 
 ---
 
@@ -880,7 +899,8 @@ For issues, feature requests or questions:
 
 **Last Updated:** 2026-08-25
 
-[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.3.0...HEAD
+[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.4.0...HEAD
+[16.4.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.3.0...v16.4.0
 [16.3.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.2.0...v16.3.0
 [16.2.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.1.2...v16.2.0
 [16.1.2]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.1.1...v16.1.2
