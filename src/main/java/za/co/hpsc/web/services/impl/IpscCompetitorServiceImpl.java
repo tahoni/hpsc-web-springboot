@@ -82,10 +82,20 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         List<CompetitorRequest> competitorRequests = readCompetitors(csvData);
 
         // Every row is validated and built before any is saved, then all are saved in one
-        // transaction, so a bad row leaves none of them persisted.
+        // transaction, so a bad row leaves none of them persisted. A row for a competitor that already exists
+        // updates and verifies that competitor instead of creating another.
         List<Competitor> competitors = new ArrayList<>();
         for (CompetitorRequest competitorRequest : competitorRequests) {
-            competitors.add(newCompetitor(normaliseCsvRequest(competitorRequest)));
+            CompetitorRequest normalised = normaliseCsvRequest(competitorRequest);
+            Competitor newCompetitor = newCompetitor(normalised);
+            Competitor existing = findExistingCompetitor(newCompetitor);
+            if (existing == null) {
+                competitors.add(newCompetitor);
+            } else {
+                competitorMapper.applyFields(existing, normalised);
+                existing.setIsVerified(true);
+                competitors.add(existing);
+            }
         }
 
         List<CompetitorResponse> competitorResponseList = transactionService.saveCompetitors(competitors).stream()
@@ -205,6 +215,31 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
         Competitor competitor = new Competitor();
         competitorMapper.applyFields(competitor, request);
         return competitor;
+    }
+
+    /**
+     * Finds the competitor a bulk import row refers to: the one with the row's club number or, when the row has no club
+     * number, the one with its ID number.
+     *
+     * @param candidate the competitor built from the row, with its club number already resolved.
+     * @return the existing competitor, or {@code null} if the row names none and so creates a new one.
+     * @throws ValidationException if the row has no club number and its ID number belongs to several competitors.
+     */
+    protected Competitor findExistingCompetitor(Competitor candidate) {
+        if (hasText(candidate.getClubNumber())) {
+            return competitorRepository.findByClubNumberWithHomeClubAndEmailAddresses(candidate.getClubNumber())
+                    .orElse(null);
+        }
+        if (hasText(candidate.getIdNumber())) {
+            List<Competitor> matches = competitorRepository
+                    .findAllByIdNumberWithHomeClubAndEmailAddresses(candidate.getIdNumber());
+            if (matches.size() > 1) {
+                throw new ValidationException("ID number " + candidate.getIdNumber() + " belongs to "
+                        + matches.size() + " competitors, so the row cannot be matched to one of them.");
+            }
+            return matches.isEmpty() ? null : matches.get(0);
+        }
+        return null;
     }
 
     /**

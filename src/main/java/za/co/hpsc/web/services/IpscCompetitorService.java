@@ -39,7 +39,13 @@ public interface IpscCompetitorService {
             throws ValidationException, NonFatalException;
 
     /**
-     * Creates a batch of new IPSC competitors from CSV data.
+     * Creates a batch of new IPSC competitors from CSV data, updating and verifying any that already exist.
+     *
+     * <p>
+     * A row refers to an existing competitor when its club number matches one or, when it has no club number, its ID
+     * number does. That competitor takes the row's data, as in a full update, and is marked verified rather than a
+     * second one being created. A row whose ID number belongs to several competitors is refused.
+     * </p>
      *
      * <p>
      * Each row is validated and built by the same rules as
@@ -50,13 +56,14 @@ public interface IpscCompetitorService {
      *
      * @param csvData the CSV data containing competitor information, one competitor per row.
      *                Must not be null or blank.
-     * @return a {@link CompetitorResponseHolder} containing the created competitors, in the same
+     * @return a {@link CompetitorResponseHolder} containing the created or updated competitors, in the same
      * order as the CSV rows.
      * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
      *                             missing a required field, if a row's gender doesn't match a
      *                             known {@link za.co.hpsc.web.enums.Gender}, or if a row's home
      *                             club is {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
-     *                             without a club number.
+     *                             without a club number, or if a row without a club number has an ID number shared by
+     *                             several competitors.
      * @throws NonFatalException   if a row's named home club cannot be found.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      * @since 8.0.0

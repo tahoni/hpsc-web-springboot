@@ -135,8 +135,6 @@ failed rows.
 
 - A `MatchCompetitorId`, `MatchId` or `CompetitorId` column in the match, competitor or match competitor CSV imports,
   is read but never used as the row's own ID, since the imports only create records.
-- The bulk competitor import only creates competitors, so it cannot verify one that already exists; use
-  `POST /ipsc/competitors/verify` afterwards.
 - The shooter log import only creates logs; there is no way to add matches to, or update, an existing log in bulk.
 - `pom.xml` still overrides `logback.version`, the Jackson BOM properties, `mysql-connector-j` and `flyway-mysql`, set
   above Spring Boot's managed versions.

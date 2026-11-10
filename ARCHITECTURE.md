@@ -430,9 +430,11 @@ Verification is deliberately never defaulted: a row without an `IsVerified` valu
 competitor created through the single-competitor endpoint without one. Such a competitor is excluded from results
 until it is marked verified through `PUT` or `PATCH /ipsc/competitors/{competitorId}`, or, for many at once, through
 `POST /ipsc/competitors/verify`, which takes a list of competitor IDs, verifies each one that exists in a single
-transaction and reports an unknown ID in its own result. The import only creates competitors, so it cannot verify one
-that already exists. The competitor endpoints are the only way to verify anyone: the Match and Match Competitor imports
-below never set `isVerified`.
+transaction and reports an unknown ID in its own result. A row that names a competitor that already exists, by its club
+number or, when it has none, its ID number, updates that competitor with the row's data and verifies it instead of
+creating another; an ID number shared by several competitors is refused. Apart from the competitor endpoints, the
+Competitor import is the only way to verify anyone: the Match and Match Competitor imports below never set
+`isVerified`.
 
 ### 📥 Match Bulk CSV Import Flow
 
