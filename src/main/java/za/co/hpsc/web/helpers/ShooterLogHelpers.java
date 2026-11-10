@@ -55,4 +55,21 @@ public final class ShooterLogHelpers {
         LocalDate matchDate = match.getScheduledDate().toLocalDate();
         return !matchDate.isBefore(shooterLog.getStartDate()) && !matchDate.isAfter(shooterLog.getEndDate());
     }
+
+    /**
+     * Describes a match that is scheduled outside a shooter log's start and end dates, for reporting when the match
+     * is read.
+     *
+     * @param match      the match to check; must not be null.
+     * @param shooterLog the shooter log that covers the match; must not be null.
+     * @return the warning, or {@code null} if the match is within the log's dates.
+     */
+    public static String describeOutsideDates(IpscMatch match, ShooterLog shooterLog) {
+        if (isWithinDates(match, shooterLog)) {
+            return null;
+        }
+        return "Match is scheduled for " + match.getScheduledDate().toLocalDate() + ", outside the dates "
+                + shooterLog.getStartDate() + " to " + shooterLog.getEndDate() + " of shooter log with ID "
+                + shooterLog.getId() + ".";
+    }
 }

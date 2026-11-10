@@ -33,6 +33,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Models
+
+- **`MatchResponse.warnings`:** Lists the problems found with a match when it is read, left out of the JSON when empty.
+
+##### Services
+
+- **`IpscMatchServiceImpl.getMatch` and `getAllMatches`:** A match whose date is outside the dates of a shooter log that
+  covers it is now reported in its `warnings` when it is read, rather than only when the log's overall results are
+  calculated. The match is still returned, so it stays readable and fixable.
+
 #### 🔄 Changed
 
 ##### Models

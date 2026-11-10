@@ -1,5 +1,6 @@
 package za.co.hpsc.web.models.ipsc.match.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +14,8 @@ import za.co.hpsc.web.enums.MatchCategory;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A persisted IPSC match, as returned by {@code IpscMatchController}'s CRUD endpoints.
@@ -51,6 +54,12 @@ public class MatchResponse {
     private MatchCategory matchCategory;
     /** A URL with more information about this match (e.g. a results page or event listing); may be null. */
     private String url;
+    /**
+     * Problems found with the match when it was read, such as a date outside the dates of a shooter log that covers
+     * it. Only filled in by the read endpoints, and left out of the JSON when empty.
+     */
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<String> warnings = new ArrayList<>();
 
     /**
      * Creates a response from a persisted match.
