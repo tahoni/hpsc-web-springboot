@@ -600,7 +600,9 @@ anything downstream references them:
    corrected version before continuing.
 5. **Add a `CHANGELOG.md` entry.** New `### 🧾 [X.Y.Z] - YYYY-MM-DD` section, using only the Keep a Changelog
    categories that apply (`➕ Added`, `🔄 Changed`, `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security` — omit
-   any that are empty). Update the Table of Contents and move the "← Current" marker to the new version.
+   any that are empty). Update the Table of Contents and move the "← Current" marker to the new version, and keep
+   the link definitions at the bottom of the file current: add `[X.Y.Z]: …/compare/v<previous>...vX.Y.Z` for the new
+   version and point `[Unreleased]` at `compare/vX.Y.Z...HEAD`, so every `[X.Y.Z]` heading resolves as a link.
 6. **Extend `HISTORY.md`.** Add a Historical Timeline entry and a Milestone for the new version, at the same
    narrative depth and in the same style as the existing entries, plus a matching Phase entry in
    `EVOLUTION_OVERVIEW.md` — `HISTORY.md`'s Evolution Overview section was split out into that

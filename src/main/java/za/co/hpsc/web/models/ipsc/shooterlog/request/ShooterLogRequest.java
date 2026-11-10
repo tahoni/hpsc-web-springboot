@@ -13,6 +13,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Request to create or fully replace a shooter log.
@@ -60,7 +61,8 @@ public class ShooterLogRequest {
      * Checks that the request carries what is needed to create a shooter log before any of it is used. Nothing is
      * looked up, so a match identifier that is present but unknown is not caught here.
      *
-     * @throws ValidationException if the start date or end date is missing, or the end date is before the start date.
+     * @throws ValidationException if the start date or end date is missing, the end date is before the start date, or
+     *                             a match identifier is null.
      */
     public void validate() {
         if (getStartDate() == null) {
@@ -71,6 +73,9 @@ public class ShooterLogRequest {
         }
         if (getEndDate().isBefore(getStartDate())) {
             throw new ValidationException("Shooter log end date cannot be before its start date.");
+        }
+        if ((matchIds != null) && matchIds.stream().anyMatch(Objects::isNull)) {
+            throw new ValidationException("Shooter log match IDs must not be null.");
         }
     }
 }

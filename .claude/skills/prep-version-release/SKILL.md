@@ -78,7 +78,10 @@ Steps:
    step) into a new `### 🧾 [$VERSION] - YYYY-MM-DD` section, keeping only the `#### <category>` headings that apply
    (`➕ Added`, `🔄 Changed`, `🐛 Fixed`, `⚠️ Deprecated`, `🗑️ Removed`, `🔐 Security`) and their `##### <Area>`
    subheadings. Update the Table of Contents and move the "← Current" marker to the new version, then start a fresh
-   empty `### 🧪 [Unreleased]` section above it.
+   empty `### 🧪 [Unreleased]` section above it. Also add the new version's link definition to the block at the
+   bottom of `CHANGELOG.md`, in the form
+   `[$VERSION]: https://github.com/tahoni/hpsc-web-springboot/compare/v<previous>...v$VERSION`, and point
+   `[Unreleased]` at `compare/v$VERSION...HEAD`, so the heading's `[$VERSION]` resolves as a link.
 7. **Extend `HISTORY.md`.** Add a Historical Timeline entry and a Milestone for `$VERSION`, at the same narrative
    depth and style as the existing entries, placed at the top (immediately below the Overview section) to keep
    reverse chronological order, plus a matching Phase entry at the end of

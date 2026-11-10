@@ -7,11 +7,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogPatchRequest;
 import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogRequest;
+import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogBulkResponse;
+import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogResponse;
+import za.co.hpsc.web.models.ipsc.shooterlog.response.ShooterLogRow;
 import za.co.hpsc.web.services.IpscShooterLogService;
 
 import java.util.List;
@@ -27,6 +31,60 @@ class IpscShooterLogControllerTest {
 
     @InjectMocks
     private IpscShooterLogController ipscShooterLogController;
+
+    // createShooterLogs()
+    @Test
+    void testCreateShooterLogs_whenSomeRowsSucceed_thenReturns201WithServiceBody() throws FatalException {
+        // Arrange
+        ShooterLogBulkResponseHolder holder = new ShooterLogBulkResponseHolder(List.of(
+                new ShooterLogBulkResponse(true, "", new ShooterLogResponse(), null),
+                new ShooterLogBulkResponse(false, "No IPSC match found with ID 9", null, new ShooterLogRow())));
+        when(ipscShooterLogService.createShooterLogs("csv")).thenReturn(holder);
+
+        // Act
+        ResponseEntity<ShooterLogBulkResponseHolder> result = ipscShooterLogController.createShooterLogs("csv");
+
+        // Assert
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
+        assertSame(holder, result.getBody());
+    }
+
+    @Test
+    void testCreateShooterLogs_whenEveryRowFails_thenReturns422WithServiceBody() throws FatalException {
+        // Arrange
+        ShooterLogBulkResponseHolder holder = new ShooterLogBulkResponseHolder(List.of(
+                new ShooterLogBulkResponse(false, "Shooter log start date is required.", null, new ShooterLogRow())));
+        when(ipscShooterLogService.createShooterLogs("csv")).thenReturn(holder);
+
+        // Act
+        ResponseEntity<ShooterLogBulkResponseHolder> result = ipscShooterLogController.createShooterLogs("csv");
+
+        // Assert
+        assertEquals(HttpStatus.UNPROCESSABLE_CONTENT, result.getStatusCode());
+        assertSame(holder, result.getBody());
+    }
+
+    @Test
+    void testCreateShooterLogs_whenThereAreNoRows_thenReturns201() throws FatalException {
+        // Arrange
+        ShooterLogBulkResponseHolder holder = new ShooterLogBulkResponseHolder(List.of());
+        when(ipscShooterLogService.createShooterLogs("csv")).thenReturn(holder);
+
+        // Act
+        ResponseEntity<ShooterLogBulkResponseHolder> result = ipscShooterLogController.createShooterLogs("csv");
+
+        // Assert
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
+    }
+
+    @Test
+    void testCreateShooterLogs_whenServiceThrowsValidationException_thenPropagates() throws FatalException {
+        // Arrange
+        when(ipscShooterLogService.createShooterLogs("bad")).thenThrow(new ValidationException("bad csv"));
+
+        // Act & Assert
+        assertThrows(ValidationException.class, () -> ipscShooterLogController.createShooterLogs("bad"));
+    }
 
     // createShooterLog()
     @Test

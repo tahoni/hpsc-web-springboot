@@ -518,6 +518,19 @@ Gap #41)* —
   `IpscMatchCompetitorServiceImpl.createMatchCompetitors`
 - [x] Describe both in `README.md`, `ARCHITECTURE.md` and the OpenAPI text — done
 
+**Shooter log bulk CSV import** *(improvement-plan.md → Gap #47)* —
+✅ Closed in v16.3.0
+
+- [x] Add `POST /ipsc/shooter-logs/bulk`, taking `text/plain` CSV with `StartDate`, `EndDate` and `MatchIds` — done,
+  as `IpscShooterLogController.createShooterLogs` and `IpscShooterLogService.createShooterLogs`, with
+  `ShooterLogRequestCsvMixIn` binding the columns
+- [x] Create each row through `createShooterLog`, so it gets the same checks as a single log — done, each row in its
+  own transaction
+- [x] Report a failed row with the values it supplied and the reason, and still create the rest — done, as
+  `ShooterLogBulkResponse`, `ShooterLogRow` and `ShooterLogBulkResponseHolder`
+- [x] Answer `422` only when every row failed — done, `201` otherwise
+- [x] Describe it in `README.md` and `ARCHITECTURE.md` — done, with a Shooter Log Bulk CSV Import Flow diagram
+
 ---
 
 ## 🟡 Partially Completed
