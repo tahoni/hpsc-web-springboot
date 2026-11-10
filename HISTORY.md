@@ -45,12 +45,14 @@ evolution of architecture, features and design philosophy across all versions.
   used, and a file that still has it imports as before
 - `flyway-mysql` is no longer pinned to `13.7.0`, so it takes the `12.4.0` Spring Boot manages and matches
   `flyway-core` and the Maven plugin; all 38 migrations were applied to a throwaway MySQL 8.4 on it
+- A `migrations` job in `build.yml` runs `FlywayMysqlMigrationTest` against a throwaway `mysql:8.4` service container
+  on every push and pull request, so a migration that MySQL rejects shows before deployment
 - `README.md`, `ARCHITECTURE.md` and the OpenAPI descriptions describe the bulk updates, the competitor update and the
   match warnings
 - Scoped as `v16.4.0` **MINOR**: the new endpoints and the optional `warnings`, `results` and request fields are
   backward-compatible additions, and nothing existing breaks
 - Improvement plan: Gaps #48, #49 and #50 are added and closed, leaving all 50 gaps closed and none open
-- The suite stands at 1,564 passing tests
+- The suite stands at 1,567 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
 - Project version bumped to 16.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 16.3.0 (November 10, 2026)
@@ -378,6 +380,7 @@ Milestones 44 to 50 (versions 10.0.0 to 13.3.0) are archived, unchanged, in
 - A bulk competitor row for an existing club number updates and verifies that competitor, with a result for every row
 - A match outside a covering shooter log's dates reports it in its `warnings` when read or edited
 - `flyway-mysql` follows the Flyway version Spring Boot manages, with the migrations checked against MySQL 8.4
+- A `migrations` CI job runs the Flyway migrations against MySQL 8.4 on every push and pull request
 - Improvement plan Gaps #48, #49 and #50 are added and closed, so every tracked gap stays closed
 
 ---
@@ -987,6 +990,7 @@ The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, i
   match outside a covering log's dates
 - The match, competitor and match competitor CSV imports no longer read their own ID column
 - `flyway-mysql` is no longer pinned above the Flyway version Spring Boot manages
+- `FlywayMysqlMigrationTest` and a `migrations` job in `build.yml` run the Flyway migrations against MySQL 8.4 in CI
 - Improvement plan: Gaps #48, #49 and #50 are added and closed, leaving all 50 gaps closed and none open
 - Project version bumped to 16.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 

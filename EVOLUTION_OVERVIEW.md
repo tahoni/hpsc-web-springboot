@@ -384,6 +384,8 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 
 - `flyway-mysql` is no longer pinned to `13.7.0`, so it takes the `12.4.0` Spring Boot manages, and all 38 migrations
   were applied to a throwaway MySQL 8.4 on it
+- A `migrations` job in `build.yml` runs `FlywayMysqlMigrationTest` against a throwaway `mysql:8.4` service container
+  on every push and pull request; the test is skipped unless `FLYWAY_MYSQL_URL` is set
 - Improvement plan: Gaps #48, #49 and #50 are added and closed, leaving all 50 gaps closed and none open
 - Project version bumped to 16.4.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
@@ -393,5 +395,6 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 
 **Test Coverage:**
 
-- The suite stands at 1,564 passing tests, with new controller, request mix-in, service and integration tests for the
-  bulk updates, the competitor update and the match warnings
+- The suite stands at 1,567 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with new controller, request
+  mix-in, service, integration and migration tests for the bulk updates, the competitor update, the match warnings and
+  the Flyway migrations on MySQL

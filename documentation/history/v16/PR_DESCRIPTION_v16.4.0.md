@@ -11,21 +11,23 @@
 
 - **Added:** `IpscShooterLogController.updateShooterLogs` and `patchShooterLogs` with the matching service methods,
   `ShooterLogBulkRequest`, `ShooterLogBulkRequestCsvMixIn`, `ShooterLogPatchRequest.addMatchIds` and `removeMatchIds`,
-  `CompetitorBulkResponse`, `CompetitorResponseHolder.results`, `MatchResponse.warnings` and
-  `ShooterLogHelpers.describeOutsideDates`; the bulk endpoints answer `200`, or `422` if every row failed
+  `CompetitorBulkResponse`, `CompetitorResponseHolder.results`, `MatchResponse.warnings`,
+  `ShooterLogHelpers.describeOutsideDates`, and `FlywayMysqlMigrationTest` with a `migrations` CI job that runs the
+  Flyway migrations against MySQL 8.4; the bulk endpoints answer `200`, or `422` if every row failed
 - **Changed:** the competitor import updates and verifies a competitor by club number; the CSV imports stop reading
   their own ID column; `flyway-mysql` is no longer pinned above the Flyway version Spring Boot manages
-- **Documentation:** `README.md`, `ARCHITECTURE.md`, the OpenAPI text and the Javadoc describe the changes;
-  improvement plan Gaps #48, #49 and #50 added and closed
+- **Documentation:** `README.md`, `ARCHITECTURE.md`, `CONTRIBUTING.md`, the OpenAPI text and the Javadoc describe the
+  changes; improvement plan Gaps #48, #49 and #50 added and closed
 - **Tests:** new controller, mix-in, request, service and integration tests
 - **Build:** project version bumped to 16.4.0 in `pom.xml` and the OpenAPI annotation
 
 ## 🧪 Test Plan
 
-- [x] `./mvnw verify -Pcoverage` passes: 1,564 tests, no failures, errors or skips, with 98.36% line and 98.74% branch
-  coverage, above the 97% minimum
+- [x] `./mvnw verify -Pcoverage` passes: 1,567 tests, no failures or errors and 3 skipped without MySQL, with 98.36%
+  line and 98.74% branch coverage, above the 97% minimum
 - [x] `CHANGELOG.md`'s `[Unreleased]` section synced against the branch and renamed to `[16.4.0]`
 - [x] All 38 Flyway migrations applied to a throwaway MySQL 8.4 on Flyway `12.4.0`
+- [ ] The `migrations` job passes on GitHub Actions against the `mysql:8.4` service container
 - [ ] Post a CSV with valid, unknown-log, missing-ID and out-of-dates rows to `PUT` and `PATCH /ipsc/shooter-logs/bulk`
   and check each row's result and the `200`
 - [ ] `PATCH` a shooter log's `addMatchIds` and `removeMatchIds` and confirm the matches change, and a match in both is

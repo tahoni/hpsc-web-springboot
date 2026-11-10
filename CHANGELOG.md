@@ -34,27 +34,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
-#### ➕ Added
-
-##### Tests
-
-- **`FlywayMysqlMigrationTest`:** Runs every Flyway migration against an empty MySQL database through the application's
-  own runtime classpath, and checks that each migration file is applied, none is pending or failed, the application
-  tables exist and the checksums validate. It runs only when `FLYWAY_MYSQL_URL` names the database, with
-  `FLYWAY_MYSQL_USER` and `FLYWAY_MYSQL_PASSWORD`, and is skipped everywhere else, as the `test` profile bypasses Flyway
-  on H2.
-
-##### Tooling
-
-- **`.github/workflows/build.yml`:** A new `migrations` job starts a throwaway `mysql:8.4` service container, the
-  version `docker-compose.yml` runs, and runs `FlywayMysqlMigrationTest` against it on every push and pull request to
-  `main` and `develop`, so a migration that MySQL rejects shows before deployment.
-
-##### Documentation
-
-- **`ARCHITECTURE.md` and `CONTRIBUTING.md`:** List the migrations gate in the CI/CD & Quality Gates table and the
-  gate summary, and the new `migrations/` test directory in the project structure tree.
-
 ---
 
 ### 🧾 [16.4.0] - 2026-11-10
@@ -108,6 +87,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   update, and is marked verified. A row without a club number, as every row for a home club other than HPSC's is,
   always creates a competitor, as neither a name nor an ID number is enough to tell two people apart.
 
+##### Tests
+
+- **`FlywayMysqlMigrationTest`:** Runs every Flyway migration against an empty MySQL database through the application's
+  own runtime classpath, and checks that each migration file is applied, none is pending or failed, the application
+  tables exist and the checksums validate. It runs only when `FLYWAY_MYSQL_URL` names the database, with
+  `FLYWAY_MYSQL_USER` and `FLYWAY_MYSQL_PASSWORD`, and is skipped everywhere else, as the `test` profile bypasses Flyway
+  on H2.
+
+##### Tooling
+
+- **`.github/workflows/build.yml`:** A new `migrations` job starts a throwaway `mysql:8.4` service container, the
+  version `docker-compose.yml` runs, and runs `FlywayMysqlMigrationTest` against it on every push and pull request to
+  `main` and `develop`, so a migration that MySQL rejects shows before deployment.
+
 #### 🔄 Changed
 
 ##### Controllers
@@ -144,6 +137,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   columns, the bulk competitor import updating and verifying a competitor by club number, and the match `warnings`.
 - **`improvement-plan.md` and `improvement-plan-tasks.md`:** Add Gaps #48, #49 and #50, each closed in this release, to
   the plan and its task list.
+- **`ARCHITECTURE.md` and `CONTRIBUTING.md`:** List the migrations gate in the CI/CD & Quality Gates table and the
+  gate summary, and the new `migrations/` test directory in the project structure tree.
 
 ---
 

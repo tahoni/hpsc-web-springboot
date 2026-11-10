@@ -53,6 +53,15 @@ in its `warnings`. Every addition is optional or new, so the release is backward
 - The match is still returned, so it stays readable and fixable, and a move to another day outside the dates is still
   refused with a `400`
 
+### 🧪 Migrations in CI
+
+- A new `migrations` job in `build.yml` runs `FlywayMysqlMigrationTest` against a throwaway `mysql:8.4` service
+  container on every push and pull request to `main` and `develop`
+- The test applies every migration to an empty database through the application's runtime classpath, and checks that
+  none is pending or failed, the application tables exist and the checksums validate
+- It runs only when `FLYWAY_MYSQL_URL` is set, so the normal build, which uses H2, needs no MySQL and reports it as
+  skipped
+
 ### 🛠️ Housekeeping
 
 - `flyway-mysql` takes the `12.4.0` Spring Boot manages instead of a `13.7.0` pin that mixed two Flyway majors; all 38
@@ -69,6 +78,8 @@ in its `warnings`. Every addition is optional or new, so the release is backward
 - `IpscShooterLogController.updateShooterLogs` and `patchShooterLogs`, serving `PUT` and
   `PATCH /ipsc/shooter-logs/bulk`, with `IpscShooterLogService.updateShooterLogs` and `patchShooterLogs`
 - `ShooterLogBulkRequest` and `ShooterLogBulkRequestCsvMixIn`, binding the bulk update columns
+- `FlywayMysqlMigrationTest` and the `migrations` job in `.github/workflows/build.yml`, running the Flyway migrations
+  against MySQL 8.4
 - `ShooterLogPatchRequest.addMatchIds` and `removeMatchIds`, with `validate`, and `ShooterLogRow.shooterLogId`,
   `addMatchIds` and `removeMatchIds`
 - `CompetitorBulkResponse` and `CompetitorResponseHolder.results`
@@ -83,6 +94,8 @@ in its `warnings`. Every addition is optional or new, so the release is backward
   `CompetitorId` or `MatchCompetitorId` column respectively, and `MatchRequest`, `CompetitorRequest` and
   `MatchCompetitorRequest` gain a constructor without their own ID
 - `pom.xml` no longer pins `flyway-mysql`
+- `ARCHITECTURE.md` and `CONTRIBUTING.md` list the migrations gate, and `ARCHITECTURE.md`'s project tree the new
+  `migrations/` test directory
 - `README.md`, `ARCHITECTURE.md`, the match and competitor controller OpenAPI text and the service Javadoc describe
   the changes
 - `documentation/roadmap/improvement-plan.md` and `improvement-plan-tasks.md` add and close Gaps #48, #49 and #50
@@ -123,9 +136,10 @@ own row. Check each result's `success` rather than the status alone, since a `20
 
 ## 📊 Statistics
 
-- **Files Changed:** 39 against `main` before this release's documentation; 1,746 insertions and 94 deletions
+- **Files Changed:** 41 against `main` before this release's history and release notes; 1,921 insertions and 99
+  deletions
 - **New Source Files:** 3 (`CompetitorBulkResponse`, `ShooterLogBulkRequest` and `ShooterLogBulkRequestCsvMixIn`),
-  plus one test class
+  plus two test classes
 - **Renamed Source Files:** 0
 - **Deleted Source Files:** 0
 - **New Dependencies:** 0, with one pin removed
@@ -143,6 +157,9 @@ own row. Check each result's `success` rather than the status alone, since a `20
   alone; a name or an ID number can be shared, and treating either as the same person would merge people.
 - **A warning, not a refusal.** A match already out of step with its log stays readable and editable, so it can be
   fixed, and an unrelated edit is not blocked; only a move to another day outside the dates is refused.
+- **Migrations are checked on MySQL, not H2.** The `test` profile bypasses Flyway and builds the schema on H2, so
+  `FlywayMysqlMigrationTest` runs the real migrations against MySQL 8.4 in CI only, switched on by `FLYWAY_MYSQL_URL`,
+  which keeps the normal build free of a MySQL requirement.
 - **A MINOR.** The new endpoints and optional fields are externally visible, backward-compatible additions, which
   `AGENTS.md`'s Semantic Versioning rules classify as MINOR; nothing existing is removed or changes shape.
 
@@ -150,13 +167,15 @@ own row. Check each result's `success` rather than the status alone, since a `20
 
 ## 🧪 Testing
 
-- `./mvnw verify -Pcoverage` passes: 1,564 tests with no failures, errors or skips.
+- `./mvnw verify -Pcoverage` passes: 1,567 tests with no failures or errors, 3 of them skipped because
+  `FlywayMysqlMigrationTest` runs only where `FLYWAY_MYSQL_URL` is set.
 - New tests cover the bulk update mix-in's column binding, `ShooterLogPatchRequest.validate`, the `PUT` and `PATCH`
   bulk controller statuses, `updateShooterLogs` and `patchShooterLogs` with valid and invalid rows, adding and
   removing matches, the competitor update by club number, and the match `warnings` on read and on a same-day edit, in
   Mockito unit tests and `@SpringBootTest` integration tests.
-- A temporary `@SpringBootTest` with Flyway enabled applied all 38 migrations to a throwaway `mysql:8.4` container on
-  `flyway-core` and `flyway-mysql` `12.4.0`; it was removed afterwards, as the `test` profile bypasses Flyway on H2.
+- `FlywayMysqlMigrationTest` applies all 38 migrations to a MySQL 8.4 database on `flyway-core` and `flyway-mysql`
+  `12.4.0` and validates their checksums; the `migrations` CI job runs it, and it was also run locally against a
+  throwaway `mysql:8.4` container.
 - Overall coverage is 98.74% branch and 98.36% line, above the 97% minimum.
 
 ---
@@ -165,8 +184,6 @@ own row. Check each result's `success` rather than the status alone, since a `20
 
 - A bulk competitor row without a club number always creates a competitor, so re-importing a file of such rows, as
   every row for a home club other than HPSC's is, creates them again.
-- Nothing in the repository runs the migrations against MySQL: the `test` profile bypasses Flyway on H2, and the check
-  for this release was a one-off.
 - `pom.xml` still overrides `logback.version`, the Jackson BOM properties and `mysql-connector-j`, set above Spring
   Boot's managed versions.
 
@@ -177,7 +194,6 @@ own row. Check each result's `success` rather than the status alone, since a `20
 - Drop the remaining dependency pins once Spring Boot manages versions at least as new.
 - Consider a safer key than the club number for matching non-HPSC competitor rows, if re-importing them proves a
   problem.
-- Consider running the Flyway migrations against MySQL in CI, so a migration problem shows before deployment.
 
 ---
 
