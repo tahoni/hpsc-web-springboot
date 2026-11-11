@@ -378,6 +378,7 @@ class IpscShooterLogServiceIntegrationTest {
         // Assert
         List<ShooterLogBulkResponse> results = holder.getShooterLogResults();
         assertEquals(5, results.size());
+        assertEquals(List.of(1, 2, 3, 4, 5), results.stream().map(ShooterLogBulkResponse::getRowNumber).toList());
         assertTrue(results.get(0).isSuccess());
         assertEquals(List.of(replacement.getId()), results.get(0).getShooterLog().getMatchIds());
         assertEquals(LocalDate.of(2026, 10, 1), results.get(0).getShooterLog().getStartDate());

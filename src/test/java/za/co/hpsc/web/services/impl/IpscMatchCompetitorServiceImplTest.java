@@ -366,7 +366,7 @@ class IpscMatchCompetitorServiceImplTest {
         request.setPoints(new BigDecimal("10"));
 
         // Act
-        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("Division not specified", request, null);
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow(1, "Division not specified", request, null);
 
         // Assert
         assertFalse(result.isSuccess());
@@ -382,7 +382,7 @@ class IpscMatchCompetitorServiceImplTest {
     @Test
     void testFailedRow_whenRowCannotBeIdentified_thenDoesNotThrowAndReportsEmptyValues() {
         // Act
-        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("bad", new MatchCompetitorRequest(), null);
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow(1, "bad", new MatchCompetitorRequest(), null);
 
         // Assert
         assertFalse(result.isSuccess());
@@ -394,7 +394,7 @@ class IpscMatchCompetitorServiceImplTest {
     @Test
     void testFailedRow_whenRequestIsNull_thenReportsEveryValueAsEmpty() {
         // Act
-        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("empty row", null, null);
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow(1, "empty row", null, null);
 
         // Assert
         assertFalse(result.isSuccess());
@@ -424,7 +424,7 @@ class IpscMatchCompetitorServiceImplTest {
         matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
 
         // Act
-        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("bad", request, matchCompetitor);
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow(1, "bad", request, matchCompetitor);
 
         // Assert
         assertEquals("1", result.getMatchCompetitorRow().getCompetitorId());
@@ -446,7 +446,7 @@ class IpscMatchCompetitorServiceImplTest {
         matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
 
         // Act
-        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("bad", request, matchCompetitor);
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow(1, "bad", request, matchCompetitor);
 
         // Assert
         assertEquals("99", result.getMatchCompetitorRow().getCompetitorId());

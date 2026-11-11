@@ -79,12 +79,15 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
 
         // Each row is saved in its own transaction, so a bad row is reported and skipped without affecting the others
         List<ShooterLogBulkResponse> shooterLogBulkResponses = new ArrayList<>();
+        int rowNumber = 0;
         for (ShooterLogRequest request : readShooterLogs(csvData)) {
+            rowNumber++;
             try {
-                shooterLogBulkResponses.add(new ShooterLogBulkResponse(true, "", createShooterLog(request), null));
+                shooterLogBulkResponses.add(
+                        new ShooterLogBulkResponse(rowNumber, true, "", createShooterLog(request), null));
             } catch (ValidationException | NonFatalException e) {
                 log.warn("Shooter log skipped due to error: {}", e.getMessage());
-                shooterLogBulkResponses.add(new ShooterLogBulkResponse(false, e.getMessage(), null,
+                shooterLogBulkResponses.add(new ShooterLogBulkResponse(rowNumber, false, e.getMessage(), null,
                         new ShooterLogRow(request)));
             }
         }
@@ -262,21 +265,23 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
         requireCsvData(csvData);
 
         List<ShooterLogBulkResponse> shooterLogBulkResponses = new ArrayList<>();
+        int rowNumber = 0;
         for (ShooterLogBulkRequest row : readRows(csvData, ShooterLogBulkRequest.class,
                 ShooterLogBulkRequestCsvMixIn.class)) {
+            rowNumber++;
             try {
                 if (row.getShooterLogId() == null) {
                     throw new ValidationException("Shooter log ID is required.");
                 }
                 shooterLogBulkResponses.add(
-                        new ShooterLogBulkResponse(true, "", update.apply(row.getShooterLogId(), row), null));
+                        new ShooterLogBulkResponse(rowNumber, true, "", update.apply(row.getShooterLogId(), row), null));
             } catch (ValidationException | NonFatalException e) {
                 log.warn("Shooter log {} skipped due to error: {}", replace ? "replacement" : "update", e.getMessage());
                 ShooterLogRow shooterLogRow = new ShooterLogRow(row);
                 shooterLogRow.setShooterLogId(Objects.toString(row.getShooterLogId(), ""));
                 shooterLogRow.setAddMatchIds(joinIds(row.getAddMatchIds()));
                 shooterLogRow.setRemoveMatchIds(joinIds(row.getRemoveMatchIds()));
-                shooterLogBulkResponses.add(new ShooterLogBulkResponse(false, e.getMessage(), null, shooterLogRow));
+                shooterLogBulkResponses.add(new ShooterLogBulkResponse(rowNumber, false, e.getMessage(), null, shooterLogRow));
             }
         }
         return new ShooterLogBulkResponseHolder(shooterLogBulkResponses);

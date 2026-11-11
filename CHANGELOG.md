@@ -37,6 +37,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ✨ Added
 
+- **`MatchCompetitorBulkResponse.rowNumber` and `ShooterLogBulkResponse.rowNumber`:** Each row of the bulk match
+  competitor import and of the bulk shooter log create, replace and update imports now carries its `rowNumber`, like
+  the competitor and match bulk rows.
 - **`CompetitorBulkResponse.success`:** Each row of the bulk competitor import now carries a `success` flag like the
   match competitor and shooter log bulk rows: `true` for a row that was created or updated, and `false` for a row that
   failed, with the reason in its `message`, no `competitor` and a `competitorRow` holding every value the row

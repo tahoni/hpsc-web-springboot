@@ -476,6 +476,8 @@ class IpscShooterLogServiceTest {
         assertEquals(2, holder.getShooterLogResults().size());
         ShooterLogBulkResponse first = holder.getShooterLogResults().get(0);
         ShooterLogBulkResponse second = holder.getShooterLogResults().get(1);
+        assertEquals(1, first.getRowNumber());
+        assertEquals(2, second.getRowNumber());
         assertTrue(first.isSuccess());
         assertEquals("", first.getMessage());
         assertNull(first.getShooterLogRow());
@@ -514,6 +516,7 @@ class IpscShooterLogServiceTest {
         // Assert
         List<ShooterLogBulkResponse> results = holder.getShooterLogResults();
         assertEquals(5, results.size());
+        assertEquals(List.of(1, 2, 3, 4, 5), results.stream().map(ShooterLogBulkResponse::getRowNumber).toList());
         assertTrue(results.get(0).isSuccess());
 
         assertFalse(results.get(1).isSuccess());
