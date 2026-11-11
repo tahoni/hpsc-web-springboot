@@ -150,8 +150,10 @@ number or a newly met precondition on an existing gap — see the `update-improv
     in v16.4.0 (pin dropped; all 38 migrations applied to MySQL 8.4 on Flyway `12.4.0`)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
-- **⚪ Open (0):**
-  - *No gaps are currently open.*
+- **⚪ Open (2):**
+  - #51 The competitor and match bulk imports now save row by row, but `ARCHITECTURE.md` still describes them as
+    all-or-nothing
+  - #52 `TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults` have no production caller
 
 ### ✅ Completed
 
@@ -1662,7 +1664,50 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 ### ⚪ Open
 
-*No gaps are currently open.*
+#### 51. The competitor and match bulk imports now save row by row, but `ARCHITECTURE.md` still describes them as all-or-nothing
+
+**Evidence:** `IpscCompetitorServiceImpl.createCompetitors` and `IpscMatchServiceImpl.createMatches` now build and save
+each CSV row on its own, through `TransactionService.saveCompetitor` and `saveMatch`, and report a row that is missing
+a field, names an unknown club or conflicts with an existing record as `success: false` while the other rows are still
+imported (`CHANGELOG.md`'s `[Unreleased]` entries "bulk competitor import reports failed rows" and "bulk match import
+reports failed rows"). `ARCHITECTURE.md` still says the opposite in four places: line 205 ("saving all rows in one
+transaction so a bad row leaves none persisted"), lines 422–423 and 452–453, where the Competitor and Match flow
+diagrams show `TransactionService.saveCompetitors` and `saveMatches` "saves every row in one transaction — a bad row
+fails before anything is saved", and line 211, which says `TransactionService` commits "each bulk import as a whole".
+The Competitor flow's last step on line 424 also still names `CompetitorResponseHolder`, now
+`CompetitorBulkResponseHolder`, and neither flow says the response carries a result for every row, as the Match
+Competitor and Shooter Log flows do.
+
+**Why it matters:** The same shape as Gaps #21 and #35: data-flow documentation that predates the code it describes.
+A contributor who reads it expects a bad row to roll the whole import back, and a client built from it would treat a
+`201` as "every row was saved" when it now only means the CSV was read. With the change, all four bulk flows report per
+row, so the page that is meant to show their shared shape now shows two of them wrongly.
+
+**Proposed improvement:** Rewrite the sentence on line 205 and the one on line 211, and change both diagrams to show
+each row saved through `TransactionService.saveCompetitor` and `saveMatch` with a failed row reported and skipped, and
+to end in `CompetitorBulkResponseHolder (one CompetitorBulkResponse per row)` and `MatchBulkResponseHolder (one
+MatchBulkResponse per row)`, as the other two flows already do.
+
+#### 52. `TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults` have no production caller
+
+**Evidence:** Grepping `src/main` for each name finds only its declaration in `TransactionService` and its
+implementation in `TransactionServiceImpl`. `saveMatches` lost its last caller when `IpscMatchServiceImpl.createMatches`
+moved to saving each row through `saveMatch`; `saveMatchCompetitors` and `saveShooterResults` have none either, as
+`IpscMatchCompetitorServiceImpl` saves each row through `saveMatchCompetitor` and `IpscShooterResultServiceImpl`
+replaces a match's results through `replaceShooterResults`. Only tests call them: `TransactionServiceTest` for all three
+and `TransactionServiceIntegrationTest` for `saveMatches`. `CHANGELOG.md` records `saveShooterResults` as new in
+v16.1.0 and describes it in its own Javadoc as the way a calculation saves its results, which `replaceShooterResults`
+now does. `saveCompetitors` is not affected, as `IpscCompetitorServiceImpl.verifyCompetitors` still calls it.
+
+**Why it matters:** The same shape as Gaps #38, #39 and #41: public methods that only tests call, so the coverage gate
+reports them as exercised while nothing in the application can reach them. Each is also a documented guarantee ("either
+every one is saved or none") that no code relies on, and `TransactionService` is the interface the `AGENTS.md` test
+tiers treat as the one place every write is committed.
+
+**Proposed improvement:** Remove the three methods from `TransactionService` and `TransactionServiceImpl`, with their
+tests in `TransactionServiceTest` and `TransactionServiceIntegrationTest`, and correct the `TransactionService` row of
+`ARCHITECTURE.md`'s service table if it still lists them. If a bulk import returns to all-or-nothing, restore the
+matching batch method with its first caller instead.
 
 ---
 
@@ -1670,7 +1715,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | No items currently scoped — #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                         |
+| **Now**     | #51 (correct `ARCHITECTURE.md`'s all-or-nothing bulk import flows) and #52 (remove three unused `TransactionService` batch saves); #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                         |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath, and `flyway-mysql` until v16.4.0 (#50, closed); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
@@ -1796,6 +1841,10 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
   read, and when it is edited without changing day, closing Gap #49.
 - ✅ Met in v16.4.0: `flyway-mysql` takes the Flyway version Spring Boot manages, so `flyway-core`, the MySQL module
   and the Maven plugin share one version, and all 38 migrations apply to MySQL 8.4 on it, closing Gap #50.
+- `ARCHITECTURE.md`'s Competitor and Match bulk CSV import flows, and the sentences around them, describe each row
+  being saved on its own and a failed row being reported, as the code does, closing Gap #51.
+- `TransactionService` declares no batch save that production code never calls: `saveMatches`, `saveMatchCompetitors`
+  and `saveShooterResults` are removed with their tests, or each has a caller, closing Gap #52.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

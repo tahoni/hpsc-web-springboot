@@ -588,7 +588,24 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-*No gaps are currently open.*
+**Competitor and match bulk import docs** *(improvement-plan.md → Gap #51)*
+
+- [ ] Rewrite `ARCHITECTURE.md`'s sentence that says both bulk imports save "all rows in one transaction so a bad row
+  leaves none persisted", and the one that says `TransactionService` commits "each bulk import as a whole", to describe
+  each row being saved on its own and a failed row being reported and skipped
+- [ ] Change the Competitor and Match Bulk CSV Import Flow diagrams to show each row saved through
+  `TransactionService.saveCompetitor` and `saveMatch`, with a failed row reported instead of failing before anything is
+  saved
+- [ ] End the Competitor flow in `CompetitorBulkResponseHolder (one CompetitorBulkResponse per row)` and the Match flow
+  in `MatchBulkResponseHolder (one MatchBulkResponse per row)`, as the Match Competitor and Shooter Log flows already do
+
+**Unused `TransactionService` batch saves** *(improvement-plan.md → Gap #52)*
+
+- [ ] Confirm with the IDE's find-usages that `saveMatches`, `saveMatchCompetitors` and `saveShooterResults` have no
+  production caller
+- [ ] Remove the three methods from `TransactionService` and `TransactionServiceImpl`, with their tests in
+  `TransactionServiceTest` and `TransactionServiceIntegrationTest`, or give each a production caller
+- [ ] Correct `ARCHITECTURE.md`'s `TransactionService` description if it still names them
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.
