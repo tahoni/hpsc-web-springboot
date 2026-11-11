@@ -25,6 +25,7 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorRow;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 import za.co.hpsc.web.repositories.CompetitorRepository;
@@ -116,14 +117,14 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
                     importedClubNumbers.put(saved.getClubNumber(), rowNumber);
                 }
                 competitorResponses.add(saved);
-                results.add(new CompetitorBulkResponse(rowNumber, true, message, saved));
+                results.add(new CompetitorBulkResponse(rowNumber, true, message, saved, null));
             } catch (ValidationException | NonFatalException e) {
                 log.warn("Competitor row {} skipped due to error: {}", rowNumber, e.getMessage());
-                results.add(failedRow(rowNumber, e.getMessage()));
+                results.add(failedRow(rowNumber, e.getMessage(), competitorRequest));
             } catch (DataIntegrityViolationException e) {
                 log.warn("Competitor row {} skipped due to a data integrity violation: {}", rowNumber,
                         e.getMessage());
-                results.add(failedRow(rowNumber, "The competitor conflicts with an existing record."));
+                results.add(failedRow(rowNumber, "The competitor conflicts with an existing record.", competitorRequest));
             }
         }
 
@@ -131,14 +132,17 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     /**
-     * Builds the outcome reported for a bulk import row that could not be imported.
+     * Builds the outcome reported for a bulk import row that could not be imported: the message and every value the
+     * row supplied, with missing ones as empty strings.
      *
      * @param rowNumber the row's position among the CSV's data rows, starting at 1.
      * @param message   the reason the row was not imported.
-     * @return an unsuccessful {@link CompetitorBulkResponse} with the message and no competitor.
+     * @param request   the request read from the row, as supplied; may be null, in which case every value is empty.
+     * @return an unsuccessful {@link CompetitorBulkResponse} with the message, a {@code null} competitor and the row's
+     * values.
      */
-    protected CompetitorBulkResponse failedRow(int rowNumber, String message) {
-        return new CompetitorBulkResponse(rowNumber, false, message, null);
+    protected CompetitorBulkResponse failedRow(int rowNumber, String message, CompetitorRequest request) {
+        return new CompetitorBulkResponse(rowNumber, false, message, null, new CompetitorRow(request));
     }
 
     @Override

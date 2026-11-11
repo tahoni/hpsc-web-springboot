@@ -23,6 +23,7 @@ import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorRow;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
@@ -425,6 +426,12 @@ public class IpscCompetitorServiceTest {
                 holder.getResults().stream().map(CompetitorBulkResponse::isSuccess).toList());
         assertEquals(List.of(1, 2, 3),
                 holder.getResults().stream().map(CompetitorBulkResponse::getRowNumber).toList());
+        assertNull(holder.getResults().get(0).getCompetitorRow());
+        assertNull(holder.getResults().get(2).getCompetitorRow());
+        CompetitorRow failedRow = holder.getResults().get(1).getCompetitorRow();
+        assertEquals("", failedRow.getFirstName());
+        assertEquals("Smith", failedRow.getLastName());
+        assertEquals("HPSC-002", failedRow.getClubNumber());
         verify(competitorRepository, times(2)).save(any(Competitor.class));
     }
 
@@ -451,6 +458,7 @@ public class IpscCompetitorServiceTest {
         assertFalse(result.isSuccess());
         assertFalse(result.getMessage().isBlank());
         assertNull(result.getCompetitor());
+        assertNotNull(result.getCompetitorRow());
     }
 
     // deleteCompetitor()

@@ -4,13 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The outcome of importing a single competitor in a bulk import: which row it was, whether it succeeded, a message
- * describing the outcome, and the {@link CompetitorResponse} it was created or updated as.
+ * describing the outcome, and the {@link CompetitorResponse} it was created or updated as, or the
+ * {@link CompetitorRow} of the values it supplied if it failed.
  *
  * @see CompetitorResponseHolder
  * @see CompetitorResponse
+ * @see CompetitorRow
  * @since 16.4.0
  */
 @Getter
@@ -27,6 +30,13 @@ public class CompetitorBulkResponse {
      * and verified an existing one, and the reason for a row that failed.
      */
     private String message = "";
-    /** The created or updated competitor; {@code null} for a row that failed. */
+    /** The created or updated competitor; {@code null} for a row that failed, whose values are in {@link #competitorRow}. */
+    @Nullable
     private CompetitorResponse competitor;
+    /**
+     * Every value the row supplied, as text with a missing value as an empty string; set only for a row that failed,
+     * and {@code null} for one that was imported.
+     */
+    @Nullable
+    private CompetitorRow competitorRow;
 }

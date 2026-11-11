@@ -39,7 +39,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`CompetitorBulkResponse.success`:** Each row of the bulk competitor import now carries a `success` flag like the
   match competitor and shooter log bulk rows: `true` for a row that was created or updated, and `false` for a row that
-  failed, with the reason in its `message` and no `competitor`.
+  failed, with the reason in its `message`, no `competitor` and a `competitorRow` holding every value the row
+  supplied, as text.
+- **`CompetitorBulkResponse.competitorRow`:** The new `CompetitorRow` type, like `MatchCompetitorRow`, reports the
+  values of a failed row, with the email addresses in one value separated by `;`. It is `null` for a row that was
+  imported.
 
 #### 🔄 Changed
 

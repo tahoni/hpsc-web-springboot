@@ -269,6 +269,7 @@ class IpscCompetitorServiceIntegrationTest {
         assertFalse(holder.getResults().getFirst().isSuccess());
         assertFalse(holder.getResults().getFirst().getMessage().isBlank());
         assertNull(holder.getResults().getFirst().getCompetitor());
+        assertNotNull(holder.getResults().getFirst().getCompetitorRow());
         assertTrue(holder.getCompetitors().isEmpty());
         assertEquals(countBefore, competitorRepository.count());
     }
