@@ -37,6 +37,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### ✨ Added
 
+##### Models
+
 - **`MatchCompetitorBulkResponse.rowNumber` and `ShooterLogBulkResponse.rowNumber`:** Each row of the bulk match
   competitor import and of the bulk shooter log create, replace and update imports now carries its `rowNumber`, like
   the competitor and match bulk rows.
@@ -48,7 +50,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   values of a failed row, with the email addresses in one value separated by `;`. It is `null` for a row that was
   imported.
 
+##### Tests
+
+- **`CompetitorRowTest`, `MatchRowTest`, `MatchResponseTest`, `ShooterLogResponseTest` and
+  `ShooterResultResponseTest`:** New tests for the row classes, the `messages` field's JSON and the responses built from
+  a log with no loaded matches or an uncalculated percentage, and the service, mapper and impl tests gain cases for
+  failed rows, row numbers, a repeated club number, data integrity conflicts, CSV read failures and the shooter log bulk
+  patch — bringing line coverage to 99.2% and branch coverage to 100%.
+
 #### 🔄 Changed
+
+##### Models
+
+- **Breaking: `MatchResponse.warnings` renamed to `messages`:** The list of problems found with a match when it is read
+  keeps its behaviour (left out of the JSON when empty) but is now serialised as `messages`, so clients that read
+  `warnings` must read `messages` instead.
+- **`CompetitorResponseHolder`:** Renamed `CompetitorBulkResponseHolder`, after the `CompetitorBulkResponse` rows it
+  carries, and so is its OpenAPI schema name; the JSON it serialises to is unchanged.
+
+##### Services
 
 - **Breaking: bulk match import reports failed rows:** `MatchResponseHolder` is renamed `MatchBulkResponseHolder` and
   now carries a `results` list with a `MatchBulkResponse` for every row: its `rowNumber`, `success`, `message`, the
@@ -62,9 +82,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `false` and skipped, instead of failing the whole request with a 400 or 404. Each row is saved in its own transaction,
   so the other rows are still imported. A CSV that is blank or cannot be parsed still fails the request. Clients that
   relied on a bad row failing the whole import must now check each row's `success`.
-- **Breaking: `MatchResponse.warnings` renamed to `messages`:** The list of problems found with a match when it is read
-  keeps its behaviour (left out of the JSON when empty) but is now serialised as `messages`, so clients that read
-  `warnings` must read `messages` instead.
+- **`IpscCompetitorServiceImpl.createCompetitors`:** A row that repeats a club number an earlier row of the same file
+  already imported is now reported as failed — "Club number … was already imported by row N of this file." — instead of
+  silently updating the competitor that earlier row just saved. A club number that matches a competitor already in the
+  database still updates and verifies it, and a failed row does not reserve its club number.
+- **`MatchCompetitorMapper.resolveFirearmType`, `IpscMatchCompetitorServiceImpl` and `IpscShooterLogServiceImpl`:**
+  Branches that could never run are removed — the "division has no firearm type" error, as every division has one, the
+  null check on the target club when a bulk row is skipped, and the null guards on the bulk request's match ID lists,
+  which default to empty lists — with no change in behaviour.
 
 ---
 
@@ -105,7 +130,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchResponse.warnings`:** Lists the problems found with a match when it is read, left out of the JSON when empty.
 - **`CompetitorBulkResponse`:** The result of one row of the bulk competitor import: its row number, a message and
   the competitor it created or updated.
-- **`CompetitorBulkResponseHolder.results`:** Holds a `CompetitorBulkResponse` for every row of the bulk competitor import,
+- **`CompetitorResponseHolder.results`:** Holds a `CompetitorBulkResponse` for every row of the bulk competitor import,
   in CSV order. `competitors` is unchanged.
 
 ##### Services
@@ -808,7 +833,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchCompetitorBulkResponseHolder.matchCompetitors`:** **Breaking:** renamed back to `matchCompetitorResults`, so
   a bulk match competitor import's response body carries `matchCompetitorResults` instead of `matchCompetitors`;
   `IpscMatchCompetitorController` reads the renamed getter
-- **`CompetitorResponse`, `CompetitorBulkResponseHolder`, `MatchResponse`, `MatchResponseHolder` and
+- **`CompetitorResponse`, `CompetitorResponseHolder`, `MatchResponse`, `MatchResponseHolder` and
   `MatchCompetitorBulkResponseHolder`:** Replaced `org.jspecify.annotations.NonNull` with
   `jakarta.validation.constraints.NotNull` on their required fields, so they can be checked by a `Validator`
 
