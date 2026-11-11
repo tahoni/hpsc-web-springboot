@@ -461,6 +461,50 @@ public class IpscCompetitorServiceTest {
         assertNotNull(result.getCompetitorRow());
     }
 
+    @Test
+    void testCreateCompetitors_whenSavingARowViolatesDataIntegrity_thenReportsTheRowAsFailed() {
+        // Arrange
+        when(competitorRepository.save(any(Competitor.class)))
+                .thenThrow(new DataIntegrityViolationException("Duplicate entry 'HPSC-001'"));
+        String csvData = """
+                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+                Jane,Doe,,,,,,,,HPSC-001,,,
+                """;
+
+        // Act
+        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertFailedRow(holder);
+        CompetitorBulkResponse result = holder.getResults().getFirst();
+        assertEquals("The competitor conflicts with an existing record.", result.getMessage());
+        assertEquals("Jane", result.getCompetitorRow().getFirstName());
+        assertEquals("HPSC-001", result.getCompetitorRow().getClubNumber());
+    }
+
+    @Test
+    void testCreateCompetitors_whenSavingARowViolatesDataIntegrity_thenTheOtherRowsAreStillImported() {
+        // Arrange
+        when(competitorRepository.save(any(Competitor.class)))
+                .thenThrow(new DataIntegrityViolationException("Duplicate entry 'HPSC-001'"))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        String csvData = """
+                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+                Jane,Doe,,,,,,,,HPSC-001,,,
+                John,Smith,,,,,,,,HPSC-002,,,
+                """;
+
+        // Act
+        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertEquals(List.of(false, true),
+                holder.getResults().stream().map(CompetitorBulkResponse::isSuccess).toList());
+        assertEquals(1, holder.getCompetitors().size());
+        assertEquals("John", holder.getCompetitors().getFirst().getFirstName());
+        assertNull(holder.getResults().get(1).getCompetitorRow());
+    }
+
     // deleteCompetitor()
     @Test
     void testDeleteCompetitor_whenCompetitorDoesNotExist_thenThrowsNonFatalException() {
