@@ -24,7 +24,7 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
-import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorRow;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
@@ -74,7 +74,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
     }
 
     @Override
-    public CompetitorResponseHolder createCompetitors(String csvData)
+    public CompetitorBulkResponseHolder createCompetitors(String csvData)
             throws FatalException {
 
         if (!hasText(csvData)) {
@@ -128,7 +128,7 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
             }
         }
 
-        return new CompetitorResponseHolder(competitorResponses, results);
+        return new CompetitorBulkResponseHolder(competitorResponses, results);
     }
 
     /**

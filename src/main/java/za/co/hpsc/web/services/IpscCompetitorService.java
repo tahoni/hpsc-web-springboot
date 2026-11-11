@@ -7,7 +7,7 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
-import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 
 import java.util.List;
@@ -57,13 +57,13 @@ public interface IpscCompetitorService {
      *
      * @param csvData the CSV data containing competitor information, one competitor per row.
      *                Must not be null or blank.
-     * @return a {@link CompetitorResponseHolder} containing the created or updated competitors, in the same
+     * @return a {@link CompetitorBulkResponseHolder} containing the created or updated competitors, in the same
      * order as the CSV rows, and the result of every row, including the rows that failed.
      * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      * @since 8.0.0
      */
-    CompetitorResponseHolder createCompetitors(String csvData)
+    CompetitorBulkResponseHolder createCompetitors(String csvData)
             throws ValidationException, NonFatalException, FatalException;
 
     /**

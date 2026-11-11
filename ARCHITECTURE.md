@@ -281,7 +281,7 @@ envelope.
 
 DTOs for the IPSC module rebuild — `MatchRequest`, `MatchPatchRequest` and `MatchResponse` (consumed by `IpscMatchController`'s
 single-match CRUD endpoints) and `MatchResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchRequest` through a Jackson mix-in), `CompetitorRequest`, `CompetitorPatchRequest` and `CompetitorResponse` (consumed by
-`IpscCompetitorController`'s single-competitor CRUD endpoints) and `CompetitorResponseHolder`
+`IpscCompetitorController`'s single-competitor CRUD endpoints) and `CompetitorBulkResponseHolder`
 (its bulk CSV import endpoint, which reads rows into `CompetitorRequest` through a Jackson mix-in), `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and `MatchCompetitorResponse` (consumed by `IpscMatchCompetitorController`'s single-entry CRUD endpoints), `MatchCompetitorBulkResponse` and `MatchCompetitorBulkResponseHolder` (the per-row outcome of a match competitor bulk import), and the
 shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
 

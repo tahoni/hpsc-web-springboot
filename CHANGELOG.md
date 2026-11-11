@@ -94,7 +94,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchResponse.warnings`:** Lists the problems found with a match when it is read, left out of the JSON when empty.
 - **`CompetitorBulkResponse`:** The result of one row of the bulk competitor import: its row number, a message and
   the competitor it created or updated.
-- **`CompetitorResponseHolder.results`:** Holds a `CompetitorBulkResponse` for every row of the bulk competitor import,
+- **`CompetitorBulkResponseHolder.results`:** Holds a `CompetitorBulkResponse` for every row of the bulk competitor import,
   in CSV order. `competitors` is unchanged.
 
 ##### Services
@@ -797,7 +797,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`MatchCompetitorBulkResponseHolder.matchCompetitors`:** **Breaking:** renamed back to `matchCompetitorResults`, so
   a bulk match competitor import's response body carries `matchCompetitorResults` instead of `matchCompetitors`;
   `IpscMatchCompetitorController` reads the renamed getter
-- **`CompetitorResponse`, `CompetitorResponseHolder`, `MatchResponse`, `MatchResponseHolder` and
+- **`CompetitorResponse`, `CompetitorBulkResponseHolder`, `MatchResponse`, `MatchResponseHolder` and
   `MatchCompetitorBulkResponseHolder`:** Replaced `org.jspecify.annotations.NonNull` with
   `jakarta.validation.constraints.NotNull` on their required fields, so they can be checked by a `Validator`
 

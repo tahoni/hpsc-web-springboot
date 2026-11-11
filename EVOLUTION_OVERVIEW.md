@@ -370,7 +370,7 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
   `MatchIds`, `AddMatchIds` and `RemoveMatchIds` columns, with none required
 - `ShooterLogPatchRequest.addMatchIds` and `removeMatchIds`, with `validate` refusing a null ID or a match both added
   and removed; `ShooterLogRow` also carries `shooterLogId`, `addMatchIds` and `removeMatchIds`
-- `CompetitorBulkResponse` and `CompetitorResponseHolder.results` report each competitor import row; `MatchResponse`
+- `CompetitorBulkResponse` and `CompetitorBulkResponseHolder.results` report each competitor import row; `MatchResponse`
   gains `warnings`, left out of the JSON when empty
 - The three CSV mix-ins stop binding their own ID column, and `MatchRequest`, `CompetitorRequest` and
   `MatchCompetitorRequest` gain a constructor without it

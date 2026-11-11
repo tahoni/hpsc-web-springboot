@@ -24,7 +24,7 @@
 
 - `IpscCompetitorController.createCompetitors` (`POST /ipsc/competitors/bulk`), backed by
   `IpscCompetitorService`/`IpscCompetitorServiceImpl.createCompetitors`
-- `CompetitorRequestForCSV`, `CompetitorResponseHolder` models
+- `CompetitorRequestForCSV`, `CompetitorBulkResponseHolder` models
 - New unit tests across the bulk-import feature and every touched request model (`CompetitorRequestTest`,
   `CompetitorRequestForCSVTest`, `MatchRequestTest`, `MatchStageRequestTest`, `MatchOverallScoresRequestTest`,
   `MatchStageScoresRequestTest`, `MatchOverallScoresRequestForCSVTest`, `MatchStageScoresRequestForCSVTest`)

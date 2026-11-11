@@ -53,7 +53,7 @@ evolution of architecture, features and design philosophy across all versions.
   let a `PATCH` add matches to and remove them from a log without restating the rest, while `matchIds` still replaces
   the list and a match both added and removed is a `400`
 - A bulk competitor import row whose club number is an existing competitor's updates and verifies that competitor
-  instead of creating another, and `CompetitorBulkResponse` in `CompetitorResponseHolder.results` reports each row
+  instead of creating another, and `CompetitorBulkResponse` in `CompetitorBulkResponseHolder.results` reports each row
 - `MatchResponse.warnings` reports a match outside the dates of a shooter log that covers it when the match is read,
   and when it is edited without changing its day, built by `ShooterLogHelpers.describeOutsideDates`; the match is
   still returned and a move to another day outside the dates is still refused
@@ -1016,7 +1016,7 @@ The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, i
   every row failed
 - `ShooterLogPatchRequest.addMatchIds` and `removeMatchIds` add and remove matches on the single and the bulk `PATCH`
 - `IpscCompetitorServiceImpl.createCompetitors` updates and verifies a competitor whose club number a row names, with
-  `CompetitorBulkResponse` and `CompetitorResponseHolder.results` reporting each row
+  `CompetitorBulkResponse` and `CompetitorBulkResponseHolder.results` reporting each row
 - `MatchResponse.warnings`, filled by `IpscMatchServiceImpl` and `ShooterLogHelpers.describeOutsideDates`, reports a
   match outside a covering log's dates
 - The match, competitor and match competitor CSV imports no longer read their own ID column

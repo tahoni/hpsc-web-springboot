@@ -95,7 +95,7 @@ IPSC request models to date: without a matching `@JsonCreator` constructor, the 
 - `IpscCompetitorController.createCompetitors` (`POST /ipsc/competitors/bulk`, consumes `text/csv`) parses CSV data
   into `CompetitorRequestForCSV` rows and creates each competitor via the existing `createCompetitor` logic — unlike
   `AwardController`/`ImageController`'s bulk endpoints, which only build response objects without persisting
-- New `CompetitorRequestForCSV` (CSV-mapped, `UpperCamelCase` headers) and `CompetitorResponseHolder` models
+- New `CompetitorRequestForCSV` (CSV-mapped, `UpperCamelCase` headers) and `CompetitorBulkResponseHolder` models
 
 **Required-Field Enforcement Fix**
 

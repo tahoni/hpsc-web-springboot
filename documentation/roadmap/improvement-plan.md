@@ -373,14 +373,14 @@ explaining whether it's intentional or simply not yet scheduled.
 
 **Proposed improvement:** Apply the same mirrored pattern Gap #1's Outcome already used for the competitor domain:
 introduce a `MatchRequestForCSV`/`MatchResponseHolder` pair alongside the existing `CompetitorRequestForCSV`/
-`CompetitorResponseHolder`, and an `IpscMatchController.createMatches`/`IpscMatchService.createMatches` pair that
+`CompetitorBulkResponseHolder`, and an `IpscMatchController.createMatches`/`IpscMatchService.createMatches` pair that
 persists each CSV row via the existing single-`createMatch` validation/club/firearm-type/category-resolution logic —
 no new cross-entity orchestration, per the discipline Gap #1 established.
 
 **Outcome:** Delivered in v8.3.0. `MatchRequestForCSV` (`models/ipsc/match/request/`) mirrors
 `CompetitorRequestForCSV`'s `UpperCamelCase` CSV/JSON `@JsonCreator` pattern, with its stages represented as a single
 semicolon-separated `<stageNumber>:<stageName>` cell rather than a nested list (CSV has no native nested-row
-representation). `MatchResponseHolder` mirrors `CompetitorResponseHolder`. `IpscMatchController.createMatches`
+representation). `MatchResponseHolder` mirrors `CompetitorBulkResponseHolder`. `IpscMatchController.createMatches`
 (`POST /ipsc/matches/bulk`, consumes `text/csv`) and `IpscMatchService`/`IpscMatchServiceImpl.createMatches` mirror
 `IpscCompetitorController`/`IpscCompetitorServiceImpl`'s `createCompetitors` shape exactly: a `readMatches` CSV-parsing
 helper, a `toRequest` row-to-`MatchRequest` mapper, and (new relative to the competitor flow, since matches have no
@@ -1594,7 +1594,7 @@ matches without restating the rest (as `addMatchIds` and `removeMatchIds` do on 
 clearing them all takes a bulk `PUT`. `IpscCompetitorServiceImpl.createCompetitors` now matches a row only on its club
 number, the one unique identifier, through `CompetitorRepository.findByClubNumber`: neither an ID number nor a full
 name can tell two people apart, so a row without a club number always creates a competitor. A matched competitor takes
-the row's data and is marked verified, and `CompetitorResponseHolder.results` carries a `CompetitorBulkResponse` for
+the row's data and is marked verified, and `CompetitorBulkResponseHolder.results` carries a `CompetitorBulkResponse` for
 every row. `ARCHITECTURE.md` describes both, with Mockito controller tests, a mix-in test and `@SpringBootTest`
 integration tests.
 

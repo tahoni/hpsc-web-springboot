@@ -23,7 +23,7 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
-import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 import za.co.hpsc.web.services.IpscCompetitorService;
 
@@ -87,7 +87,7 @@ public class IpscCompetitorController {
      * @param csvData the CSV content as a string containing details about competitors,
      *                formatted according to the expected schema. This parameter is required
      *                and cannot be null.
-     * @return a {@link CompetitorResponseHolder} containing the created or updated competitors and the result of every
+     * @return a {@link CompetitorBulkResponseHolder} containing the created or updated competitors and the result of every
      * row.
      * @throws ValidationException if the CSV data is null, blank or cannot be parsed. A row that is missing a
      *                             required field, has an unrecognised gender, names a home club that cannot be
@@ -106,7 +106,7 @@ public class IpscCompetitorController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Competitors created or updated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = CompetitorResponseHolder.class))),
+                            schema = @Schema(implementation = CompetitorBulkResponseHolder.class))),
             @ApiResponse(responseCode = "400", description = "Invalid CSV data provided.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
@@ -114,7 +114,7 @@ public class IpscCompetitorController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<CompetitorResponseHolder> createCompetitors(
+    ResponseEntity<CompetitorBulkResponseHolder> createCompetitors(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(mediaType = "text/plain",
                             schema = @Schema(implementation = String.class),

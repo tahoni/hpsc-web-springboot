@@ -11,7 +11,7 @@
 
 - **Added:** `IpscShooterLogController.updateShooterLogs` and `patchShooterLogs` with the matching service methods,
   `ShooterLogBulkRequest`, `ShooterLogBulkRequestCsvMixIn`, `ShooterLogPatchRequest.addMatchIds` and `removeMatchIds`,
-  `CompetitorBulkResponse`, `CompetitorResponseHolder.results`, `MatchResponse.warnings`,
+  `CompetitorBulkResponse`, `CompetitorBulkResponseHolder.results`, `MatchResponse.warnings`,
   `ShooterLogHelpers.describeOutsideDates`, and `FlywayMysqlMigrationTest` with a `migrations` CI job that runs the
   Flyway migrations against MySQL 8.4; the bulk endpoints answer `200`, or `422` if every row failed
 - **Changed:** the competitor import updates and verifies a competitor by club number; the CSV imports stop reading

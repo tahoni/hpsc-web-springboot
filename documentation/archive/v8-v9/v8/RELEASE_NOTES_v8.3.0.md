@@ -30,7 +30,7 @@ documented since v8.1.0 as the one asymmetry left between the two IPSC domains' 
 - **`MatchRequestForCSV`** — new request model (`models/ipsc/match/request/`), matching `CompetitorRequestForCSV`'s
   `UpperCamelCase`, `@JsonCreator`-constructor pattern for both CSV and JSON input
 - **`MatchResponseHolder`** — new response container (`models/ipsc/match/response/`), mirroring
-  `CompetitorResponseHolder`
+  `CompetitorBulkResponseHolder`
 
 ### 🧩 A Delimited Stages Cell, Not a Nested List
 
@@ -69,7 +69,7 @@ documented since v8.1.0 as the one asymmetry left between the two IPSC domains' 
   `Stages` to their `UpperCamelCase` column/property names for CSV/JSON deserialization, matching
   `CompetitorRequestForCSV`'s pattern
 - **`MatchResponseHolder`:** New response container holding the `MatchResponse`s created by a bulk CSV import,
-  mirroring `CompetitorResponseHolder`
+  mirroring `CompetitorBulkResponseHolder`
 
 #### Documentation
 

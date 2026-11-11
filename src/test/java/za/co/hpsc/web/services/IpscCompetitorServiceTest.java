@@ -22,7 +22,7 @@ import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponse;
-import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorRow;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
@@ -31,7 +31,6 @@ import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.repositories.ShooterResultRepository;
-import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.services.impl.IpscEntityClubServiceImpl;
 import za.co.hpsc.web.services.impl.IpscCompetitorServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
@@ -314,7 +313,7 @@ public class IpscCompetitorServiceTest {
                 """;
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertEquals(1, holder.getCompetitors().size());
@@ -333,7 +332,7 @@ public class IpscCompetitorServiceTest {
                 """;
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"),
@@ -351,7 +350,7 @@ public class IpscCompetitorServiceTest {
                 """;
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertEquals(2, holder.getCompetitors().size());
@@ -369,7 +368,7 @@ public class IpscCompetitorServiceTest {
                 """;
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertFailedRow(holder);
@@ -384,7 +383,7 @@ public class IpscCompetitorServiceTest {
                 """;
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertFailedRow(holder);
@@ -400,7 +399,7 @@ public class IpscCompetitorServiceTest {
                 """;
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertFailedRow(holder);
@@ -418,7 +417,7 @@ public class IpscCompetitorServiceTest {
                 """;
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertEquals(2, holder.getCompetitors().size());
@@ -445,13 +444,13 @@ public class IpscCompetitorServiceTest {
                 """;
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertTrue(holder.getResults().getFirst().isSuccess());
     }
 
-    private static void assertFailedRow(CompetitorResponseHolder holder) {
+    private static void assertFailedRow(CompetitorBulkResponseHolder holder) {
         assertTrue(holder.getCompetitors().isEmpty());
         assertEquals(1, holder.getResults().size());
         CompetitorBulkResponse result = holder.getResults().getFirst();
@@ -472,7 +471,7 @@ public class IpscCompetitorServiceTest {
                 """;
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertFailedRow(holder);
@@ -495,7 +494,7 @@ public class IpscCompetitorServiceTest {
                 """;
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertEquals(List.of(false, true),

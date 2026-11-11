@@ -115,7 +115,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 **Match bulk CSV import** *(improvement-plan.md → Gap #8)* — ✅ Closed in v8.3.0
 
 - [x] Introduce `MatchRequestForCSV`/`MatchResponseHolder` (`models/ipsc/match/request/`,
-  `models/ipsc/match/response/`), mirroring `CompetitorRequestForCSV`/`CompetitorResponseHolder`'s `UpperCamelCase`
+  `models/ipsc/match/response/`), mirroring `CompetitorRequestForCSV`/`CompetitorBulkResponseHolder`'s `UpperCamelCase`
   CSV/JSON `@JsonCreator` pattern — with stages represented as a single semicolon-separated
   `<stageNumber>:<stageName>` cell, since CSV has no native nested-row representation
 - [x] Add `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`, consumes `text/csv`) and
@@ -549,7 +549,7 @@ Gap #41)* —
 - [x] Let a bulk competitor row for an existing competitor update and verify it instead of creating another — done
   differently: matched on the club number only, in `IpscCompetitorServiceImpl.createCompetitors`, as neither an ID
   number nor a full name can tell two people apart
-- [x] Report each competitor row — done, as `CompetitorBulkResponse` in `CompetitorResponseHolder.results`
+- [x] Report each competitor row — done, as `CompetitorBulkResponse` in `CompetitorBulkResponseHolder.results`
 - [x] Describe both in `ARCHITECTURE.md` — done
 
 **Match date conflicts reported when read** *(improvement-plan.md → Gap #49)* —

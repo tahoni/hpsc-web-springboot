@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
  * describing the outcome, and the {@link CompetitorResponse} it was created or updated as, or the
  * {@link CompetitorRow} of the values it supplied if it failed.
  *
- * @see CompetitorResponseHolder
+ * @see CompetitorBulkResponseHolder
  * @see CompetitorResponse
  * @see CompetitorRow
  * @since 16.4.0

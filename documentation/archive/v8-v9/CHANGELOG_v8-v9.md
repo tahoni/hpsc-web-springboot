@@ -1711,7 +1711,7 @@ versions, [`CHANGELOG_v5-v7.md`](/documentation/archive/v5-v7/CHANGELOG_v5-v7.md
   pattern. The `stages` field is a single semicolon-separated CSV cell of
   `<stageNumber>-<stageName>` entries (e.g. `"1-Stage One;2-Stage Two"`)
 - **`MatchResponseHolder`:** New response container (`models/ipsc/match/response/`) holding the
-  `MatchResponse`s created by a bulk CSV import, mirroring `CompetitorResponseHolder`
+  `MatchResponse`s created by a bulk CSV import, mirroring `CompetitorBulkResponseHolder`
 
 ##### Tests
 
@@ -1922,7 +1922,7 @@ versions, [`CHANGELOG_v5-v7.md`](/documentation/archive/v5-v7/CHANGELOG_v5-v7.md
 
 - **`CompetitorRequestForCSV`:** New CSV-mapped request model (`models/ipsc/competitor/request/`) for bulk competitor
   import, mirroring `CompetitorRequest`'s fields other than `competitorId`
-- **`CompetitorResponseHolder`:** New response container (`models/ipsc/competitor/response/`) holding the
+- **`CompetitorBulkResponseHolder`:** New response container (`models/ipsc/competitor/response/`) holding the
   `CompetitorResponse`s created by a bulk CSV import
 
 ##### Tests
