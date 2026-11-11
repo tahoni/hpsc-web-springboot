@@ -29,7 +29,7 @@ gaining a `@JsonCreator` constructor and comprehensive new unit test coverage.
 - Unlike `AwardController`/`ImageController`'s bulk endpoints, which only build response objects without persisting,
   this endpoint actually saves each competitor
 - New **`CompetitorRequestForCSV`** (CSV-mapped, `UpperCamelCase` Practiscore-style headers) and
-  **`CompetitorBulkResponseHolder`** models (`models/ipsc/competitor/`)
+  **`CompetitorResponseHolder`** models (`models/ipsc/competitor/`)
 
 ### 🐛 Required-Field Enforcement Fix
 
@@ -78,7 +78,7 @@ gaining a `@JsonCreator` constructor and comprehensive new unit test coverage.
 
 #### Models
 
-- `CompetitorRequestForCSV`, `CompetitorBulkResponseHolder`
+- `CompetitorRequestForCSV`, `CompetitorResponseHolder`
 
 #### Tests
 

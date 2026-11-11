@@ -43,7 +43,7 @@ in its `warnings`. Every addition is optional or new, so the release is backward
   row's data and marks it verified, instead of creating another
 - A row without a club number, as every row for a home club other than HPSC's is, always creates a competitor, since
   neither a name nor an ID number can tell two people apart
-- `CompetitorBulkResponseHolder.results` holds a `CompetitorBulkResponse` for every row, with its row number, a message
+- `CompetitorResponseHolder.results` holds a `CompetitorBulkResponse` for every row, with its row number, a message
   and the competitor; `competitors` is unchanged
 
 ### ⚠️ Match Warnings
@@ -82,7 +82,7 @@ in its `warnings`. Every addition is optional or new, so the release is backward
   against MySQL 8.4
 - `ShooterLogPatchRequest.addMatchIds` and `removeMatchIds`, with `validate`, and `ShooterLogRow.shooterLogId`,
   `addMatchIds` and `removeMatchIds`
-- `CompetitorBulkResponse` and `CompetitorBulkResponseHolder.results`
+- `CompetitorBulkResponse` and `CompetitorResponseHolder.results`
 - `MatchResponse.warnings`, `IpscMatchServiceImpl` filling it, and `ShooterLogHelpers.describeOutsideDates`
 - Mockito, mix-in and `@SpringBootTest` integration tests for the above
 

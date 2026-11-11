@@ -586,7 +586,7 @@ Phase-by-phase narrative, [`HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HIST
   this delimited design before either ever reached `develop`
 - New `IpscMatchServiceImpl.parseStages` helper splits each `Stages` cell entry on its first `-` into a
   `MatchStageRequest`; new `readMatches`/`toRequest` helpers mirror `IpscCompetitorServiceImpl`'s CSV-parsing pattern
-- New `MatchResponseHolder` response container (`models/ipsc/match/response/`), mirroring `CompetitorBulkResponseHolder`
+- New `MatchResponseHolder` response container (`models/ipsc/match/response/`), mirroring `CompetitorResponseHolder`
 - New unit tests across `IpscMatchController`/`Service`/`ServiceImpl`'s bulk import, and `MatchRequestForCSV`'s
   `UpperCamelCase` JSON/CSV (de)serialisation and required-field enforcement
 - Project version bumped to 8.3.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
@@ -658,7 +658,7 @@ Phase-by-phase narrative, [`HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HIST
   `IpscCompetitorService`/`IpscCompetitorServiceImpl`, following `AwardController`/`ImageController`'s bulk-import
   convention — but, unlike those, actually persisting each row via the existing `createCompetitor`
   validation/gender/home-club-resolution logic
-- New `CompetitorRequestForCSV`/`CompetitorBulkResponseHolder` models (`models/ipsc/competitor/`)
+- New `CompetitorRequestForCSV`/`CompetitorResponseHolder` models (`models/ipsc/competitor/`)
 - Found and fixed a recurring Jackson gotcha: `@JsonProperty(required = true)` is silently inert without a matching
   `@JsonCreator` constructor. `CompetitorRequestForCSV`, `CompetitorRequest`, `MatchRequest`, `MatchStageRequest` and
   the not-yet-wired `MatchOverallScoresRequest`/`MatchStageScoresRequest` (plus their CSV variants) all gained a
@@ -1163,7 +1163,7 @@ IpscMatchCompetitorController → IpscMatchCompetitorService → MatchCompetitor
 
 - New `IpscCompetitorController.createCompetitors` (`POST /ipsc/competitors/bulk`) persists competitors from CSV
   data via the existing `createCompetitor` logic
-- New `CompetitorRequestForCSV`/`CompetitorBulkResponseHolder` models
+- New `CompetitorRequestForCSV`/`CompetitorResponseHolder` models
 - Fixed a Jackson gotcha affecting every `@JsonProperty(required = true)` field added to date: `CompetitorRequest`,
   `CompetitorRequestForCSV`, `MatchRequest`, `MatchStageRequest` and the score request models all gained a
   `@JsonCreator` constructor so required fields are actually enforced
