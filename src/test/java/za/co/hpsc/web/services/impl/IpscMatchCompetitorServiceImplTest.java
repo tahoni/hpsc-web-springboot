@@ -1,5 +1,11 @@
 package za.co.hpsc.web.services.impl;
 
+import java.io.IOException;
+import za.co.hpsc.web.exceptions.FatalException;
+import org.mockito.MockedConstruction;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.core.FormatSchema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +41,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -75,6 +84,28 @@ class IpscMatchCompetitorServiceImplTest {
                 new MatchCompetitorMapper(competitorRepository, ipscMatchRepository, ipscEntityCompetitorService),
                 new MatchCompetitorRowMapper(),
                 ipscEntityClubService, null);
+    }
+
+    // readMatchCompetitors()
+    @Test
+    void testReadMatchCompetitors_whenReadingTheCsvFails_thenThrowsFatalExceptionWithTheCause() throws IOException {
+        // Arrange
+        IOException cause = new IOException("disk unavailable");
+        ObjectReader reader = mock(ObjectReader.class);
+        when(reader.with(any(FormatSchema.class))).thenReturn(reader);
+        when(reader.readValues(anyString())).thenThrow(cause);
+
+        try (MockedConstruction<CsvMapper> ignored = mockConstruction(CsvMapper.class,
+                (mapper, context) -> {
+                    when(mapper.readerFor(MatchCompetitorRequest.class)).thenReturn(reader);
+                })) {
+
+            // Act & Assert
+            FatalException thrown = assertThrows(FatalException.class,
+                    () -> matchCompetitorServiceImpl.readMatchCompetitors("MatchId,CompetitorId\\n1,2\\n"));
+            assertSame(cause, thrown.getCause());
+            assertTrue(thrown.getMessage().contains("disk unavailable"));
+        }
     }
 
     // findMatchCompetitorOrThrow()

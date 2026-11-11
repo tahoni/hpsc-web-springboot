@@ -597,6 +597,24 @@ public class IpscMatchServiceTest {
         assertTrue(matches.get(2).getMessages().isEmpty());
     }
 
+    @Test
+    void testGetAllMatches_whenALogCoversAMatchThatIsNotListed_thenIgnoresIt() {
+        // Arrange
+        IpscMatch listed = matchOn(1L, LocalDate.of(2026, 9, 12));
+        IpscMatch unlisted = matchOn(99L, LocalDate.of(2026, 10, 12));
+        ShooterLog shooterLog = shooterLog(7L, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30));
+        shooterLog.setMatches(List.of(listed, unlisted));
+        when(ipscMatchRepository.findAllWithClub()).thenReturn(List.of(listed));
+        when(shooterLogRepository.findAllWithMatches()).thenReturn(List.of(shooterLog));
+
+        // Act
+        List<MatchResponse> matches = ipscMatchService.getAllMatches();
+
+        // Assert
+        assertEquals(1, matches.size());
+        assertTrue(matches.getFirst().getMessages().isEmpty());
+    }
+
     private IpscMatch matchOn(Long id, LocalDate date) {
         IpscMatch match = new IpscMatch();
         match.setId(id);

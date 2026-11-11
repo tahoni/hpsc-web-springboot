@@ -233,6 +233,22 @@ public class CompetitorMapperTest {
     }
 
     @Test
+    void testApplyFields_whenEmailAddressesAreSetToNull_thenCompetitorEmailAddressesIsEmpty() {
+        // Arrange
+        CompetitorRequest request = new CompetitorRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Doe");
+        request.setEmailAddresses(null);
+        Competitor competitor = new Competitor();
+
+        // Act
+        competitorMapper.applyFields(competitor, request);
+
+        // Assert
+        assertEquals(List.of(), competitor.getEmailAddresses());
+    }
+
+    @Test
     void testApplyFields_whenMultipleEmailAddresses_thenCompetitorHasAllOfThem() {
         // Arrange
         CompetitorRequest request = new CompetitorRequest();
