@@ -50,20 +50,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
-- **Bulk match import reports failed rows:** `MatchResponseHolder` is renamed `MatchBulkResponseHolder` and now carries a
-  `results` list with a `MatchBulkResponse` for every row: its `rowNumber`, `success`, `message`, the created `match`
-  and, for a row that failed, a `matchRow` (the new `MatchRow`) holding every value the row supplied. A row that is
-  missing a required field, has an unrecognised firearm type or category or names an unknown club is now reported and
-  skipped instead of failing the whole request with a 400 or 404. Each row is saved in its own transaction, so the
-  other rows are still imported. A CSV that is blank or cannot be parsed still fails the request. **Breaking** for
-  clients that relied on a bad row failing the whole import.
-- **Bulk competitor import reports failed rows:** A row that is missing a required field, has an unrecognised
+- **Breaking: bulk match import reports failed rows:** `MatchResponseHolder` is renamed `MatchBulkResponseHolder` and
+  now carries a `results` list with a `MatchBulkResponse` for every row: its `rowNumber`, `success`, `message`, the
+  created `match` and, for a row that failed, a `matchRow` (the new `MatchRow`) holding every value the row supplied. A
+  row that is missing a required field, has an unrecognised firearm type or category or names an unknown club is now
+  reported and skipped instead of failing the whole request with a 400 or 404. Each row is saved in its own transaction,
+  so the other rows are still imported. A CSV that is blank or cannot be parsed still fails the request. Clients that
+  relied on a bad row failing the whole import must now check each row's `success`.
+- **Breaking: bulk competitor import reports failed rows:** A row that is missing a required field, has an unrecognised
   gender, names an unknown home club or lacks a required club number is now reported in its result with `success`
-  `false` and skipped, instead of failing the whole request with a 400 or 404. Each row is saved in its own
-  transaction, so the other rows are still imported. A CSV that is blank or cannot be parsed still fails the request.
-- **`MatchResponse.warnings` renamed to `messages`:** The list of problems found with a match when it is read keeps its
-  behaviour (left out of the JSON when empty) but is now serialised as `messages`. **Breaking** for clients that read
-  `warnings`.
+  `false` and skipped, instead of failing the whole request with a 400 or 404. Each row is saved in its own transaction,
+  so the other rows are still imported. A CSV that is blank or cannot be parsed still fails the request. Clients that
+  relied on a bad row failing the whole import must now check each row's `success`.
+- **Breaking: `MatchResponse.warnings` renamed to `messages`:** The list of problems found with a match when it is read
+  keeps its behaviour (left out of the JSON when empty) but is now serialised as `messages`, so clients that read
+  `warnings` must read `messages` instead.
 
 ---
 
