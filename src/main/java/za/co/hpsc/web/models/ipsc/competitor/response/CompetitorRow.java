@@ -15,7 +15,7 @@ import java.util.Objects;
  * {@link SystemConstants#ARRAY_SEPARATOR} as in the CSV.
  *
  * @see CompetitorBulkResponse
- * @since 16.5.0
+ * @since 17.0.0
  */
 @Getter
 @Setter

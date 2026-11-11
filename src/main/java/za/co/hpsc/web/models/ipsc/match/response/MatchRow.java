@@ -13,7 +13,7 @@ import java.util.Objects;
  * missing or unknown in it.
  *
  * @see MatchBulkResponse
- * @since 16.5.0
+ * @since 17.0.0
  */
 @Getter
 @Setter

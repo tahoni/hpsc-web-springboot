@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
  * @see MatchBulkResponseHolder
  * @see MatchResponse
  * @see MatchRow
- * @since 16.5.0
+ * @since 17.0.0
  */
 @Getter
 @Setter
