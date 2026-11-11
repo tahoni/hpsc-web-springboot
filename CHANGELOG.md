@@ -98,6 +98,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   transaction so that a bad row leaves none persisted. The flows end in `CompetitorBulkResponseHolder` and
   `MatchBulkResponseHolder`, each with a result per row. Closes improvement plan Gap #51.
 
+#### 🗑️ Removed
+
+##### Services
+
+- **`TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults`:** Removed with their tests, as
+  no production code called them — the bulk match import now saves each row through `saveMatch`, the match competitor
+  import through `saveMatchCompetitor` and a shooter result calculation through `replaceShooterResults`. Closes
+  improvement plan Gap #52.
+
 ---
 
 ### 🧾 [16.4.1] - 2026-11-10

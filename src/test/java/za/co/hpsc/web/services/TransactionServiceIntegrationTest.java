@@ -187,18 +187,6 @@ class TransactionServiceIntegrationTest {
         assertEquals("Renamed Championship", ipscMatchRepository.findById(saved.getId()).orElseThrow().getName());
     }
 
-    // saveMatches()
-    @Test
-    void testSaveMatches_whenOneFails_thenRollsBackEveryOne() {
-        // Arrange
-        IpscMatch valid = newMatch("First Match");
-        IpscMatch invalid = newMatch(null);
-
-        // Act & Assert
-        assertThrows(DataIntegrityViolationException.class, () -> transactionService.saveMatches(List.of(valid, invalid)));
-        assertEquals(0, ipscMatchRepository.count());
-    }
-
     // deleteMatch()
     @Test
     void testDeleteMatch_whenUnreferenced_thenCommitsTheDelete() {

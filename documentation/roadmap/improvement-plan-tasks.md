@@ -585,6 +585,14 @@ Gap #41)* —
 - [x] End the Competitor flow in `CompetitorBulkResponseHolder (one CompetitorBulkResponse per row)` and the Match flow
   in `MatchBulkResponseHolder (one MatchBulkResponse per row)`, as the Match Competitor and Shooter Log flows already do
 
+**Unused `TransactionService` batch saves** *(improvement-plan.md → Gap #52)* — ✅ Closed in v17.0.0
+
+- [x] Confirm with the IDE's find-usages that `saveMatches`, `saveMatchCompetitors` and `saveShooterResults` have no
+  production caller
+- [x] Remove the three methods from `TransactionService` and `TransactionServiceImpl`, with their tests in
+  `TransactionServiceTest` and `TransactionServiceIntegrationTest`, or give each a production caller — removed
+- [x] Correct `ARCHITECTURE.md`'s `TransactionService` description if it still names them
+
 ---
 
 ## 🟡 Partially Completed
@@ -599,13 +607,7 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-**Unused `TransactionService` batch saves** *(improvement-plan.md → Gap #52)*
-
-- [ ] Confirm with the IDE's find-usages that `saveMatches`, `saveMatchCompetitors` and `saveShooterResults` have no
-  production caller
-- [ ] Remove the three methods from `TransactionService` and `TransactionServiceImpl`, with their tests in
-  `TransactionServiceTest` and `TransactionServiceIntegrationTest`, or give each a production caller
-- [ ] Correct `ARCHITECTURE.md`'s `TransactionService` description if it still names them
+*No gaps are currently open.*
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.
