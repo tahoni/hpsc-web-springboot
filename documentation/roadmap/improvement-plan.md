@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (50):**
+- **✅ Completed (51):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -148,11 +148,11 @@ number or a newly met precondition on an existing gap — see the `update-improv
     day — closed in v16.4.0 (`MatchResponse.warnings` on read and on a same-day edit)
   - #50 `flyway-mysql` was pinned a major above `flyway-core` and the Maven plugin, mixing two Flyway majors — closed
     in v16.4.0 (pin dropped; all 38 migrations applied to MySQL 8.4 on Flyway `12.4.0`)
+  - #51 The competitor and match bulk imports now save row by row, but `ARCHITECTURE.md` still describes them as
+    all-or-nothing — closed in v17.0.0 (sentences and both flow diagrams rewritten)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
-- **⚪ Open (2):**
-  - #51 The competitor and match bulk imports now save row by row, but `ARCHITECTURE.md` still describes them as
-    all-or-nothing
+- **⚪ Open (1):**
   - #52 `TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults` have no production caller
 
 ### ✅ Completed
@@ -1654,17 +1654,7 @@ and `flyway-mysql` `12.4.0`; the test and the container were removed afterwards,
 repository ran the migrations against MySQL; the `migrations` job in `build.yml` and `FlywayMysqlMigrationTest` now
 run them against MySQL 8.4 on every push and pull request, while the `test` profile still bypasses Flyway on H2.
 
-### 🟡 Partially Completed
-
-A gap moves here when it has at least one **Progress** paragraph (per
-`update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
-but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
-
-*No gaps are currently partially completed.*
-
-### ⚪ Open
-
-#### 51. The competitor and match bulk imports now save row by row, but `ARCHITECTURE.md` still describes them as all-or-nothing
+#### 51. The competitor and match bulk imports now save row by row, but `ARCHITECTURE.md` still describes them as all-or-nothing — ✅ Closed in v17.0.0
 
 **Evidence:** `IpscCompetitorServiceImpl.createCompetitors` and `IpscMatchServiceImpl.createMatches` now build and save
 each CSV row on its own, through `TransactionService.saveCompetitor` and `saveMatch`, and report a row that is missing
@@ -1687,6 +1677,24 @@ row, so the page that is meant to show their shared shape now shows two of them 
 each row saved through `TransactionService.saveCompetitor` and `saveMatch` with a failed row reported and skipped, and
 to end in `CompetitorBulkResponseHolder (one CompetitorBulkResponse per row)` and `MatchBulkResponseHolder (one
 MatchBulkResponse per row)`, as the other two flows already do.
+
+**Outcome:** Done as proposed. `ARCHITECTURE.md`'s sentence on the two bulk imports now says each row is saved in its
+own transaction and a row that fails is reported with the values it supplied and skipped while the others are still
+saved, and the `TransactionService` sentence says it commits "each row of a bulk import" in its own transaction. The
+Competitor and Match Bulk CSV Import Flow diagrams now run `for each row, on its own` through
+`TransactionService.saveCompetitor` and `saveMatch`, the Competitor one noting that a club number an earlier row of the
+file already imported is refused, and end in `CompetitorBulkResponseHolder (one CompetitorBulkResponse per row)` and
+`MatchBulkResponseHolder (one MatchBulkResponse per row)`, as the Match Competitor and Shooter Log flows do.
+
+### 🟡 Partially Completed
+
+A gap moves here when it has at least one **Progress** paragraph (per
+`update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
+but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
+
+*No gaps are currently partially completed.*
+
+### ⚪ Open
 
 #### 52. `TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults` have no production caller
 
@@ -1715,7 +1723,7 @@ matching batch method with its first caller instead.
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | #51 (correct `ARCHITECTURE.md`'s all-or-nothing bulk import flows) and #52 (remove three unused `TransactionService` batch saves); #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                         |
+| **Now**     | #52 (remove three unused `TransactionService` batch saves); #51 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                         |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath, and `flyway-mysql` until v16.4.0 (#50, closed); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
@@ -1841,8 +1849,8 @@ matching batch method with its first caller instead.
   read, and when it is edited without changing day, closing Gap #49.
 - ✅ Met in v16.4.0: `flyway-mysql` takes the Flyway version Spring Boot manages, so `flyway-core`, the MySQL module
   and the Maven plugin share one version, and all 38 migrations apply to MySQL 8.4 on it, closing Gap #50.
-- `ARCHITECTURE.md`'s Competitor and Match bulk CSV import flows, and the sentences around them, describe each row
-  being saved on its own and a failed row being reported, as the code does, closing Gap #51.
+- ✅ Met in v17.0.0: `ARCHITECTURE.md`'s Competitor and Match bulk CSV import flows, and the sentences around them,
+  describe each row being saved on its own and a failed row being reported, as the code does, closing Gap #51.
 - `TransactionService` declares no batch save that production code never calls: `saveMatches`, `saveMatchCompetitors`
   and `saveShooterResults` are removed with their tests, or each has a caller, closing Gap #52.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s

@@ -574,6 +574,17 @@ Gap #41)* —
   against a throwaway `mysql:8.4` container: all 38 migrations applied on Flyway `12.4.0`, then the test and the
   container were removed
 
+**Competitor and match bulk import docs** *(improvement-plan.md → Gap #51)* — ✅ Closed in v17.0.0
+
+- [x] Rewrite `ARCHITECTURE.md`'s sentence that says both bulk imports save "all rows in one transaction so a bad row
+  leaves none persisted", and the one that says `TransactionService` commits "each bulk import as a whole", to describe
+  each row being saved on its own and a failed row being reported and skipped
+- [x] Change the Competitor and Match Bulk CSV Import Flow diagrams to show each row saved through
+  `TransactionService.saveCompetitor` and `saveMatch`, with a failed row reported instead of failing before anything is
+  saved
+- [x] End the Competitor flow in `CompetitorBulkResponseHolder (one CompetitorBulkResponse per row)` and the Match flow
+  in `MatchBulkResponseHolder (one MatchBulkResponse per row)`, as the Match Competitor and Shooter Log flows already do
+
 ---
 
 ## 🟡 Partially Completed
@@ -587,17 +598,6 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 ---
 
 ## ⚪ Open
-
-**Competitor and match bulk import docs** *(improvement-plan.md → Gap #51)*
-
-- [ ] Rewrite `ARCHITECTURE.md`'s sentence that says both bulk imports save "all rows in one transaction so a bad row
-  leaves none persisted", and the one that says `TransactionService` commits "each bulk import as a whole", to describe
-  each row being saved on its own and a failed row being reported and skipped
-- [ ] Change the Competitor and Match Bulk CSV Import Flow diagrams to show each row saved through
-  `TransactionService.saveCompetitor` and `saveMatch`, with a failed row reported instead of failing before anything is
-  saved
-- [ ] End the Competitor flow in `CompetitorBulkResponseHolder (one CompetitorBulkResponse per row)` and the Match flow
-  in `MatchBulkResponseHolder (one MatchBulkResponse per row)`, as the Match Competitor and Shooter Log flows already do
 
 **Unused `TransactionService` batch saves** *(improvement-plan.md → Gap #52)*
 

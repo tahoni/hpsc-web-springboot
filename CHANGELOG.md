@@ -91,6 +91,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   null check on the target club when a bulk row is skipped, and the null guards on the bulk request's match ID lists,
   which default to empty lists — with no change in behaviour.
 
+##### Documentation
+
+- **`ARCHITECTURE.md`:** The competitor and match bulk CSV import flows, and the sentences around them, now say each row
+  is saved in its own transaction and a failed row is reported and skipped, instead of all rows being saved in one
+  transaction so that a bad row leaves none persisted. The flows end in `CompetitorBulkResponseHolder` and
+  `MatchBulkResponseHolder`, each with a result per row. Closes improvement plan Gap #51.
+
 ---
 
 ### 🧾 [16.4.1] - 2026-11-10

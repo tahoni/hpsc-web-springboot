@@ -202,13 +202,14 @@ Contains all business logic.
 > rather than an import. See the Award/Image CSV Processing Flow below.
 
 > Both IPSC domains support bulk CSV import, each building every row via the same validation/resolution logic
-> as its single-item `create` endpoint, then saving all rows in one transaction so a bad row leaves none
-> persisted: `IpscCompetitorController.createCompetitors` (`IpscCompetitorService`/`IpscCompetitorServiceImpl`)
+> as its single-item `create` endpoint, then saving it in its own transaction, so a row that fails is reported with the
+> values it supplied and skipped while the other rows are still saved:
+> `IpscCompetitorController.createCompetitors` (`IpscCompetitorService`/`IpscCompetitorServiceImpl`)
 > and `IpscMatchController.createMatches` (`IpscMatchService`/`IpscMatchServiceImpl`).
 
 > `IpscMatchService`/`IpscCompetitorService` declare no `@Transactional`: they validate requests and build or modify
-> entities outside any transaction, then hand them to `TransactionService`, which commits each write (and each bulk
-> import as a whole) in its own explicit `TransactionTemplate` transaction. Everything it returns has the associations
+> entities outside any transaction, then hand them to `TransactionService`, which commits each write (and each row of
+> a bulk import) in its own explicit `TransactionTemplate` transaction. Everything it returns has the associations
 > a response reads already loaded, since `spring.jpa.open-in-view` is disabled.
 
 > Deleting a competitor only removes what it owns — their email addresses; a match owns nothing. A record that
@@ -417,11 +418,13 @@ Handled by `IpscCompetitorController` — unlike the Award/Image flow above, the
 Client uploads CSV (Content-Type: text/plain)
     → IpscCompetitorController.createCompetitors
         → IpscCompetitorService.createCompetitors
-            (parses CSV via Jackson CsvMapper into CompetitorRequest rows, then builds each row with the same
-             validation/gender/home-club-resolution logic the single-competitor endpoint uses)
-            → TransactionService.saveCompetitors
-                (saves every row in one transaction — a bad row fails before anything is saved)
-        ← CompetitorResponseHolder
+            (parses CSV via Jackson CsvMapper into CompetitorRequest rows)
+            → for each row, on its own:
+                build it with the same validation/gender/home-club-resolution logic the single-competitor
+                    endpoint uses, refusing a club number an earlier row of the file already imported
+                    → TransactionService.saveCompetitor (in its own transaction; a row that fails, or conflicts with
+                    an existing record, is reported as failed, with the values it supplied)
+        ← CompetitorBulkResponseHolder (one CompetitorBulkResponse per row)
     ← ResponseEntity<...>
 ← JSON response
 ```
@@ -447,11 +450,13 @@ Handled by `IpscMatchController` — same shape as the Competitor flow above:
 Client uploads CSV (Content-Type: text/plain)
     → IpscMatchController.createMatches
         → IpscMatchService.createMatches
-            (parses CSV via Jackson CsvMapper into MatchRequest rows, then builds each row with the
-             same validation/club/firearm-type/category-resolution logic the single-match endpoint uses)
-            → TransactionService.saveMatches
-                (saves every row in one transaction — a bad row fails before anything is saved)
-        ← MatchBulkResponseHolder
+            (parses CSV via Jackson CsvMapper into MatchRequest rows)
+            → for each row, on its own:
+                build it with the same validation/club/firearm-type/category-resolution logic the single-match
+                    endpoint uses
+                    → TransactionService.saveMatch (in its own transaction; a row that fails, or conflicts with
+                    an existing record, is reported as failed, with the values it supplied)
+        ← MatchBulkResponseHolder (one MatchBulkResponse per row)
     ← ResponseEntity<...>
 ← JSON response
 ```
