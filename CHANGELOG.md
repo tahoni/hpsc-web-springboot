@@ -35,6 +35,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+- **`MatchResponse.warnings` renamed to `messages`:** The list of problems found with a match when it is read keeps its
+  behaviour (left out of the JSON when empty) but is now serialised as `messages`. **Breaking** for clients that read
+  `warnings`.
+
 ---
 
 ### 🧾 [16.4.1] - 2026-11-10

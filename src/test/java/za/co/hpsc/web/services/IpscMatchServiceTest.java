@@ -475,8 +475,8 @@ public class IpscMatchServiceTest {
         MatchResponse fetched = assertDoesNotThrow(() -> ipscMatchService.getMatch(1L));
 
         // Assert
-        assertEquals(1, fetched.getWarnings().size());
-        assertTrue(fetched.getWarnings().get(0).contains("shooter log with ID 7"));
+        assertEquals(1, fetched.getMessages().size());
+        assertTrue(fetched.getMessages().get(0).contains("shooter log with ID 7"));
     }
 
     @Test
@@ -492,7 +492,7 @@ public class IpscMatchServiceTest {
         MatchResponse fetched = ipscMatchService.getMatch(1L);
 
         // Assert
-        assertTrue(fetched.getWarnings().isEmpty());
+        assertTrue(fetched.getMessages().isEmpty());
     }
 
     @Test
@@ -510,9 +510,9 @@ public class IpscMatchServiceTest {
 
         // Assert
         assertEquals(3, matches.size());
-        assertEquals(1, matches.get(0).getWarnings().size());
-        assertTrue(matches.get(1).getWarnings().isEmpty());
-        assertTrue(matches.get(2).getWarnings().isEmpty());
+        assertEquals(1, matches.get(0).getMessages().size());
+        assertTrue(matches.get(1).getMessages().isEmpty());
+        assertTrue(matches.get(2).getMessages().isEmpty());
     }
 
     private IpscMatch matchOn(Long id, LocalDate date) {
@@ -887,8 +887,8 @@ public class IpscMatchServiceTest {
         MatchResponse response = assertDoesNotThrow(() -> ipscMatchService.patchMatch(1L, patch));
 
         // Assert
-        assertEquals(1, response.getWarnings().size());
-        assertTrue(response.getWarnings().get(0).contains("shooter log with ID 7"));
+        assertEquals(1, response.getMessages().size());
+        assertTrue(response.getMessages().get(0).contains("shooter log with ID 7"));
     }
 
     @Test
@@ -942,8 +942,8 @@ public class IpscMatchServiceTest {
         MatchResponse response = assertDoesNotThrow(() -> ipscMatchService.updateMatch(1L, validRequest("Test Club")));
 
         // Assert
-        assertEquals(1, response.getWarnings().size());
-        assertTrue(response.getWarnings().get(0).contains("shooter log with ID 7"));
+        assertEquals(1, response.getMessages().size());
+        assertTrue(response.getMessages().get(0).contains("shooter log with ID 7"));
     }
 
     // Helpers

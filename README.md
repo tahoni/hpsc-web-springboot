@@ -32,7 +32,7 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
   plus bulk CSV import
 - **IPSC Matches**: Match CRUD, including firearm type and match category resolution, plus bulk CSV import.
   A match cannot be rescheduled outside the dates of a shooter log that covers it, and one already outside them
-  reports it in its `warnings` when it is read or edited
+  reports it in its `messages` when it is read or edited
 - **IPSC Match Competitors**: CRUD for a competitor's entry in a match, including competitor, match, division and
   category resolution, plus bulk CSV import
 - **IPSC Shooter Results**: Calculation of each competitor's rank and percentage within their firearm type, division

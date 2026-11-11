@@ -64,7 +64,7 @@ public interface IpscMatchService {
      * @param matchId the identifier of the match to replace.
      * @param request the match's replacement fields. Must not be null and must carry a match
      *                name, date and firearm type. The club and match category default when omitted.
-     * @return the updated match, with a message in its {@code warnings} for each shooter log that covers it and whose
+     * @return the updated match, with a message in its {@code messages} for each shooter log that covers it and whose
      * dates it is outside, when it stays on the same day.
      * @throws ValidationException if a required field is missing, the firearm type/category
      *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
@@ -88,7 +88,7 @@ public interface IpscMatchService {
      *                to {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
      *                rather than being rejected. A supplied {@code matchDate} sets the match's
      *                scheduled date to the start of that day.
-     * @return the updated match, with a message in its {@code warnings} for each shooter log that covers it and whose
+     * @return the updated match, with a message in its {@code messages} for each shooter log that covers it and whose
      * dates it is outside, when it stays on the same day.
      * @throws ValidationException if the firearm type/category doesn't match a known
      *                             {@link za.co.hpsc.web.enums.FirearmType}/
@@ -107,7 +107,7 @@ public interface IpscMatchService {
      * Retrieves an existing IPSC match.
      *
      * @param matchId the identifier of the match to retrieve.
-     * @return the match, with a message in its {@code warnings} for each shooter log that covers it and whose dates
+     * @return the match, with a message in its {@code messages} for each shooter log that covers it and whose dates
      * it is outside.
      * @throws NonFatalException if no match with {@code matchId} exists.
      * @since 8.0.0
@@ -118,7 +118,7 @@ public interface IpscMatchService {
     /**
      * Retrieves every IPSC match.
      *
-     * @return all persisted matches, each with a message in its {@code warnings} for each shooter log that covers
+     * @return all persisted matches, each with a message in its {@code messages} for each shooter log that covers
      * it and whose dates it is outside.
      * @since 8.0.0
      */

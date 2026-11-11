@@ -136,7 +136,7 @@ public class IpscMatchController {
     @PutMapping(value = "/{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Replace match", description = "Fully replace an existing IPSC match's fields. A match "
             + "left on its day outside the dates of a shooter log that covers it is saved, with a message for each "
-            + "such log in the response's warnings.")
+            + "such log in the response's messages.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Match replaced.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -174,7 +174,7 @@ public class IpscMatchController {
     @PatchMapping(value = "/{matchId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update match", description = "Partially update an existing IPSC match; only non-null "
             + "fields are applied. A match left on its day outside the dates of a shooter log that covers it is "
-            + "saved, with a message for each such log in the response's warnings.")
+            + "saved, with a message for each such log in the response's messages.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Match updated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -207,7 +207,7 @@ public class IpscMatchController {
      */
     @GetMapping(value = "/{matchId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get match", description = "Retrieve an IPSC match by ID. A match outside the dates of "
-            + "a shooter log that covers it is still returned, with a message for each such log in its warnings.")
+            + "a shooter log that covers it is still returned, with a message for each such log in its messages.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Match found.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -231,7 +231,7 @@ public class IpscMatchController {
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all matches", description = "Retrieve every IPSC match. A match outside the dates "
             + "of a shooter log that covers it is still returned, with a message for each such log in its "
-            + "warnings.")
+            + "messages.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Matches retrieved.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
