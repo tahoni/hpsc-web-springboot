@@ -2,7 +2,11 @@ package za.co.hpsc.web.services.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import com.fasterxml.jackson.core.FormatSchema;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import org.mockito.InjectMocks;
+import org.mockito.MockedConstruction;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -10,6 +14,7 @@ import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.enums.Gender;
+import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.mappers.CompetitorMapper;
@@ -18,12 +23,16 @@ import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -438,6 +447,25 @@ class IpscCompetitorServiceImplTest {
     void testReadCompetitors_whenCsvDataIsNull_thenThrowsValidationException() {
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.readCompetitors(null));
+    }
+
+    @Test
+    void testReadCompetitors_whenReadingTheCsvFails_thenThrowsFatalExceptionWithTheCause() throws IOException {
+        // Arrange
+        IOException cause = new IOException("disk unavailable");
+        ObjectReader reader = mock(ObjectReader.class);
+        when(reader.with(any(FormatSchema.class))).thenReturn(reader);
+        when(reader.readValues(anyString())).thenThrow(cause);
+
+        try (MockedConstruction<CsvMapper> ignored = mockConstruction(CsvMapper.class,
+                (mapper, context) -> when(mapper.readerFor(CompetitorRequest.class)).thenReturn(reader))) {
+
+            // Act & Assert
+            FatalException thrown = assertThrows(FatalException.class,
+                    () -> ipscCompetitorServiceImpl.readCompetitors("FirstName,LastName\nJane,Doe\n"));
+            assertSame(cause, thrown.getCause());
+            assertTrue(thrown.getMessage().contains("disk unavailable"));
+        }
     }
 
     // toResponse()
