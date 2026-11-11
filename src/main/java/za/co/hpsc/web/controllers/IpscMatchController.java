@@ -22,7 +22,7 @@ import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
-import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
+import za.co.hpsc.web.models.ipsc.match.response.MatchBulkResponseHolder;
 import za.co.hpsc.web.services.IpscMatchService;
 
 import java.util.List;
@@ -83,34 +83,31 @@ public class IpscMatchController {
      * @param csvData the CSV content as a string containing details about matches, formatted
      *                according to the expected schema. This parameter is required and cannot be
      *                null.
-     * @return a {@link MatchResponseHolder} containing the created matches.
-     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
-     *                             missing a required field, if a row's firearm type/category is
-     *                             unrecognised.
-     * @throws NonFatalException   if a row's named club cannot be found.
+     * @return a {@link MatchBulkResponseHolder} containing the created matches and the result of every row.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed. A row that is missing a
+     *                             required field, has an unrecognised firearm type/category or names a club that
+     *                             cannot be found is reported in its own result instead.
      * @throws FatalException      if a critical error occurs during processing, that prevents the
      *                             operation from completing successfully — including a row naming no club while
      *                             {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
      *                             is null.
      */
     @PostMapping(value = "/bulk", consumes = "text/plain", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Create matches", description = "Create IPSC matches in bulk from CSV data.")
+    @Operation(summary = "Create matches", description = "Create IPSC matches in bulk from CSV data. A row "
+            + "that fails is reported, with its reason, and skipped without affecting the other rows. The response "
+            + "lists the result of every row.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Matches created.",
+            @ApiResponse(responseCode = "201", description = "Matches created; a row that failed is reported in the results.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = MatchResponseHolder.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid CSV data provided, a required field is "
-                    + "missing or the firearm type/category is unrecognised.",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ControllerResponse.class))),
-            @ApiResponse(responseCode = "404", description = "A row's named club could not be found.",
+                            schema = @Schema(implementation = MatchBulkResponseHolder.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid CSV data provided.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error occurred while processing the CSV data.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })
-    ResponseEntity<MatchResponseHolder> createMatches(
+    ResponseEntity<MatchBulkResponseHolder> createMatches(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(mediaType = "text/plain",
                             schema = @Schema(implementation = String.class),

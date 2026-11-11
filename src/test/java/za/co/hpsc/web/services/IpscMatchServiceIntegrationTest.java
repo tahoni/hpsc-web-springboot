@@ -25,6 +25,8 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
+import za.co.hpsc.web.models.ipsc.match.response.MatchBulkResponse;
+import za.co.hpsc.web.models.ipsc.match.response.MatchBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
@@ -504,7 +506,8 @@ class IpscMatchServiceIntegrationTest {
 
     @Test
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    void testCreateMatches_whenNoTransactionIsActiveAndARowIsInvalid_thenNoRowIsCommitted() {
+    void testCreateMatches_whenNoTransactionIsActiveAndARowIsInvalid_thenOnlyTheValidRowsAreCommitted() {
+        List<Long> createdIds = List.of();
         try {
             // Arrange
             createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
@@ -514,10 +517,18 @@ class IpscMatchServiceIntegrationTest {
                     2026-09-13,Second Match,No Such Club,%1$s,%2$s,,,
                     """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
-            // Act & Assert
-            assertThrows(ValidationException.class, () -> ipscMatchService.createMatches(csvData));
-            assertTrue(ipscMatchService.getAllMatches().isEmpty());
+            // Act
+            MatchBulkResponseHolder holder = assertDoesNotThrow(() -> ipscMatchService.createMatches(csvData));
+            createdIds = holder.getMatches().stream().map(MatchResponse::getMatchId).toList();
+
+            // Assert
+            assertEquals(List.of(true, false),
+                    holder.getResults().stream().map(MatchBulkResponse::isSuccess).toList());
+            assertEquals(1, ipscMatchService.getAllMatches().size());
+            assertEquals("First Match", ipscMatchService.getAllMatches().getFirst().getMatchName());
+            assertEquals("No Such Club", holder.getResults().get(1).getMatchRow().getClub());
         } finally {
+            createdIds.forEach(ipscMatchService::deleteMatch);
             clubRepository.findByName("Test Club").ifPresent(clubRepository::delete);
         }
     }

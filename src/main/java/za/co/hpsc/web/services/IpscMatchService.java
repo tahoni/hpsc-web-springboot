@@ -6,7 +6,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
-import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
+import za.co.hpsc.web.models.ipsc.match.response.MatchBulkResponseHolder;
 
 import java.util.List;
 
@@ -38,24 +38,20 @@ public interface IpscMatchService {
      *
      * <p>
      * Each row is validated and built by the same rules as {@link #createMatch(MatchRequest)}
-     * (validation, firearm type/category resolution and club resolution). Every row is checked
-     * before any is saved, and all are then saved in a single transaction, so either every row is
-     * created or none is.
+     * (validation, firearm type/category resolution and club resolution) and saved in its own transaction. A row
+     * that fails any of those is reported with {@code success} {@code false} and the reason in its message, and
+     * skipped without affecting the other rows.
      * </p>
      *
      * @param csvData the CSV data containing match information, one match per row. Must not be
      *                null or blank.
-     * @return a {@link MatchResponseHolder} containing the created matches, in the same order as
-     * the CSV rows.
-     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
-     *                             missing a required field, if a row's firearm type/category
-     *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
-     *                             {@link za.co.hpsc.web.enums.MatchCategory}.
-     * @throws NonFatalException   if a row's named club cannot be found.
+     * @return a {@link MatchBulkResponseHolder} containing the created matches, in the same order as the CSV rows,
+     * and the result of every row, including the rows that failed.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      * @since 8.0.0
      */
-    MatchResponseHolder createMatches(String csvData)
+    MatchBulkResponseHolder createMatches(String csvData)
             throws ValidationException, NonFatalException, FatalException;
 
     /**
