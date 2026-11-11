@@ -97,9 +97,9 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
             MatchCompetitor matchCompetitor = null;
             try {
                 if (!isForClub(request, targetClub)) {
-                    String targetClubName = (targetClub != null) ? targetClub.getName() : "";
+                    // isForClub is always true without a target club, so a row is only skipped for a known one
                     matchCompetitorBulkResponses.add(
-                            failedRow(rowNumber, "Skipped: match club is not " + targetClubName, request, null));
+                            failedRow(rowNumber, "Skipped: match club is not " + targetClub.getName(), request, null));
                     continue;
                 }
 

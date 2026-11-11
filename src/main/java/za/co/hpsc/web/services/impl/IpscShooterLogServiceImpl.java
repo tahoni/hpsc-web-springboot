@@ -106,7 +106,7 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
             patchRequest.setStartDate(row.getStartDate());
             patchRequest.setEndDate(row.getEndDate());
             // A CSV cell cannot tell an empty list from an omitted one, so an empty one leaves the matches unchanged
-            patchRequest.setMatchIds((row.getMatchIds() == null || row.getMatchIds().isEmpty()) ? null : row.getMatchIds());
+            patchRequest.setMatchIds(row.getMatchIds().isEmpty() ? null : row.getMatchIds());
             patchRequest.setAddMatchIds(row.getAddMatchIds());
             patchRequest.setRemoveMatchIds(row.getRemoveMatchIds());
             return patchShooterLog(shooterLogId, patchRequest);
@@ -206,11 +206,11 @@ public class IpscShooterLogServiceImpl implements IpscShooterLogService {
     /**
      * Writes identifiers as text, separated by {@link SystemConstants#ARRAY_SEPARATOR}.
      *
-     * @param ids the identifiers; may be null.
+     * @param ids the identifiers; never null, as a bulk request row defaults them to an empty list.
      * @return the identifiers as text, empty if there are none.
      */
     private static String joinIds(List<Long> ids) {
-        return (ids == null) ? "" : ids.stream().map(String::valueOf).collect(java.util.stream.Collectors.joining(
+        return ids.stream().map(String::valueOf).collect(java.util.stream.Collectors.joining(
                 SystemConstants.ARRAY_SEPARATOR));
     }
 
