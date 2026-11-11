@@ -83,40 +83,62 @@ public class IpscCompetitorServiceImpl implements IpscCompetitorService {
 
         List<CompetitorRequest> competitorRequests = readCompetitors(csvData);
 
-        // Every row is validated and built before any is saved, then all are saved in one
-        // transaction, so a bad row leaves none of them persisted. A row for a competitor that already exists
-        // updates and verifies that competitor instead of creating another.
-        List<Competitor> competitors = new ArrayList<>();
-        // The result of each row; a saved row's competitor is filled in once the row is saved
+        // Each row is saved in its own transaction, so a bad row is reported and skipped without affecting the
+        // others. A row for a competitor that already exists updates and verifies that competitor instead of
+        // creating another.
+        List<CompetitorResponse> competitorResponses = new ArrayList<>();
         List<CompetitorBulkResponse> results = new ArrayList<>();
-        List<CompetitorBulkResponse> savedResults = new ArrayList<>();
+        // The club numbers imported so far and the row each came from, so a later row repeating one is refused
+        // rather than silently updating the competitor an earlier row of the same file just saved
+        Map<String, Integer> importedClubNumbers = new HashMap<>();
         int rowNumber = 0;
         for (CompetitorRequest competitorRequest : competitorRequests) {
             rowNumber++;
-            CompetitorRequest normalised = normaliseCsvRequest(competitorRequest);
-            Competitor newCompetitor = newCompetitor(normalised);
-            Optional<Competitor> existing = findExistingCompetitor(newCompetitor);
-            CompetitorBulkResponse result = new CompetitorBulkResponse(rowNumber, "", null);
-            if (existing.isEmpty()) {
-                competitors.add(newCompetitor);
-            } else {
-                Competitor competitor = existing.get();
-                competitorMapper.applyFields(competitor, normalised);
-                competitor.setIsVerified(true);
-                competitors.add(competitor);
-                result.setMessage("Updated and verified the existing competitor with ID " + competitor.getId() + ".");
+            try {
+                CompetitorRequest normalised = normaliseCsvRequest(competitorRequest);
+                Competitor competitor = newCompetitor(normalised);
+                Integer earlierRow = hasText(competitor.getClubNumber())
+                        ? importedClubNumbers.get(competitor.getClubNumber()) : null;
+                if (earlierRow != null) {
+                    throw new ValidationException("Club number " + competitor.getClubNumber()
+                            + " was already imported by row " + earlierRow + " of this file.");
+                }
+                String message = "";
+                Optional<Competitor> existing = findExistingCompetitor(competitor);
+                if (existing.isPresent()) {
+                    competitor = existing.get();
+                    competitorMapper.applyFields(competitor, normalised);
+                    competitor.setIsVerified(true);
+                    message = "Updated and verified the existing competitor with ID " + competitor.getId() + ".";
+                }
+                CompetitorResponse saved = toResponse(transactionService.saveCompetitor(competitor));
+                if (hasText(saved.getClubNumber())) {
+                    importedClubNumbers.put(saved.getClubNumber(), rowNumber);
+                }
+                competitorResponses.add(saved);
+                results.add(new CompetitorBulkResponse(rowNumber, true, message, saved));
+            } catch (ValidationException | NonFatalException e) {
+                log.warn("Competitor row {} skipped due to error: {}", rowNumber, e.getMessage());
+                results.add(failedRow(rowNumber, e.getMessage()));
+            } catch (DataIntegrityViolationException e) {
+                log.warn("Competitor row {} skipped due to a data integrity violation: {}", rowNumber,
+                        e.getMessage());
+                results.add(failedRow(rowNumber, "The competitor conflicts with an existing record."));
             }
-            results.add(result);
-            savedResults.add(result);
         }
 
-        List<CompetitorResponse> competitorResponseList = transactionService.saveCompetitors(competitors).stream()
-                .map(this::toResponse)
-                .toList();
-        for (int i = 0; i < savedResults.size(); i++) {
-            savedResults.get(i).setCompetitor(competitorResponseList.get(i));
-        }
-        return new CompetitorResponseHolder(new ArrayList<>(competitorResponseList), results);
+        return new CompetitorResponseHolder(competitorResponses, results);
+    }
+
+    /**
+     * Builds the outcome reported for a bulk import row that could not be imported.
+     *
+     * @param rowNumber the row's position among the CSV's data rows, starting at 1.
+     * @param message   the reason the row was not imported.
+     * @return an unsuccessful {@link CompetitorBulkResponse} with the message and no competitor.
+     */
+    protected CompetitorBulkResponse failedRow(int rowNumber, String message) {
+        return new CompetitorBulkResponse(rowNumber, false, message, null);
     }
 
     @Override

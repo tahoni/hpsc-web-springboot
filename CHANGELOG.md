@@ -35,8 +35,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ✨ Added
+
+- **`CompetitorBulkResponse.success`:** Each row of the bulk competitor import now carries a `success` flag like the
+  match competitor and shooter log bulk rows: `true` for a row that was created or updated, and `false` for a row that
+  failed, with the reason in its `message` and no `competitor`.
+
 #### 🔄 Changed
 
+- **Bulk competitor import reports failed rows:** A row that is missing a required field, has an unrecognised
+  gender, names an unknown home club or lacks a required club number is now reported in its result with `success`
+  `false` and skipped, instead of failing the whole request with a 400 or 404. Each row is saved in its own
+  transaction, so the other rows are still imported. A CSV that is blank or cannot be parsed still fails the request.
 - **`MatchResponse.warnings` renamed to `messages`:** The list of problems found with a match when it is read keeps its
   behaviour (left out of the JSON when empty) but is now serialised as `messages`. **Breaking** for clients that read
   `warnings`.

@@ -89,12 +89,11 @@ public class IpscCompetitorController {
      *                and cannot be null.
      * @return a {@link CompetitorResponseHolder} containing the created or updated competitors and the result of every
      * row.
-     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
-     *                             missing a required field, if a row's gender is unrecognised, or
-     *                             if a row's home club is
-     *                             {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
-     *                             without a club number.
-     * @throws NonFatalException   if a row's named home club cannot be found.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed. A row that is missing a
+     *                             required field, has an unrecognised gender, names a home club that cannot be
+     *                             found, or has the home club
+     *                             {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION} without a
+     *                             club number is reported in its own result instead.
      * @throws FatalException      if a critical error occurs during processing, that prevents the
      *                             operation from completing successfully.
      */
@@ -102,16 +101,13 @@ public class IpscCompetitorController {
     @Operation(summary = "Create competitors", description = "Create IPSC competitors in bulk from CSV data. A "
             + "row's club number is required when its home club is HPSC, and is otherwise ignored (forced to "
             + "null). A row whose club number is an existing competitor's updates and verifies that "
-            + "competitor instead of creating another. The response lists the result of every row.")
+            + "competitor instead of creating another. A row that fails is reported, with its reason, and skipped "
+            + "without affecting the other rows. The response lists the result of every row.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Competitors created or updated.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = CompetitorResponseHolder.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid CSV data provided, a required field is "
-                    + "missing, the gender is unrecognised, or a row's home club is HPSC without a club number.",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ControllerResponse.class))),
-            @ApiResponse(responseCode = "404", description = "A row's named home club could not be found.",
+            @ApiResponse(responseCode = "400", description = "Invalid CSV data provided.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error occurred while processing the CSV data.",
