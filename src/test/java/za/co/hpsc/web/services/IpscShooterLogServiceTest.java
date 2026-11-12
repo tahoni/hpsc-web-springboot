@@ -1,5 +1,11 @@
 package za.co.hpsc.web.services;
 
+import java.io.IOException;
+import za.co.hpsc.web.exceptions.FatalException;
+import org.mockito.MockedConstruction;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.core.FormatSchema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -476,6 +486,8 @@ class IpscShooterLogServiceTest {
         assertEquals(2, holder.getShooterLogResults().size());
         ShooterLogBulkResponse first = holder.getShooterLogResults().get(0);
         ShooterLogBulkResponse second = holder.getShooterLogResults().get(1);
+        assertEquals(1, first.getRowNumber());
+        assertEquals(2, second.getRowNumber());
         assertTrue(first.isSuccess());
         assertEquals("", first.getMessage());
         assertNull(first.getShooterLogRow());
@@ -514,6 +526,7 @@ class IpscShooterLogServiceTest {
         // Assert
         List<ShooterLogBulkResponse> results = holder.getShooterLogResults();
         assertEquals(5, results.size());
+        assertEquals(List.of(1, 2, 3, 4, 5), results.stream().map(ShooterLogBulkResponse::getRowNumber).toList());
         assertTrue(results.get(0).isSuccess());
 
         assertFalse(results.get(1).isSuccess());
@@ -613,6 +626,87 @@ class IpscShooterLogServiceTest {
         // Act & Assert
         assertThrows(ValidationException.class, () -> ipscShooterLogService.createShooterLog(request));
         verifyNoInteractions(ipscMatchRepository, transactionService);
+    }
+
+    @Test
+    void testCreateShooterLogs_whenReadingTheCsvFails_thenThrowsFatalExceptionWithTheCause() throws IOException {
+        // Arrange
+        IOException cause = new IOException("disk unavailable");
+        ObjectReader reader = mock(ObjectReader.class);
+        when(reader.with(any(FormatSchema.class))).thenReturn(reader);
+        when(reader.readValues(anyString())).thenThrow(cause);
+
+        try (MockedConstruction<CsvMapper> ignored = mockConstruction(CsvMapper.class,
+                (mapper, context) -> when(mapper.readerFor(ShooterLogRequest.class)).thenReturn(reader))) {
+
+            // Act & Assert
+            FatalException thrown = assertThrows(FatalException.class,
+                    () -> ipscShooterLogService.createShooterLogs("StartDate,EndDate,MatchIds\n2026-09-01,2026-09-30,\n"));
+            assertSame(cause, thrown.getCause());
+            assertTrue(thrown.getMessage().contains("disk unavailable"));
+        }
+    }
+
+    // patchShooterLogs()
+    @Test
+    void testPatchShooterLogs_whenARowListsMatchIds_thenReplacesTheLogsMatches() throws Exception {
+        // Arrange
+        ShooterLog shooterLog = shooterLog(1L, match(10L));
+        when(shooterLogRepository.findByIdWithMatches(1L)).thenReturn(Optional.of(shooterLog));
+        when(ipscMatchRepository.findAllById(List.of(11L))).thenReturn(List.of(match(11L)));
+        when(transactionService.saveShooterLog(shooterLog)).thenReturn(shooterLog);
+        String csvData = """
+                ShooterLogId,MatchIds
+                1,11
+                """;
+
+        // Act
+        ShooterLogBulkResponseHolder holder = ipscShooterLogService.patchShooterLogs(csvData);
+
+        // Assert
+        assertTrue(holder.getShooterLogResults().getFirst().isSuccess());
+        assertEquals(List.of(11L), holder.getShooterLogResults().getFirst().getShooterLog().getMatchIds());
+    }
+
+    @Test
+    void testPatchShooterLogs_whenARowLeavesMatchIdsEmpty_thenLeavesTheLogsMatchesUnchanged() throws Exception {
+        // Arrange
+        ShooterLog shooterLog = shooterLog(1L, match(10L));
+        when(shooterLogRepository.findByIdWithMatches(1L)).thenReturn(Optional.of(shooterLog));
+        when(transactionService.saveShooterLog(shooterLog)).thenReturn(shooterLog);
+        String csvData = """
+                ShooterLogId,StartDate,MatchIds
+                1,2026-09-02,
+                """;
+
+        // Act
+        ShooterLogBulkResponseHolder holder = ipscShooterLogService.patchShooterLogs(csvData);
+
+        // Assert
+        assertTrue(holder.getShooterLogResults().getFirst().isSuccess());
+        assertEquals(List.of(10L), holder.getShooterLogResults().getFirst().getShooterLog().getMatchIds());
+        assertEquals(LocalDate.of(2026, 9, 2), holder.getShooterLogResults().getFirst().getShooterLog().getStartDate());
+    }
+
+    @Test
+    void testPatchShooterLogs_whenARowFailsAfterListingMatchesToAddAndRemove_thenReportsThoseIdsInTheRow()
+            throws Exception {
+        // Arrange
+        when(shooterLogRepository.findByIdWithMatches(999L)).thenReturn(Optional.empty());
+        String csvData = """
+                ShooterLogId,AddMatchIds,RemoveMatchIds
+                999,10;11,12
+                """;
+
+        // Act
+        ShooterLogBulkResponseHolder holder = ipscShooterLogService.patchShooterLogs(csvData);
+
+        // Assert
+        ShooterLogBulkResponse result = holder.getShooterLogResults().getFirst();
+        assertFalse(result.isSuccess());
+        assertEquals("999", result.getShooterLogRow().getShooterLogId());
+        assertEquals("10;11", result.getShooterLogRow().getAddMatchIds());
+        assertEquals("12", result.getShooterLogRow().getRemoveMatchIds());
     }
 
     // Helpers

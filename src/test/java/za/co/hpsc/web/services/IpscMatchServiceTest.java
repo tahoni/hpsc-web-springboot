@@ -20,7 +20,8 @@ import za.co.hpsc.web.mappers.MatchMapper;
 import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
-import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
+import za.co.hpsc.web.models.ipsc.match.response.MatchBulkResponse;
+import za.co.hpsc.web.models.ipsc.match.response.MatchBulkResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
@@ -257,7 +258,7 @@ public class IpscMatchServiceTest {
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
         // Act
-        MatchResponseHolder holder = assertDoesNotThrow(() -> ipscMatchService.createMatches(csvData));
+        MatchBulkResponseHolder holder = assertDoesNotThrow(() -> ipscMatchService.createMatches(csvData));
 
         // Assert
         assertEquals(1, holder.getMatches().size());
@@ -280,7 +281,7 @@ public class IpscMatchServiceTest {
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
         // Act
-        MatchResponseHolder holder = assertDoesNotThrow(() -> ipscMatchService.createMatches(csvData));
+        MatchBulkResponseHolder holder = assertDoesNotThrow(() -> ipscMatchService.createMatches(csvData));
 
         // Assert
         assertEquals(2, holder.getMatches().size());
@@ -290,7 +291,7 @@ public class IpscMatchServiceTest {
     }
 
     @Test
-    void testCreateMatches_whenRowIsMissingRequiredField_thenThrowsValidationException() {
+    void testCreateMatches_whenRowIsMissingRequiredField_thenReportsTheRowAsFailed() {
         // Arrange - MatchName is present but blank, so it survives CSV parsing and instead trips
         // createMatch's own validation
         String csvData = """
@@ -298,12 +299,17 @@ public class IpscMatchServiceTest {
                 2026-09-12,,Test Club,%s,%s
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchService.createMatches(csvData));
+        // Act
+        MatchBulkResponseHolder holder = assertDoesNotThrow(() -> ipscMatchService.createMatches(csvData));
+
+        // Assert
+        assertFailedRow(holder);
+        assertEquals("2026-09-12", holder.getResults().getFirst().getMatchRow().getMatchDate());
+        assertEquals("Test Club", holder.getResults().getFirst().getMatchRow().getClub());
     }
 
     @Test
-    void testCreateMatches_whenRowHasUnrecognisedFirearmType_thenThrowsValidationException() {
+    void testCreateMatches_whenRowHasUnrecognisedFirearmType_thenReportsTheRowAsFailed() {
         // Arrange
         stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         String csvData = """
@@ -311,12 +317,16 @@ public class IpscMatchServiceTest {
                 2026-09-12,Club Championship,Test Club,Not A Firearm Type,%s
                 """.formatted(MatchCategory.CLUB_SHOOT);
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchService.createMatches(csvData));
+        // Act
+        MatchBulkResponseHolder holder = assertDoesNotThrow(() -> ipscMatchService.createMatches(csvData));
+
+        // Assert
+        assertFailedRow(holder);
+        assertEquals("Not A Firearm Type", holder.getResults().getFirst().getMatchRow().getMatchFirearmType());
     }
 
     @Test
-    void testCreateMatches_whenRowClubIsUnknown_thenThrowsValidationException() {
+    void testCreateMatches_whenRowClubIsUnknown_thenReportsTheRowAsFailed() {
         // Arrange
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
         String csvData = """
@@ -324,8 +334,80 @@ public class IpscMatchServiceTest {
                 2026-09-12,Club Championship,No Such Club,%s,%s
                 """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscMatchService.createMatches(csvData));
+        // Act
+        MatchBulkResponseHolder holder = assertDoesNotThrow(() -> ipscMatchService.createMatches(csvData));
+
+        // Assert
+        assertFailedRow(holder);
+        assertEquals("No Such Club", holder.getResults().getFirst().getMatchRow().getClub());
+    }
+
+    @Test
+    void testCreateMatches_whenOneRowFails_thenTheOtherRowsAreStillImported() {
+        // Arrange
+        stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        stubMatchSaveReturnsSameEntity();
+        String csvData = """
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url
+                2026-09-12,First Match,Test Club,%1$s,%2$s
+                2026-09-13,,Test Club,%1$s,%2$s
+                2026-09-14,Third Match,Test Club,%1$s,%2$s
+                """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
+
+        // Act
+        MatchBulkResponseHolder holder = assertDoesNotThrow(() -> ipscMatchService.createMatches(csvData));
+
+        // Assert
+        assertEquals(2, holder.getMatches().size());
+        assertEquals(List.of(true, false, true),
+                holder.getResults().stream().map(MatchBulkResponse::isSuccess).toList());
+        assertEquals(List.of(1, 2, 3), holder.getResults().stream().map(MatchBulkResponse::getRowNumber).toList());
+        assertNull(holder.getResults().get(0).getMatchRow());
+        assertNull(holder.getResults().get(2).getMatchRow());
+        assertEquals("2026-09-13", holder.getResults().get(1).getMatchRow().getMatchDate());
+        assertEquals("", holder.getResults().get(1).getMatchRow().getMatchName());
+    }
+
+    @Test
+    void testCreateMatches_whenRowSucceeds_thenItIsReportedAsSuccessful() {
+        // Arrange
+        stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        stubMatchSaveReturnsSameEntity();
+        String csvData = """
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url
+                2026-09-12,First Match,Test Club,%1$s,%2$s
+                """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
+
+        // Act
+        MatchBulkResponseHolder holder = assertDoesNotThrow(() -> ipscMatchService.createMatches(csvData));
+
+        // Assert
+        MatchBulkResponse result = holder.getResults().getFirst();
+        assertTrue(result.isSuccess());
+        assertEquals(1, result.getRowNumber());
+        assertEquals("", result.getMessage());
+        assertSame(holder.getMatches().getFirst(), result.getMatch());
+        assertNull(result.getMatchRow());
+    }
+
+    @Test
+    void testCreateMatches_whenSavingARowViolatesDataIntegrity_thenReportsTheRowAsFailed() {
+        // Arrange
+        stubExistingClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        when(ipscMatchRepository.save(any(IpscMatch.class)))
+                .thenThrow(new DataIntegrityViolationException("Duplicate entry"));
+        String csvData = """
+                MatchDate,MatchName,Club,MatchFirearmType,MatchCategory,StartTime,EndTime,Url
+                2026-09-12,First Match,Test Club,%1$s,%2$s
+                """.formatted(FirearmType.HANDGUN, MatchCategory.CLUB_SHOOT);
+
+        // Act
+        MatchBulkResponseHolder holder = assertDoesNotThrow(() -> ipscMatchService.createMatches(csvData));
+
+        // Assert
+        assertFailedRow(holder);
+        assertEquals("The match conflicts with an existing record.", holder.getResults().getFirst().getMessage());
+        assertEquals("First Match", holder.getResults().getFirst().getMatchRow().getMatchName());
     }
 
     // deleteMatch()
@@ -475,8 +557,8 @@ public class IpscMatchServiceTest {
         MatchResponse fetched = assertDoesNotThrow(() -> ipscMatchService.getMatch(1L));
 
         // Assert
-        assertEquals(1, fetched.getWarnings().size());
-        assertTrue(fetched.getWarnings().get(0).contains("shooter log with ID 7"));
+        assertEquals(1, fetched.getMessages().size());
+        assertTrue(fetched.getMessages().get(0).contains("shooter log with ID 7"));
     }
 
     @Test
@@ -492,7 +574,7 @@ public class IpscMatchServiceTest {
         MatchResponse fetched = ipscMatchService.getMatch(1L);
 
         // Assert
-        assertTrue(fetched.getWarnings().isEmpty());
+        assertTrue(fetched.getMessages().isEmpty());
     }
 
     @Test
@@ -510,9 +592,27 @@ public class IpscMatchServiceTest {
 
         // Assert
         assertEquals(3, matches.size());
-        assertEquals(1, matches.get(0).getWarnings().size());
-        assertTrue(matches.get(1).getWarnings().isEmpty());
-        assertTrue(matches.get(2).getWarnings().isEmpty());
+        assertEquals(1, matches.get(0).getMessages().size());
+        assertTrue(matches.get(1).getMessages().isEmpty());
+        assertTrue(matches.get(2).getMessages().isEmpty());
+    }
+
+    @Test
+    void testGetAllMatches_whenALogCoversAMatchThatIsNotListed_thenIgnoresIt() {
+        // Arrange
+        IpscMatch listed = matchOn(1L, LocalDate.of(2026, 9, 12));
+        IpscMatch unlisted = matchOn(99L, LocalDate.of(2026, 10, 12));
+        ShooterLog shooterLog = shooterLog(7L, LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30));
+        shooterLog.setMatches(List.of(listed, unlisted));
+        when(ipscMatchRepository.findAllWithClub()).thenReturn(List.of(listed));
+        when(shooterLogRepository.findAllWithMatches()).thenReturn(List.of(shooterLog));
+
+        // Act
+        List<MatchResponse> matches = ipscMatchService.getAllMatches();
+
+        // Assert
+        assertEquals(1, matches.size());
+        assertTrue(matches.getFirst().getMessages().isEmpty());
     }
 
     private IpscMatch matchOn(Long id, LocalDate date) {
@@ -887,8 +987,8 @@ public class IpscMatchServiceTest {
         MatchResponse response = assertDoesNotThrow(() -> ipscMatchService.patchMatch(1L, patch));
 
         // Assert
-        assertEquals(1, response.getWarnings().size());
-        assertTrue(response.getWarnings().get(0).contains("shooter log with ID 7"));
+        assertEquals(1, response.getMessages().size());
+        assertTrue(response.getMessages().get(0).contains("shooter log with ID 7"));
     }
 
     @Test
@@ -942,8 +1042,8 @@ public class IpscMatchServiceTest {
         MatchResponse response = assertDoesNotThrow(() -> ipscMatchService.updateMatch(1L, validRequest("Test Club")));
 
         // Assert
-        assertEquals(1, response.getWarnings().size());
-        assertTrue(response.getWarnings().get(0).contains("shooter log with ID 7"));
+        assertEquals(1, response.getMessages().size());
+        assertTrue(response.getMessages().get(0).contains("shooter log with ID 7"));
     }
 
     // Helpers
@@ -977,6 +1077,16 @@ public class IpscMatchServiceTest {
     private void stubDefaultClub() {
         Club club = newClub("Eufees Clubs", IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
         when(clubRepository.findByIdentifier(IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER)).thenReturn(Optional.of(club));
+    }
+
+    private static void assertFailedRow(MatchBulkResponseHolder holder) {
+        assertTrue(holder.getMatches().isEmpty());
+        assertEquals(1, holder.getResults().size());
+        MatchBulkResponse result = holder.getResults().getFirst();
+        assertFalse(result.isSuccess());
+        assertFalse(result.getMessage().isBlank());
+        assertNull(result.getMatch());
+        assertNotNull(result.getMatchRow());
     }
 
     private void stubMatchSaveReturnsSameEntity() {

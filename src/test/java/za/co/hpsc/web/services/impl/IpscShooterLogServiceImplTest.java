@@ -55,6 +55,20 @@ class IpscShooterLogServiceImplTest {
         assertEquals(List.of(match), shooterLog.getMatches());
     }
 
+    // adjustMatches()
+    @Test
+    void testAdjustMatches_whenTheLogHasNoMatchesLoaded_thenAddsToAnEmptyList() {
+        // Arrange
+        IpscMatch added = match(10L);
+        when(ipscMatchRepository.findAllById(List.of(10L))).thenReturn(List.of(added));
+
+        // Act
+        List<IpscMatch> result = ipscShooterLogServiceImpl.adjustMatches(null, List.of(10L), null);
+
+        // Assert
+        assertEquals(List.of(added), result);
+    }
+
     // resolveMatches()
     @Test
     void testResolveMatches_whenIdsAreNull_thenReturnsAnEmptyModifiableList() {

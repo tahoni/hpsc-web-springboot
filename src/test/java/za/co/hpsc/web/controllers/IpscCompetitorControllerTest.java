@@ -14,7 +14,7 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
-import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 import za.co.hpsc.web.services.IpscCompetitorService;
@@ -100,11 +100,11 @@ class IpscCompetitorControllerTest {
     @Test
     void testCreateCompetitors_whenServiceSucceeds_thenReturns201() throws ValidationException, NonFatalException, FatalException {
         // Arrange
-        CompetitorResponseHolder holder = new CompetitorResponseHolder(List.of());
+        CompetitorBulkResponseHolder holder = new CompetitorBulkResponseHolder(List.of());
         when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenReturn(holder);
 
         // Act
-        ResponseEntity<CompetitorResponseHolder> result = ipscCompetitorController.createCompetitors(VALID_CSV);
+        ResponseEntity<CompetitorBulkResponseHolder> result = ipscCompetitorController.createCompetitors(VALID_CSV);
 
         // Assert
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -113,11 +113,11 @@ class IpscCompetitorControllerTest {
     @Test
     void testCreateCompetitors_whenServiceSucceeds_thenResponseBodyIsReturnedFromService() throws ValidationException, NonFatalException, FatalException {
         // Arrange
-        CompetitorResponseHolder holder = new CompetitorResponseHolder(List.of(new CompetitorResponse()));
+        CompetitorBulkResponseHolder holder = new CompetitorBulkResponseHolder(List.of(new CompetitorResponse()));
         when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenReturn(holder);
 
         // Act
-        ResponseEntity<CompetitorResponseHolder> result = ipscCompetitorController.createCompetitors(VALID_CSV);
+        ResponseEntity<CompetitorBulkResponseHolder> result = ipscCompetitorController.createCompetitors(VALID_CSV);
 
         // Assert
         assertSame(holder, result.getBody());

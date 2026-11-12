@@ -1,5 +1,11 @@
 package za.co.hpsc.web.services.impl;
 
+import java.io.IOException;
+import za.co.hpsc.web.exceptions.FatalException;
+import org.mockito.MockedConstruction;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.core.FormatSchema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +41,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -75,6 +84,28 @@ class IpscMatchCompetitorServiceImplTest {
                 new MatchCompetitorMapper(competitorRepository, ipscMatchRepository, ipscEntityCompetitorService),
                 new MatchCompetitorRowMapper(),
                 ipscEntityClubService, null);
+    }
+
+    // readMatchCompetitors()
+    @Test
+    void testReadMatchCompetitors_whenReadingTheCsvFails_thenThrowsFatalExceptionWithTheCause() throws IOException {
+        // Arrange
+        IOException cause = new IOException("disk unavailable");
+        ObjectReader reader = mock(ObjectReader.class);
+        when(reader.with(any(FormatSchema.class))).thenReturn(reader);
+        when(reader.readValues(anyString())).thenThrow(cause);
+
+        try (MockedConstruction<CsvMapper> ignored = mockConstruction(CsvMapper.class,
+                (mapper, context) -> {
+                    when(mapper.readerFor(MatchCompetitorRequest.class)).thenReturn(reader);
+                })) {
+
+            // Act & Assert
+            FatalException thrown = assertThrows(FatalException.class,
+                    () -> matchCompetitorServiceImpl.readMatchCompetitors("MatchId,CompetitorId\\n1,2\\n"));
+            assertSame(cause, thrown.getCause());
+            assertTrue(thrown.getMessage().contains("disk unavailable"));
+        }
     }
 
     // findMatchCompetitorOrThrow()
@@ -366,7 +397,7 @@ class IpscMatchCompetitorServiceImplTest {
         request.setPoints(new BigDecimal("10"));
 
         // Act
-        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("Division not specified", request, null);
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow(1, "Division not specified", request, null);
 
         // Assert
         assertFalse(result.isSuccess());
@@ -382,7 +413,7 @@ class IpscMatchCompetitorServiceImplTest {
     @Test
     void testFailedRow_whenRowCannotBeIdentified_thenDoesNotThrowAndReportsEmptyValues() {
         // Act
-        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("bad", new MatchCompetitorRequest(), null);
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow(1, "bad", new MatchCompetitorRequest(), null);
 
         // Assert
         assertFalse(result.isSuccess());
@@ -394,7 +425,7 @@ class IpscMatchCompetitorServiceImplTest {
     @Test
     void testFailedRow_whenRequestIsNull_thenReportsEveryValueAsEmpty() {
         // Act
-        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("empty row", null, null);
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow(1, "empty row", null, null);
 
         // Assert
         assertFalse(result.isSuccess());
@@ -424,7 +455,7 @@ class IpscMatchCompetitorServiceImplTest {
         matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
 
         // Act
-        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("bad", request, matchCompetitor);
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow(1, "bad", request, matchCompetitor);
 
         // Assert
         assertEquals("1", result.getMatchCompetitorRow().getCompetitorId());
@@ -446,7 +477,7 @@ class IpscMatchCompetitorServiceImplTest {
         matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
 
         // Act
-        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow("bad", request, matchCompetitor);
+        MatchCompetitorBulkResponse result = matchCompetitorServiceImpl.failedRow(1, "bad", request, matchCompetitor);
 
         // Assert
         assertEquals("99", result.getMatchCompetitorRow().getCompetitorId());

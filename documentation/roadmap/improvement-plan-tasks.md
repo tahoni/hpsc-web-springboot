@@ -115,7 +115,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 **Match bulk CSV import** *(improvement-plan.md → Gap #8)* — ✅ Closed in v8.3.0
 
 - [x] Introduce `MatchRequestForCSV`/`MatchResponseHolder` (`models/ipsc/match/request/`,
-  `models/ipsc/match/response/`), mirroring `CompetitorRequestForCSV`/`CompetitorResponseHolder`'s `UpperCamelCase`
+  `models/ipsc/match/response/`), mirroring `CompetitorRequestForCSV`/`CompetitorBulkResponseHolder`'s `UpperCamelCase`
   CSV/JSON `@JsonCreator` pattern — with stages represented as a single semicolon-separated
   `<stageNumber>:<stageName>` cell, since CSV has no native nested-row representation
 - [x] Add `IpscMatchController.createMatches` (`POST /ipsc/matches/bulk`, consumes `text/csv`) and
@@ -549,7 +549,7 @@ Gap #41)* —
 - [x] Let a bulk competitor row for an existing competitor update and verify it instead of creating another — done
   differently: matched on the club number only, in `IpscCompetitorServiceImpl.createCompetitors`, as neither an ID
   number nor a full name can tell two people apart
-- [x] Report each competitor row — done, as `CompetitorBulkResponse` in `CompetitorResponseHolder.results`
+- [x] Report each competitor row — done, as `CompetitorBulkResponse` in `CompetitorBulkResponseHolder.results`
 - [x] Describe both in `ARCHITECTURE.md` — done
 
 **Match date conflicts reported when read** *(improvement-plan.md → Gap #49)* —
@@ -573,6 +573,25 @@ Gap #41)* —
 - [x] Run the migrations against a MySQL database on the aligned version — done, with a temporary `@SpringBootTest`
   against a throwaway `mysql:8.4` container: all 38 migrations applied on Flyway `12.4.0`, then the test and the
   container were removed
+
+**Competitor and match bulk import docs** *(improvement-plan.md → Gap #51)* — ✅ Closed in v17.0.0
+
+- [x] Rewrite `ARCHITECTURE.md`'s sentence that says both bulk imports save "all rows in one transaction so a bad row
+  leaves none persisted", and the one that says `TransactionService` commits "each bulk import as a whole", to describe
+  each row being saved on its own and a failed row being reported and skipped
+- [x] Change the Competitor and Match Bulk CSV Import Flow diagrams to show each row saved through
+  `TransactionService.saveCompetitor` and `saveMatch`, with a failed row reported instead of failing before anything is
+  saved
+- [x] End the Competitor flow in `CompetitorBulkResponseHolder (one CompetitorBulkResponse per row)` and the Match flow
+  in `MatchBulkResponseHolder (one MatchBulkResponse per row)`, as the Match Competitor and Shooter Log flows already do
+
+**Unused `TransactionService` batch saves** *(improvement-plan.md → Gap #52)* — ✅ Closed in v17.0.0
+
+- [x] Confirm with the IDE's find-usages that `saveMatches`, `saveMatchCompetitors` and `saveShooterResults` have no
+  production caller
+- [x] Remove the three methods from `TransactionService` and `TransactionServiceImpl`, with their tests in
+  `TransactionServiceTest` and `TransactionServiceIntegrationTest`, or give each a production caller — removed
+- [x] Correct `ARCHITECTURE.md`'s `TransactionService` description if it still names them
 
 ---
 

@@ -66,16 +66,6 @@ public interface TransactionService {
     IpscMatch saveMatch(IpscMatch match);
 
     /**
-     * Creates or updates a batch of matches in a single transaction, so either every one is
-     * saved or none is, following the same rules as {@link #saveMatch(IpscMatch)}.
-     *
-     * @param matches the matches to save. Must not be null.
-     * @return the saved matches, in the order given.
-     * @since 8.9.0
-     */
-    List<IpscMatch> saveMatches(List<IpscMatch> matches);
-
-    /**
      * Deletes a match.
      *
      * @param match the match to delete. Must not be null and must already be persisted.
@@ -98,19 +88,6 @@ public interface TransactionService {
      * @since 8.9.0
      */
     MatchCompetitor saveMatchCompetitor(MatchCompetitor matchCompetitor);
-
-    /**
-     * Creates or updates a batch of match competitors in a single transaction, so either every one is
-     * saved or none is.
-     *
-     * @param matchCompetitors the match competitors to save. Must not be null.
-     * @return the saved match competitors, in the order given.
-     * @throws org.springframework.dao.DataIntegrityViolationException if a unique constraint is violated, such as
-     *                                                                  a duplicate competitor, match and firearm
-     *                                                                  type.
-     * @since 8.9.0
-     */
-    List<MatchCompetitor> saveMatchCompetitors(List<MatchCompetitor> matchCompetitors);
 
     /**
      * Deletes a match competitor.
@@ -143,20 +120,6 @@ public interface TransactionService {
      * @since 16.1.0
      */
     void deleteShooterLog(ShooterLog shooterLog);
-
-    /**
-     * Creates or updates a batch of shooter results in a single transaction, so either every one is saved or none
-     * is.
-     *
-     * @param shooterResults the shooter results to save; a new one is created when its ID is {@code null}. Must
-     *                       not be null.
-     * @return the saved shooter results, in the order given.
-     * @throws org.springframework.dao.DataIntegrityViolationException if a unique constraint is violated, such as
-     *                                                                  a second result for the same match and match
-     *                                                                  competitor.
-     * @since 15.0.0
-     */
-    List<ShooterResult> saveShooterResults(List<ShooterResult> shooterResults);
 
     /**
      * Saves some shooter results and deletes others in one transaction, flushing before it commits so a constraint

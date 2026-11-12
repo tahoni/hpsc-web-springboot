@@ -6,7 +6,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
-import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
+import za.co.hpsc.web.models.ipsc.match.response.MatchBulkResponseHolder;
 
 import java.util.List;
 
@@ -38,24 +38,20 @@ public interface IpscMatchService {
      *
      * <p>
      * Each row is validated and built by the same rules as {@link #createMatch(MatchRequest)}
-     * (validation, firearm type/category resolution and club resolution). Every row is checked
-     * before any is saved, and all are then saved in a single transaction, so either every row is
-     * created or none is.
+     * (validation, firearm type/category resolution and club resolution) and saved in its own transaction. A row
+     * that fails any of those is reported with {@code success} {@code false} and the reason in its message, and
+     * skipped without affecting the other rows.
      * </p>
      *
      * @param csvData the CSV data containing match information, one match per row. Must not be
      *                null or blank.
-     * @return a {@link MatchResponseHolder} containing the created matches, in the same order as
-     * the CSV rows.
-     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
-     *                             missing a required field, if a row's firearm type/category
-     *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
-     *                             {@link za.co.hpsc.web.enums.MatchCategory}.
-     * @throws NonFatalException   if a row's named club cannot be found.
+     * @return a {@link MatchBulkResponseHolder} containing the created matches, in the same order as the CSV rows,
+     * and the result of every row, including the rows that failed.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      * @since 8.0.0
      */
-    MatchResponseHolder createMatches(String csvData)
+    MatchBulkResponseHolder createMatches(String csvData)
             throws ValidationException, NonFatalException, FatalException;
 
     /**
@@ -64,7 +60,7 @@ public interface IpscMatchService {
      * @param matchId the identifier of the match to replace.
      * @param request the match's replacement fields. Must not be null and must carry a match
      *                name, date and firearm type. The club and match category default when omitted.
-     * @return the updated match, with a message in its {@code warnings} for each shooter log that covers it and whose
+     * @return the updated match, with a message in its {@code messages} for each shooter log that covers it and whose
      * dates it is outside, when it stays on the same day.
      * @throws ValidationException if a required field is missing, the firearm type/category
      *                             doesn't match a known {@link za.co.hpsc.web.enums.FirearmType}/
@@ -88,7 +84,7 @@ public interface IpscMatchService {
      *                to {@link za.co.hpsc.web.constants.IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}
      *                rather than being rejected. A supplied {@code matchDate} sets the match's
      *                scheduled date to the start of that day.
-     * @return the updated match, with a message in its {@code warnings} for each shooter log that covers it and whose
+     * @return the updated match, with a message in its {@code messages} for each shooter log that covers it and whose
      * dates it is outside, when it stays on the same day.
      * @throws ValidationException if the firearm type/category doesn't match a known
      *                             {@link za.co.hpsc.web.enums.FirearmType}/
@@ -107,7 +103,7 @@ public interface IpscMatchService {
      * Retrieves an existing IPSC match.
      *
      * @param matchId the identifier of the match to retrieve.
-     * @return the match, with a message in its {@code warnings} for each shooter log that covers it and whose dates
+     * @return the match, with a message in its {@code messages} for each shooter log that covers it and whose dates
      * it is outside.
      * @throws NonFatalException if no match with {@code matchId} exists.
      * @since 8.0.0
@@ -118,7 +114,7 @@ public interface IpscMatchService {
     /**
      * Retrieves every IPSC match.
      *
-     * @return all persisted matches, each with a message in its {@code warnings} for each shooter log that covers
+     * @return all persisted matches, each with a message in its {@code messages} for each shooter log that covers
      * it and whose dates it is outside.
      * @since 8.0.0
      */

@@ -59,7 +59,7 @@ public class MatchResponse {
      * it. Only filled in by the read endpoints, and left out of the JSON when empty.
      */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private List<String> warnings = new ArrayList<>();
+    private List<String> messages = new ArrayList<>();
 
     /**
      * Creates a response from a persisted match.

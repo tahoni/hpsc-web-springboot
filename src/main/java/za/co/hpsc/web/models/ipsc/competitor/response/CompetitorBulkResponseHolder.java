@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class CompetitorResponseHolder {
+public class CompetitorBulkResponseHolder {
     /** The list of competitors created or updated by the bulk import. */
     @NotNull
     private List<CompetitorResponse> competitors;
@@ -29,7 +29,7 @@ public class CompetitorResponseHolder {
      *
      * @param competitors the competitors created or updated.
      */
-    public CompetitorResponseHolder(List<CompetitorResponse> competitors) {
+    public CompetitorBulkResponseHolder(List<CompetitorResponse> competitors) {
         this(competitors, new ArrayList<>());
     }
 
@@ -39,7 +39,7 @@ public class CompetitorResponseHolder {
      * @param competitors the competitors created or updated.
      * @param results     the result of each row, in CSV order.
      */
-    public CompetitorResponseHolder(List<CompetitorResponse> competitors, List<CompetitorBulkResponse> results) {
+    public CompetitorBulkResponseHolder(List<CompetitorResponse> competitors, List<CompetitorBulkResponse> results) {
         this.competitors = competitors;
         this.results = results;
     }

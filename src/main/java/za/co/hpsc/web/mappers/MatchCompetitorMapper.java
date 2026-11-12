@@ -352,8 +352,7 @@ public class MatchCompetitorMapper {
      * @param division    the division to take the firearm type from when the name is not recognised; may be
      *                    {@code null}, in which case the name must match a known firearm type.
      * @return the matching {@link FirearmType}, or the division's firearm type when the name is not recognised.
-     * @throws ValidationException if the name matches no firearm type and the division is {@code null} or has no
-     *                             firearm type.
+     * @throws ValidationException if the name matches no firearm type and the division is {@code null}.
      */
     public FirearmType resolveFirearmType(String firearmType, Division division) {
         Optional<FirearmType> optionalFirearmType = FirearmType.fromName(firearmType);
@@ -361,15 +360,8 @@ public class MatchCompetitorMapper {
             // If the firearm type is provided, return it
             return optionalFirearmType.get();
         } else if (division != null) {
-            // If the firearm type is not provided, return the firearm type from the division if it exists,
-            // otherwise throw an exception
-            FirearmType divisionFirearmType = division.getFirearmType();
-            if (divisionFirearmType != null) {
-                return divisionFirearmType;
-            } else {
-                throw new ValidationException("Division " + division + " has no default firearm type " +
-                        "and unknown firearm type" + firearmType);
-            }
+            // If the firearm type is not provided, return the firearm type of the division, which every division has
+            return division.getFirearmType();
         } else {
             throw new ValidationException("Unknown firearm type: " + firearmType);
         }

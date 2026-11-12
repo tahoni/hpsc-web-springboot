@@ -1,5 +1,13 @@
 package za.co.hpsc.web.services.impl;
 
+import za.co.hpsc.web.models.award.request.AwardRequestForCSV;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import java.io.IOException;
+import za.co.hpsc.web.exceptions.FatalException;
+import org.mockito.MockedConstruction;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.core.FormatSchema;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +21,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,6 +38,29 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AwardServiceImplTest {
     @InjectMocks
     private AwardServiceImpl awardService;
+
+    // readAwards()
+    @Test
+    void testReadAwards_whenReadingTheCsvFails_thenThrowsFatalExceptionWithTheCause() throws IOException {
+        // Arrange
+        IOException cause = new IOException("disk unavailable");
+        ObjectReader reader = mock(ObjectReader.class);
+        when(reader.with(any(FormatSchema.class))).thenReturn(reader);
+        when(reader.readValues(anyString())).thenThrow(cause);
+
+        try (MockedConstruction<CsvMapper> ignored = mockConstruction(CsvMapper.class,
+                (mapper, context) -> {
+                    when(mapper.schemaFor(AwardRequestForCSV.class)).thenReturn(CsvSchema.emptySchema());
+                    when(mapper.readerFor(AwardRequest.class)).thenReturn(reader);
+                })) {
+
+            // Act & Assert
+            FatalException thrown = assertThrows(FatalException.class,
+                    () -> awardService.readAwards("title,category\\nAward,Cat\\n"));
+            assertSame(cause, thrown.getCause());
+            assertTrue(thrown.getMessage().contains("disk unavailable"));
+        }
+    }
 
     // mapAwards()
     @Test
