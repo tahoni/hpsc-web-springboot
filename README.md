@@ -32,7 +32,7 @@ Practical Shooting Club platform. It currently provides RESTful APIs for:
   plus bulk CSV import
 - **IPSC Matches**: Match CRUD, including firearm type and match category resolution, plus bulk CSV import.
   A match cannot be rescheduled outside the dates of a shooter log that covers it, and one already outside them
-  reports it in its `warnings` when it is read or edited
+  reports it in its `messages` when it is read or edited
 - **IPSC Match Competitors**: CRUD for a competitor's entry in a match, including competitor, match, division and
   category resolution, plus bulk CSV import
 - **IPSC Shooter Results**: Calculation of each competitor's rank and percentage within their firearm type, division
@@ -229,7 +229,7 @@ This project's documentation is spread across a few files, each with a distinct 
 | [`HELP.md`](HELP.md)                             | Spring Initializr reference links (Maven, Spring Boot docs, guides)                             |
 
 [`documentation/history/`](documentation/history) holds one of each of the following files per released version from
-v14.0.0 onward, so past releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to
+v17.0.0 onward, so past releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to
 the next version, grouped into one subdirectory per major version (e.g. `documentation/history/vN/`):
 
 | File                       | Purpose                                                    |
@@ -239,7 +239,8 @@ the next version, grouped into one subdirectory per major version (e.g. `documen
 
 [`documentation/archive/`](documentation/archive) holds the frozen archives of the earlier releases, one subdirectory
 per range — [`v1-v4/`](documentation/archive/v1-v4), [`v5-v7/`](documentation/archive/v5-v7),
-[`v8-v9/`](documentation/archive/v8-v9) and [`v10-v13/`](documentation/archive/v10-v13) — each with that range's per-version release notes and pull request
+[`v8-v9/`](documentation/archive/v8-v9), [`v10-v13/`](documentation/archive/v10-v13) and
+[`v14-v16/`](documentation/archive/v14-v16) — each with that range's per-version release notes and pull request
 descriptions plus three single files named for the range (e.g. `CHANGELOG_v5-v7.md`):
 
 | File                          | Purpose                                                                                                |

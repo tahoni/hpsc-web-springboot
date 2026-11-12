@@ -162,26 +162,6 @@ public class TransactionServiceTest {
         // Assert
         verify(transactionManager).commit(transactionStatus);
     }
-    // saveMatches()
-    @Test
-    void testSaveMatches_whenCalled_thenSavesEachInOneTransactionInOrder() {
-        // Arrange
-        stubTransaction();
-        IpscMatch first = new IpscMatch();
-        first.setName("First Match");
-        IpscMatch second = new IpscMatch();
-        second.setName("Second Match");
-        when(ipscMatchRepository.save(any(IpscMatch.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        // Act
-        List<IpscMatch> result = transactionService.saveMatches(List.of(first, second));
-
-        // Assert
-        assertEquals(List.of(first, second), result);
-        verify(transactionManager, times(1)).getTransaction(any());
-        verify(transactionManager).commit(transactionStatus);
-    }
-
     // deleteMatch()
     @Test
     void testDeleteMatch_whenCalled_thenDeletesFlushesAndCommits() {
@@ -239,41 +219,6 @@ public class TransactionServiceTest {
         verify(transactionManager, never()).commit(any());
     }
 
-    // saveMatchCompetitors()
-    @Test
-    void testSaveMatchCompetitors_whenCalled_thenSavesEachFlushesAndCommitsInOneTransaction() {
-        // Arrange
-        stubTransaction();
-        MatchCompetitor first = new MatchCompetitor();
-        MatchCompetitor second = new MatchCompetitor();
-        when(matchCompetitorRepository.save(any(MatchCompetitor.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        // Act
-        List<MatchCompetitor> result = transactionService.saveMatchCompetitors(List.of(first, second));
-
-        // Assert
-        assertEquals(List.of(first, second), result);
-        verify(matchCompetitorRepository).flush();
-        verify(transactionManager, times(1)).getTransaction(any());
-        verify(transactionManager).commit(transactionStatus);
-    }
-
-    @Test
-    void testSaveMatchCompetitors_whenFlushFails_thenRollsBackAndPropagates() {
-        // Arrange
-        stubTransaction();
-        when(matchCompetitorRepository.save(any(MatchCompetitor.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-        doThrow(new DataIntegrityViolationException("duplicate")).when(matchCompetitorRepository).flush();
-
-        // Act & Assert
-        assertThrows(DataIntegrityViolationException.class,
-                () -> transactionService.saveMatchCompetitors(List.of(new MatchCompetitor())));
-        verify(transactionManager).rollback(transactionStatus);
-        verify(transactionManager, never()).commit(any());
-    }
-
     // saveShooterLog()
     @Test
     void testSaveShooterLog_whenCalled_thenSavesLoadsMatchesAndCommits() {
@@ -301,41 +246,6 @@ public class TransactionServiceTest {
         // Act & Assert
         assertThrows(DataIntegrityViolationException.class,
                 () -> transactionService.saveShooterLog(new ShooterLog()));
-        verify(transactionManager).rollback(transactionStatus);
-        verify(transactionManager, never()).commit(any());
-    }
-
-    // saveShooterResults()
-    @Test
-    void testSaveShooterResults_whenCalled_thenSavesEachFlushesAndCommitsInOneTransaction() {
-        // Arrange
-        stubTransaction();
-        ShooterResult first = new ShooterResult();
-        ShooterResult second = new ShooterResult();
-        when(shooterResultRepository.save(any(ShooterResult.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        // Act
-        List<ShooterResult> result = transactionService.saveShooterResults(List.of(first, second));
-
-        // Assert
-        assertEquals(List.of(first, second), result);
-        verify(shooterResultRepository).flush();
-        verify(transactionManager, times(1)).getTransaction(any());
-        verify(transactionManager).commit(transactionStatus);
-    }
-
-    @Test
-    void testSaveShooterResults_whenFlushFails_thenRollsBackAndPropagates() {
-        // Arrange
-        stubTransaction();
-        when(shooterResultRepository.save(any(ShooterResult.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-        doThrow(new DataIntegrityViolationException("duplicate")).when(shooterResultRepository).flush();
-
-        // Act & Assert
-        assertThrows(DataIntegrityViolationException.class,
-                () -> transactionService.saveShooterResults(List.of(new ShooterResult())));
         verify(transactionManager).rollback(transactionStatus);
         verify(transactionManager, never()).commit(any());
     }

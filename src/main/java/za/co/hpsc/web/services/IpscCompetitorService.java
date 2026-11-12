@@ -7,7 +7,7 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
-import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 
 import java.util.List;
@@ -51,24 +51,19 @@ public interface IpscCompetitorService {
      * <p>
      * Each row is validated and built by the same rules as
      * {@link #createCompetitor(CompetitorRequest)} (validation, gender resolution and home club
-     * resolution). Every row is checked before any is saved, and all are then saved in a single
-     * transaction, so either every row is created or none is.
+     * resolution) and saved in its own transaction. A row that fails any of those is reported with
+     * {@code success} {@code false} and the reason in its message, and skipped without affecting the other rows.
      * </p>
      *
      * @param csvData the CSV data containing competitor information, one competitor per row.
      *                Must not be null or blank.
-     * @return a {@link CompetitorResponseHolder} containing the created or updated competitors, in the same
-     * order as the CSV rows, and the result of every row.
-     * @throws ValidationException if the CSV data is null, blank or cannot be parsed, if a row is
-     *                             missing a required field, if a row's gender doesn't match a
-     *                             known {@link za.co.hpsc.web.enums.Gender}, or if a row's home
-     *                             club is {@link za.co.hpsc.web.constants.IpscConstants#HOME_CLUB_ABBREVIATION}
-     *                             without a club number.
-     * @throws NonFatalException   if a row's named home club cannot be found.
+     * @return a {@link CompetitorBulkResponseHolder} containing the created or updated competitors, in the same
+     * order as the CSV rows, and the result of every row, including the rows that failed.
+     * @throws ValidationException if the CSV data is null, blank or cannot be parsed.
      * @throws FatalException      if an I/O error occurs while reading the CSV data.
      * @since 8.0.0
      */
-    CompetitorResponseHolder createCompetitors(String csvData)
+    CompetitorBulkResponseHolder createCompetitors(String csvData)
             throws ValidationException, NonFatalException, FatalException;
 
     /**

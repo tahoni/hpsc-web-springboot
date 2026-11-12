@@ -353,6 +353,8 @@ public class IpscMatchCompetitorServiceTest {
         MatchCompetitorBulkResponse response0 = holder.getMatchCompetitorResults().get(0);
         MatchCompetitorBulkResponse response1 = holder.getMatchCompetitorResults().get(1);
         MatchCompetitorBulkResponse response2 = holder.getMatchCompetitorResults().get(2);
+        assertEquals(List.of(1, 2, 3), holder.getMatchCompetitorResults().stream()
+                .map(MatchCompetitorBulkResponse::getRowNumber).toList());
         assertTrue(response0.isSuccess());
         assertFalse(response1.isSuccess());
         assertFalse(response2.isSuccess());

@@ -89,15 +89,19 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
         // Each row is saved in its own transaction, so a bad row is reported and skipped without affecting the
         // others. save() also refuses a row that duplicates one saved earlier in this import.
         List<MatchCompetitorBulkResponse> matchCompetitorBulkResponses = new ArrayList<>();
+        int rowNumber = 0;
         for (MatchCompetitorRequest request : requests) {
+            rowNumber++;
             // Set once the row's fields are applied, so a row that then fails to save, as a duplicate does, is
             // reported by its resolved values
             MatchCompetitor matchCompetitor = null;
             try {
                 if (!isForClub(request, targetClub)) {
-                    String targetClubName = (targetClub != null) ? targetClub.getName() : "";
-                    matchCompetitorBulkResponses.add(
-                            failedRow("Skipped: match club is not " + targetClubName, request, null));
+                    if (targetClub != null) {
+                        // isForClub is always true without a target club, so a row is only skipped for a known one
+                        matchCompetitorBulkResponses.add(
+                                failedRow(rowNumber, "Skipped: match club is not " + targetClub.getName(), request, null));
+                    }
                     continue;
                 }
 
@@ -108,7 +112,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                         resolvable, request);
                 if (hasText(missingFields)) {
                     log.warn("Match competitor skipped due to missing or unresolvable required fields: {}", missingFields);
-                    matchCompetitorBulkResponses.add(failedRow(missingFields, request, resolvable));
+                    matchCompetitorBulkResponses.add(failedRow(rowNumber, missingFields, request, resolvable));
                     continue;
                 }
 
@@ -120,10 +124,10 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
                         : "Imported, but competitor with ID " + matchCompetitor.getCompetitor().getId()
                         + " is not verified, so this entry is left out of shooter results until the competitor is "
                         + "verified.";
-                matchCompetitorBulkResponses.add(new MatchCompetitorBulkResponse(true, message, saved, null));
+                matchCompetitorBulkResponses.add(new MatchCompetitorBulkResponse(rowNumber, true, message, saved, null));
             } catch (ValidationException | NonFatalException e) {
                 log.warn("Match competitor skipped due to error: {}", e.getMessage());
-                matchCompetitorBulkResponses.add(failedRow(e.getMessage(), request, matchCompetitor));
+                matchCompetitorBulkResponses.add(failedRow(rowNumber, e.getMessage(), request, matchCompetitor));
             }
         }
 
@@ -260,6 +264,7 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * whatever is missing or unknown in the row.
      * </p>
      *
+     * @param rowNumber       the row's position among the CSV's data rows, starting at 1.
      * @param message         the reason the row was not imported.
      * @param request         the request for the row; may be null, as for an empty row, in which case every value is empty.
      * @param matchCompetitor the match competitor populated as far as the row could be resolved, whose resolved
@@ -267,9 +272,9 @@ public class IpscMatchCompetitorServiceImpl implements IpscMatchCompetitorServic
      * @return an unsuccessful {@link MatchCompetitorBulkResponse} with the message, a {@code null} match competitor
      * and the row's values.
      */
-    protected MatchCompetitorBulkResponse failedRow(String message, MatchCompetitorRequest request,
+    protected MatchCompetitorBulkResponse failedRow(int rowNumber, String message, MatchCompetitorRequest request,
                                                     MatchCompetitor matchCompetitor) {
-        return new MatchCompetitorBulkResponse(false, message, null,
+        return new MatchCompetitorBulkResponse(rowNumber, false, message, null,
                 matchCompetitorRowMapper.toRow(request, matchCompetitor));
     }
 

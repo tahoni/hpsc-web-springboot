@@ -129,7 +129,7 @@ responsibilities:
 |--------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Award Ceremonies**           | Award data and ceremony grouping, processed from CSV                                                                                                                                                                                                                                                       |
 | **Image Gallery**              | Image metadata processing from CSV                                                                                                                                                                                                                                                                         |
-| **IPSC Competitors & Matches** | Full CRUD for competitor and match records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`; a match cannot be rescheduled outside the dates of a shooter log that covers it, and one already outside them reports it in its `warnings` when read or edited            |
+| **IPSC Competitors & Matches** | Full CRUD for competitor and match records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`; a match cannot be rescheduled outside the dates of a shooter log that covers it, and one already outside them reports it in its `messages` when read or edited            |
 | **IPSC Match Competitors**     | Full CRUD for a competitor's entry in a match, plus bulk CSV import, via `IpscMatchCompetitorController`                                                                                                                                                                                                   |
 | **IPSC Shooter Results**       | Calculation of a match's ranked results per firearm type, division and competitor category for verified competitors with points, and reading them, via `IpscShooterResultController`                                                                                                                       |
 | **Shooter Logs**               | Full CRUD for shooter logs (a date range and the matches it covers) via `IpscShooterLogController`, and calculation of each competitor's overall rank and percentage per division and competitor category from the log's matches' shooter results, and reading them, via `IpscShooterLogOverallController` |
@@ -202,13 +202,14 @@ Contains all business logic.
 > rather than an import. See the Award/Image CSV Processing Flow below.
 
 > Both IPSC domains support bulk CSV import, each building every row via the same validation/resolution logic
-> as its single-item `create` endpoint, then saving all rows in one transaction so a bad row leaves none
-> persisted: `IpscCompetitorController.createCompetitors` (`IpscCompetitorService`/`IpscCompetitorServiceImpl`)
+> as its single-item `create` endpoint, then saving it in its own transaction, so a row that fails is reported with the
+> values it supplied and skipped while the other rows are still saved:
+> `IpscCompetitorController.createCompetitors` (`IpscCompetitorService`/`IpscCompetitorServiceImpl`)
 > and `IpscMatchController.createMatches` (`IpscMatchService`/`IpscMatchServiceImpl`).
 
 > `IpscMatchService`/`IpscCompetitorService` declare no `@Transactional`: they validate requests and build or modify
-> entities outside any transaction, then hand them to `TransactionService`, which commits each write (and each bulk
-> import as a whole) in its own explicit `TransactionTemplate` transaction. Everything it returns has the associations
+> entities outside any transaction, then hand them to `TransactionService`, which commits each write (and each row of
+> a bulk import) in its own explicit `TransactionTemplate` transaction. Everything it returns has the associations
 > a response reads already loaded, since `spring.jpa.open-in-view` is disabled.
 
 > Deleting a competitor only removes what it owns — their email addresses; a match owns nothing. A record that
@@ -280,8 +281,8 @@ envelope.
 #### `models/ipsc/match/`, `models/ipsc/competitor/`, `models/ipsc/matchcompetitor/` and `models/ipsc/shared/`
 
 DTOs for the IPSC module rebuild — `MatchRequest`, `MatchPatchRequest` and `MatchResponse` (consumed by `IpscMatchController`'s
-single-match CRUD endpoints) and `MatchResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchRequest` through a Jackson mix-in), `CompetitorRequest`, `CompetitorPatchRequest` and `CompetitorResponse` (consumed by
-`IpscCompetitorController`'s single-competitor CRUD endpoints) and `CompetitorResponseHolder`
+single-match CRUD endpoints) and `MatchBulkResponseHolder` (its bulk CSV import endpoint, which reads rows into `MatchRequest` through a Jackson mix-in), `CompetitorRequest`, `CompetitorPatchRequest` and `CompetitorResponse` (consumed by
+`IpscCompetitorController`'s single-competitor CRUD endpoints) and `CompetitorBulkResponseHolder`
 (its bulk CSV import endpoint, which reads rows into `CompetitorRequest` through a Jackson mix-in), `MatchCompetitorRequest`, `MatchCompetitorPatchRequest` and `MatchCompetitorResponse` (consumed by `IpscMatchCompetitorController`'s single-entry CRUD endpoints), `MatchCompetitorBulkResponse` and `MatchCompetitorBulkResponseHolder` (the per-row outcome of a match competitor bulk import), and the
 shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchStageScore`.
 
@@ -417,11 +418,13 @@ Handled by `IpscCompetitorController` — unlike the Award/Image flow above, the
 Client uploads CSV (Content-Type: text/plain)
     → IpscCompetitorController.createCompetitors
         → IpscCompetitorService.createCompetitors
-            (parses CSV via Jackson CsvMapper into CompetitorRequest rows, then builds each row with the same
-             validation/gender/home-club-resolution logic the single-competitor endpoint uses)
-            → TransactionService.saveCompetitors
-                (saves every row in one transaction — a bad row fails before anything is saved)
-        ← CompetitorResponseHolder
+            (parses CSV via Jackson CsvMapper into CompetitorRequest rows)
+            → for each row, on its own:
+                build it with the same validation/gender/home-club-resolution logic the single-competitor
+                    endpoint uses, refusing a club number an earlier row of the file already imported
+                    → TransactionService.saveCompetitor (in its own transaction; a row that fails, or conflicts with
+                    an existing record, is reported as failed, with the values it supplied)
+        ← CompetitorBulkResponseHolder (one CompetitorBulkResponse per row)
     ← ResponseEntity<...>
 ← JSON response
 ```
@@ -447,11 +450,13 @@ Handled by `IpscMatchController` — same shape as the Competitor flow above:
 Client uploads CSV (Content-Type: text/plain)
     → IpscMatchController.createMatches
         → IpscMatchService.createMatches
-            (parses CSV via Jackson CsvMapper into MatchRequest rows, then builds each row with the
-             same validation/club/firearm-type/category-resolution logic the single-match endpoint uses)
-            → TransactionService.saveMatches
-                (saves every row in one transaction — a bad row fails before anything is saved)
-        ← MatchResponseHolder
+            (parses CSV via Jackson CsvMapper into MatchRequest rows)
+            → for each row, on its own:
+                build it with the same validation/club/firearm-type/category-resolution logic the single-match
+                    endpoint uses
+                    → TransactionService.saveMatch (in its own transaction; a row that fails, or conflicts with
+                    an existing record, is reported as failed, with the values it supplied)
+        ← MatchBulkResponseHolder (one MatchBulkResponse per row)
     ← ResponseEntity<...>
 ← JSON response
 ```

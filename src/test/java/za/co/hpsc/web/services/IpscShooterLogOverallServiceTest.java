@@ -78,6 +78,25 @@ class IpscShooterLogOverallServiceTest {
     }
 
     @Test
+    void testCalculateShooterLogOverall_whenTheLogsMatchesWereNotLoaded_thenCalculatesNothing()
+            throws NonFatalException {
+        // Arrange
+        ShooterLog shooterLog = shooterLog(1L);
+        shooterLog.setMatches(null);
+        when(shooterLogRepository.findByIdWithMatches(1L)).thenReturn(Optional.of(shooterLog));
+        when(shooterLogOverallRepository.findAllByShooterLogIdWithDetails(1L)).thenReturn(List.of());
+
+        // Act
+        ShooterLogOverallResponseHolder holder =
+                assertDoesNotThrow(() -> ipscShooterLogOverallService.calculateShooterLogOverall(1L));
+
+        // Assert
+        assertTrue(holder.getShooterLogOverallResults().isEmpty());
+        verifyNoInteractions(ipscShooterResultService, shooterResultRepository);
+        verify(transactionService, never()).replaceShooterLogOverallResults(any(), any());
+    }
+
+    @Test
     void testCalculateShooterLogOverall_whenCompetitorsAreNotVerified_thenExcludesThemAndDeletesTheirOveralls()
             throws NonFatalException {
         // Arrange

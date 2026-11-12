@@ -7,8 +7,8 @@ import lombok.Setter;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The outcome of importing a single shooter log in a bulk import: whether it succeeded, a message describing the
- * outcome, and the {@link ShooterLogResponse} it relates to.
+ * The outcome of importing a single shooter log in a bulk import: which row it was, whether it succeeded, a
+ * message describing the outcome, and the {@link ShooterLogResponse} it relates to.
  *
  * @see ShooterLogBulkResponseHolder
  * @see ShooterLogResponse
@@ -19,6 +19,8 @@ import org.jspecify.annotations.Nullable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShooterLogBulkResponse {
+    /** The row's position among the CSV's data rows, starting at 1 for the first row after the header. */
+    private int rowNumber;
     /** Whether the shooter log was imported successfully. */
     private boolean success = true;
     /** A message describing the outcome of the import: empty for a row that was imported, the reason otherwise. */

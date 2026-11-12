@@ -7,8 +7,8 @@ import lombok.Setter;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The outcome of importing a single match competitor in a bulk import: whether it succeeded, a
- * message describing the outcome, and the {@link MatchCompetitorResponse} it relates to.
+ * The outcome of importing a single match competitor in a bulk import: which row it was, whether it succeeded,
+ * a message describing the outcome, and the {@link MatchCompetitorResponse} it relates to.
  *
  * @see MatchCompetitorBulkResponseHolder
  * @see MatchCompetitorResponse
@@ -19,6 +19,8 @@ import org.jspecify.annotations.Nullable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MatchCompetitorBulkResponse {
+    /** The row's position among the CSV's data rows, starting at 1 for the first row after the header. */
+    private int rowNumber;
     /** Whether the match competitor was imported successfully. */
     private boolean success = true;
     /**

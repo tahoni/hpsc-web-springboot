@@ -109,7 +109,7 @@ class IpscMatchCompetitorControllerTest {
     @Test
     void testCreateMatchCompetitors_whenEveryRowFails_thenReturns422WithTheResults() throws Exception {
         // Arrange
-        MatchCompetitorBulkResponse failed = new MatchCompetitorBulkResponse(false, "No competitor found",
+        MatchCompetitorBulkResponse failed = new MatchCompetitorBulkResponse(1, false, "No competitor found",
                 null, null);
         MatchCompetitorBulkResponseHolder holder = new MatchCompetitorBulkResponseHolder(List.of(failed, failed));
         when(ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV, null)).thenReturn(holder);
@@ -126,9 +126,9 @@ class IpscMatchCompetitorControllerTest {
     @Test
     void testCreateMatchCompetitors_whenSomeRowsFail_thenReturns201() throws Exception {
         // Arrange
-        MatchCompetitorBulkResponse failed = new MatchCompetitorBulkResponse(false, "No competitor found",
+        MatchCompetitorBulkResponse failed = new MatchCompetitorBulkResponse(1, false, "No competitor found",
                 null, null);
-        MatchCompetitorBulkResponse created = new MatchCompetitorBulkResponse(true, "",
+        MatchCompetitorBulkResponse created = new MatchCompetitorBulkResponse(2, true, "",
                 null, null);
         when(ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV, null))
                 .thenReturn(new MatchCompetitorBulkResponseHolder(List.of(failed, created)));

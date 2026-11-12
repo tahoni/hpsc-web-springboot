@@ -13,7 +13,7 @@ import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
-import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
+import za.co.hpsc.web.models.ipsc.match.response.MatchBulkResponseHolder;
 import za.co.hpsc.web.services.IpscMatchService;
 
 import java.util.List;
@@ -68,11 +68,11 @@ class IpscMatchControllerTest {
     @Test
     void testCreateMatches_whenServiceSucceeds_thenReturns201() throws ValidationException, NonFatalException, FatalException {
         // Arrange
-        MatchResponseHolder holder = new MatchResponseHolder(List.of());
+        MatchBulkResponseHolder holder = new MatchBulkResponseHolder(List.of());
         when(ipscMatchService.createMatches(VALID_CSV)).thenReturn(holder);
 
         // Act
-        ResponseEntity<MatchResponseHolder> result = ipscMatchController.createMatches(VALID_CSV);
+        ResponseEntity<MatchBulkResponseHolder> result = ipscMatchController.createMatches(VALID_CSV);
 
         // Assert
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
@@ -81,11 +81,11 @@ class IpscMatchControllerTest {
     @Test
     void testCreateMatches_whenServiceSucceeds_thenResponseBodyIsReturnedFromService() throws ValidationException, NonFatalException, FatalException {
         // Arrange
-        MatchResponseHolder holder = new MatchResponseHolder(List.of(new MatchResponse()));
+        MatchBulkResponseHolder holder = new MatchBulkResponseHolder(List.of(new MatchResponse()));
         when(ipscMatchService.createMatches(VALID_CSV)).thenReturn(holder);
 
         // Act
-        ResponseEntity<MatchResponseHolder> result = ipscMatchController.createMatches(VALID_CSV);
+        ResponseEntity<MatchBulkResponseHolder> result = ipscMatchController.createMatches(VALID_CSV);
 
         // Assert
         assertSame(holder, result.getBody());

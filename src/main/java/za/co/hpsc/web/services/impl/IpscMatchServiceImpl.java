@@ -25,7 +25,9 @@ import za.co.hpsc.web.models.ipsc.match.request.MatchPatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequest;
 import za.co.hpsc.web.models.ipsc.match.request.MatchRequestCsvMixIn;
 import za.co.hpsc.web.models.ipsc.match.response.MatchResponse;
-import za.co.hpsc.web.models.ipsc.match.response.MatchResponseHolder;
+import za.co.hpsc.web.models.ipsc.match.response.MatchRow;
+import za.co.hpsc.web.models.ipsc.match.response.MatchBulkResponse;
+import za.co.hpsc.web.models.ipsc.match.response.MatchBulkResponseHolder;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogRepository;
@@ -68,7 +70,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
     }
 
     @Override
-    public MatchResponseHolder createMatches(String csvData) throws FatalException {
+    public MatchBulkResponseHolder createMatches(String csvData) throws FatalException {
         if (!hasText(csvData)) {
             log.error("The provided csv data is null or empty.");
             throw new ValidationException("CSV data cannot be null or blank.");
@@ -76,17 +78,39 @@ public class IpscMatchServiceImpl implements IpscMatchService {
 
         List<MatchRequest> matchRequests = readMatches(csvData);
 
-        // Every row is validated and built before any is saved, then all are saved in one
-        // transaction, so a bad row leaves none of them persisted.
-        List<IpscMatch> matches = new ArrayList<>();
+        // Each row is saved in its own transaction, so a bad row is reported and skipped without affecting the others
+        List<MatchResponse> matchResponses = new ArrayList<>();
+        List<MatchBulkResponse> results = new ArrayList<>();
+        int rowNumber = 0;
         for (MatchRequest matchRequest : matchRequests) {
-            matches.add(newMatch(matchRequest));
+            rowNumber++;
+            try {
+                MatchResponse saved = toResponse(transactionService.saveMatch(newMatch(matchRequest)));
+                matchResponses.add(saved);
+                results.add(new MatchBulkResponse(rowNumber, true, "", saved, null));
+            } catch (ValidationException | NonFatalException e) {
+                log.warn("Match row {} skipped due to error: {}", rowNumber, e.getMessage());
+                results.add(failedRow(rowNumber, e.getMessage(), matchRequest));
+            } catch (DataIntegrityViolationException e) {
+                log.warn("Match row {} skipped due to a data integrity violation: {}", rowNumber, e.getMessage());
+                results.add(failedRow(rowNumber, "The match conflicts with an existing record.", matchRequest));
+            }
         }
 
-        List<MatchResponse> matchResponseList = transactionService.saveMatches(matches).stream()
-                .map(this::toResponse)
-                .toList();
-        return new MatchResponseHolder(new ArrayList<>(matchResponseList));
+        return new MatchBulkResponseHolder(matchResponses, results);
+    }
+
+    /**
+     * Builds the outcome reported for a bulk import row that could not be imported: the message and every value the
+     * row supplied, with missing ones as empty strings.
+     *
+     * @param rowNumber the row's position among the CSV's data rows, starting at 1.
+     * @param message   the reason the row was not imported.
+     * @param request   the request read from the row, as supplied; may be null, in which case every value is empty.
+     * @return an unsuccessful {@link MatchBulkResponse} with the message, a {@code null} match and the row's values.
+     */
+    protected MatchBulkResponse failedRow(int rowNumber, String message, MatchRequest request) {
+        return new MatchBulkResponse(rowNumber, false, message, null, new MatchRow(request));
     }
 
     @Override
@@ -258,7 +282,7 @@ public class IpscMatchServiceImpl implements IpscMatchService {
      * @param shooterLog a shooter log that covers the match.
      */
     protected void addWarningIfOutsideDates(MatchResponse response, IpscMatch match, ShooterLog shooterLog) {
-        ShooterLogHelpers.describeOutsideDates(match, shooterLog).ifPresent(response.getWarnings()::add);
+        ShooterLogHelpers.describeOutsideDates(match, shooterLog).ifPresent(response.getMessages()::add);
     }
 
     /**

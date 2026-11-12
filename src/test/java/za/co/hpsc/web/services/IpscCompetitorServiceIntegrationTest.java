@@ -24,7 +24,7 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorPatchRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
-import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponseHolder;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
@@ -256,36 +256,64 @@ class IpscCompetitorServiceIntegrationTest {
     }
 
     @Test
-    void testCreateCompetitors_whenRowIsMissingRequiredField_thenThrowsValidationException() {
+    void testCreateCompetitors_whenRowIsMissingRequiredField_thenReportsTheRowAsFailed() {
         // Arrange
         String csvData = CSV_HEADER + ",Doe,,,,,,,,,,,\n";
+        long countBefore = competitorRepository.count();
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorService.createCompetitors(csvData));
+        // Act
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertEquals(1, holder.getResults().size());
+        assertFalse(holder.getResults().getFirst().isSuccess());
+        assertFalse(holder.getResults().getFirst().getMessage().isBlank());
+        assertNull(holder.getResults().getFirst().getCompetitor());
+        assertNotNull(holder.getResults().getFirst().getCompetitorRow());
+        assertTrue(holder.getCompetitors().isEmpty());
+        assertEquals(countBefore, competitorRepository.count());
     }
 
     @Test
-    void testCreateCompetitors_whenRowHasUnrecognisedGender_thenThrowsValidationException() {
+    void testCreateCompetitors_whenRowHasUnrecognisedGender_thenReportsTheRowAsFailed() {
         // Arrange
         String csvData = CSV_HEADER + "Jane,Doe,,,,Not A Gender,,,,HPSC-001,,,\n";
+        long countBefore = competitorRepository.count();
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorService.createCompetitors(csvData));
+        // Act
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertEquals(1, holder.getResults().size());
+        assertFalse(holder.getResults().getFirst().isSuccess());
+        assertFalse(holder.getResults().getFirst().getMessage().isBlank());
+        assertNull(holder.getResults().getFirst().getCompetitor());
+        assertTrue(holder.getCompetitors().isEmpty());
+        assertEquals(countBefore, competitorRepository.count());
     }
 
     @Test
-    void testCreateCompetitors_whenRowHomeClubIsUnknown_thenThrowsValidationException() {
+    void testCreateCompetitors_whenRowHomeClubIsUnknown_thenReportsTheRowAsFailed() {
         // Arrange
         String csvData = CSV_HEADER + "Jane,Doe,,,,,No Such Club,,,HPSC-001,,,\n";
+        long countBefore = competitorRepository.count();
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorService.createCompetitors(csvData));
+        // Act
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertEquals(1, holder.getResults().size());
+        assertFalse(holder.getResults().getFirst().isSuccess());
+        assertFalse(holder.getResults().getFirst().getMessage().isBlank());
+        assertNull(holder.getResults().getFirst().getCompetitor());
+        assertTrue(holder.getCompetitors().isEmpty());
+        assertEquals(countBefore, competitorRepository.count());
     }
 
     @Test
     void testCreateCompetitors_whenHeaderOnlyWithNoDataRows_thenReturnsEmptyHolder() {
         // Act
-        CompetitorResponseHolder holder =
+        CompetitorBulkResponseHolder holder =
                 assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(CSV_HEADER));
 
         // Assert
@@ -299,7 +327,7 @@ class IpscCompetitorServiceIntegrationTest {
         String csvData = CSV_HEADER + "Jane,Doe,,,,,,,,HPSC-001,,,,true,false\n";
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertEquals(1, holder.getCompetitors().size());
@@ -320,7 +348,7 @@ class IpscCompetitorServiceIntegrationTest {
         String csvData = CSV_HEADER + "Jane,Smith,,,,,Test Club,,,HPSC-001,,,jane@example.com,true,false\n";
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertEquals(1, holder.getCompetitors().size());
@@ -348,7 +376,7 @@ class IpscCompetitorServiceIntegrationTest {
         String csvData = CSV_HEADER + "Jane,Smith,,,,,Other Club,,,,8001015009087,,,\n";
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertNotEquals(existing.getCompetitorId(), holder.getCompetitors().getFirst().getCompetitorId());
@@ -367,7 +395,7 @@ class IpscCompetitorServiceIntegrationTest {
         String csvData = CSV_HEADER + "Jane,Doe,,,,,Other Club,,,,,,jane@example.com,true,false\n";
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertNotEquals(existing.getCompetitorId(), holder.getCompetitors().getFirst().getCompetitorId());
@@ -385,7 +413,7 @@ class IpscCompetitorServiceIntegrationTest {
         String csvData = CSV_HEADER + "Anna,New,,,,,Test Club,,,HPSC-002,,,,\n" + "Jane,Smith,,,,,Test Club,,,HPSC-001,,,,\n";
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertEquals(2, holder.getCompetitors().size());
@@ -405,7 +433,7 @@ class IpscCompetitorServiceIntegrationTest {
                 "Jane,Doe,Ann,Janie,1990-01-01,Female,Test Club,12345,7001,HPSC-001,9001015800083,0821234567,jane.doe@example.com;jane2.doe@example.com\n";
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertEquals(1, holder.getCompetitors().size());
@@ -440,7 +468,7 @@ class IpscCompetitorServiceIntegrationTest {
                 "John,Smith,,,,,Test Club,,,HPSC-002,,,\n";
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         List<CompetitorResponse> competitors = holder.getCompetitors();
@@ -450,6 +478,47 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals("John", competitors.get(1).getFirstName());
         assertEquals("HPSC-002", competitors.get(1).getClubNumber());
         assertNotEquals(competitors.get(0).getCompetitorId(), competitors.get(1).getCompetitorId());
+    }
+
+    @Test
+    void testCreateCompetitors_whenOneRowFails_thenTheOtherRowsArePersisted() {
+        // Arrange
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        long countBefore = competitorRepository.count();
+        String csvData = CSV_HEADER
+                + "Jane,Doe,,,,,Test Club,,,HPSC-001,,,\n"
+                + "John,Smith,,,,Not A Gender,Test Club,,,HPSC-002,,,\n"
+                + "Anna,Brown,,,,,Test Club,,,HPSC-003,,,\n";
+
+        // Act
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertEquals(List.of(true, false, true),
+                holder.getResults().stream().map(result -> result.isSuccess()).toList());
+        assertEquals(2, holder.getCompetitors().size());
+        assertEquals(countBefore + 2, competitorRepository.count());
+    }
+
+    @Test
+    void testCreateCompetitors_whenALaterRowRepeatsAnEarlierClubNumber_thenFailsTheLaterRow() {
+        // Arrange
+        createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
+        long countBefore = competitorRepository.count();
+        String csvData = CSV_HEADER
+                + "Jane,Doe,,,,,Test Club,,,HPSC-001,,,\n"
+                + "John,Smith,,,,,Test Club,,,HPSC-001,,,\n";
+
+        // Act
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertEquals(List.of(true, false),
+                holder.getResults().stream().map(result -> result.isSuccess()).toList());
+        assertTrue(holder.getResults().get(1).getMessage().contains("row 1"));
+        assertEquals(1, holder.getCompetitors().size());
+        assertEquals("Jane", holder.getCompetitors().getFirst().getFirstName());
+        assertEquals(countBefore + 1, competitorRepository.count());
     }
 
     // deleteCompetitor()

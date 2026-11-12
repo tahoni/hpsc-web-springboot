@@ -719,6 +719,34 @@ class MatchCompetitorMapperTest {
     }
 
     @Test
+    void testPopulateResolvableFields_whenMatchClubIsGivenAsItsCode_thenResolvesTheClub() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setMatchClub("B HPSC");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.populateResolvableFields(matchCompetitor, request);
+
+        // Assert
+        assertEquals(ClubIdentifier.HPSC, matchCompetitor.getMatchClub());
+    }
+
+    @Test
+    void testPopulateResolvableFields_whenMatchClubIsUnknown_thenLeavesNull() {
+        // Arrange
+        MatchCompetitorRequest request = new MatchCompetitorRequest();
+        request.setMatchClub("No Such Club");
+        MatchCompetitor matchCompetitor = new MatchCompetitor();
+
+        // Act
+        matchCompetitorMapper.populateResolvableFields(matchCompetitor, request);
+
+        // Assert
+        assertNull(matchCompetitor.getMatchClub());
+    }
+
+    @Test
     void testPopulateResolvableFields_whenCompetitorCategoryUnknown_thenLeavesNull() {
         // Arrange
         MatchCompetitorRequest request = new MatchCompetitorRequest();

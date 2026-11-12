@@ -21,7 +21,9 @@ import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorVerifyRequest;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponse;
 import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorVerifyResponseHolder;
-import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponse;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorBulkResponseHolder;
+import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorRow;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
@@ -29,7 +31,6 @@ import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.repositories.ShooterResultRepository;
-import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.services.impl.IpscEntityClubServiceImpl;
 import za.co.hpsc.web.services.impl.IpscCompetitorServiceImpl;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
@@ -312,7 +313,7 @@ public class IpscCompetitorServiceTest {
                 """;
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertEquals(1, holder.getCompetitors().size());
@@ -331,7 +332,7 @@ public class IpscCompetitorServiceTest {
                 """;
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"),
@@ -349,7 +350,7 @@ public class IpscCompetitorServiceTest {
                 """;
 
         // Act
-        CompetitorResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
 
         // Assert
         assertEquals(2, holder.getCompetitors().size());
@@ -359,31 +360,37 @@ public class IpscCompetitorServiceTest {
     }
 
     @Test
-    void testCreateCompetitors_whenRowIsMissingRequiredField_thenThrowsValidationException() {
+    void testCreateCompetitors_whenRowIsMissingRequiredField_thenReportsTheRowAsFailed() {
         // Arrange
         String csvData = """
                 FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 ,Doe,,,,,,,,,,,
                 """;
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorService.createCompetitors(csvData));
+        // Act
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertFailedRow(holder);
     }
 
     @Test
-    void testCreateCompetitors_whenRowHasUnrecognisedGender_thenThrowsValidationException() {
+    void testCreateCompetitors_whenRowHasUnrecognisedGender_thenReportsTheRowAsFailed() {
         // Arrange
         String csvData = """
                 FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
                 Jane,Doe,,,,Not A Gender,,,,HPSC-001,,,
                 """;
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorService.createCompetitors(csvData));
+        // Act
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertFailedRow(holder);
     }
 
     @Test
-    void testCreateCompetitors_whenRowHomeClubIsUnknown_thenThrowsValidationException() {
+    void testCreateCompetitors_whenRowHomeClubIsUnknown_thenReportsTheRowAsFailed() {
         // Arrange
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
         String csvData = """
@@ -391,8 +398,110 @@ public class IpscCompetitorServiceTest {
                 Jane,Doe,,,,,No Such Club,,,HPSC-001,,,
                 """;
 
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorService.createCompetitors(csvData));
+        // Act
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertFailedRow(holder);
+    }
+
+    @Test
+    void testCreateCompetitors_whenOneRowFails_thenTheOtherRowsAreStillImported() {
+        // Arrange
+        stubSaveReturnsSameEntity();
+        String csvData = """
+                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+                Jane,Doe,,,,,,,,HPSC-001,,,
+                ,Smith,,,,,,,,HPSC-002,,,
+                John,Brown,,,,,,,,HPSC-003,,,
+                """;
+
+        // Act
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertEquals(2, holder.getCompetitors().size());
+        assertEquals(List.of(true, false, true),
+                holder.getResults().stream().map(CompetitorBulkResponse::isSuccess).toList());
+        assertEquals(List.of(1, 2, 3),
+                holder.getResults().stream().map(CompetitorBulkResponse::getRowNumber).toList());
+        assertNull(holder.getResults().get(0).getCompetitorRow());
+        assertNull(holder.getResults().get(2).getCompetitorRow());
+        CompetitorRow failedRow = holder.getResults().get(1).getCompetitorRow();
+        assertEquals("", failedRow.getFirstName());
+        assertEquals("Smith", failedRow.getLastName());
+        assertEquals("HPSC-002", failedRow.getClubNumber());
+        verify(competitorRepository, times(2)).save(any(Competitor.class));
+    }
+
+    @Test
+    void testCreateCompetitors_whenRowSucceeds_thenItIsReportedAsSuccessful() {
+        // Arrange
+        stubSaveReturnsSameEntity();
+        String csvData = """
+                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+                Jane,Doe,,,,,,,,HPSC-001,,,
+                """;
+
+        // Act
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertTrue(holder.getResults().getFirst().isSuccess());
+    }
+
+    private static void assertFailedRow(CompetitorBulkResponseHolder holder) {
+        assertTrue(holder.getCompetitors().isEmpty());
+        assertEquals(1, holder.getResults().size());
+        CompetitorBulkResponse result = holder.getResults().getFirst();
+        assertFalse(result.isSuccess());
+        assertFalse(result.getMessage().isBlank());
+        assertNull(result.getCompetitor());
+        assertNotNull(result.getCompetitorRow());
+    }
+
+    @Test
+    void testCreateCompetitors_whenSavingARowViolatesDataIntegrity_thenReportsTheRowAsFailed() {
+        // Arrange
+        when(competitorRepository.save(any(Competitor.class)))
+                .thenThrow(new DataIntegrityViolationException("Duplicate entry 'HPSC-001'"));
+        String csvData = """
+                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+                Jane,Doe,,,,,,,,HPSC-001,,,
+                """;
+
+        // Act
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertFailedRow(holder);
+        CompetitorBulkResponse result = holder.getResults().getFirst();
+        assertEquals("The competitor conflicts with an existing record.", result.getMessage());
+        assertEquals("Jane", result.getCompetitorRow().getFirstName());
+        assertEquals("HPSC-001", result.getCompetitorRow().getClubNumber());
+    }
+
+    @Test
+    void testCreateCompetitors_whenSavingARowViolatesDataIntegrity_thenTheOtherRowsAreStillImported() {
+        // Arrange
+        when(competitorRepository.save(any(Competitor.class)))
+                .thenThrow(new DataIntegrityViolationException("Duplicate entry 'HPSC-001'"))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        String csvData = """
+                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+                Jane,Doe,,,,,,,,HPSC-001,,,
+                John,Smith,,,,,,,,HPSC-002,,,
+                """;
+
+        // Act
+        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
+
+        // Assert
+        assertEquals(List.of(false, true),
+                holder.getResults().stream().map(CompetitorBulkResponse::isSuccess).toList());
+        assertEquals(1, holder.getCompetitors().size());
+        assertEquals("John", holder.getCompetitors().getFirst().getFirstName());
+        assertNull(holder.getResults().get(1).getCompetitorRow());
     }
 
     // deleteCompetitor()

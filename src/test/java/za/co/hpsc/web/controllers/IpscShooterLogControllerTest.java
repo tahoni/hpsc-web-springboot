@@ -37,8 +37,8 @@ class IpscShooterLogControllerTest {
     void testCreateShooterLogs_whenSomeRowsSucceed_thenReturns201WithServiceBody() throws FatalException {
         // Arrange
         ShooterLogBulkResponseHolder holder = new ShooterLogBulkResponseHolder(List.of(
-                new ShooterLogBulkResponse(true, "", new ShooterLogResponse(), null),
-                new ShooterLogBulkResponse(false, "No IPSC match found with ID 9", null, new ShooterLogRow())));
+                new ShooterLogBulkResponse(1, true, "", new ShooterLogResponse(), null),
+                new ShooterLogBulkResponse(1, false, "No IPSC match found with ID 9", null, new ShooterLogRow())));
         when(ipscShooterLogService.createShooterLogs("csv")).thenReturn(holder);
 
         // Act
@@ -53,7 +53,7 @@ class IpscShooterLogControllerTest {
     void testCreateShooterLogs_whenEveryRowFails_thenReturns422WithServiceBody() throws FatalException {
         // Arrange
         ShooterLogBulkResponseHolder holder = new ShooterLogBulkResponseHolder(List.of(
-                new ShooterLogBulkResponse(false, "Shooter log start date is required.", null, new ShooterLogRow())));
+                new ShooterLogBulkResponse(1, false, "Shooter log start date is required.", null, new ShooterLogRow())));
         when(ipscShooterLogService.createShooterLogs("csv")).thenReturn(holder);
 
         // Act
@@ -260,8 +260,8 @@ class IpscShooterLogControllerTest {
     void testUpdateShooterLogs_whenSomeRowsSucceed_thenReturns200WithServiceBody() throws FatalException {
         // Arrange
         ShooterLogBulkResponseHolder holder = new ShooterLogBulkResponseHolder(List.of(
-                new ShooterLogBulkResponse(true, "", new ShooterLogResponse(), null),
-                new ShooterLogBulkResponse(false, "No shooter log found with ID 9", null, new ShooterLogRow())));
+                new ShooterLogBulkResponse(1, true, "", new ShooterLogResponse(), null),
+                new ShooterLogBulkResponse(1, false, "No shooter log found with ID 9", null, new ShooterLogRow())));
         when(ipscShooterLogService.updateShooterLogs("csv")).thenReturn(holder);
 
         // Act
@@ -276,7 +276,7 @@ class IpscShooterLogControllerTest {
     void testUpdateShooterLogs_whenEveryRowFails_thenReturns422WithServiceBody() throws FatalException {
         // Arrange
         ShooterLogBulkResponseHolder holder = new ShooterLogBulkResponseHolder(List.of(
-                new ShooterLogBulkResponse(false, "Shooter log ID is required.", null, new ShooterLogRow())));
+                new ShooterLogBulkResponse(1, false, "Shooter log ID is required.", null, new ShooterLogRow())));
         when(ipscShooterLogService.updateShooterLogs("csv")).thenReturn(holder);
 
         // Act
@@ -313,8 +313,8 @@ class IpscShooterLogControllerTest {
     void testPatchShooterLogs_whenSomeRowsSucceed_thenReturns200WithServiceBody() throws FatalException {
         // Arrange
         ShooterLogBulkResponseHolder holder = new ShooterLogBulkResponseHolder(List.of(
-                new ShooterLogBulkResponse(true, "", new ShooterLogResponse(), null),
-                new ShooterLogBulkResponse(false, "No shooter log found with ID 9", null, new ShooterLogRow())));
+                new ShooterLogBulkResponse(1, true, "", new ShooterLogResponse(), null),
+                new ShooterLogBulkResponse(1, false, "No shooter log found with ID 9", null, new ShooterLogRow())));
         when(ipscShooterLogService.patchShooterLogs("csv")).thenReturn(holder);
 
         // Act
@@ -329,7 +329,7 @@ class IpscShooterLogControllerTest {
     void testPatchShooterLogs_whenEveryRowFails_thenReturns422WithServiceBody() throws FatalException {
         // Arrange
         ShooterLogBulkResponseHolder holder = new ShooterLogBulkResponseHolder(List.of(
-                new ShooterLogBulkResponse(false, "Shooter log ID is required.", null, new ShooterLogRow())));
+                new ShooterLogBulkResponse(1, false, "Shooter log ID is required.", null, new ShooterLogRow())));
         when(ipscShooterLogService.patchShooterLogs("csv")).thenReturn(holder);
 
         // Act
