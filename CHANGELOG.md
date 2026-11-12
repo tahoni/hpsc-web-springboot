@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 16.4.1](#-1641---2026-11-10) ← Current
+- [🧾 Version 17.0.0](#-1700---2026-11-12) ← Current
+- [🧾 Version 16.4.1](#-1641---2026-11-10)
 - [🧾 Version 16.4.0](#-1640---2026-11-10)
 - [🧾 Version 16.3.0](#-1630---2026-11-10)
 - [🧾 Version 16.2.0](#-1620---2026-11-10)
@@ -35,7 +36,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
-#### ✨ Added
+---
+
+### 🧾 [17.0.0] - 2026-11-12
+
+#### ➕ Added
 
 ##### Models
 
@@ -1000,7 +1005,8 @@ For issues, feature requests or questions:
 
 **Last Updated:** 2026-08-25
 
-[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.4.1...HEAD
+[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v17.0.0...HEAD
+[17.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.4.1...v17.0.0
 [16.4.1]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.4.0...v16.4.1
 [16.4.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.3.0...v16.4.0
 [16.3.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.2.0...v16.3.0

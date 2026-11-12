@@ -420,3 +420,50 @@ which is backward-incompatible, so it is MAJOR under the Semantic Versioning rul
 
 - The suite stands at 1,569 tests, three skipped unless `FLYWAY_MYSQL_URL` is set; the existing
   `IpscMatchCompetitorServiceImplTest` cases for the home club were updated for the `Optional`
+
+
+### Phase 61: Reporting Failed Rows in the Competitor and Match Imports (v17.0.0)
+
+**Controllers & Services**
+
+- `IpscCompetitorServiceImpl.createCompetitors` and `IpscMatchServiceImpl.createMatches` save each row in its own
+  transaction, so a row that is missing a required field, has an unrecognised gender, firearm type or category, names an
+  unknown club or lacks a required club number is reported and skipped instead of failing the whole request with a
+  `400` or `404`; a CSV that is blank or cannot be parsed still fails the request
+- A competitor row that repeats a club number an earlier row of the same file already imported is reported as failed
+  instead of silently updating the competitor that row just saved
+- `MatchCompetitorMapper.resolveFirearmType`, `IpscMatchCompetitorServiceImpl` and `IpscShooterLogServiceImpl` lose
+  branches that could never run, with no change in behaviour
+- `TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults` are removed with their tests, as no
+  production code called them
+
+**Models**
+
+- `MatchBulkResponseHolder` replaces `MatchResponseHolder` and carries a `MatchBulkResponse` for every row, with its
+  `rowNumber`, `success`, `message`, the created `match` and, for a failed row, a `matchRow` holding every value the row
+  supplied
+- `CompetitorBulkResponse` gains `rowNumber`, `success` and a `competitorRow`, and `CompetitorResponseHolder` becomes
+  `CompetitorBulkResponseHolder`; `MatchCompetitorBulkResponse` and `ShooterLogBulkResponse` gain `rowNumber`
+- `CompetitorRow` and `MatchRow` report a failed row's values as text, like `MatchCompetitorRow`
+- `MatchResponse.warnings` is renamed `messages`
+
+**Documentation**
+
+- `ARCHITECTURE.md` describes the competitor and match bulk imports as saving each row in its own transaction, ending in
+  the new result holders, and the controller OpenAPI text and service Javadoc say the same
+
+**Build & Metadata**
+
+- Improvement plan: Gaps #51 and #52 are added and closed, leaving all 52 gaps closed and none open
+- Project version bumped to 17.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Giving the competitor and match imports the per-row, report-and-continue behaviour that the match competitor and
+  shooter log imports already had, and scoping the release as a MAJOR for the breaking response changes
+
+**Test Coverage:**
+
+- The suite stands at 1,601 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with new tests for the row classes,
+  the `messages` JSON, failed rows, row numbers, a repeated club number, data integrity conflicts and CSV read failures,
+  taking line coverage to 99.2% and branch coverage to 100%

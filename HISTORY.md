@@ -21,6 +21,35 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 17.0.0 (November 12, 2026)
+
+**Theme:** Reporting Failed Rows in the Competitor and Match Imports
+
+**Key Focus:**
+
+- The bulk competitor import (`IpscCompetitorServiceImpl.createCompetitors`) and the bulk match import
+  (`IpscMatchServiceImpl.createMatches`) save each row in its own transaction, so a row that is missing a required
+  field, has an unrecognised gender, firearm type or category, names an unknown club or lacks a required club number is
+  reported and skipped instead of failing the whole request with a `400` or `404`
+- `CompetitorBulkResponse` gains `rowNumber`, `success` and a `competitorRow`, and `MatchBulkResponseHolder.results`
+  holds a new `MatchBulkResponse` for every match row with its `rowNumber`, `success`, `message`, `match` and, for a
+  failed row, a `matchRow`; `MatchCompetitorBulkResponse` and `ShooterLogBulkResponse` gain `rowNumber`
+- `CompetitorRow` and `MatchRow` report the values a failed row supplied, as text, like `MatchCompetitorRow`
+- A competitor row that repeats a club number an earlier row of the same file already imported is reported as failed
+  instead of silently updating the competitor that row just saved
+- `MatchResponse.warnings` is renamed `messages`, `MatchResponseHolder` becomes `MatchBulkResponseHolder` and
+  `CompetitorResponseHolder` becomes `CompetitorBulkResponseHolder`
+- Branches that could never run are removed from `MatchCompetitorMapper.resolveFirearmType`,
+  `IpscMatchCompetitorServiceImpl` and `IpscShooterLogServiceImpl`
+- `TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults` are removed, as no production code
+  called them
+- `ARCHITECTURE.md` describes the competitor and match imports as per-row instead of all-or-nothing
+- Scoped as `v17.0.0` **MAJOR**: the renamed `messages` field, the new match import response and the bad rows that no
+  longer fail the whole request are backward-incompatible, each flagged **Breaking** in `CHANGELOG.md`
+- Improvement plan: Gaps #51 and #52 are added and closed, leaving all 52 gaps closed and none open
+- The suite stands at 1,601 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
+- Project version bumped to 17.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 16.4.1 (November 10, 2026)
 
 **Theme:** Making an Absent Home Club Explicit
@@ -405,6 +434,14 @@ Milestones 44 to 50 (versions 10.0.0 to 13.3.0) are archived, unchanged, in
   with the rows the import counts as the club's unchanged
 - No improvement plan gap is added or closed, so every tracked gap stays closed
 
+### Milestone 61: Reporting Failed Rows in the Competitor and Match Imports (v17.0.0)
+
+- The bulk competitor and match imports save each row on its own and report a failed row, with the values it supplied,
+  instead of failing the whole request
+- A match import answers with a result for every row, and every bulk row now carries its `rowNumber`
+- `MatchResponse.warnings` is renamed `messages`, and `TransactionService`'s three unused batch saves are removed
+- Improvement plan Gaps #51 and #52 are added and closed, so every tracked gap stays closed
+
 ---
 
 ## 🏛️ Architectural Evolution
@@ -693,6 +730,12 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   step with its log saying so when it is read — as a third backward-compatible MINOR release. v16.4.1 then makes a
   competitor's missing home club explicit in the import's club check by returning an `Optional` — as a PATCH release
   that changes no contract.
+- **Version 17.x (v17.0.0):** Make the competitor and match bulk imports behave like the match competitor and shooter
+  log imports already did — each row saved on its own, and a row that cannot be imported reported with the values it
+  supplied and its row number rather than failing the whole request, so one bad line no longer hides the good ones.
+  Because that changes what the match import answers, what a bad row does to the request and the name of a response
+  field, v17.0.0 is the project's ninth consecutive major version, with each breaking change flagged in `CHANGELOG.md`
+  as it landed.
 
 ### Initial Phase (v1.0.0)
 
@@ -991,7 +1034,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v16.4.1, the following areas are identified for future enhancement:
+Based on the evolution to v17.0.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -1002,7 +1045,20 @@ The completed-work logs for versions 8.0.0 to 9.1.0 are archived, unchanged, in
 The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 [`documentation/archive/v10-v13/HISTORY_v10-v13.md`](/documentation/archive/v10-v13/HISTORY_v10-v13.md).
 
-### Recently Completed (v16.4.1)
+### Recently Completed (v17.0.0)
+
+- `IpscCompetitorServiceImpl.createCompetitors` and `IpscMatchServiceImpl.createMatches` save each row in its own
+  transaction and report a failed row, with `CompetitorBulkResponse` and the new `MatchBulkResponse` carrying its
+  `rowNumber`, `success`, `message` and the values it supplied in `CompetitorRow` or `MatchRow`
+- `MatchBulkResponseHolder` replaces `MatchResponseHolder`, `CompetitorBulkResponseHolder` replaces
+  `CompetitorResponseHolder`, and `MatchResponse.warnings` is renamed `messages`
+- A competitor row that repeats a club number already imported by an earlier row of the file is reported as failed
+- `TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults` are removed
+- `ARCHITECTURE.md` describes the competitor and match imports as per-row
+- Improvement plan: Gaps #51 and #52 are added and closed, leaving all 52 gaps closed and none open
+- Project version bumped to 17.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v16.4.1)
 
 - `IpscMatchCompetitorServiceImpl.resolveCompetitorHomeClub` returns an `Optional<ClubIdentifier>`, empty when the
   competitor has no home club or the home club has no identifier, instead of `null`
