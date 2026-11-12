@@ -14,7 +14,8 @@
   result per row; `CompetitorResponseHolder` is now `CompetitorBulkResponseHolder`; a competitor row repeating an
   earlier row's club number is reported as failed; unreachable branches are removed
 - **Removed:** `TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults`, which nothing called
-- **Documentation:** `ARCHITECTURE.md` describes the imports as per-row; `CHANGELOG.md`, `HISTORY.md`,
+- **Documentation:** versions 14.0.0 – 16.4.1 are archived in `documentation/archive/v14-v16/`;
+  `ARCHITECTURE.md` describes the imports as per-row; `CHANGELOG.md`, `HISTORY.md`,
   `EVOLUTION_OVERVIEW.md` and `RELEASE_NOTES.md` cover 17.0.0; improvement plan Gaps #51 and #52 are added and closed
 - **Build:** project version bumped to 17.0.0 in `pom.xml` and the OpenAPI annotation
 
