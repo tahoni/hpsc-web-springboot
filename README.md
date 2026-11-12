@@ -239,7 +239,8 @@ the next version, grouped into one subdirectory per major version (e.g. `documen
 
 [`documentation/archive/`](documentation/archive) holds the frozen archives of the earlier releases, one subdirectory
 per range — [`v1-v4/`](documentation/archive/v1-v4), [`v5-v7/`](documentation/archive/v5-v7),
-[`v8-v9/`](documentation/archive/v8-v9) and [`v10-v13/`](documentation/archive/v10-v13) — each with that range's per-version release notes and pull request
+[`v8-v9/`](documentation/archive/v8-v9), [`v10-v13/`](documentation/archive/v10-v13) and
+[`v14-v16/`](documentation/archive/v14-v16) — each with that range's per-version release notes and pull request
 descriptions plus three single files named for the range (e.g. `CHANGELOG_v5-v7.md`):
 
 | File                          | Purpose                                                                                                |
