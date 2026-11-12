@@ -83,9 +83,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   silently updating the competitor that earlier row just saved. A club number that matches a competitor already in the
   database still updates and verifies it, and a failed row does not reserve its club number.
 - **`MatchCompetitorMapper.resolveFirearmType`, `IpscMatchCompetitorServiceImpl` and `IpscShooterLogServiceImpl`:**
-  Branches that could never run are removed — the "division has no firearm type" error, as every division has one, the
-  null check on the target club when a bulk row is skipped, and the null guards on the bulk request's match ID lists,
-  which default to empty lists — with no change in behaviour.
+  Branches that could never run are removed — the "division has no firearm type" error, as every division has one, and
+  the null guards on the bulk request's match ID lists, which default to empty lists — with no change in behaviour. The
+  null check on the target club stays, so a skipped row's message only names a club when there is one.
 
 ##### Documentation
 
