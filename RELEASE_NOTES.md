@@ -77,6 +77,10 @@ response field, it is a breaking release.
   Branches that could never run are removed, with no change in behaviour.
 - **`ARCHITECTURE.md`:** The competitor and match bulk CSV import flows say each row is saved in its own transaction.
   Closes improvement plan Gap #51.
+- **Archived versions 14.0.0 – 16.4.1:** Their `CHANGELOG`, `HISTORY` and `EVOLUTION_OVERVIEW` entries move, unchanged,
+  into `documentation/archive/v14-v16/`, with the v14 – v16 release notes and pull request descriptions from
+  `documentation/history/`, which now starts at v17.0.0; `README.md`, `AGENTS.md` and the `prep-version-release`
+  skill follow the new locations.
 
 ### Fixed
 
@@ -113,6 +117,7 @@ No configuration property, database schema or endpoint path changes. Clients of 
 - **Renamed Source Files:** 1 (`CompetitorResponseHolder` to `CompetitorBulkResponseHolder`)
 - **Deleted Source Files:** 1 (`MatchResponseHolder`)
 - **New Dependencies:** 0
+- **Archived Documentation:** 20 release notes and pull request descriptions moved, and 3 archive files created
 
 ---
 

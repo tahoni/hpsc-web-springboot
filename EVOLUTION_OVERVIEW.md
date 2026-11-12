@@ -59,6 +59,8 @@ Phases 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
 
 - `ARCHITECTURE.md` describes the competitor and match bulk imports as saving each row in its own transaction, ending in
   the new result holders, and the controller OpenAPI text and service Javadoc say the same
+- Versions 14.0.0 to 16.4.1 are archived, unchanged, in `documentation/archive/v14-v16/`, with their release notes and
+  pull request descriptions
 
 **Build & Metadata**
 

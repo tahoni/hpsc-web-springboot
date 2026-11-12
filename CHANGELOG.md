@@ -27,19 +27,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
-#### 🔄 Changed
-
-##### Documentation
-
-- **Archived the v14 – v16 release notes and pull request descriptions:** Moved them from `documentation/history/` to
-  `documentation/archive/v14-v16/`, leaving `documentation/history/` with the v17 releases onwards; `README.md` and
-  `AGENTS.md` now say that folder starts at v17.0.0
-- **Archived versions 14.0.0 – 16.4.1:** Moved the `CHANGELOG`, `HISTORY` and `EVOLUTION_OVERVIEW` entries of those
-  versions into `CHANGELOG_v14-v16.md`, `HISTORY_v14-v16.md` and `EVOLUTION_OVERVIEW_v14-v16.md` in
-  `documentation/archive/v14-v16/`, with the link definitions their headings use; the links in `README.md`,
-  `AGENTS.md`, `CHANGELOG.md`, `HISTORY.md`, `EVOLUTION_OVERVIEW.md` and the `prep-version-release` skill follow the
-  new locations
-
 ---
 
 ### 🧾 [17.0.0] - 2026-11-12
@@ -106,6 +93,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   is saved in its own transaction and a failed row is reported and skipped, instead of all rows being saved in one
   transaction so that a bad row leaves none persisted. The flows end in `CompetitorBulkResponseHolder` and
   `MatchBulkResponseHolder`, each with a result per row. Closes improvement plan Gap #51.
+- **Archived the v14 – v16 release notes and pull request descriptions:** Moved them from `documentation/history/` to
+  `documentation/archive/v14-v16/`, leaving `documentation/history/` with the v17 releases onwards; `README.md` and
+  `AGENTS.md` now say that folder starts at v17.0.0
+- **Archived versions 14.0.0 – 16.4.1:** Moved the `CHANGELOG`, `HISTORY` and `EVOLUTION_OVERVIEW` entries of those
+  versions into `CHANGELOG_v14-v16.md`, `HISTORY_v14-v16.md` and `EVOLUTION_OVERVIEW_v14-v16.md` in
+  `documentation/archive/v14-v16/`, with the link definitions their headings use; the links in `README.md`,
+  `AGENTS.md`, `CHANGELOG.md`, `HISTORY.md`, `EVOLUTION_OVERVIEW.md` and the `prep-version-release` skill follow the
+  new locations
 
 #### 🗑️ Removed
 

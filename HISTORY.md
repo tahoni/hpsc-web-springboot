@@ -44,6 +44,8 @@ evolution of architecture, features and design philosophy across all versions.
 - `TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults` are removed, as no production code
   called them
 - `ARCHITECTURE.md` describes the competitor and match imports as per-row instead of all-or-nothing
+- Versions 14.0.0 to 16.4.1 are archived, unchanged, in `documentation/archive/v14-v16/`, with their release notes and
+  pull request descriptions, leaving `documentation/history/` to start at v17.0.0
 - Scoped as `v17.0.0` **MAJOR**: the renamed `messages` field, the new match import response and the bad rows that no
   longer fail the whole request are backward-incompatible, each flagged **Breaking** in `CHANGELOG.md`
 - Improvement plan: Gaps #51 and #52 are added and closed, leaving all 52 gaps closed and none open
@@ -720,6 +722,7 @@ The completed-work logs for versions 14.0.0 to 16.4.1 are archived, unchanged, i
 - A competitor row that repeats a club number already imported by an earlier row of the file is reported as failed
 - `TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults` are removed
 - `ARCHITECTURE.md` describes the competitor and match imports as per-row
+- Versions 14.0.0 to 16.4.1 are archived in `documentation/archive/v14-v16/`
 - Improvement plan: Gaps #51 and #52 are added and closed, leaving all 52 gaps closed and none open
 - Project version bumped to 17.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
