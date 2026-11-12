@@ -36,6 +36,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Documentation
+
+- **Archived the v14 – v16 release notes and pull request descriptions:** Moved them from `documentation/history/` to
+  `documentation/archive/v14-v16/`, leaving `documentation/history/` with the v17 releases onwards; `README.md` and
+  `AGENTS.md` now say that folder starts at v17.0.0
+
 ---
 
 ### 🧾 [17.0.0] - 2026-11-12

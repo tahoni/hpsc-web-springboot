@@ -229,7 +229,7 @@ This project's documentation is spread across a few files, each with a distinct 
 | [`HELP.md`](HELP.md)                             | Spring Initializr reference links (Maven, Spring Boot docs, guides)                             |
 
 [`documentation/history/`](documentation/history) holds one of each of the following files per released version from
-v14.0.0 onward, so past releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to
+v17.0.0 onward, so past releases stay individually referenceable as `RELEASE_NOTES.md` and the release PR moves on to
 the next version, grouped into one subdirectory per major version (e.g. `documentation/history/vN/`):
 
 | File                       | Purpose                                                    |

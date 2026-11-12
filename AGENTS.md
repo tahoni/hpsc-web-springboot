@@ -330,8 +330,8 @@ points back to it rather than restating it, so it's the one to update first when
 
 Five documentation-only folders supplement these:
 
-- **`documentation/history/`** holds one of each of the following files per released version from v14.0.0 onward,
-  grouped into `v14/` and later subdirectories by major version (e.g. `documentation/history/v14/`):
+- **`documentation/history/`** holds one of each of the following files per released version from v17.0.0 onward,
+  grouped into `v17/` and later subdirectories by major version (e.g. `documentation/history/v17/`):
 
   | File                       | Purpose                                                    |
   |----------------------------|------------------------------------------------------------|
