@@ -69,6 +69,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Documentation
 
+- **`AGENTS.md` and `ARCHITECTURE.md`:** The 3-tier service test rule now says every service has an interface test and an
+  integration test, and an `ImplTest` only where its impl has helper methods worth testing directly, instead of
+  listing five services that follow the split, and `ARCHITECTURE.md`'s test tree no longer lists the removed
+  `exceptions/` directory. Closes improvement plan Gap #55.
 - **Missing `@since` tags:** Added them to the Javadoc of `CompetitorMapper`, `MatchCompetitorMapper`,
   `MatchCompetitorRowMapper` and `MatchMapper`, and of 74 public and package-private methods and constructors in the
   mappers, helpers, request and response models, `ControllerAdvice` and the service implementations, each with the

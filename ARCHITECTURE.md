@@ -107,7 +107,6 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     ├───controllers/            # Controller unit tests (Mockito, no Spring context)
     ├───converters/             # AttributeConverter unit tests
     ├───enums/                  # Enum unit tests
-    ├───exceptions/             # Exception hierarchy unit tests
     ├───helpers/                # Helper unit tests
     ├───mappers/                # Mapper unit tests
     ├───migrations/             # Flyway migration test against MySQL (runs only when FLYWAY_MYSQL_URL is set)

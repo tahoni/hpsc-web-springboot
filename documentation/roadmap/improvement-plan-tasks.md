@@ -611,6 +611,12 @@ Gap #41)* —
 - [x] Say in the `IpscShooterLogOverallService` row and the `ShooterLogOverallResponse` sentence that an overall records
   the matches it was calculated from as `matchIds` — done
 
+**Test docs after the cleanup** *(improvement-plan.md → Gap #55)* — ✅ Closed in v18.0.0
+
+- [x] Reword `AGENTS.md`'s 3-tier sentence so every service has an interface test and an integration test, and an
+  `ImplTest` only where the impl has helper methods worth testing directly, without the list of five services — done
+- [x] Remove the `exceptions/` line from `ARCHITECTURE.md`'s test tree — done
+
 ---
 
 ## 🟡 Partially Completed

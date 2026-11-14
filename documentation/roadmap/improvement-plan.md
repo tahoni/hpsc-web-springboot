@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (54):**
+- **✅ Completed (55):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -158,6 +158,8 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #54 `ARCHITECTURE.md`'s entity table omits `ShooterLogOverall.matches`, and its relationship sentence is untrue
     for both many-to-many links — closed in v18.0.0 (entity table, relationship sentence and the service and
     response descriptions updated)
+  - #55 The test cleanup left `AGENTS.md`'s 3-tier service rule and `ARCHITECTURE.md`'s test tree describing tests
+    that no longer exist — closed in v18.0.0 (rule reworded, `exceptions/` removed from the test tree)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
 - **⚪ Open (0):**
@@ -1778,6 +1780,33 @@ kept in the `shooter_log_match` and `shooter_log_overall_match` join tables, the
 says the best matches each overall was calculated from are recorded, and the `ShooterLogOverallResponse` sentence
 says each overall lists its `matchIds`.
 
+#### 55. The test cleanup left `AGENTS.md`'s 3-tier service rule and `ARCHITECTURE.md`'s test tree describing tests that no longer exist — ✅ Closed in v18.0.0
+
+**Evidence:** `AGENTS.md:437`'s Test Conventions say "All five services (`AwardService`, `ImageService`,
+`IpscCompetitorService`, `IpscMatchService`, `TransactionService`) follow this split", the split being an interface
+test, a `<Service>ImplTest` for the impl's own helper methods and an integration test. `services/` now declares eleven
+service interfaces and `services/impl/` holds eight `ImplTest` classes: `TransactionServiceImplTest` is removed in the
+`[Unreleased]` test cleanup (`CHANGELOG.md`'s "Brittle service tests removed" entry), and `IpscShooterLogOverallService`
+and `IpscShooterResultService` never had one, so `TransactionService`, which the sentence names, no longer follows it.
+`ARCHITECTURE.md:110`'s test tree still lists `exceptions/ # Exception hierarchy unit tests`, but the
+`FatalException`, `NonFatalException` and `ValidationException` tests were deleted in the same cleanup as `super(...)`
+pass-through, so `src/test/java/za/co/hpsc/web/exceptions/` no longer exists.
+
+**Why it matters:** The same shape as Gaps #20 and #34: test documentation that predates the tests it describes. A
+contributor adding a service reads the rule as "every service gets an `ImplTest`" and writes one with nothing to test,
+or reads the tree and looks for exception tests. Gap #20 closed when the sentence named every service then in
+existence, and it has since fallen behind by six.
+
+**Proposed improvement:** Reword the `AGENTS.md` sentence to say every service has a `<Service>Test` and a
+`<Service>IntegrationTest`, and a `<Service>ImplTest` only when its impl has protected or private helper methods, not
+declared on the interface, that are worth testing directly; drop the list of five services. Remove the `exceptions/`
+line from `ARCHITECTURE.md`'s test tree.
+
+**Outcome:** Done as proposed. `AGENTS.md`'s Test Conventions now say every service has the interface test and the
+integration test, and an `ImplTest` only where its impl has helper methods worth testing directly, name
+`TransactionService` as one that has none, and no longer list five services; `ARCHITECTURE.md`'s test tree no longer
+lists `exceptions/`.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -1796,7 +1825,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | No items currently scoped — #53 and #54 closed in v18.0.0, #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                              |
+| **Now**     | No items currently scoped — #53, #54 and #55 closed in v18.0.0, #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                         |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath, and `flyway-mysql` until v16.4.0 (#50, closed); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
@@ -1930,6 +1959,8 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 - ✅ Met in v18.0.0: `ARCHITECTURE.md`'s Domain Entities table and the sentence below it describe
   `ShooterLogOverall.matches` and the two `@ManyToMany` links, and the service and response descriptions mention an
   overall's `matchIds`, closing Gap #54.
+- ✅ Met in v18.0.0: `AGENTS.md`'s 3-tier service test rule matches the `ImplTest` classes that exist, and
+  `ARCHITECTURE.md`'s test tree lists only directories that exist, closing Gap #55.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.
