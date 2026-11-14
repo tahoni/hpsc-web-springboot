@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Competitor;
+import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.ShooterLogOverall;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
@@ -59,6 +60,11 @@ public class ShooterLogOverallResponse {
      * {@link IpscConstants#PERCENTAGE_SCALE} decimal places for display.
      */
     private String percentageInLog;
+    /**
+     * The identifiers of the matches the overall was calculated from, being the competitor's best matches in the log;
+     * empty if it was calculated from none.
+     */
+    private List<Long> matchIds = new ArrayList<>();
     /** When the overall rank and percentage in the log were calculated, if they were. */
     private LocalDateTime dateCalculated;
 
@@ -66,8 +72,8 @@ public class ShooterLogOverallResponse {
      * Creates a response from a persisted shooter log overall.
      *
      * @param shooterLogOverall the overall to convert. Must not be null and must have its shooter log and
-     *                          competitor set. Those lazily loaded associations are read here, so call this while
-     *                          the persistence session is still open, or after fetch-joining them.
+     *                          competitor set. Those lazily loaded associations, and its matches, are read here, so
+     *                          call this while the persistence session is still open, or after fetch-joining them.
      */
     public ShooterLogOverallResponse(ShooterLogOverall shooterLogOverall) {
         this.shooterLogOverallId = shooterLogOverall.getId();
@@ -92,6 +98,8 @@ public class ShooterLogOverallResponse {
         this.percentageInLog = (shooterLogOverall.getPercentageInLog() == null) ? null
                 : NumberUtil.formatBigDecimal(shooterLogOverall.getPercentageInLog(),
                 IpscConstants.PERCENTAGE_SCALE);
+        this.matchIds = (shooterLogOverall.getMatches() == null) ? new ArrayList<>()
+                : shooterLogOverall.getMatches().stream().map(IpscMatch::getId).toList();
         this.dateCalculated = shooterLogOverall.getDateCalculated();
     }
 }

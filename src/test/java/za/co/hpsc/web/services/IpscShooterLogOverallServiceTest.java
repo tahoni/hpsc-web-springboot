@@ -150,6 +150,8 @@ class IpscShooterLogOverallServiceTest {
         // Assert
         // The best four are 100, 90, 80 and 70; the 10 is dropped
         assertEquals(new BigDecimal("85.00"), savedOverallResults().getFirst().getPercentageInLog());
+        // The overall records the matches it was calculated from, best first, without the dropped one
+        assertEquals(List.of(first, second, fourth, fifth), savedOverallResults().getFirst().getMatches());
     }
 
     @Test
@@ -694,6 +696,8 @@ class IpscShooterLogOverallServiceTest {
         overall.setCompetitor(competitor);
         overall.setCompetitorCategory(CompetitorCategory.NONE);
         overall.setDivision(Division.OPEN);
+        // Calculated from all of the log's matches, which holds while a log has no more than the best matches
+        overall.setMatches(new ArrayList<>(shooterLog.getMatches()));
         overall.setDateCalculated(dateCalculated);
         return overall;
     }

@@ -27,6 +27,43 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Database
+
+- **`V11_13_0__create_shooter_log_overall_match.sql`:** Creates the `shooter_log_overall_match` join table linking a
+  `shooter_log_overall` to the `ipsc_match`es it was calculated from, with foreign keys to both and an index on
+  `match_id`.
+
+##### Domain
+
+- **`ShooterLogOverall.matches`:** The matches an overall was calculated from, being the competitor's best matches in
+  the shooter log, kept in the new `shooter_log_overall_match` table.
+
+##### Models
+
+- **`ShooterLogOverallResponse.matchIds`:** Each overall result now lists the identifiers of the matches it was
+  calculated from, empty if it was calculated from none.
+
+#### 🔄 Changed
+
+##### Services
+
+- **`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`:** Records the matches each overall was calculated
+  from: the competitor's best `SHOOTER_LOG_BEST_MATCHES` results by percentage, with equal percentages taken from the
+  most recent match first. The overall percentage is still the average of those same results. An overall calculated
+  before its matches were recorded, or from other matches, is treated as out of date and recalculated.
+
+##### Repositories
+
+- **`ShooterLogOverallRepository`:** `findAllByShooterLogIdWithDetails` and `findAllWithDetails` also fetch each
+  overall's matches, so they can be read outside a transaction.
+
+##### Tests
+
+- **`IpscShooterLogOverallServiceTest`:** The best-matches case now also checks which matches the overall records, and
+  the existing overall fixtures carry their matches.
+
 ---
 
 ### 🧾 [17.0.0] - 2026-11-12

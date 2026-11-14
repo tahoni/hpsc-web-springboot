@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Default {@link IpscShooterLogOverallService}, calculating shooter log overall results from the persisted
@@ -105,7 +106,9 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
             overall.setCompetitor(latest.getCompetitor());
             overall.setCompetitorCategory(category);
             overall.setDivision(latest.getDivision());
-            overall.setPercentageInLog(averagePercentage(results));
+            List<ShooterResult> bestResults = bestResults(results);
+            overall.setPercentageInLog(averagePercentage(bestResults));
+            overall.setMatches(matchesOfResults(bestResults));
             overall.setDateCalculated(dateCalculated);
             groups.computeIfAbsent(new OverallGroup(latest.getDivision(), category), group -> new ArrayList<>())
                     .add(overall);
@@ -197,8 +200,18 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
         }
 
         LocalDateTime oldestCalculated = null;
-        for (ShooterLogOverall existing : existingByCompetitorId.values()) {
+        for (Map.Entry<Long, ShooterLogOverall> entry : existingByCompetitorId.entrySet()) {
+            ShooterLogOverall existing = entry.getValue();
             if (existing.getDateCalculated() == null) {
+                return false;
+            }
+            // An overall calculated before its matches were recorded, or from other matches, is out of date
+            Set<Long> expectedMatchIds = matchesOfResults(bestResults(resultsByCompetitorId.get(entry.getKey())))
+                    .stream().map(IpscMatch::getId).collect(Collectors.toSet());
+            Set<Long> recordedMatchIds = (existing.getMatches() == null) ? Set.of()
+                    : existing.getMatches().stream().map(IpscMatch::getId)
+                    .collect(Collectors.toSet());
+            if (!expectedMatchIds.equals(recordedMatchIds)) {
                 return false;
             }
             if ((oldestCalculated == null) || existing.getDateCalculated().isBefore(oldestCalculated)) {
@@ -222,8 +235,10 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
     }
 
     /**
-     * Averages the best percentages a competitor has across the matches of a shooter log: their
-     * {@link IpscConstants#SHOOTER_LOG_BEST_MATCHES} highest, or all of them if they have fewer.
+     * Picks the results that count towards a competitor's overall: their
+     * {@link IpscConstants#SHOOTER_LOG_BEST_MATCHES} highest percentages across the matches of a shooter log, or all
+     * of them if they have fewer. Equal percentages are taken from the most recent match first, so the same results
+     * are picked every time.
      *
      * <p>
      * A result without a percentage is ignored. {@link ShooterResult#getPercentageInLog()} is nullable, and although
@@ -232,21 +247,43 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
      * </p>
      *
      * @param results the competitor's shooter results in the log.
-     * @return the average of the results' best percentages, to {@link IpscConstants#PERCENTAGE_SCALE} decimal
-     * places, or {@code null} if none of them has a percentage.
+     * @return the best results, highest percentage first.
      */
-    @Nullable private BigDecimal averagePercentage(List<ShooterResult> results) {
-        List<BigDecimal> percentages = results.stream()
-                .map(ShooterResult::getPercentageInLog)
-                .filter(Objects::nonNull)
-                .sorted(Comparator.reverseOrder())
+    private List<ShooterResult> bestResults(List<ShooterResult> results) {
+        return results.stream()
+                .filter(result -> result.getPercentageInLog() != null)
+                .sorted(Comparator.comparing(ShooterResult::getPercentageInLog, Comparator.reverseOrder())
+                        .thenComparing(result -> result.getMatch().getScheduledDate(), Comparator.reverseOrder())
+                        .thenComparing(ShooterResult::getId))
                 .limit(IpscConstants.SHOOTER_LOG_BEST_MATCHES)
                 .toList();
-        if (percentages.isEmpty()) {
+    }
+
+    /**
+     * The matches the given shooter results are from, each once.
+     *
+     * @param results the shooter results.
+     * @return the results' matches, as a new modifiable list, in the order of the results.
+     */
+    private List<IpscMatch> matchesOfResults(List<ShooterResult> results) {
+        return results.stream().map(ShooterResult::getMatch).distinct()
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    /**
+     * Averages the percentages of the results that count towards a competitor's overall.
+     *
+     * @param bestResults the competitor's best results, as picked by {@link #bestResults(List)}.
+     * @return the average of the results' percentages, to {@link IpscConstants#PERCENTAGE_SCALE} decimal places, or
+     * {@code null} if there are no results.
+     */
+    @Nullable private BigDecimal averagePercentage(List<ShooterResult> bestResults) {
+        if (bestResults.isEmpty()) {
             return null;
         }
-        BigDecimal sum = percentages.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-        return sum.divide(BigDecimal.valueOf(percentages.size()), IpscConstants.PERCENTAGE_SCALE,
+        BigDecimal sum = bestResults.stream().map(ShooterResult::getPercentageInLog)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return sum.divide(BigDecimal.valueOf(bestResults.size()), IpscConstants.PERCENTAGE_SCALE,
                 RoundingMode.HALF_UP);
     }
 
