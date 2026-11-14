@@ -142,8 +142,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   return, that deleting an overall removes its match rows, and that both read endpoints return `matchIds`. A further
   case runs the calculation and reads the results without a surrounding transaction, which is what exposed the
   `LazyInitializationException` fixed under Domain above.
-- **`IpscShooterLogOverallControllerTest`:** New cases check that the create, get-all and get endpoints return each
-  overall's `matchIds`, including an empty list, and that `matchIds` serialises to a JSON array of identifiers.
 - **`ShooterLogOverallRepositoryIntegrationTest`:** New cases check that `findAllByShooterLogIdWithDetails` and
   `findAllWithDetails` fetch each overall's shooter log, competitor and matches, return an overall with several matches
   once and an overall with none with an empty list, and that the first returns only the requested log's overalls.
