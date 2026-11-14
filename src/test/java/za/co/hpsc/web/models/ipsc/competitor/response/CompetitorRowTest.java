@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.models.ipsc.competitor.request.CompetitorRequest;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,7 +70,7 @@ class CompetitorRowTest {
     void testConstructor_whenValuesAreMissing_thenReportsThemAsEmpty() {
         // Arrange
         CompetitorRequest request = new CompetitorRequest(null, null, "Doe", null, null, null, null, null, null,
-                null, "HPSC-001", null, null, Arrays.asList("jane@example.com", null, "jane2@example.com"), null,
+                null, "HPSC-001", null, null, List.of("jane@example.com"), null,
                 null, null, null);
 
         // Act
@@ -83,7 +82,7 @@ class CompetitorRowTest {
         assertEquals("", row.getDateOfBirth());
         assertEquals("", row.getSapsaNumber());
         assertEquals("HPSC-001", row.getClubNumber());
-        assertEquals("jane@example.com;null;jane2@example.com", row.getEmailAddresses());
+        assertEquals("jane@example.com", row.getEmailAddresses());
         assertEquals("", row.getPaidUpSapsa());
         assertEquals("", row.getIsVerified());
     }

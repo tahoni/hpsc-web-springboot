@@ -5,18 +5,10 @@ import za.co.hpsc.web.models.award.request.AwardRequest;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class AwardResponseTest {
-
-    private final AwardPlacing first =
-            new AwardPlacing(1, "Gold", "gold.png");
-    private final AwardPlacing second =
-            new AwardPlacing(2, "Silver", "silver.png");
-    private final AwardPlacing third =
-            new AwardPlacing(3, "Bronze", "bronze.png");
 
     // AwardResponse(AwardRequest)
     @Test
@@ -64,101 +56,6 @@ class AwardResponseTest {
         assertEquals(1, response.getFirstPlace().getPlace());
         assertEquals(2, response.getSecondPlace().getPlace());
         assertEquals(3, response.getThirdPlace().getPlace());
-    }
-
-    // AwardResponse(AwardPlacing, AwardPlacing, AwardPlacing)
-    @Test
-    void testConstructor_withAwardPlaces_thenInitialisesUuidAndAwardPlaces() {
-        // Act
-        AwardResponse response = new AwardResponse(first, second, third);
-
-        // Assert
-        assertNotNull(response.getUuid());
-        assertEquals(first, response.getFirstPlace());
-        assertEquals(second, response.getSecondPlace());
-        assertEquals(third, response.getThirdPlace());
-    }
-
-    // AwardResponse(UUID, AwardPlacing, AwardPlacing, AwardPlacing)
-    @Test
-    void testConstructor_withUuidAndAwardPlaces_thenInitialisesUuidAndAwardPlaces() {
-        // Arrange
-        UUID uuid = UUID.randomUUID();
-
-        // Act
-        AwardResponse response = new AwardResponse(uuid, first, second, third);
-
-        // Assert
-        assertEquals(uuid, response.getUuid());
-        assertEquals(first, response.getFirstPlace());
-        assertEquals(second, response.getSecondPlace());
-        assertEquals(third, response.getThirdPlace());
-    }
-
-    // AwardResponse(UUID, String, AwardPlacing, AwardPlacing, AwardPlacing)
-    @Test
-    void testShortConstructor_withUuidAwardPlacesAndTitle_thenInitialisesFieldsCorrectly() {
-        // Arrange
-        UUID uuid = UUID.randomUUID();
-
-        // Act
-        AwardResponse response = new AwardResponse(uuid, "Mini Title", first, second, third);
-
-        // Assert meta-data
-        assertEquals(uuid, response.getUuid());
-        assertEquals("Mini Title", response.getTitle());
-        // Assert places
-        assertEquals(first, response.getFirstPlace());
-        assertEquals(second, response.getSecondPlace());
-        assertEquals(third, response.getThirdPlace());
-    }
-
-    // AwardResponse(String, String, String, String, List<String>, AwardPlacing, AwardPlacing, AwardPlacing)
-    @Test
-    void testConstructor_withoutUuidButWithBasicFields_thenInitialisesAllFields() {
-        // Act
-        AwardResponse response = new AwardResponse(
-                "Title", "Summary", "Desc", "Cat", List.of("tag"), first, second, third
-        );
-
-        // Assert meta-data
-        assertNotNull(response.getUuid());
-        assertEquals("Title", response.getTitle());
-        assertEquals("Summary", response.getSummary());
-        assertEquals("Desc", response.getDescription());
-        assertEquals("Cat", response.getCategory());
-        assertEquals(1, response.getTags().size());
-        assertTrue(response.getTags().contains("tag"));
-        // Assert places
-        assertEquals(first, response.getFirstPlace());
-        assertEquals(second, response.getSecondPlace());
-        assertEquals(third, response.getThirdPlace());
-    }
-
-    // AwardResponse(UUID, String, String, String, String, List<String>, AwardPlacing, AwardPlacing, AwardPlacing)
-    @Test
-    void testFullConstructor_thenInitialisesAllFields() {
-        // Arrange
-        UUID uuid = UUID.randomUUID();
-        List<String> tags = List.of("sports", "annual");
-
-        // Act
-        AwardResponse response = new AwardResponse(
-                uuid, "Title", "Summary", "Desc", "Cat", tags, first, second, third
-        );
-
-        // Assert meta-data
-        assertEquals(uuid, response.getUuid());
-        assertEquals("Title", response.getTitle());
-        assertEquals("Summary", response.getSummary());
-        assertEquals("Desc", response.getDescription());
-        assertEquals("Cat", response.getCategory());
-        assertEquals(2, response.getTags().size());
-        assertTrue(response.getTags().containsAll(tags));
-        // Assert places
-        assertEquals(first, response.getFirstPlace());
-        assertEquals(second, response.getSecondPlace());
-        assertEquals(third, response.getThirdPlace());
     }
 
     // AwardResponse(String, String, String, String, List<String>, String, String, String, String, String, String)

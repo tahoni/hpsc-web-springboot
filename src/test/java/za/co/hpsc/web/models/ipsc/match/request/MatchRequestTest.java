@@ -16,7 +16,7 @@ class MatchRequestTest {
 
     // JSON serialization
     @Test
-    void testJsonSerialization_whenFullyPopulated_thenSerializesAllFields() throws Exception {
+    void testJsonSerialization_whenFullyPopulated_thenSerializesRepresentativeFields() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         MatchRequest request = new MatchRequest(1L, LocalDate.of(2026, 4, 10), "Club Championship",
@@ -33,11 +33,7 @@ class MatchRequestTest {
         assertEquals("2026-04-10", node.get("matchDate").asText());
         assertEquals("Club Championship", node.get("matchName").asText());
         assertEquals("08:00", node.get("startTime").asText());
-        assertEquals("17:00", node.get("endTime").asText());
-        assertEquals("Test Club", node.get("club").asText());
         assertEquals("Pistol", node.get("matchFirearmType").asText());
-        assertEquals("Level 1", node.get("matchCategory").asText());
-        assertEquals("https://example.com/matches/1", node.get("url").asText());
     }
 
     @Test
@@ -90,11 +86,7 @@ class MatchRequestTest {
         assertEquals(LocalDate.of(2026, 4, 10), request.getMatchDate());
         assertEquals("Club Championship", request.getMatchName());
         assertEquals(LocalTime.of(8, 0), request.getStartTime());
-        assertEquals(LocalTime.of(17, 0), request.getEndTime());
-        assertEquals("Test Club", request.getClub());
         assertEquals("Pistol", request.getMatchFirearmType());
-        assertEquals("Level 1", request.getMatchCategory());
-        assertEquals("https://example.com/matches/1", request.getUrl());
     }
 
     @Test

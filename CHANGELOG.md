@@ -68,6 +68,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Tests
 
+- **Brittle model, enum and exception tests removed:** The three exception test classes and the `IpscCommonScoreTest`,
+  `IpscMatchScoreTest` and `IpscMatchStageScoreTest` classes are deleted, as they only checked `super(...)` pass-through
+  and Lombok getters. The constructor and getter pass-through tests in the request and response tests go too, keeping
+  the UUID, MIME type, derived-success and default-list logic, and the enum tests drop their repeated lookups and
+  `toString` restatements. The JSON serialisation tests check representative fields instead of every property,
+  `AwardCeremonyResponseTest` uses a fixed date instead of `LocalDate.now()`, and `CompetitorVerifyRequestTest` expects
+  `MismatchedInputException` rather than any `Exception`.
 - **Brittle controller, advice, repository and migration tests removed:** The controller tests that only stubbed a
   service and asserted the same body came back, and the ones that checked an exception propagates (the controllers
   have no handlers; `ControllerAdviceTest` covers the mapping), are deleted, keeping the status-decision tests, so each

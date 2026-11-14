@@ -5,7 +5,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.exceptions.ValidationException;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,27 +24,6 @@ class ShooterLogPatchRequestTest {
         assertNull(request.getStartDate());
         assertNull(request.getEndDate());
         assertNull(request.getMatchIds());
-    }
-
-    @Test
-    void testJsonDeserialization_whenAllFieldsProvided_thenMapsOntoFields() throws Exception {
-        // Arrange
-        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        String json = """
-                {
-                  "startDate": "2026-10-01",
-                  "endDate": "2026-10-31",
-                  "matchIds": [12]
-                }
-                """;
-
-        // Act
-        ShooterLogPatchRequest request = mapper.readValue(json, ShooterLogPatchRequest.class);
-
-        // Assert
-        assertEquals(LocalDate.of(2026, 10, 1), request.getStartDate());
-        assertEquals(LocalDate.of(2026, 10, 31), request.getEndDate());
-        assertEquals(List.of(12L), request.getMatchIds());
     }
 
     @Test

@@ -10,23 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class MatchCompetitorPatchRequestTest {
 
     @Test
-    void testNewInstance_whenNothingSet_thenEveryFieldIsNull() {
-        // Act
-        MatchCompetitorPatchRequest request = new MatchCompetitorPatchRequest();
-
-        // Assert
-        assertNull(request.getCompetitorId());
-        assertNull(request.getMatchId());
-        assertNull(request.getMatchClub());
-        assertNull(request.getCompetitorCategory());
-        assertNull(request.getFirearmType());
-        assertNull(request.getDivision());
-        assertNull(request.getPowerFactor());
-        assertNull(request.getPoints());
-        assertNull(request.getIsVisitor());
-    }
-
-    @Test
     void testJsonDeserialization_whenEmptyObject_thenEveryFieldIsNull() throws Exception {
         // Act
         MatchCompetitorPatchRequest request = new ObjectMapper().readValue("{}", MatchCompetitorPatchRequest.class);
