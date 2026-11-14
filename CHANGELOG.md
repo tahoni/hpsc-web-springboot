@@ -47,6 +47,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### Configuration
+
+- **`springdoc.api-docs.enabled` and `springdoc.swagger-ui.enabled`:** Set to `false` in `application.properties` and
+  `application-dev.properties`, so the OpenAPI `/v3/api-docs` endpoint and the Swagger UI are no longer exposed by
+  default; the production profile inherits the setting.
+
 ##### Services
 
 - **`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`:** Records the matches each overall was calculated
