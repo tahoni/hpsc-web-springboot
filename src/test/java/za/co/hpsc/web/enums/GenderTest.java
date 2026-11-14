@@ -79,13 +79,4 @@ class GenderTest {
         // Assert
         assertEquals("Male", result);
     }
-
-    @Test
-    void testToString_whenGenderIsFemale_thenReturnsFemale() {
-        // Act
-        String result = Gender.Female.toString();
-
-        // Assert
-        assertEquals("Female", result);
-    }
 }

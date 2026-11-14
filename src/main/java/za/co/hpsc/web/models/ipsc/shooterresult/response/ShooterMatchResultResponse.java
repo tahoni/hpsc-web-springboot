@@ -31,6 +31,7 @@ public class ShooterMatchResultResponse {
      * Creates a match description from a persisted match.
      *
      * @param match the match to convert. Must not be null.
+     * @since 15.0.0
      */
     public ShooterMatchResultResponse(IpscMatch match) {
         this.matchId = match.getId();

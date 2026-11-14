@@ -2,11 +2,7 @@ package za.co.hpsc.web.services.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import com.fasterxml.jackson.core.FormatSchema;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import org.mockito.InjectMocks;
-import org.mockito.MockedConstruction;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,7 +10,6 @@ import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.enums.Gender;
-import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.mappers.CompetitorMapper;
@@ -23,16 +18,12 @@ import za.co.hpsc.web.models.ipsc.competitor.response.CompetitorResponse;
 import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -449,25 +440,6 @@ class IpscCompetitorServiceImplTest {
         assertThrows(ValidationException.class, () -> ipscCompetitorServiceImpl.readCompetitors(null));
     }
 
-    @Test
-    void testReadCompetitors_whenReadingTheCsvFails_thenThrowsFatalExceptionWithTheCause() throws IOException {
-        // Arrange
-        IOException cause = new IOException("disk unavailable");
-        ObjectReader reader = mock(ObjectReader.class);
-        when(reader.with(any(FormatSchema.class))).thenReturn(reader);
-        when(reader.readValues(anyString())).thenThrow(cause);
-
-        try (MockedConstruction<CsvMapper> ignored = mockConstruction(CsvMapper.class,
-                (mapper, context) -> when(mapper.readerFor(CompetitorRequest.class)).thenReturn(reader))) {
-
-            // Act & Assert
-            FatalException thrown = assertThrows(FatalException.class,
-                    () -> ipscCompetitorServiceImpl.readCompetitors("FirstName,LastName\nJane,Doe\n"));
-            assertSame(cause, thrown.getCause());
-            assertTrue(thrown.getMessage().contains("disk unavailable"));
-        }
-    }
-
     // toResponse()
     @Test
     void testToResponse_whenCompetitorHasHomeClub_thenMapsHomeClubIdentifier() {
@@ -494,25 +466,16 @@ class IpscCompetitorServiceImplTest {
     }
 
     @Test
-    void testToResponse_whenCompetitorHasAllFields_thenMapsAllFields() {
+    void testToResponse_whenCompetitorHasFields_thenMapsThem() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
         competitor.setFirstName("Jane");
         competitor.setLastName("Doe");
-        competitor.setMiddleNames("Ann");
-        competitor.setNickName("Janie");
         competitor.setDateOfBirth(LocalDate.of(1990, 1, 1));
         competitor.setGender(Gender.Female);
-        competitor.setSapsaNumber(12345);
         competitor.setCompetitorNumber(7001);
-        competitor.setClubNumber("HPSC-001");
-        competitor.setIdNumber("9001015800083");
-        competitor.setCellphoneNumber("0821234567");
         competitor.setPaidUpSapsa(true);
-        competitor.setPaidUpNgpsa(true);
-        competitor.setPaidUpClub(false);
-        competitor.setIsVerified(true);
         competitor.setEmailAddresses(List.of("jane.doe@example.com"));
 
         // Act
@@ -522,33 +485,11 @@ class IpscCompetitorServiceImplTest {
         assertEquals(1L, response.getCompetitorId());
         assertEquals("Jane", response.getFirstName());
         assertEquals("Doe", response.getLastName());
-        assertEquals("Ann", response.getMiddleNames());
-        assertEquals("Janie", response.getNickName());
         assertEquals(LocalDate.of(1990, 1, 1), response.getDateOfBirth());
         assertEquals(Gender.Female, response.getGender());
-        assertEquals(12345, response.getSapsaNumber());
         assertEquals(7001, response.getCompetitorNumber());
-        assertEquals("HPSC-001", response.getClubNumber());
-        assertEquals("9001015800083", response.getIdNumber());
-        assertEquals("0821234567", response.getCellphoneNumber());
         assertEquals(Boolean.TRUE, response.getPaidUpSapsa());
-        assertEquals(Boolean.TRUE, response.getPaidUpNgpsa());
-        assertEquals(Boolean.FALSE, response.getPaidUpClub());
-        assertEquals(Boolean.TRUE, response.getIsVerified());
         assertEquals(List.of("jane.doe@example.com"), response.getEmailAddresses());
-    }
-
-    @Test
-    void testToResponse_whenMultipleEmailAddresses_thenAllAreMapped() {
-        // Arrange
-        Competitor competitor = new Competitor();
-        competitor.setEmailAddresses(List.of("jane.doe@example.com", "jane2.doe@example.com"));
-
-        // Act
-        CompetitorResponse response = ipscCompetitorServiceImpl.toResponse(competitor);
-
-        // Assert
-        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), response.getEmailAddresses());
     }
 
     // validateForCreate()

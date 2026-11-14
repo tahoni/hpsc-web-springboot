@@ -593,6 +593,30 @@ Gap #41)* —
   `TransactionServiceTest` and `TransactionServiceIntegrationTest`, or give each a production caller — removed
 - [x] Correct `ARCHITECTURE.md`'s `TransactionService` description if it still names them
 
+**Swagger UI and OpenAPI docs availability** *(improvement-plan.md → Gap #53)* — ✅ Closed in v18.0.0
+
+- [x] Reword `README.md`'s "🌐 API Documentation" section to say the OpenAPI document and Swagger UI are served only
+  under the `dev` profile, and how to turn them on elsewhere — done
+- [x] Say the same in `AGENTS.md`'s Project Overview "API docs" line and `ARCHITECTURE.md`'s tech-stack row — done
+- [x] Add a sentence to `CONTRIBUTING.md`'s step that starts the `dev` profile, saying the other profiles do not serve
+  them — done
+
+**`ARCHITECTURE.md` entity docs for `ShooterLogOverall.matches`** *(improvement-plan.md → Gap #54)* —
+✅ Closed in v18.0.0
+
+- [x] Add the many-to-many link to `IpscMatch` (through `shooter_log_overall_match`) to the `ShooterLogOverall` row of
+  the Domain Entities table — done
+- [x] Reword the sentence below the table, which says every relationship's owning side declares a `@ManyToOne`, to cover
+  the `@ManyToMany`/`@JoinTable` links of `ShooterLog` and `ShooterLogOverall` — done
+- [x] Say in the `IpscShooterLogOverallService` row and the `ShooterLogOverallResponse` sentence that an overall records
+  the matches it was calculated from as `matchIds` — done
+
+**Test docs after the cleanup** *(improvement-plan.md → Gap #55)* — ✅ Closed in v18.0.0
+
+- [x] Reword `AGENTS.md`'s 3-tier sentence so every service has an interface test and an integration test, and an
+  `ImplTest` only where the impl has helper methods worth testing directly, without the list of five services — done
+- [x] Remove the `exceptions/` line from `ARCHITECTURE.md`'s test tree — done
+
 ---
 
 ## 🟡 Partially Completed

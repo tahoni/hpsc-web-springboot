@@ -76,6 +76,7 @@ public class CompetitorResponse {
      *                   Must not be null.
      *                   The lazily loaded home club and email addresses are read here, so call this while the
      *                   persistence session is still open.
+     * @since 13.0.0
      */
     public CompetitorResponse(@NonNull Competitor competitor) {
         this.competitorId = competitor.getId();

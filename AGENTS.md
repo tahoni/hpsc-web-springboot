@@ -30,7 +30,8 @@ manages IPSC match data, competitor tracking, club operations, awards and image 
 is a pure API server.
 
 - **Port / context path:** `8080` / `/hpsc-web`
-- **API docs:** Swagger UI at `http://localhost:8080/hpsc-web/swagger-ui/index.html`
+- **API docs:** Swagger UI at `http://localhost:8080/hpsc-web/swagger-ui/index.html`, served only under the `dev`
+  profile — it and the OpenAPI document are off by default and under `prod`
 
 ---
 
@@ -428,17 +429,18 @@ updating if `.claude/`'s own layout changes, not for individual skill additions.
        reaches into the impl's protected/private helpers.
     2. **`<Service>ImplTest`** (`services/impl/`) — a Mockito unit test of the impl class's own protected/private
        helper methods that aren't declared on the interface (e.g. `applyFields`, `toResponse`), likewise with every
-       repository dependency mocked.
+       repository dependency mocked. Only a service whose impl has such helpers worth testing directly has one.
     3. **`<Service>IntegrationTest`** (`services/`) — a `@SpringBootTest`/`@ActiveProfiles("test")` test exercising
        the interface's full public contract end-to-end through a real, Spring-wired bean backed by the H2 `test`
        profile database — no mocks.
 
-   All five services (`AwardService`, `ImageService`, `IpscCompetitorService`, `IpscMatchService`,
-   `TransactionService`) follow this split; a new service should too. `TransactionServiceIntegrationTest` is the one
-   integration test deliberately not `@Transactional`, since a surrounding test transaction would hide whether
-   `TransactionService` really commits or rolls back; it deletes its committed data after each test instead. See
-   the `scaffold-unit-tests`/`scaffold-integration-tests` skills for the detailed per-tier rules (what each tier
-   should and shouldn't cover, Spring Boot 4 auto-configuration gotchas, etc.).
+   Every service has the interface test and the integration test, and an `ImplTest` where tier 2 applies, so
+   `TransactionService` has no `TransactionServiceImplTest`; a new service should follow the same split.
+   `TransactionServiceIntegrationTest` is the one integration test deliberately not `@Transactional`, since a
+   surrounding test transaction would hide whether `TransactionService` really commits or rolls back; it deletes its
+   committed data after each test instead. See the `scaffold-unit-tests`/`scaffold-integration-tests` skills for the
+   detailed per-tier rules (what each tier should and shouldn't cover, Spring Boot 4 auto-configuration gotchas,
+   etc.).
 - Test class names follow `<ClassName>Test`; test method names follow
   `test<Scenario>_when<Condition>_then<Expectation>`.
 - JUnit Jupiter's `Assertions` are used for assertions throughout — AssertJ is explicitly excluded from

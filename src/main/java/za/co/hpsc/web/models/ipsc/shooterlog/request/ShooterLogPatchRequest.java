@@ -59,6 +59,7 @@ public class ShooterLogPatchRequest {
      *
      * @throws ValidationException if an identifier in {@code addMatchIds} or {@code removeMatchIds} is null, or one is
      *                             in both, as the request would then both add and remove the same match.
+     * @since 16.4.0
      */
     public void validate() {
         if (hasNull(addMatchIds) || hasNull(removeMatchIds)) {

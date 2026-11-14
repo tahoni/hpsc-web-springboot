@@ -23,7 +23,11 @@ import java.time.LocalTime;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class MatchRequestCsvMixIn {
-    /** The JSON constructor, which takes a {@code matchId}, is not used to read CSV. */
+    /**
+     * The JSON constructor, which takes a {@code matchId}, is not used to read CSV.
+     *
+     * @since 9.0.0
+     */
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     MatchRequestCsvMixIn(Long matchId, LocalDate matchDate, String matchName, String club, String matchFirearmType,
                          String matchCategory, LocalTime startTime, LocalTime endTime, String url) {

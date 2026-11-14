@@ -27,6 +27,8 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
  * Kept out of the request classes because resolving a home club needs the {@link ClubRepository}, which a request
  * model shouldn't depend on.
  * </p>
+ *
+ * @since 13.0.0
  */
 @Component
 public class CompetitorMapper {
@@ -49,6 +51,7 @@ public class CompetitorMapper {
      *                             or the resolved home club is {@link IpscConstants#HOME_CLUB_ABBREVIATION}
      *                             but no club number was supplied.
      * @throws NonFatalException   if the request's home club name doesn't match an existing club.
+     * @since 13.0.0
      */
     public void applyFields(@NonNull Competitor competitor, @NonNull CompetitorRequest request) {
         competitor.setFirstName(request.getFirstName());
@@ -84,6 +87,7 @@ public class CompetitorMapper {
      *                             or the resolved home club is {@link IpscConstants#HOME_CLUB_ABBREVIATION}
      *                             but no club number was supplied.
      * @throws NonFatalException   if the request's home club name doesn't match an existing club.
+     * @since 13.0.0
      */
     public void applyPatchFields(@NonNull Competitor competitor, @NonNull CompetitorPatchRequest request) {
         if (request.getFirstName() != null) {
@@ -157,6 +161,7 @@ public class CompetitorMapper {
      * {@code homeClub} is {@link IpscConstants#HOME_CLUB_ABBREVIATION}, otherwise {@code null}.
      * @throws ValidationException if {@code homeClub} is {@link IpscConstants#HOME_CLUB_ABBREVIATION}
      *                             but {@code clubNumber} is null or blank.
+     * @since 13.0.0
      */
     public @Nullable String resolveClubNumber(Club homeClub, String clubNumber) {
         if (!isMemberOfHomeClub(homeClub)) {
@@ -181,6 +186,7 @@ public class CompetitorMapper {
      *
      * @param club the club to check; may be {@code null}.
      * @return {@code true} if {@code club} is the default home club; {@code false} otherwise.
+     * @since 13.0.0
      */
     public boolean isMemberOfHomeClub(Club club) {
         return isMemberOfHomeClub(club, IpscConstants.HOME_CLUB_IDENTIFIER);
@@ -201,6 +207,7 @@ public class CompetitorMapper {
      *                           {@link IpscConstants#HOME_CLUB_IDENTIFIER}, HPSC's own club.
      * @return {@code true} if {@code club} is the home club identified by {@code homeClubIdentifier}; {@code false}
      * otherwise.
+     * @since 13.0.0
      */
     public boolean isMemberOfHomeClub(Club club, ClubIdentifier homeClubIdentifier) {
         return ipscEntityClubService.isSameClub(club, homeClubIdentifier);
@@ -213,6 +220,7 @@ public class CompetitorMapper {
      *               is set.
      * @return the matching {@link Gender}, or {@code null} if {@code gender} wasn't supplied.
      * @throws ValidationException if {@code gender} was supplied but doesn't match a known gender.
+     * @since 13.0.0
      */
     public @Nullable Gender resolveGender(String gender) {
         if (!hasText(gender)) {
@@ -239,6 +247,7 @@ public class CompetitorMapper {
      *                             club identifier code, abbreviation or name.
      * @throws NonFatalException   if {@code clubName} is a known club identifier, or is blank, but no club is
      *                             persisted with the identifier looked up.
+     * @since 13.0.0
      */
     public @Nullable Club resolveHomeClub(String clubName) {
         if (!hasText(clubName)) {
@@ -262,6 +271,7 @@ public class CompetitorMapper {
      * @return {@code competitorNumber} as a whole number if it was supplied, otherwise {@code sapsaNumber},
      * or {@code null} if neither was supplied.
      * @throws ValidationException if {@code competitorNumber} is not a whole number.
+     * @since 13.0.0
      */
     public Integer resolveCompetitorNumber(String competitorNumber, Integer sapsaNumber) {
         Integer parsedCompetitorNumber = parseCompetitorNumber(competitorNumber);
@@ -275,6 +285,7 @@ public class CompetitorMapper {
      *                         blank.
      * @return the competitor number as a whole number, or {@code null} if it is null or blank.
      * @throws ValidationException if the competitor number is not a whole number.
+     * @since 13.0.0
      */
     public @Nullable Integer parseCompetitorNumber(String competitorNumber) {
         if (!hasText(competitorNumber)) {

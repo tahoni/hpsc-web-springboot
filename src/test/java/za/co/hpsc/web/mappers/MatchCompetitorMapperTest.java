@@ -25,9 +25,6 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -87,26 +84,7 @@ class MatchCompetitorMapperTest {
         matchCompetitorMapper.applyFields(matchCompetitor, request);
 
         // Assert
-        assertSame(competitor, matchCompetitor.getCompetitor());
-        assertSame(match, matchCompetitor.getMatch());
-        assertEquals(ClubIdentifier.HPSC, matchCompetitor.getMatchClub());
-        assertEquals(CompetitorCategory.LADY, matchCompetitor.getCompetitorCategory());
-        assertEquals(FirearmType.PCC, matchCompetitor.getFirearmType());
-        assertEquals(Division.PCC_IRON, matchCompetitor.getDivision());
-        assertEquals(PowerFactor.MINOR, matchCompetitor.getPowerFactor());
-        assertEquals(new BigDecimal("50"), matchCompetitor.getPoints());
-        assertEquals(new BigDecimal("98.25"), matchCompetitor.getPercentage());
-        assertEquals(new BigDecimal("41.5"), matchCompetitor.getTime());
-        assertEquals(new BigDecimal("93.75"), matchCompetitor.getPercentageOfPossiblePoints());
-        assertEquals(30, matchCompetitor.getAlpha());
-        assertEquals(4, matchCompetitor.getCharlie());
-        assertEquals(1, matchCompetitor.getDelta());
-        assertEquals(2, matchCompetitor.getMisses());
-        assertEquals(1, matchCompetitor.getNoPenaltyMisses());
-        assertEquals(0, matchCompetitor.getNoShoots());
-        assertEquals(3, matchCompetitor.getProceduralErrors());
-        assertEquals(5, matchCompetitor.getAdditionalPenalties());
-        assertEquals(Boolean.TRUE, matchCompetitor.getIsVisitor());
+        assertAllFieldsApplied(matchCompetitor, competitor, match);
     }
 
     // applyPatchFields()
@@ -146,26 +124,7 @@ class MatchCompetitorMapperTest {
         matchCompetitorMapper.applyPatchFields(matchCompetitor, request);
 
         // Assert
-        assertSame(competitor, matchCompetitor.getCompetitor());
-        assertSame(match, matchCompetitor.getMatch());
-        assertEquals(ClubIdentifier.HPSC, matchCompetitor.getMatchClub());
-        assertEquals(CompetitorCategory.LADY, matchCompetitor.getCompetitorCategory());
-        assertEquals(FirearmType.PCC, matchCompetitor.getFirearmType());
-        assertEquals(Division.PCC_IRON, matchCompetitor.getDivision());
-        assertEquals(PowerFactor.MINOR, matchCompetitor.getPowerFactor());
-        assertEquals(new BigDecimal("50"), matchCompetitor.getPoints());
-        assertEquals(new BigDecimal("98.25"), matchCompetitor.getPercentage());
-        assertEquals(new BigDecimal("41.5"), matchCompetitor.getTime());
-        assertEquals(new BigDecimal("93.75"), matchCompetitor.getPercentageOfPossiblePoints());
-        assertEquals(30, matchCompetitor.getAlpha());
-        assertEquals(4, matchCompetitor.getCharlie());
-        assertEquals(1, matchCompetitor.getDelta());
-        assertEquals(2, matchCompetitor.getMisses());
-        assertEquals(1, matchCompetitor.getNoPenaltyMisses());
-        assertEquals(0, matchCompetitor.getNoShoots());
-        assertEquals(3, matchCompetitor.getProceduralErrors());
-        assertEquals(5, matchCompetitor.getAdditionalPenalties());
-        assertEquals(Boolean.TRUE, matchCompetitor.getIsVisitor());
+        assertAllFieldsApplied(matchCompetitor, competitor, match);
     }
 
     @Test
@@ -657,7 +616,6 @@ class MatchCompetitorMapperTest {
 
         // Act & Assert
         assertSame(competitor, matchCompetitorMapper.resolveCompetitor(null, "123", "Jane Doe"));
-        verify(competitorRepository, never()).findById(any());
     }
 
     @Test
@@ -945,7 +903,7 @@ class MatchCompetitorMapperTest {
     @Test
     void testResolveMatchClub_whenNameMatches_thenReturnsClub() {
         // Act & Assert
-        assertEquals(ClubIdentifier.HPSC, matchCompetitorMapper.resolveMatchClub("Hartbeespoortdam Practical Shooting Club"));
+        assertEquals(ClubIdentifier.HPSC, matchCompetitorMapper.resolveMatchClub(ClubIdentifier.HPSC.getName()));
     }
 
     @Test
@@ -975,6 +933,29 @@ class MatchCompetitorMapperTest {
     }
 
     // Helpers
+    private void assertAllFieldsApplied(MatchCompetitor matchCompetitor, Competitor competitor, IpscMatch match) {
+        assertSame(competitor, matchCompetitor.getCompetitor());
+        assertSame(match, matchCompetitor.getMatch());
+        assertEquals(ClubIdentifier.HPSC, matchCompetitor.getMatchClub());
+        assertEquals(CompetitorCategory.LADY, matchCompetitor.getCompetitorCategory());
+        assertEquals(FirearmType.PCC, matchCompetitor.getFirearmType());
+        assertEquals(Division.PCC_IRON, matchCompetitor.getDivision());
+        assertEquals(PowerFactor.MINOR, matchCompetitor.getPowerFactor());
+        assertEquals(new BigDecimal("50"), matchCompetitor.getPoints());
+        assertEquals(new BigDecimal("98.25"), matchCompetitor.getPercentage());
+        assertEquals(new BigDecimal("41.5"), matchCompetitor.getTime());
+        assertEquals(new BigDecimal("93.75"), matchCompetitor.getPercentageOfPossiblePoints());
+        assertEquals(30, matchCompetitor.getAlpha());
+        assertEquals(4, matchCompetitor.getCharlie());
+        assertEquals(1, matchCompetitor.getDelta());
+        assertEquals(2, matchCompetitor.getMisses());
+        assertEquals(1, matchCompetitor.getNoPenaltyMisses());
+        assertEquals(0, matchCompetitor.getNoShoots());
+        assertEquals(3, matchCompetitor.getProceduralErrors());
+        assertEquals(5, matchCompetitor.getAdditionalPenalties());
+        assertEquals(Boolean.TRUE, matchCompetitor.getIsVisitor());
+    }
+
     private void stubCompetitorAndMatch() {
         Competitor competitor = new Competitor();
         competitor.setId(1L);

@@ -2,7 +2,9 @@ package za.co.hpsc.web.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import za.co.hpsc.web.converters.FirearmTypeConverter;
@@ -25,6 +27,8 @@ public class IpscMatch {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Club club;
 
     @Column(nullable = false)

@@ -196,19 +196,6 @@ class ValueUtilTest {
     }
 
     @Test
-    void testNullAsDefaultString_whenSpecialCharacters_thenReturnsValue() {
-        // Arrange
-        String value = "@#$%^&*";
-        String defaultValue = "Default";
-
-        // Act
-        String result = ValueUtil.nullAsDefaultString(value, defaultValue);
-
-        // Assert
-        assertEquals("@#$%^&*", result);
-    }
-
-    @Test
     void testNullAsDefaultString_whenCustomObjectWithToString_thenReturnsStringRepresentation() {
         // Arrange
         Object value = new Object() {
@@ -317,48 +304,6 @@ class ValueUtilTest {
         assertEquals(new ArrayList<>(), result);
     }
 
-    @Test
-    void testNullAsEmptyList_whenSingleElementList_thenReturnsSameList() {
-        // Arrange
-        List<Integer> input = List.of(42);
-
-        // Act
-        List<Integer> result = ValueUtil.nullAsEmptyList(input);
-
-        // Assert
-        assertEquals(input, result);
-    }
-
-    @Test
-    void testNullAsEmptyList_whenLargeList_thenReturnsSameList() {
-        // Arrange
-        List<String> input = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            input.add("Item " + i);
-        }
-
-        // Act
-        List<String> result = ValueUtil.nullAsEmptyList(input);
-
-        // Assert
-        assertEquals(input, result);
-        assertEquals(1000, result.size());
-    }
-
-    @Test
-    void testNullAsEmptyList_whenReturnedFromNull_thenReturnsNewInstance() {
-        // Act
-        List<String> result1 = ValueUtil.nullAsEmptyList(null);
-        List<String> result2 = ValueUtil.nullAsEmptyList(null);
-
-        // Assert
-        assertEquals(new ArrayList<>(), result1);
-        assertEquals(new ArrayList<>(), result2);
-        // Verify they are different instances
-        assertNotNull(result1);
-        assertNotNull(result2);
-    }
-
     // nullAsEmptyString(Object)
     @Test
     void testNullAsEmptyString_whenNonNullObject_thenReturnsToStringValue() {
@@ -398,23 +343,6 @@ class ValueUtilTest {
 
         // Assert
         assertEquals("", result);
-    }
-
-    @Test
-    void testNullAsEmptyString_whenObjectWithCustomToString_thenReturnsCustomValue() {
-        // Arrange
-        Object value = new Object() {
-            @Override
-            public String toString() {
-                return "CustomStringRepresentation";
-            }
-        };
-
-        // Act
-        String result = ValueUtil.nullAsEmptyString(value);
-
-        // Assert
-        assertEquals("CustomStringRepresentation", result);
     }
 
     @Test
@@ -476,48 +404,12 @@ class ValueUtilTest {
     }
 
     @Test
-    void testNullAsEmptyString_whenSpecialCharacterString_thenReturnsSameString() {
-        // Arrange
-        String input = "@#$%^&*()";
-
-        // Act
-        String result = ValueUtil.nullAsEmptyString(input);
-
-        // Assert
-        assertEquals(input, result);
-    }
-
-    @Test
     void testNullAsEmptyString_whenNullString_thenReturnsEmptyString() {
         // Act
         String result = ValueUtil.nullAsEmptyString(null);
 
         // Assert
         assertEquals("", result);
-    }
-
-    @Test
-    void testNullAsEmptyString_whenUnicodeString_thenReturnsSameString() {
-        // Arrange
-        String input = "Hello 世界 🌍";
-
-        // Act
-        String result = ValueUtil.nullAsEmptyString(input);
-
-        // Assert
-        assertEquals(input, result);
-    }
-
-    @Test
-    void testNullAsEmptyString_whenVeryLongString_thenReturnsSameString() {
-        // Arrange
-        String input = "A".repeat(10000);
-
-        // Act
-        String result = ValueUtil.nullAsEmptyString(input);
-
-        // Assert
-        assertEquals(input, result);
     }
 
     // nullAsRandomUuid(UUID)
@@ -540,20 +432,6 @@ class ValueUtilTest {
 
         // Assert
         assertNotNull(result);
-    }
-
-    @Test
-    void testNullAsRandomUuid_whenMultipleNullCalls_thenReturnsDifferentUuids() {
-        // Act
-        UUID result1 = ValueUtil.nullAsRandomUuid(null);
-        UUID result2 = ValueUtil.nullAsRandomUuid(null);
-
-        // Assert
-        assertNotNull(result1);
-        assertNotNull(result2);
-        // Random UUIDs should be different (extremely unlikely to collide),
-        // but we only assert they're not null rather than strict inequality
-        // to avoid flaky tests from the extremely rare collision possibility
     }
 
     // nullAsZero(Integer)

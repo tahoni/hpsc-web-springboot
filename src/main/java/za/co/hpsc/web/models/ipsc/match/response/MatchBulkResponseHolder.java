@@ -28,6 +28,7 @@ public class MatchBulkResponseHolder {
      * Creates a holder without row results.
      *
      * @param matches the matches created.
+     * @since 17.0.0
      */
     public MatchBulkResponseHolder(List<MatchResponse> matches) {
         this(matches, new ArrayList<>());
@@ -38,6 +39,7 @@ public class MatchBulkResponseHolder {
      *
      * @param matches the matches created.
      * @param results the result of each row, in CSV order.
+     * @since 17.0.0
      */
     public MatchBulkResponseHolder(List<MatchResponse> matches, List<MatchBulkResponse> results) {
         this.matches = matches;

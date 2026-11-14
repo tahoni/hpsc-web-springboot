@@ -63,7 +63,9 @@ ever contradicts it, `AGENTS.md` wins — fix the drift there first, then update
    ```
    The app starts on `http://localhost:8080/hpsc-web`. Interactive API docs are at
    `http://localhost:8080/hpsc-web/swagger-ui/index.html` — see [`AGENTS.md`'s Project
-   Overview](AGENTS.md#-project-overview).
+   Overview](AGENTS.md#-project-overview). Only the `dev` profile serves them: the other profiles leave the OpenAPI
+   document and the Swagger UI off unless `springdoc.api-docs.enabled` and `springdoc.swagger-ui.enabled` are set to
+   `true`.
 
 > An `application-local.properties` profile also exists in the repository, pre-configured against a specific hand-built
 > database baseline from before Flyway was introduced. It isn't a generic onboarding path — use `dev` unless you

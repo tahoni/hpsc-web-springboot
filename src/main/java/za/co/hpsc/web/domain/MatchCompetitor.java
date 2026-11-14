@@ -3,7 +3,9 @@ package za.co.hpsc.web.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import za.co.hpsc.web.converters.*;
@@ -26,11 +28,15 @@ public class MatchCompetitor {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "competitor_id", nullable = false)
     @NotNull
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Competitor competitor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "match_id", nullable = false)
     @NotNull
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private IpscMatch match;
 
     @Convert(converter = ClubIdentifierConverter.class)

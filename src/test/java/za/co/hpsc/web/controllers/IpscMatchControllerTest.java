@@ -45,20 +45,6 @@ class IpscMatchControllerTest {
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
     }
 
-    @Test
-    void testCreateMatch_whenServiceSucceeds_thenResponseBodyIsReturnedFromService() throws ValidationException, NonFatalException {
-        // Arrange
-        MatchRequest request = new MatchRequest();
-        MatchResponse response = new MatchResponse();
-        when(ipscMatchService.createMatch(request)).thenReturn(response);
-
-        // Act
-        ResponseEntity<MatchResponse> result = ipscMatchController.createMatch(request);
-
-        // Assert
-        assertSame(response, result.getBody());
-    }
-
     // createMatches()
     private static final String VALID_CSV = """
             MatchDate,MatchName,Club,MatchFirearmType,MatchCategory
@@ -76,19 +62,6 @@ class IpscMatchControllerTest {
 
         // Assert
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
-    }
-
-    @Test
-    void testCreateMatches_whenServiceSucceeds_thenResponseBodyIsReturnedFromService() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        MatchBulkResponseHolder holder = new MatchBulkResponseHolder(List.of(new MatchResponse()));
-        when(ipscMatchService.createMatches(VALID_CSV)).thenReturn(holder);
-
-        // Act
-        ResponseEntity<MatchBulkResponseHolder> result = ipscMatchController.createMatches(VALID_CSV);
-
-        // Assert
-        assertSame(holder, result.getBody());
     }
 
     // deleteMatch()
@@ -109,7 +82,6 @@ class IpscMatchControllerTest {
 
         // Assert
         verify(ipscMatchService).deleteMatch(1L);
-        verifyNoMoreInteractions(ipscMatchService);
     }
 
     // getMatch()

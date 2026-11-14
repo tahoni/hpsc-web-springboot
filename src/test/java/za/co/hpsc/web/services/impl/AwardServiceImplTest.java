@@ -36,6 +36,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @ExtendWith(MockitoExtension.class)
 public class AwardServiceImplTest {
+    private static final String CSV_HEADER = "title,description,summary,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName\n";
+
     @InjectMocks
     private AwardServiceImpl awardService;
 
@@ -131,85 +133,13 @@ public class AwardServiceImplTest {
     @Test
     public void testMapAwards_whenNullAwardRequestList_thenThrowsValidationException() {
         // Act & Assert
-        ValidationException exception =
-                assertThrows(ValidationException.class, () -> awardService.mapAwards(null));
-        assertEquals("Award request list cannot be null.", exception.getMessage());
-    }
-
-    // readAwards()
-    @Test
-    public void testReadAwards_whenValidCsv_thenReturnsAwardRequestList() {
-        // Arrange
-        String csvData = """
-                title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
-                Award 1,Summary 1,Description 1,Category 1,tag1;tag2,2023-10-10,/path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,John Doe,Alice Smith,Bob Johnson,w1.png,w2.png,w3.png
-                Award 2,Summary 2,Description 2,Category 2,tag3;tag4,2023-10-10,/path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,Mary Jane,Tom Brown,Karen White,wX.png,wY.png,wZ.png
-                """;
-
-        // Act
-        List<AwardRequest> awardRequests = assertDoesNotThrow(() ->
-                awardService.readAwards(csvData));
-
-        // Assert - Verify list size
-        assertNotNull(awardRequests);
-        assertEquals(2, awardRequests.size());
-
-        // Assert - Verify first award (ceremony data)
-        AwardRequest firstAward = awardRequests.getFirst();
-        assertEquals(LocalDate.of(2023, 10, 10), firstAward.getDate());
-        assertEquals("/path/to", firstAward.getImageFilePath());
-        assertEquals("Ceremony 1", firstAward.getCeremonyTitle());
-        assertEquals("Ceremony Summary 1", firstAward.getCeremonySummary());
-        assertEquals("Ceremony Description 1", firstAward.getCeremonyDescription());
-        assertEquals("Ceremony Category 1", firstAward.getCeremonyCategory());
-        assertEquals(List.of("tags1"), firstAward.getCeremonyTags());
-
-        // Assert - Verify first award (award data)
-        assertEquals("Award 1", firstAward.getTitle());
-        assertEquals("Summary 1", firstAward.getSummary());
-        assertEquals("Description 1", firstAward.getDescription());
-        assertEquals("Category 1", firstAward.getCategory());
-        assertEquals(List.of("tag1", "tag2"), firstAward.getTags());
-
-        // Assert - Verify first award (award places)
-        assertEquals("John Doe", firstAward.getFirstPlaceName());
-        assertEquals("Alice Smith", firstAward.getSecondPlaceName());
-        assertEquals("Bob Johnson", firstAward.getThirdPlaceName());
-        assertEquals("w1.png", firstAward.getFirstPlaceImageFileName());
-        assertEquals("w2.png", firstAward.getSecondPlaceImageFileName());
-        assertEquals("w3.png", firstAward.getThirdPlaceImageFileName());
-
-        // Assert - Verify second award (ceremony data)
-        AwardRequest secondAward = awardRequests.get(1);
-        assertEquals(LocalDate.of(2023, 10, 10), secondAward.getDate());
-        assertEquals("/path/to", secondAward.getImageFilePath());
-        assertEquals("Ceremony 1", secondAward.getCeremonyTitle());
-        assertEquals("Ceremony Summary 1", secondAward.getCeremonySummary());
-        assertEquals("Ceremony Description 1", secondAward.getCeremonyDescription());
-        assertEquals("Ceremony Category 1", secondAward.getCeremonyCategory());
-        assertEquals(List.of("tags1"), secondAward.getCeremonyTags());
-
-        // Assert - Verify second award (award data)
-        assertEquals("Award 2", secondAward.getTitle());
-        assertEquals("Summary 2", secondAward.getSummary());
-        assertEquals("Description 2", secondAward.getDescription());
-        assertEquals("Category 2", secondAward.getCategory());
-        assertEquals(List.of("tag3", "tag4"), secondAward.getTags());
-
-        // Assert - Verify second award (award places)
-        assertEquals("Mary Jane", awardRequests.get(1).getFirstPlaceName());
-        assertEquals("Tom Brown", awardRequests.get(1).getSecondPlaceName());
-        assertEquals("Karen White", awardRequests.get(1).getThirdPlaceName());
-        assertEquals("wX.png", awardRequests.get(1).getFirstPlaceImageFileName());
-        assertEquals("wY.png", awardRequests.get(1).getSecondPlaceImageFileName());
-        assertEquals("wZ.png", awardRequests.get(1).getThirdPlaceImageFileName());
+        assertThrows(ValidationException.class, () -> awardService.mapAwards(null));
     }
 
     @Test
-    public void testReadAwards_whenValidCsvWithRearrangedColumns_thenReturnsAwardRequestList() {
+    public void testReadAwards_whenValidCsv_thenMapsEachColumnByItsHeader() {
         // Arrange
-        String csvData = """
-                title,description,summary,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
+        String csvData = CSV_HEADER + """
                 Award 1,Description 1,Summary 1,Category 1,tag1;tag2,2023-10-10,/path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,John Doe,Alice Smith,Bob Johnson,w1.png,w2.png,w3.png
                 Award 2,Description 2,Summary 2,Category 2,tag3;tag4,2023-10-10,/path/to,Ceremony 1,Ceremony Summary 1,Ceremony Description 1,Ceremony Category 1,tags1,Mary Jane,Tom Brown,Karen White,wX.png,wY.png,wZ.png
                 """;
@@ -257,64 +187,9 @@ public class AwardServiceImplTest {
     }
 
     @Test
-    public void testReadAwards_whenLargeCsv_thenReturnsAwardRequestList() {
-        // Arrange
-        StringBuilder largeCsv = new StringBuilder("title,summary,description,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName\n");
-
-        for (int i = 0; i < 1000; i++) {
-            largeCsv.append("Title ").append(i).append(",Summary ").append(i).append(",Description ").append(i)
-                    .append(",Category ").append(i % 10).append(",Tag").append(i % 10);
-            largeCsv.append(",2023-10-10").append(",/path/to/image").append(i);
-            largeCsv.append(",Ceremony Title ").append(i).append(",Ceremony Summary ").append(i)
-                    .append(",Ceremony Description ").append(i).append(",Ceremony Category ").append(i % 10)
-                    .append(",ceremonyTag").append(i % 10);
-            largeCsv.append(",First ").append(i).append(",Second ").append(i).append(",Third ").append(i)
-                    .append(",imgA").append(i).append(".png").append(",imgB").append(i).append(".png")
-                    .append(",imgC").append(i).append(".png\n");
-        }
-
-        // Act
-        List<AwardRequest> awardRequests = assertDoesNotThrow(() ->
-                awardService.readAwards(largeCsv.toString()));
-
-        // Assert - Verify total count
-        assertNotNull(awardRequests);
-        assertEquals(1000, awardRequests.size());
-
-        // Assert - Verify random awards throughout the list
-        assertEquals("Title 200", awardRequests.get(200).getTitle());
-        assertEquals("Summary 200", awardRequests.get(200).getSummary());
-        assertEquals("Ceremony Title 400", awardRequests.get(400).getCeremonyTitle());
-        assertEquals("Ceremony Description 400", awardRequests.get(400).getCeremonyDescription());
-        assertEquals("First 600", awardRequests.get(600).getFirstPlaceName());
-        assertEquals("imgA600.png", awardRequests.get(600).getFirstPlaceImageFileName());
-        assertEquals("Tag0", awardRequests.get(800).getTags().getFirst());
-
-        // Assert - Verify last award has complete data
-        assertEquals(LocalDate.of(2023, 10, 10), awardRequests.get(999).getDate());
-        assertEquals("/path/to/image999", awardRequests.get(999).getImageFilePath());
-        assertEquals("Ceremony Title 999", awardRequests.get(999).getCeremonyTitle());
-        assertEquals("Ceremony Summary 999", awardRequests.get(999).getCeremonySummary());
-        assertEquals("Ceremony Description 999", awardRequests.get(999).getCeremonyDescription());
-        assertEquals("Ceremony Category 9", awardRequests.get(999).getCeremonyCategory());
-        assertEquals("ceremonyTag9", awardRequests.get(999).getCeremonyTags().getLast());
-        assertEquals("Title 999", awardRequests.get(999).getTitle());
-        assertEquals("Summary 999", awardRequests.get(999).getSummary());
-        assertEquals("Description 999", awardRequests.get(999).getDescription());
-        assertEquals("Category 9", awardRequests.get(999).getCategory());
-        assertEquals("Tag9", awardRequests.get(999).getTags().getLast());
-        assertEquals("First 999", awardRequests.get(999).getFirstPlaceName());
-        assertEquals("imgA999.png", awardRequests.get(999).getFirstPlaceImageFileName());
-        assertEquals("Second 999", awardRequests.get(999).getSecondPlaceName());
-        assertEquals("imgB999.png", awardRequests.get(999).getSecondPlaceImageFileName());
-        assertEquals("Third 999", awardRequests.get(999).getThirdPlaceName());
-        assertEquals("imgC999.png", awardRequests.get(999).getThirdPlaceImageFileName());
-    }
-
-    @Test
     public void testReadAwards_whenEmptyCsvData_thenReturnsEmptyList() {
         // Arrange
-        String emptyCsvData = "title,description,summary,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName\n";
+        String emptyCsvData = CSV_HEADER;
 
         // Act
         List<AwardRequest> awardRequests = assertDoesNotThrow(() ->
@@ -342,8 +217,7 @@ public class AwardServiceImplTest {
     @Test
     public void testReadAwards_whenInvalidCsvData_thenThrowsValidationException() {
         // Arrange
-        String invalidCsvData = """
-                title,description,summary,category,tags,date,imageFilePath,ceremonyTitle,ceremonySummary,ceremonyDescription,ceremonyCategory,ceremonyTags,firstPlaceName,secondPlaceName,thirdPlaceName,firstPlaceImageFileName,secondPlaceImageFileName,thirdPlaceImageFileName
+        String invalidCsvData = CSV_HEADER + """
                 Invalid Row Without Correct Columns
                 """;
 

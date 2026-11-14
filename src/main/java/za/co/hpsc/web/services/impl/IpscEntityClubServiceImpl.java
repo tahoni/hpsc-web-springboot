@@ -20,6 +20,7 @@ public class IpscEntityClubServiceImpl implements IpscEntityClubService {
      * Creates the service.
      *
      * @param clubRepository the repository used to look up persisted clubs.
+     * @since 14.0.0
      */
     public IpscEntityClubServiceImpl(ClubRepository clubRepository) {
         this.clubRepository = clubRepository;
@@ -31,6 +32,8 @@ public class IpscEntityClubServiceImpl implements IpscEntityClubService {
      * <p>
      * Implementation note: delegates to {@link #findByCodeOrAbbreviationWithDefault(String, ClubIdentifier)} with no
      * default club.
+     *
+     * @since 14.0.0
      */
     @Override
     public Club findByCodeOrAbbreviation(String clubName)
@@ -48,6 +51,8 @@ public class IpscEntityClubServiceImpl implements IpscEntityClubService {
      * abbreviation, {@link ClubRepository} by name, then {@link ClubIdentifier} by code, abbreviation or name
      * resolved through {@link ClubRepository#findByIdentifier(ClubIdentifier)}. Only a name that matches none of
      * these throws {@link ValidationException}; every other failure to find a club throws {@link NonFatalException}.
+     *
+     * @since 14.0.0
      */
     @Override
     public Club findByCodeOrAbbreviationWithDefault(String clubName, ClubIdentifier defaultClubIdentifier)
@@ -87,6 +92,8 @@ public class IpscEntityClubServiceImpl implements IpscEntityClubService {
      * <p>
      * Implementation note: compares {@link Club#getIdentifier()} to the target by reference, so no repository
      * access is involved.
+     *
+     * @since 12.0.0
      */
     @Override
     public boolean isSameClub(Club club, ClubIdentifier targetClubIdentifier) {
@@ -98,6 +105,8 @@ public class IpscEntityClubServiceImpl implements IpscEntityClubService {
      *
      * <p>
      * Implementation note: compares the two enum constants by reference, so no repository access is involved.
+     *
+     * @since 12.0.0
      */
     @Override
     public boolean isSameClub(ClubIdentifier clubIdentifier, ClubIdentifier targetClubIdentifier) {

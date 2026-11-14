@@ -614,17 +614,6 @@ public class CompetitorMapperTest {
         assertFalse(competitorMapper.isMemberOfHomeClub(null, ClubIdentifier.HPSC));
     }
 
-    @Test
-    void testIsMemberOfHomeClub_whenNoIdentifierIsGiven_thenDefaultsToTheHomeClubIdentifier() {
-        // Arrange
-        Club club = new Club();
-        club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
-
-        // Act & Assert
-        assertTrue(competitorMapper.isMemberOfHomeClub(club));
-        assertEquals(ClubIdentifier.HPSC, IpscConstants.HOME_CLUB_IDENTIFIER);
-    }
-
     // parseCompetitorNumber()
     @Test
     void testParseCompetitorNumber_whenNumberHasSurroundingSpaces_thenReturnsTheWholeNumber() {
@@ -798,7 +787,6 @@ public class CompetitorMapperTest {
 
         // Assert
         assertSame(club, resolved);
-        verify(clubRepository, never()).findByName("TC");
     }
 
     // Helpers

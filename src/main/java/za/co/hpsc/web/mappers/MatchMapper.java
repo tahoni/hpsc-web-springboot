@@ -28,6 +28,7 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
  * </p>
  *
  * @see IpscEntityClubService
+ * @since 13.0.0
  */
 @Component
 public class MatchMapper {
@@ -47,6 +48,7 @@ public class MatchMapper {
      * @throws ValidationException if the request's club, firearm type or match category doesn't match a known one.
      * @throws NonFatalException   if the request's club is a known club identifier but no club exists with it, or if
      *                             no club exists for {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
+     * @since 13.0.0
      */
     public void applyFields(@NonNull IpscMatch match, @NonNull MatchRequest request) {
         match.setClub(resolveClub(request.getClub()));
@@ -71,6 +73,7 @@ public class MatchMapper {
      * @throws NonFatalException   if the request's club is a known club identifier but no club exists with it, or if
      *                             the club is blank and no club exists for
      *                             {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
+     * @since 13.0.0
      */
     public void applyPatchFields(@NonNull IpscMatch match, @NonNull MatchPatchRequest request) {
         if (request.getClub() != null) {
@@ -117,6 +120,7 @@ public class MatchMapper {
      * @throws NonFatalException   if {@code clubName} is a known club identifier but no club exists with it, or if
      *                             {@code clubName} wasn't supplied and no club exists for
      *                             {@link IpscConstants#DEFAULT_MATCH_CLUB_IDENTIFIER}.
+     * @since 13.0.0
      */
     public Club resolveClub(String clubName) {
         return ipscEntityClubService.findByCodeOrAbbreviationWithDefault(clubName, IpscConstants.DEFAULT_MATCH_CLUB_IDENTIFIER);
@@ -141,6 +145,7 @@ public class MatchMapper {
      * @throws NonFatalException   if {@code clubName} is a known club identifier but no club exists with it, or if
      *                             {@code clubName} wasn't supplied and {@code defaultIdentifier} is null or has no
      *                             club.
+     * @since 13.0.0
      */
     public Club resolveClub(String clubName, ClubIdentifier defaultIdentifier) {
         return ipscEntityClubService.findByCodeOrAbbreviationWithDefault(clubName, defaultIdentifier);
@@ -152,6 +157,7 @@ public class MatchMapper {
      * @param firearmType the firearm type name to look up.
      * @return the matching {@link FirearmType}.
      * @throws ValidationException if no firearm type matches {@code firearmType}.
+     * @since 13.0.0
      */
     public FirearmType resolveFirearmType(String firearmType) {
         return FirearmType.fromName(firearmType)
@@ -173,6 +179,7 @@ public class MatchMapper {
      * @return the matching {@link MatchCategory}, or {@link IpscConstants#DEFAULT_MATCH_CATEGORY} if
      * {@code category} wasn't supplied.
      * @throws ValidationException if {@code category} was supplied but no match category matches it.
+     * @since 13.0.0
      */
     public MatchCategory resolveMatchCategory(String category) {
         if (!hasText(category)) {

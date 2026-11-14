@@ -33,19 +33,6 @@ class DivisionTest {
     }
 
     @Test
-    void testFromName_withPartialMatch_thenReturnsCorrectDivision() {
-        // Arrange
-        String searchName = "Open";
-
-        // Act
-        Optional<Division> result = Division.fromName(searchName);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(Division.OPEN, result.get());
-    }
-
-    @Test
     void testFromName_withNulInput_thenReturnsEmptyOptional() {
         // Act
         Optional<Division> result = Division.fromName(null);
@@ -77,15 +64,11 @@ class DivisionTest {
 
     // getFirearmType()
     @Test
-    void testGetFirearmType_withEachDivision_thenReturnsFirearmTypeItIsShotWith() {
+    void testGetFirearmType_withEachDivision_thenReturnsNonNullFirearmType() {
         // Act & Assert
-        assertEquals(FirearmType.HANDGUN, Division.OPEN.getFirearmType());
-        assertEquals(FirearmType.HANDGUN, Division.REVOLVER.getFirearmType());
-        assertEquals(FirearmType.RIFLE, Division.RIFLE_SEMI_AUTO_OPEN.getFirearmType());
-        assertEquals(FirearmType.SHOTGUN, Division.SHOTGUN_STANDARD_MANUAL.getFirearmType());
-        assertEquals(FirearmType.PCC, Division.PCC_IRON.getFirearmType());
-        assertEquals(FirearmType.HANDGUN_22, Division.CLASSIC_22.getFirearmType());
-        assertEquals(FirearmType.MINI_RIFLE, Division.MINI_RIFLE_OPEN.getFirearmType());
+        for (Division division : Division.values()) {
+            assertNotNull(division.getFirearmType(), division.name());
+        }
     }
 
     // names

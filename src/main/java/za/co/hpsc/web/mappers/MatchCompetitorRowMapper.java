@@ -19,6 +19,8 @@ import java.util.Objects;
  * direction, towards a response model. It is a class of its own because it needs no repositories, and the
  * {@link MatchCompetitorMapper} resolves things through them.
  * </p>
+ *
+ * @since 14.0.0
  */
 @Component
 public class MatchCompetitorRowMapper {
@@ -33,6 +35,7 @@ public class MatchCompetitorRowMapper {
      * @param matchCompetitor the match competitor populated as far as the row could be resolved; may be null, in
      *                        which case the row is described by the request alone.
      * @return the row's values, with a missing value as an empty string.
+     * @since 14.0.0
      */
     public MatchCompetitorRow toRow(@Nullable MatchCompetitorRequest request,
                                     @Nullable MatchCompetitor matchCompetitor) {

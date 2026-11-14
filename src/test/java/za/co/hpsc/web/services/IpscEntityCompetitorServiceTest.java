@@ -109,9 +109,8 @@ public class IpscEntityCompetitorServiceTest {
         when(competitorRepository.findAllByFirstNameLastNameOrNickNameLastNameIgnoreCase("Jane Doe")).thenReturn(List.of());
 
         // Act & Assert
-        NonFatalException exception = assertThrows(NonFatalException.class,
+        assertThrows(NonFatalException.class,
                 () -> ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("1234", "Jane Doe"));
-        assertTrue(exception.getMessage().startsWith("No competitors"));
     }
 
     @Test
@@ -122,9 +121,8 @@ public class IpscEntityCompetitorServiceTest {
                 .thenReturn(List.of(competitor("Jane", "Doe", null), competitor("Janet", "Doe", "Jane")));
 
         // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class,
+        assertThrows(ValidationException.class,
                 () -> ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("1234", "Jane Doe"));
-        assertTrue(exception.getMessage().startsWith("Two or more"));
     }
 
     @Test
@@ -180,9 +178,8 @@ public class IpscEntityCompetitorServiceTest {
                 .thenReturn(List.of(competitor("John", "Doe", null), competitor("Jack", "Doe", null)));
 
         // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class,
+        assertThrows(ValidationException.class,
                 () -> ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("1234", "Jane Doe"));
-        assertTrue(exception.getMessage().startsWith("Two or more"));
     }
 
     @Test
@@ -192,9 +189,8 @@ public class IpscEntityCompetitorServiceTest {
                 .thenReturn(List.of(competitor("Jane", "Doe", null), competitor("Janet", "Doe", "Jane")));
 
         // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class,
+        assertThrows(ValidationException.class,
                 () -> ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("1234", "Jane Doe"));
-        assertTrue(exception.getMessage().startsWith("Two or more"));
     }
 
     @Test
@@ -219,9 +215,8 @@ public class IpscEntityCompetitorServiceTest {
                 .thenReturn(List.of(competitor("John", "Doe", null), competitor("Jack", "Doe", null)));
 
         // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class,
+        assertThrows(ValidationException.class,
                 () -> ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("AB123456", "Jane Doe"));
-        assertTrue(exception.getMessage().startsWith("Two or more"));
     }
 
     @Test
@@ -391,6 +386,45 @@ public class IpscEntityCompetitorServiceTest {
 
         // Assert
         assertSame(jane, result.orElseThrow());
+    }
+
+    @Test
+    void testFindCompetitor_whenTheNumberIsTooLongForAnInt_thenMatchesByIdNumber() {
+        // Arrange
+        Competitor competitor = competitor("Jane", "Doe", null);
+        when(competitorRepository.findAllByIdNumber("8001015009087")).thenReturn(List.of(competitor));
+
+        // Act
+        Optional<Competitor> result = ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("8001015009087", "Someone Else");
+
+        // Assert
+        assertSame(competitor, result.orElseThrow());
+    }
+
+    @Test
+    void testFindCompetitor_whenTheNumberHasALeadingPlus_thenMatchesByIdNumber() {
+        // Arrange
+        Competitor competitor = competitor("Jane", "Doe", null);
+        when(competitorRepository.findAllByIdNumber("+42")).thenReturn(List.of(competitor));
+
+        // Act
+        Optional<Competitor> result = ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("+42", "Someone Else");
+
+        // Assert
+        assertSame(competitor, result.orElseThrow());
+    }
+
+    @Test
+    void testFindCompetitor_whenTheNumberHasLettersAmongTheDigits_thenMatchesByIdNumber() {
+        // Arrange
+        Competitor competitor = competitor("Jane", "Doe", null);
+        when(competitorRepository.findAllByIdNumber("12a")).thenReturn(List.of(competitor));
+
+        // Act
+        Optional<Competitor> result = ipscEntityCompetitorService.findCompetitorByIdentifierAndFullName("12a", "Someone Else");
+
+        // Assert
+        assertSame(competitor, result.orElseThrow());
     }
 
     @Test

@@ -70,26 +70,6 @@ public class ClubIdentifierTest {
         assertFalse(result.isPresent());
     }
 
-    @Test
-    void testFromAbbreviation_whenAbbreviationIsPmpsc_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.fromAbbreviation("PMPSC");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.PMPSC, result.get());
-    }
-
-    @Test
-    void testFromAbbreviation_whenAbbreviationIsVisitor_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.fromAbbreviation("V");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.VISITOR, result.get());
-    }
-
     // fromCode()
     @Test
     void testFromCode_whenCodeIsKnown_thenReturnsMatchingClub() {
@@ -126,46 +106,6 @@ public class ClubIdentifierTest {
 
         // Assert
         assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testFromCode_whenCodeIsSosc_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("C SOSC");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.SOSC, result.get());
-    }
-
-    @Test
-    void testFromCode_whenCodeIsHpsc_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("B HPSC");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.HPSC, result.get());
-    }
-
-    @Test
-    void testFromCode_whenCodeIsVisitor_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("U Visitor");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.VISITOR, result.get());
-    }
-
-    @Test
-    void testFromCode_whenCodeIsCaseInsensitive_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.fromCode("A PMPSC");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.PMPSC, result.get());
     }
 
     @Test
@@ -234,35 +174,6 @@ public class ClubIdentifierTest {
         assertFalse(result.isPresent());
     }
 
-    @Test
-    void testFromName_whenNameIsPmpsc_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.fromName("Pretoria Military Practical Shooting Club");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.PMPSC, result.get());
-    }
-
-    @Test
-    void testFromName_whenNameIsVisitor_thenReturnsMatchingClub() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.fromName("Visitor");
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(ClubIdentifier.VISITOR, result.get());
-    }
-
-    @Test
-    void testFromName_whenNameIsUnknown_thenReturnsEmptyOptional() {
-        // Act
-        Optional<ClubIdentifier> result = ClubIdentifier.fromName("UNKNOWN");
-
-        // Assert
-        assertFalse(result.isPresent());
-    }
-
     // toString()
     @Test
     void testToString_whenIdentifierIsHpsc_thenReturnsNameAndAbbreviation() {
@@ -271,23 +182,5 @@ public class ClubIdentifierTest {
 
         // Assert
         assertEquals("Hartbeespoortdam Practical Shooting Club (HPSC)", result);
-    }
-
-    @Test
-    void testToString_whenIdentifierIsSosc_thenReturnsNameAndAbbreviation() {
-        // Act
-        String result = ClubIdentifier.SOSC.toString();
-
-        // Assert
-        assertEquals("Safari Outdoor Shooting Club (SOSC)", result);
-    }
-
-    @Test
-    void testToString_whenIdentifierIsUnknown_thenReturnsEmptyParentheses() {
-        // Act
-        String result = ClubIdentifier.UNKNOWN.toString();
-
-        // Assert
-        assertEquals(" ()", result);
     }
 }

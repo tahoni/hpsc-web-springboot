@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 17.0.0](#-1700---2026-11-12) ← Current
+- [🧾 Version 18.0.0](#-1800---2026-11-14) ← Current
+- [🧾 Version 17.0.0](#-1700---2026-11-12)
 - [🗄️ Archived Versions 14.0.0 – 16.4.1](/documentation/archive/v14-v16/CHANGELOG_v14-v16.md)
 - [🗄️ Archived Versions 10.0.0 – 13.3.0](/documentation/archive/v10-v13/CHANGELOG_v10-v13.md)
 - [🗄️ Archived Versions 8.0.0 – 9.1.0](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md)
@@ -26,6 +27,130 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [18.0.0] - 2026-11-14
+
+#### ➕ Added
+
+##### Database
+
+- **`V11_13_0__create_shooter_log_overall_match.sql`:** Creates the `shooter_log_overall_match` join table linking a
+  `shooter_log_overall` to the `ipsc_match`es it was calculated from, with foreign keys to both and an index on
+  `match_id`.
+
+##### Domain
+
+- **`ShooterLogOverall.matches`:** The matches an overall was calculated from, being the competitor's best matches in
+  the shooter log, kept in the new `shooter_log_overall_match` table.
+
+##### Models
+
+- **`ShooterLogOverallResponse.matchIds`:** Each overall result now lists the identifiers of the matches it was
+  calculated from, empty if it was calculated from none.
+
+#### 🔄 Changed
+
+##### Configuration
+
+- **Breaking: the OpenAPI document and Swagger UI are off by default:** `springdoc.api-docs.enabled` and
+  `springdoc.swagger-ui.enabled` are set to `false` in `application.properties`, so the OpenAPI `/v3/api-docs` endpoint
+  and the Swagger UI are no longer exposed by default, and to `true` in `application-dev.properties`, so they stay
+  available during development; the production profile inherits the default. A deployment that serves the OpenAPI
+  document, for example to generate a client from it, or the Swagger UI must set both properties to `true`.
+
+##### Domain
+
+- **Lazy associations left out of `equals`, `hashCode` and `toString`:** `Competitor.homeClub` and `emailAddresses`,
+  `IpscMatch.club`, `MatchCompetitor.competitor` and `match`, `ShooterLog.matches`, `ShooterLogOverall.shooterLog`,
+  `competitor` and `matches`, and `ShooterResult.match`, `competitor` and `matchCompetitor` no longer take part in the
+  generated methods. Hibernate calls `hashCode` on the matches of a `@ManyToMany` list when it compares them on commit,
+  which read the match's club and failed with a `LazyInitializationException` when calculating a shooter log's overall
+  results. Two entities now compare equal when their own columns match, whatever their lazy associations hold.
+
+##### Services
+
+- **`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`:** Records the matches each overall was calculated
+  from: the competitor's best `SHOOTER_LOG_BEST_MATCHES` results by percentage, with equal percentages taken from the
+  most recent match first. The overall percentage is still the average of those same results. An overall calculated
+  before its matches were recorded, or from other matches, is treated as out of date and recalculated.
+
+##### Repositories
+
+- **`ShooterLogOverallRepository`:** `findAllByShooterLogIdWithDetails` and `findAllWithDetails` also fetch each
+  overall's matches, so they can be read outside a transaction.
+
+##### Documentation
+
+- **`AGENTS.md` and `ARCHITECTURE.md`:** The 3-tier service test rule now says every service has an interface test and an
+  integration test, and an `ImplTest` only where its impl has helper methods worth testing directly, instead of
+  listing five services that follow the split, and `ARCHITECTURE.md`'s test tree no longer lists the removed
+  `exceptions/` directory. Closes improvement plan Gap #55.
+- **Missing `@since` tags:** Added them to the Javadoc of `CompetitorMapper`, `MatchCompetitorMapper`,
+  `MatchCompetitorRowMapper` and `MatchMapper`, and of 74 public and package-private methods and constructors in the
+  mappers, helpers, request and response models, `ControllerAdvice` and the service implementations, each with the
+  release that first contained it. The two private records and the protected and private helper methods stay untagged.
+- **`README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md`:** Now say the OpenAPI document and Swagger UI are
+  served only under the `dev` profile, and are off by default and under `prod`, instead of presenting them as always
+  available. `README.md` also says how to serve them under another profile, by setting `springdoc.api-docs.enabled` and
+  `springdoc.swagger-ui.enabled` to `true`. Closes improvement plan Gap #53.
+- **`ARCHITECTURE.md`:** The Domain Entities table now lists `ShooterLogOverall`'s many-to-many link to `IpscMatch`
+  through `shooter_log_overall_match`, and the sentence below it says `ShooterLog.matches` and
+  `ShooterLogOverall.matches` are `@ManyToMany` links kept in join tables rather than a `@ManyToOne`. The
+  `IpscShooterLogOverallService` row and the `ShooterLogOverallResponse` description mention the matches an overall was
+  calculated from, as `matchIds`. Closes improvement plan Gap #54.
+- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Record two new open gaps, #53 (the OpenAPI document and
+  Swagger UI are off by default and on only in `dev`, but `README.md`, `AGENTS.md` and `ARCHITECTURE.md` present them as
+  always available) and #54 (`ARCHITECTURE.md`'s entity table omits `ShooterLogOverall.matches`), and remove a stale
+  Success Criteria entry for Gap #6, which the "✅ Met in v16.1.0" entry already supersedes.
+
+##### Tests
+
+- **Brittle mapper, helper and util tests removed:** `ValueUtilTest` drops nine redundant or vacuous tests (special
+  characters, Unicode, a 10,000-character string, a 1000-item list, a duplicate of the custom-`toString` test and two
+  that never asserted what their names claimed). The mapper tests no longer assert unknown-category message text, a
+  constant's value or `verify(never())` on lookups the result already proves, `MatchCompetitorMapperTest` shares its
+  field assertions and takes the club name from `ClubIdentifier.HPSC`, and the helper tests check the distinguishing
+  token of a "not found" message instead of the whole sentence.
+- **Brittle model, enum and exception tests removed:** The constructor and getter pass-through tests in the request and
+  response tests go, keeping the UUID, MIME type, derived-success and default-list logic and one test for each
+  hand-written constructor, and the enum tests drop their repeated lookups and `toString` restatements. The JSON
+  serialisation tests check representative fields instead of every property, `AwardCeremonyResponseTest` uses a fixed
+  date instead of `LocalDate.now()`, and `CompetitorVerifyRequestTest` expects `MismatchedInputException` rather than
+  any `Exception`. The exception tests and the `IpscCommonScoreTest`, `IpscMatchScoreTest` and
+  `IpscMatchStageScoreTest` classes stay, as their hand-written constructors need them to keep line coverage above the
+  97% minimum.
+- **Brittle controller, advice, repository and migration tests removed:** The controller tests that only stubbed a
+  service and asserted the same body came back, and the ones that checked an exception propagates (the controllers
+  have no handlers; `ControllerAdviceTest` covers the mapping), are deleted, keeping the status-decision tests, so each
+  endpoint still has a status test. `ControllerAdviceTest` drops its timestamp and blank-message tests and merges each
+  handler's single-assertion tests, and two misnamed tests are fixed. The repository tests filter by the IDs they
+  saved instead of counting a shared table, and `FlywayMysqlMigrationTest` now asserts no pending or failed
+  migrations instead of counting `.sql` files from the working directory. The `matchIds` JSON-shape check moves into
+  `ShooterLogOverallResponseTest`.
+- **Brittle service tests removed:** `IpscEntityClubServiceImplTest` and `IpscEntityCompetitorServiceImplTest` shrink
+  to one test each and `TransactionServiceImplTest` is removed, as the interface tests already cover the same cases by
+  result rather than by the order the mocks are consulted. Five of the six "reading the CSV fails" tests that mocked
+  `CsvMapper`, the 1000-row CSV tests and other tests that only mirrored a mapper or a setter are deleted. Exact message
+  text is now asserted by exception type or one key token, `times(N)` is dropped where the result already proves the
+  count, and the integration tests compare row counts by before and after deltas or by the IDs they saved instead of
+  absolute counts on the shared database. The repeated CSV headers and warning checks move into constants and helpers.
+- **`ShooterLogOverallResponseTest`:** New tests for the response built from an overall, covering `matchIds` for an
+  overall with matches, with none and with its matches not set.
+- **`IpscShooterLogOverallServiceTest`:** The best-matches case now also checks which matches the overall records, and
+  the existing overall fixtures carry their matches. New cases cover equal percentages, fewer matches than the limit,
+  results without a percentage, a match shared by two results, replacing an existing overall's matches, and an overall
+  being recalculated when its matches are missing or differ but not when only their order does, and a case with matches
+  whose club cannot be loaded. The read cases now check `matchIds`.
+- **`IpscShooterLogOverallServiceIntegrationTest`:** New cases record each competitor's best matches in the
+  `shooter_log_overall_match` table, check that recalculating does not duplicate them or the overalls the queries
+  return, that deleting an overall removes its match rows, and that both read endpoints return `matchIds`. A further
+  case runs the calculation and reads the results without a surrounding transaction, which is what exposed the
+  `LazyInitializationException` fixed under Domain above.
+- **`ShooterLogOverallRepositoryIntegrationTest`:** New cases check that `findAllByShooterLogIdWithDetails` and
+  `findAllWithDetails` fetch each overall's shooter log, competitor and matches, return an overall with several matches
+  once and an overall with none with an empty list, and that the first returns only the requested log's overalls.
 
 ---
 
@@ -89,7 +214,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Documentation
 
-- **`ARCHITECTURE.md`:** The competitor and match bulk CSV import flows, and the sentences around them, now say each row
+- **`ARCHITECTURE.md`:** The competitor and match bulk CSV import flows, and the surrounding sentences, now say each row
   is saved in its own transaction and a failed row is reported and skipped, instead of all rows being saved in one
   transaction so that a bad row leaves none persisted. The flows end in `CompetitorBulkResponseHolder` and
   `MatchBulkResponseHolder`, each with a result per row. Closes improvement plan Gap #51.
@@ -228,5 +353,6 @@ For issues, feature requests or questions:
 
 **Last Updated:** 2026-08-25
 
-[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v17.0.0...HEAD
+[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v18.0.0...HEAD
+[18.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v17.0.0...v18.0.0
 [17.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.4.1...v17.0.0

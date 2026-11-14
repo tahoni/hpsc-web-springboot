@@ -108,6 +108,9 @@ class TransactionServiceIntegrationTest {
     // saveCompetitors()
     @Test
     void testSaveCompetitors_whenAllAreValid_thenCommitsEachInOrder() {
+        // Arrange
+        long countBefore = competitorRepository.count();
+
         // Act
         List<Competitor> saved = transactionService.saveCompetitors(
                 List.of(newCompetitor("Jane"), newCompetitor("John")));
@@ -116,19 +119,20 @@ class TransactionServiceIntegrationTest {
         assertEquals(2, saved.size());
         assertEquals("Jane", saved.get(0).getFirstName());
         assertEquals("John", saved.get(1).getFirstName());
-        assertEquals(2, competitorRepository.count());
+        assertEquals(countBefore + 2, competitorRepository.count());
     }
 
     @Test
     void testSaveCompetitors_whenOneFails_thenRollsBackEveryOne() {
         // Arrange
+        long countBefore = competitorRepository.count();
         Competitor invalid = newCompetitor("John");
         invalid.setLastName(null);
 
         // Act & Assert
         assertThrows(DataIntegrityViolationException.class,
                 () -> transactionService.saveCompetitors(List.of(newCompetitor("Jane"), invalid)));
-        assertEquals(0, competitorRepository.count());
+        assertEquals(countBefore, competitorRepository.count());
     }
 
     // deleteCompetitor()

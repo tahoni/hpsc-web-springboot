@@ -70,6 +70,7 @@ public class ShooterResultResponse {
      * @param shooterResult the shooter result to convert. Must not be null and must have its match, competitor and
      *                      match competitor set. Those lazily loaded associations are read here, so call this while
      *                      the persistence session is still open, or after fetch-joining them.
+     * @since 15.0.0
      */
     public ShooterResultResponse(ShooterResult shooterResult) {
         this.shooterResultId = shooterResult.getId();

@@ -73,7 +73,9 @@ public class MatchCompetitorHelpersTest {
         String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertTrue(message.contains("not found for"));
+        assertTrue(message.contains("ID 7"));
+        assertTrue(message.contains("name John Smith"));
+        assertTrue(message.contains("competitor number 123"));
     }
 
     @Test
@@ -88,7 +90,7 @@ public class MatchCompetitorHelpersTest {
         String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertTrue(message.contains("not found for"));
+        assertTrue(message.contains("ID 7"));
     }
 
     @Test
@@ -103,7 +105,7 @@ public class MatchCompetitorHelpersTest {
         String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertTrue(message.contains("not found for"));
+        assertTrue(message.contains("name John Smith"));
     }
 
     @Test
@@ -118,7 +120,7 @@ public class MatchCompetitorHelpersTest {
         String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertEquals("Competitor not found for name John Smith", message);
+        assertTrue(message.contains("John Smith"));
     }
 
     @Test
@@ -133,7 +135,7 @@ public class MatchCompetitorHelpersTest {
         String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertEquals("Competitor not found for name Jane Smith-Jones", message);
+        assertTrue(message.contains("Jane Smith-Jones"));
     }
 
     @Test
@@ -148,7 +150,7 @@ public class MatchCompetitorHelpersTest {
         String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertTrue(message.contains("not found for"));
+        assertTrue(message.contains("competitor number 123"));
     }
 
     @Test
@@ -164,7 +166,8 @@ public class MatchCompetitorHelpersTest {
         String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertTrue(message.contains("not found for"));
+        assertTrue(message.contains("competitor number 123"));
+        assertFalse(message.contains("for name"));
     }
 
     @Test
@@ -180,7 +183,8 @@ public class MatchCompetitorHelpersTest {
         String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertTrue(message.contains("not found for"));
+        assertTrue(message.contains("ID 7"));
+        assertFalse(message.contains("competitor number"));
     }
 
     @Test
@@ -196,7 +200,8 @@ public class MatchCompetitorHelpersTest {
         String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertTrue(message.contains("not found for"));
+        assertTrue(message.contains("name John Smith"));
+        assertFalse(message.contains("competitor number"));
     }
 
     @Test
@@ -212,7 +217,7 @@ public class MatchCompetitorHelpersTest {
         String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertTrue(message.contains("not found for"));
+        assertTrue(message.contains("ID 7, Competitor not found for name John Smith"));
     }
 
     @Test
@@ -280,7 +285,8 @@ public class MatchCompetitorHelpersTest {
         String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertTrue(message.contains("not found for"));
+        assertTrue(message.contains("name John Smith"));
+        assertFalse(message.contains("competitor number"));
     }
 
     @Test
@@ -309,7 +315,7 @@ public class MatchCompetitorHelpersTest {
         String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertTrue(message.contains("not found for"));
+        assertTrue(message.contains("ID 42"));
     }
 
     @Test
@@ -344,7 +350,7 @@ public class MatchCompetitorHelpersTest {
         String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertTrue(message.contains("not found for"));
+        assertTrue(message.contains("Unknown Club"));
     }
 
     @Test
@@ -435,7 +441,10 @@ public class MatchCompetitorHelpersTest {
         String message = MatchCompetitorHelpers.getErrorMessagesForMissingRequiredFields(matchCompetitor, request);
 
         // Assert
-        assertTrue(message.contains("not specified"));
+        int matchIndex = message.indexOf("Match not specified");
+        int divisionIndex = message.indexOf("Division not specified");
+        int powerFactorIndex = message.indexOf("Power factor not specified");
+        assertTrue((matchIndex >= 0) && (matchIndex < divisionIndex) && (divisionIndex < powerFactorIndex));
     }
 
     // Helpers

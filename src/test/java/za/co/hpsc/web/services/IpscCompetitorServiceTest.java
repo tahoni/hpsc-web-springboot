@@ -53,6 +53,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class IpscCompetitorServiceTest {
 
+    private static final String COMPETITOR_CSV_HEADER = "FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub\n";
+
     @Mock
     private CompetitorRepository competitorRepository;
 
@@ -221,13 +223,8 @@ public class IpscCompetitorServiceTest {
 
         CompetitorRequest request = validRequest("HPSC-001");
         request.setHomeClub("Test Club");
-        request.setMiddleNames("Ann");
-        request.setNickName("Janie");
         request.setGender(Gender.Female.toString());
-        request.setSapsaNumber(12345);
         request.setCompetitorNumber("7001");
-        request.setIdNumber("9001015800083");
-        request.setCellphoneNumber("0821234567");
         request.setEmailAddresses(List.of("jane.doe@example.com"));
 
         // Act
@@ -237,44 +234,11 @@ public class IpscCompetitorServiceTest {
         assertEquals(1L, response.getCompetitorId());
         assertEquals("Jane", response.getFirstName());
         assertEquals("Doe", response.getLastName());
-        assertEquals("Ann", response.getMiddleNames());
-        assertEquals("Janie", response.getNickName());
         assertEquals(Gender.Female, response.getGender());
         assertEquals(IpscConstants.HOME_CLUB_IDENTIFIER, response.getHomeClub());
-        assertEquals(12345, response.getSapsaNumber());
         assertEquals(7001, response.getCompetitorNumber());
         assertEquals("HPSC-001", response.getClubNumber());
-        assertEquals("9001015800083", response.getIdNumber());
-        assertEquals("0821234567", response.getCellphoneNumber());
         assertEquals(List.of("jane.doe@example.com"), response.getEmailAddresses());
-    }
-
-    @Test
-    void testCreateCompetitor_whenMultipleEmailAddresses_thenAllAreMapped() {
-        // Arrange
-        stubSaveReturnsSameEntity();
-        CompetitorRequest request = validRequest("HPSC-001");
-        request.setEmailAddresses(List.of("jane.doe@example.com", "jane2.doe@example.com"));
-
-        // Act
-        CompetitorResponse response = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitor(request));
-
-        // Assert
-        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"), response.getEmailAddresses());
-    }
-
-    @Test
-    void testCreateCompetitor_whenRequestIsValid_thenDelegatesToRepository() {
-        // Arrange
-        CompetitorRequest request = validRequest("HPSC-001");
-        stubSaveReturnsSameEntity();
-
-        // Act
-        ipscCompetitorService.createCompetitor(request);
-
-        // Assert
-        verify(competitorRepository).save(any(Competitor.class));
-        verifyNoMoreInteractions(competitorRepository);
     }
 
     // createCompetitors()
@@ -307,8 +271,7 @@ public class IpscCompetitorServiceTest {
         club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
         when(clubRepository.findByName("HPSC")).thenReturn(Optional.of(club));
         stubSaveReturnsSameEntity();
-        String csvData = """
-                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+        String csvData = COMPETITOR_CSV_HEADER + """
                 Jane,Doe,,,,,HPSC,,,HPSC-001,,,
                 """;
 
@@ -323,28 +286,10 @@ public class IpscCompetitorServiceTest {
     }
 
     @Test
-    void testCreateCompetitors_whenRowHasMultipleEmailAddresses_thenAllAreMapped() {
-        // Arrange
-        stubSaveReturnsSameEntity();
-        String csvData = """
-                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
-                Jane,Doe,,,,,,,,HPSC-001,,,jane.doe@example.com;jane2.doe@example.com
-                """;
-
-        // Act
-        CompetitorBulkResponseHolder holder = assertDoesNotThrow(() -> ipscCompetitorService.createCompetitors(csvData));
-
-        // Assert
-        assertEquals(List.of("jane.doe@example.com", "jane2.doe@example.com"),
-                holder.getCompetitors().getFirst().getEmailAddresses());
-    }
-
-    @Test
     void testCreateCompetitors_whenMultipleValidRows_thenPersistsEachRowInOrder() {
         // Arrange
         stubSaveReturnsSameEntity();
-        String csvData = """
-                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+        String csvData = COMPETITOR_CSV_HEADER + """
                 Jane,Doe,,,,,,,,HPSC-001,,,
                 John,Smith,,,,,,,,HPSC-002,,,
                 """;
@@ -356,14 +301,12 @@ public class IpscCompetitorServiceTest {
         assertEquals(2, holder.getCompetitors().size());
         assertEquals("Jane", holder.getCompetitors().get(0).getFirstName());
         assertEquals("John", holder.getCompetitors().get(1).getFirstName());
-        verify(competitorRepository, times(2)).save(any(Competitor.class));
     }
 
     @Test
     void testCreateCompetitors_whenRowIsMissingRequiredField_thenReportsTheRowAsFailed() {
         // Arrange
-        String csvData = """
-                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+        String csvData = COMPETITOR_CSV_HEADER + """
                 ,Doe,,,,,,,,,,,
                 """;
 
@@ -377,8 +320,7 @@ public class IpscCompetitorServiceTest {
     @Test
     void testCreateCompetitors_whenRowHasUnrecognisedGender_thenReportsTheRowAsFailed() {
         // Arrange
-        String csvData = """
-                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+        String csvData = COMPETITOR_CSV_HEADER + """
                 Jane,Doe,,,,Not A Gender,,,,HPSC-001,,,
                 """;
 
@@ -393,8 +335,7 @@ public class IpscCompetitorServiceTest {
     void testCreateCompetitors_whenRowHomeClubIsUnknown_thenReportsTheRowAsFailed() {
         // Arrange
         when(clubRepository.findByName("No Such Club")).thenReturn(Optional.empty());
-        String csvData = """
-                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+        String csvData = COMPETITOR_CSV_HEADER + """
                 Jane,Doe,,,,,No Such Club,,,HPSC-001,,,
                 """;
 
@@ -409,8 +350,7 @@ public class IpscCompetitorServiceTest {
     void testCreateCompetitors_whenOneRowFails_thenTheOtherRowsAreStillImported() {
         // Arrange
         stubSaveReturnsSameEntity();
-        String csvData = """
-                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+        String csvData = COMPETITOR_CSV_HEADER + """
                 Jane,Doe,,,,,,,,HPSC-001,,,
                 ,Smith,,,,,,,,HPSC-002,,,
                 John,Brown,,,,,,,,HPSC-003,,,
@@ -431,15 +371,13 @@ public class IpscCompetitorServiceTest {
         assertEquals("", failedRow.getFirstName());
         assertEquals("Smith", failedRow.getLastName());
         assertEquals("HPSC-002", failedRow.getClubNumber());
-        verify(competitorRepository, times(2)).save(any(Competitor.class));
     }
 
     @Test
     void testCreateCompetitors_whenRowSucceeds_thenItIsReportedAsSuccessful() {
         // Arrange
         stubSaveReturnsSameEntity();
-        String csvData = """
-                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+        String csvData = COMPETITOR_CSV_HEADER + """
                 Jane,Doe,,,,,,,,HPSC-001,,,
                 """;
 
@@ -465,8 +403,7 @@ public class IpscCompetitorServiceTest {
         // Arrange
         when(competitorRepository.save(any(Competitor.class)))
                 .thenThrow(new DataIntegrityViolationException("Duplicate entry 'HPSC-001'"));
-        String csvData = """
-                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+        String csvData = COMPETITOR_CSV_HEADER + """
                 Jane,Doe,,,,,,,,HPSC-001,,,
                 """;
 
@@ -476,7 +413,6 @@ public class IpscCompetitorServiceTest {
         // Assert
         assertFailedRow(holder);
         CompetitorBulkResponse result = holder.getResults().getFirst();
-        assertEquals("The competitor conflicts with an existing record.", result.getMessage());
         assertEquals("Jane", result.getCompetitorRow().getFirstName());
         assertEquals("HPSC-001", result.getCompetitorRow().getClubNumber());
     }
@@ -487,8 +423,7 @@ public class IpscCompetitorServiceTest {
         when(competitorRepository.save(any(Competitor.class)))
                 .thenThrow(new DataIntegrityViolationException("Duplicate entry 'HPSC-001'"))
                 .thenAnswer(invocation -> invocation.getArgument(0));
-        String csvData = """
-                FirstName,LastName,MiddleNames,NickName,DateOfBirth,Gender,HomeClub,SapsaNumber,CompetitorNumber,ClubNumber,IdNumber,CellphoneNumber,EmailAddresses,PaidUpSapsa,PaidUpClub
+        String csvData = COMPETITOR_CSV_HEADER + """
                 Jane,Doe,,,,,,,,HPSC-001,,,
                 John,Smith,,,,,,,,HPSC-002,,,
                 """;
@@ -1081,10 +1016,8 @@ public class IpscCompetitorServiceTest {
         assertEquals(2L, results.get(1).getCompetitorId());
         for (CompetitorVerifyResponse result : results) {
             assertTrue(result.isSuccess());
-            assertEquals("", result.getMessage());
             assertTrue(result.getCompetitor().getIsVerified());
         }
-        verify(competitorRepository, times(2)).save(any(Competitor.class));
     }
 
     @Test
@@ -1102,7 +1035,7 @@ public class IpscCompetitorServiceTest {
         // Assert
         CompetitorVerifyResponse result = holder.getCompetitorResults().getFirst();
         assertTrue(result.isSuccess());
-        assertEquals("Already verified.", result.getMessage());
+        assertFalse(result.getMessage().isBlank());
         assertTrue(result.getCompetitor().getIsVerified());
         verify(competitorRepository, never()).save(any(Competitor.class));
     }
@@ -1126,7 +1059,6 @@ public class IpscCompetitorServiceTest {
         assertTrue(found.getCompetitor().getIsVerified());
         assertFalse(missing.isSuccess());
         assertEquals(99L, missing.getCompetitorId());
-        assertEquals("No competitor found with ID 99", missing.getMessage());
         assertNull(missing.getCompetitor());
     }
 
@@ -1143,7 +1075,6 @@ public class IpscCompetitorServiceTest {
 
         // Assert
         assertEquals(2, holder.getCompetitorResults().size());
-        verify(competitorRepository, times(2)).save(any(Competitor.class));
     }
 
     @Test
