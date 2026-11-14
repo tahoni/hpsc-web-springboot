@@ -49,9 +49,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Configuration
 
-- **`springdoc.api-docs.enabled` and `springdoc.swagger-ui.enabled`:** Set to `false` in `application.properties` and
-  `application-dev.properties`, so the OpenAPI `/v3/api-docs` endpoint and the Swagger UI are no longer exposed by
-  default; the production profile inherits the setting.
+- **`springdoc.api-docs.enabled` and `springdoc.swagger-ui.enabled`:** Set to `false` in `application.properties`, so
+  the OpenAPI `/v3/api-docs` endpoint and the Swagger UI are no longer exposed by default, and to `true` in
+  `application-dev.properties`, so they stay available during development; the production profile inherits the
+  default.
 
 ##### Services
 
