@@ -268,4 +268,24 @@ class ImageResponseTest {
         // Assert
         assertEquals(MediaType.IMAGE_GIF_VALUE, imageResponse.getMimeType());
     }
+
+    // ImageResponse(UUID, String, String, String, String, List<String>, String, String, String)
+    @Test
+    void testConstructor_withUuidAndAllMetadata_thenKeepsThemAndInfersMimeType() {
+        // Arrange
+        UUID uuid = UUID.randomUUID();
+
+        // Act
+        ImageResponse response = new ImageResponse(uuid, "Title", "Summary", "Description", "Category",
+                List.of("tag"), "/path", "photo.jpg", null);
+
+        // Assert
+        assertEquals(uuid, response.getUuid());
+        assertEquals("Title", response.getTitle());
+        assertEquals("Summary", response.getSummary());
+        assertEquals(List.of("tag"), response.getTags());
+        assertEquals("/path", response.getFilePath());
+        assertEquals("photo.jpg", response.getFileName());
+        assertEquals(MediaType.IMAGE_JPEG_VALUE, response.getMimeType());
+    }
 }

@@ -214,4 +214,61 @@ class AwardCeremonyResponseTest {
         request.setThirdPlaceImageFileName(imagePrefix + "c.png");
         return request;
     }
+
+    // AwardCeremonyResponse(UUID, LocalDate, String, List<AwardResponse>)
+    @Test
+    void testConstructor_withUuidDateImageAndAwards_thenKeepsThemAndDefaultsNulls() {
+        // Arrange
+        UUID uuid = UUID.randomUUID();
+
+        // Act
+        AwardCeremonyResponse response = new AwardCeremonyResponse(uuid, now, "/images", sampleAwards);
+        AwardCeremonyResponse defaulted = new AwardCeremonyResponse(uuid, now, null, null);
+
+        // Assert
+        assertEquals(uuid, response.getUuid());
+        assertEquals(now, response.getDate());
+        assertEquals("/images", response.getImageFilePath());
+        assertEquals(sampleAwards, response.getAwards());
+        assertEquals("", defaulted.getImageFilePath());
+        assertTrue(defaulted.getAwards().isEmpty());
+    }
+
+    // AwardCeremonyResponse(UUID, String, LocalDate, String, List<AwardResponse>)
+    @Test
+    void testConstructor_withUuidTitleDateImageAndAwards_thenKeepsTheTitleAndDefaultsNulls() {
+        // Arrange
+        UUID uuid = UUID.randomUUID();
+
+        // Act
+        AwardCeremonyResponse response = new AwardCeremonyResponse(uuid, "Ceremony", now, "/images", sampleAwards);
+        AwardCeremonyResponse defaulted = new AwardCeremonyResponse(uuid, "Ceremony", now, null, null);
+
+        // Assert
+        assertEquals(uuid, response.getUuid());
+        assertEquals("Ceremony", response.getTitle());
+        assertEquals("/images", response.getImageFilePath());
+        assertEquals(sampleAwards, response.getAwards());
+        assertEquals("", defaulted.getImageFilePath());
+        assertTrue(defaulted.getAwards().isEmpty());
+    }
+
+    // AwardCeremonyResponse(String, String, String, String, List<String>, LocalDate, String, List<AwardResponse>)
+    @Test
+    void testConstructor_withAllMetadataAndNoUuid_thenGeneratesAUuidAndDefaultsNulls() {
+        // Act
+        AwardCeremonyResponse response = new AwardCeremonyResponse("Ceremony", "Summary", "Description", "Category",
+                List.of("tag"), now, "/images", sampleAwards);
+        AwardCeremonyResponse defaulted = new AwardCeremonyResponse("Ceremony", null, null, null, null, now, null, null);
+
+        // Assert
+        assertNotNull(response.getUuid());
+        assertEquals("Ceremony", response.getTitle());
+        assertEquals("Summary", response.getSummary());
+        assertEquals(List.of("tag"), response.getTags());
+        assertEquals(now, response.getDate());
+        assertEquals(sampleAwards, response.getAwards());
+        assertEquals("", defaulted.getImageFilePath());
+        assertTrue(defaulted.getAwards().isEmpty());
+    }
 }
