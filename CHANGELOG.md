@@ -68,6 +68,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Tests
 
+- **`ShooterLogOverallResponseTest`:** New tests for the response built from an overall, covering `matchIds` for an
+  overall with matches, with none and with its matches not set.
 - **`IpscShooterLogOverallServiceTest`:** The best-matches case now also checks which matches the overall records, and
   the existing overall fixtures carry their matches.
 
