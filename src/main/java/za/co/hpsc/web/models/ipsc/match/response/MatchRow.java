@@ -32,6 +32,7 @@ public class MatchRow {
      * Describes a request by the values it supplied.
      *
      * @param request the request to describe; may be null, as for an empty row, in which case every value is empty.
+     * @since 17.0.0
      */
     public MatchRow(MatchRequest request) {
         if (request == null) {

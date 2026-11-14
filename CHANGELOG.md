@@ -69,6 +69,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Documentation
 
+- **Missing `@since` tags:** Added them to the Javadoc of `CompetitorMapper`, `MatchCompetitorMapper`,
+  `MatchCompetitorRowMapper` and `MatchMapper`, and of 74 public and package-private methods and constructors in the
+  mappers, helpers, request and response models, `ControllerAdvice` and the service implementations, each with the
+  release that first contained it. The two private records and the protected and private helper methods stay untagged.
 - **`README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md`:** Now say the OpenAPI document and Swagger UI are
   served only under the `dev` profile, and are off by default and under `prod`, instead of presenting them as always
   available. `README.md` also says how to serve them under another profile, by setting `springdoc.api-docs.enabled` and

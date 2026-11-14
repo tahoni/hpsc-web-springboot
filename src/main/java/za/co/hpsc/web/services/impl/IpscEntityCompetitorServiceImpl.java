@@ -60,6 +60,8 @@ public class IpscEntityCompetitorServiceImpl implements IpscEntityCompetitorServ
      * than returning an empty {@link Optional}: a {@link NonFatalException} when no competitor
      * matched the number, ID number or name, a {@link ValidationException} when several did, even
      * if the name matched none of the competitors that share the number.</p>
+     *
+     * @since 14.0.0
      */
     @Override
     public Optional<Competitor> findCompetitorByIdentifierAndFullName(String competitorNumber, String fullName)

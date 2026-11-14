@@ -22,7 +22,11 @@ import java.math.BigDecimal;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class MatchCompetitorRequestCsvMixIn {
-    /** The JSON constructor, which takes a {@code matchCompetitorId}, is not used to read CSV. */
+    /**
+     * The JSON constructor, which takes a {@code matchCompetitorId}, is not used to read CSV.
+     *
+     * @since 9.1.0
+     */
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     MatchCompetitorRequestCsvMixIn(Long matchCompetitorId, Long competitorId, String competitorName,
                                    String competitorNumber, Long matchId, String matchClub,

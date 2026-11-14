@@ -47,6 +47,7 @@ public class MatchCompetitorRow {
      * Describes a request by the values it supplied.
      *
      * @param request the request to describe; may be null, as for an empty row, in which case every value is empty.
+     * @since 14.0.0
      */
     public MatchCompetitorRow(MatchCompetitorRequest request) {
         if (request == null) {

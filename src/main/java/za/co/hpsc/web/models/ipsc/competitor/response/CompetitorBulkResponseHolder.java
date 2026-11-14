@@ -28,6 +28,7 @@ public class CompetitorBulkResponseHolder {
      * Creates a holder without row results.
      *
      * @param competitors the competitors created or updated.
+     * @since 16.4.0
      */
     public CompetitorBulkResponseHolder(List<CompetitorResponse> competitors) {
         this(competitors, new ArrayList<>());
@@ -38,6 +39,7 @@ public class CompetitorBulkResponseHolder {
      *
      * @param competitors the competitors created or updated.
      * @param results     the result of each row, in CSV order.
+     * @since 16.4.0
      */
     public CompetitorBulkResponseHolder(List<CompetitorResponse> competitors, List<CompetitorBulkResponse> results) {
         this.competitors = competitors;

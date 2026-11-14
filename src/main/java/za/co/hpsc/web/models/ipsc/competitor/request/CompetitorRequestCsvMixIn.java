@@ -24,7 +24,11 @@ import java.util.List;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class CompetitorRequestCsvMixIn {
-    /** The JSON constructor, which takes a {@code competitorId}, is not used to read CSV. */
+    /**
+     * The JSON constructor, which takes a {@code competitorId}, is not used to read CSV.
+     *
+     * @since 9.0.0
+     */
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     CompetitorRequestCsvMixIn(Long competitorId, String firstName, String lastName, String middleNames,
                               String nickName, LocalDate dateOfBirth, String gender, String homeClub,

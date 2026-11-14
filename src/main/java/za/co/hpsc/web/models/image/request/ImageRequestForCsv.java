@@ -64,6 +64,7 @@ public abstract class ImageRequestForCsv {
      * @param title    the title of the image. Must not be null or blank.
      * @param filePath the file path where the image is stored. Must not be null or blank.
      * @param fileName the name of the file containing the image. Must not be null or blank.
+     * @since 1.0.0
      */
     @JsonCreator
     public ImageRequestForCsv(@JsonProperty(value = "title", required = true) String title,

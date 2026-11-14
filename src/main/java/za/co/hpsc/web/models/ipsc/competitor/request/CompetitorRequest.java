@@ -97,6 +97,7 @@ public class CompetitorRequest {
      * @param paidUpClub      whether the competitor's club membership is paid up; stored as {@code null} when
      *                         omitted.
      * @param isVerified       whether the competitor has been verified; stored as {@code null} when omitted.
+     * @since 8.1.0
      */
     @JsonCreator
     public CompetitorRequest(@JsonProperty("competitorId") Long competitorId,
@@ -161,6 +162,7 @@ public class CompetitorRequest {
      * @param paidUpNgpsa     whether the competitor is paid up with NGPSA; may be null.
      * @param paidUpClub      whether the competitor is paid up with their club; may be null.
      * @param isVerified      whether the competitor has been verified; may be null.
+     * @since 8.1.0
      */
     public CompetitorRequest(String firstName, String lastName, String middleNames, String nickName,
                              LocalDate dateOfBirth, String gender, String homeClub, Integer sapsaNumber,
@@ -184,6 +186,7 @@ public class CompetitorRequest {
      * </p>
      *
      * @throws ValidationException if the first name or the last name is missing.
+     * @since 13.0.0
      */
     public void validate() {
         if (!hasText(getFirstName())) {

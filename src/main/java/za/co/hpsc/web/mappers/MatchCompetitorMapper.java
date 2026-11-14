@@ -28,6 +28,8 @@ import static za.co.hpsc.web.utils.StringUtil.hasText;
  * Kept out of the request classes because resolving a competitor or match needs repositories, which a request model
  * shouldn't depend on.
  * </p>
+ *
+ * @since 13.0.0
  */
 @Component
 public class MatchCompetitorMapper {
@@ -53,6 +55,7 @@ public class MatchCompetitorMapper {
      *                             belong to the firearm type. A null, blank or unrecognised firearm type is taken
      *                             from the division, see {@link #resolveFirearmType(String, Division)}.
      * @throws NonFatalException   if the competitor or match cannot be found.
+     * @since 13.0.0
      */
     public void applyFields(@NonNull MatchCompetitor matchCompetitor, @NonNull MatchCompetitorRequest request) {
 
@@ -94,6 +97,7 @@ public class MatchCompetitorMapper {
      *
      * @param matchCompetitor the entity to populate; must not be null.
      * @param request         the request carrying the field values; must not be null.
+     * @since 14.0.0
      */
     public void populateResolvableFields(@NonNull MatchCompetitor matchCompetitor,
                                          @NonNull MatchCompetitorRequest request) {
@@ -155,6 +159,7 @@ public class MatchCompetitorMapper {
      *                             no division to take it from, or the competitor number and name match more than one
      *                             competitor.
      * @throws NonFatalException   if the competitor or match cannot be found.
+     * @since 13.0.0
      */
     public void applyPatchFields(@NonNull MatchCompetitor matchCompetitor,
                                  @NonNull MatchCompetitorPatchRequest request) {
@@ -234,6 +239,7 @@ public class MatchCompetitorMapper {
      * @param competitorId the identifier to look up.
      * @return the matching {@link Competitor}.
      * @throws NonFatalException if no competitor with {@code competitorId} exists.
+     * @since 13.0.0
      */
     public Competitor findCompetitorOrThrow(Long competitorId) {
         return competitorRepository.findById(competitorId)
@@ -258,6 +264,7 @@ public class MatchCompetitorMapper {
      *                             competitor matches, including when the name matches none of the competitors that
      *                             share the number.
      * @throws NonFatalException   if no competitor matches.
+     * @since 13.0.0
      */
     public Competitor findCompetitorOrThrow(String competitorNumber, String competitorName) {
         String trimmedCompetitorNumber = (competitorNumber == null) ? null : competitorNumber.trim();
@@ -282,6 +289,7 @@ public class MatchCompetitorMapper {
      *                             or blank, or if more than one competitor matches the number and name, including when
      *                             the name matches none of the competitors that share the number.
      * @throws NonFatalException   if no competitor matches the number and name.
+     * @since 13.0.0
      */
     public Competitor resolveCompetitor(Long competitorId, String competitorNumber, String name) {
         if (competitorId != null) {
@@ -297,6 +305,7 @@ public class MatchCompetitorMapper {
      * @param matchId the identifier to look up.
      * @return the matching {@link IpscMatch}.
      * @throws NonFatalException if no match with {@code matchId} exists.
+     * @since 13.0.0
      */
     public IpscMatch findMatchOrThrow(Long matchId) {
         return ipscMatchRepository.findById(matchId)
@@ -310,6 +319,7 @@ public class MatchCompetitorMapper {
      *                  in which case no club is set.
      * @return the matching {@link ClubIdentifier}, or {@code null} if {@code matchClub} wasn't supplied.
      * @throws ValidationException if {@code matchClub} was supplied but doesn't match a known club.
+     * @since 13.0.0
      */
     public @Nullable ClubIdentifier resolveMatchClub(String matchClub) {
         if (!hasText(matchClub)) {
@@ -333,6 +343,7 @@ public class MatchCompetitorMapper {
      * @param competitorCategory the category name to look up; may be null or blank.
      * @return the matching {@link CompetitorCategory}, or {@link CompetitorCategory#NONE} if the name is null or blank.
      * @throws ValidationException if {@code competitorCategory} is non-blank and matches no category.
+     * @since 13.0.0
      */
     public CompetitorCategory resolveCompetitorCategory(String competitorCategory) {
         return CompetitorCategory.fromName(competitorCategory)
@@ -353,6 +364,7 @@ public class MatchCompetitorMapper {
      *                    {@code null}, in which case the name must match a known firearm type.
      * @return the matching {@link FirearmType}, or the division's firearm type when the name is not recognised.
      * @throws ValidationException if the name matches no firearm type and the division is {@code null}.
+     * @since 13.0.0
      */
     public FirearmType resolveFirearmType(String firearmType, Division division) {
         Optional<FirearmType> optionalFirearmType = FirearmType.fromName(firearmType);
@@ -373,6 +385,7 @@ public class MatchCompetitorMapper {
      * @param division    the division to check; ignored if null.
      * @param firearmType the firearm type it must belong to; ignored if null.
      * @throws ValidationException if {@code division} belongs to a different firearm type.
+     * @since 13.0.0
      */
     public void validateDivisionMatchesFirearmType(@Nullable Division division, @Nullable FirearmType firearmType) {
         if ((division != null) && (firearmType != null) && (division.getFirearmType() != firearmType)) {
@@ -386,6 +399,7 @@ public class MatchCompetitorMapper {
      * @param division the division name to look up.
      * @return the matching {@link Division}.
      * @throws ValidationException if no division matches {@code division}.
+     * @since 13.0.0
      */
     public Division resolveDivision(String division) {
         return Division.fromName(division)
@@ -398,6 +412,7 @@ public class MatchCompetitorMapper {
      * @param powerFactor the power factor name to look up; may be null or blank, in which case none is set.
      * @return the matching {@link PowerFactor}, or {@code null} if {@code powerFactor} wasn't supplied.
      * @throws ValidationException if {@code powerFactor} was supplied but doesn't match a known power factor.
+     * @since 13.0.0
      */
     public @Nullable PowerFactor resolvePowerFactor(String powerFactor) {
         if ((powerFactor == null) || powerFactor.isBlank()) {

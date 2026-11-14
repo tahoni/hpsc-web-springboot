@@ -25,6 +25,7 @@ public final class ShooterLogHelpers {
      * @param shooterLog the shooter log to check; must not be null. A log without a start or end date, or without
      *                   matches, has nothing to check.
      * @throws ValidationException if a match is scheduled before the log's start date or after its end date.
+     * @since 16.1.2
      */
     public static void validateMatchesWithinDates(ShooterLog shooterLog) {
         if ((shooterLog.getStartDate() == null) || (shooterLog.getEndDate() == null)
@@ -48,6 +49,7 @@ public final class ShooterLogHelpers {
      * @param shooterLog the shooter log whose dates apply; must not be null. A log without a start or end date has
      *                   no bounds to check.
      * @return {@code true} if the match is within the log's dates, or the log has no dates.
+     * @since 16.1.2
      */
     public static boolean isWithinDates(IpscMatch match, ShooterLog shooterLog) {
         if ((shooterLog.getStartDate() == null) || (shooterLog.getEndDate() == null)) {
@@ -64,6 +66,7 @@ public final class ShooterLogHelpers {
      * @param match      the match to check; must not be null.
      * @param shooterLog the shooter log that covers the match; must not be null.
      * @return the warning, or empty if the match is within the log's dates.
+     * @since 16.4.0
      */
     public static Optional<String> describeOutsideDates(IpscMatch match, ShooterLog shooterLog) {
         if (isWithinDates(match, shooterLog)) {

@@ -32,6 +32,7 @@ public class CompetitorVerifyRequest {
      * Constructs a {@code CompetitorVerifyRequest} from its JSON representation.
      *
      * @param competitorIds the identifiers of the competitors to verify. Must not be null, empty or contain a null.
+     * @since 16.2.0
      */
     @JsonCreator
     public CompetitorVerifyRequest(@JsonProperty(value = "competitorIds", required = true) List<Long> competitorIds) {
@@ -42,6 +43,7 @@ public class CompetitorVerifyRequest {
      * Checks that the request names at least one competitor, before any of it is used.
      *
      * @throws ValidationException if no competitor IDs are given, or one of them is null.
+     * @since 16.2.0
      */
     public void validate() {
         if ((competitorIds == null) || competitorIds.isEmpty()) {

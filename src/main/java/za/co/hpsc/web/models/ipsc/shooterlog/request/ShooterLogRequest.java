@@ -47,6 +47,7 @@ public class ShooterLogRequest {
      * @param startDate the date the shooter log starts on. Must not be null.
      * @param endDate   the date the shooter log ends on. Must not be null or before {@code startDate}.
      * @param matchIds  the identifiers of the matches the shooter log covers; may be null or empty.
+     * @since 16.1.0
      */
     @JsonCreator
     public ShooterLogRequest(@JsonProperty(value = "startDate", required = true) LocalDate startDate,
@@ -63,6 +64,7 @@ public class ShooterLogRequest {
      *
      * @throws ValidationException if the start date or end date is missing, the end date is before the start date, or
      *                             a match identifier is null.
+     * @since 16.1.0
      */
     public void validate() {
         if (getStartDate() == null) {

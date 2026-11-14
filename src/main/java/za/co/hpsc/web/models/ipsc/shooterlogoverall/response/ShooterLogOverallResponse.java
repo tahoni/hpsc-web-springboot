@@ -74,6 +74,7 @@ public class ShooterLogOverallResponse {
      * @param shooterLogOverall the overall to convert. Must not be null and must have its shooter log and
      *                          competitor set. Those lazily loaded associations, and its matches, are read here, so
      *                          call this while the persistence session is still open, or after fetch-joining them.
+     * @since 16.1.0
      */
     public ShooterLogOverallResponse(ShooterLogOverall shooterLogOverall) {
         this.shooterLogOverallId = shooterLogOverall.getId();

@@ -105,6 +105,7 @@ public class MatchCompetitorResponse {
      *                        Must not be null and must have its match and competitor set.
      *                        Those lazily loaded associations are read here, so call this while the persistence
      *                        session is still open.
+     * @since 13.0.0
      */
     public MatchCompetitorResponse(MatchCompetitor matchCompetitor) {
         this.matchCompetitorId = matchCompetitor.getId();
