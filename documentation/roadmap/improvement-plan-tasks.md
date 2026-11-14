@@ -593,6 +593,14 @@ Gap #41)* —
   `TransactionServiceTest` and `TransactionServiceIntegrationTest`, or give each a production caller — removed
 - [x] Correct `ARCHITECTURE.md`'s `TransactionService` description if it still names them
 
+**Swagger UI and OpenAPI docs availability** *(improvement-plan.md → Gap #53)* — ✅ Closed in v18.0.0
+
+- [x] Reword `README.md`'s "🌐 API Documentation" section to say the OpenAPI document and Swagger UI are served only
+  under the `dev` profile, and how to turn them on elsewhere — done
+- [x] Say the same in `AGENTS.md`'s Project Overview "API docs" line and `ARCHITECTURE.md`'s tech-stack row — done
+- [x] Add a sentence to `CONTRIBUTING.md`'s step that starts the `dev` profile, saying the other profiles do not serve
+  them — done
+
 **`ARCHITECTURE.md` entity docs for `ShooterLogOverall.matches`** *(improvement-plan.md → Gap #54)* —
 ✅ Closed in v18.0.0
 
@@ -617,13 +625,7 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-**Swagger UI and OpenAPI docs availability** *(improvement-plan.md → Gap #53)*
-
-- [ ] Reword `README.md`'s "🌐 API Documentation" section to say the OpenAPI document and Swagger UI are served only
-  under the `dev` profile, and how to turn them on elsewhere
-- [ ] Say the same in `AGENTS.md`'s Project Overview "API docs" line and `ARCHITECTURE.md`'s tech-stack row
-- [ ] Add a sentence to `CONTRIBUTING.md`'s step that starts the `dev` profile, saying the other profiles do not serve
-  them
+*No gaps are currently open.*
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

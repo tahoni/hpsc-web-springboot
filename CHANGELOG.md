@@ -69,6 +69,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Documentation
 
+- **`README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md`:** Now say the OpenAPI document and Swagger UI are
+  served only under the `dev` profile, and are off by default and under `prod`, instead of presenting them as always
+  available. `README.md` also says how to serve them under another profile, by setting `springdoc.api-docs.enabled` and
+  `springdoc.swagger-ui.enabled` to `true`. Closes improvement plan Gap #53.
 - **`ARCHITECTURE.md`:** The Domain Entities table now lists `ShooterLogOverall`'s many-to-many link to `IpscMatch`
   through `shooter_log_overall_match`, and the sentence below it says `ShooterLog.matches` and
   `ShooterLogOverall.matches` are `@ManyToMany` links kept in join tables rather than a `@ManyToOne`. The

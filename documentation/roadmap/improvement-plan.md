@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (53):**
+- **✅ Completed (54):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -152,14 +152,16 @@ number or a newly met precondition on an existing gap — see the `update-improv
     all-or-nothing — closed in v17.0.0 (sentences and both flow diagrams rewritten)
   - #52 `TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults` have no production caller —
     closed in v17.0.0 (three methods removed with their tests)
+  - #53 The OpenAPI document and Swagger UI are now off by default, but three docs still present them as always
+    available — closed in v18.0.0 (`README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` say they are
+    served only under `dev`)
   - #54 `ARCHITECTURE.md`'s entity table omits `ShooterLogOverall.matches`, and its relationship sentence is untrue
     for both many-to-many links — closed in v18.0.0 (entity table, relationship sentence and the service and
     response descriptions updated)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
-- **⚪ Open (1):**
-  - #53 The OpenAPI document and Swagger UI are now off by default, but three docs still present them as always
-    available
+- **⚪ Open (0):**
+  - *No gaps are currently open.*
 
 ### ✅ Completed
 
@@ -1721,6 +1723,34 @@ already stopped naming `saveMatches` when Gap #51 was closed, and a coverage bui
 and 100% branch coverage. If a bulk import returns to all-or-nothing, it can add the matching batch method with its
 first caller.
 
+#### 53. The OpenAPI document and Swagger UI are now off by default, but three docs still present them as always available — ✅ Closed in v18.0.0
+
+**Evidence:** `application.properties` now sets `springdoc.api-docs.enabled=false` and
+`springdoc.swagger-ui.enabled=false`, `application-dev.properties` sets both back to `true`, and
+`application-prod.properties` sets neither, so it inherits `false` (`CHANGELOG.md`'s `[Unreleased]` Configuration
+entry). Three docs say the opposite without naming a profile: `README.md`'s "🌐 API Documentation" section says the
+documentation "is automatically generated using SpringDoc OpenAPI and can be accessed at" the Swagger UI and
+`/v3/api-docs` URLs; `AGENTS.md`'s Project Overview lists "API docs: Swagger UI at
+`http://localhost:8080/hpsc-web/swagger-ui/index.html`"; and `ARCHITECTURE.md`'s tech-stack table gives "Swagger UI at
+`/hpsc-web/swagger-ui/index.html`". `CONTRIBUTING.md` is accurate, as it reaches the docs only after starting the `dev`
+profile, but it does not say that no other profile serves them.
+
+**Why it matters:** The same shape as Gaps #27 and #30: documentation promises a setup that the properties files no
+longer provide. A contributor who runs the application with no profile, or anyone pointed at a `prod` deployment,
+gets a `404` from the URLs the README names, and `RELEASE_NOTES.md` tells clients to regenerate from the OpenAPI
+document, which only a `dev` instance now serves.
+
+**Proposed improvement:** In `README.md`, `AGENTS.md` and `ARCHITECTURE.md`, say that the OpenAPI document and Swagger
+UI are served only under the `dev` profile, are off by default and in `prod`, and are turned on elsewhere by setting
+the two `springdoc` properties to `true`. Add the same sentence to `CONTRIBUTING.md`'s step that starts the `dev`
+profile.
+
+**Outcome:** Done as proposed. `README.md`'s API Documentation section, `AGENTS.md`'s Project Overview "API docs"
+line and `ARCHITECTURE.md`'s tech-stack row now say the OpenAPI document and Swagger UI are served only under the
+`dev` profile, and off by default and under `prod`; `README.md` says how to serve them under another profile, by
+setting `springdoc.api-docs.enabled` and `springdoc.swagger-ui.enabled` to `true`, and `CONTRIBUTING.md`'s step that
+starts the `dev` profile says the other profiles leave them off unless those properties are set.
+
 #### 54. `ARCHITECTURE.md`'s entity table omits `ShooterLogOverall.matches`, and its relationship sentence is untrue for both many-to-many links — ✅ Closed in v18.0.0
 
 **Evidence:** `ShooterLogOverall` now has a `matches` list, a `@ManyToMany` kept in the `shooter_log_overall_match` join
@@ -1758,27 +1788,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 ### ⚪ Open
 
-#### 53. The OpenAPI document and Swagger UI are now off by default, but three docs still present them as always available
-
-**Evidence:** `application.properties` now sets `springdoc.api-docs.enabled=false` and
-`springdoc.swagger-ui.enabled=false`, `application-dev.properties` sets both back to `true`, and
-`application-prod.properties` sets neither, so it inherits `false` (`CHANGELOG.md`'s `[Unreleased]` Configuration
-entry). Three docs say the opposite without naming a profile: `README.md`'s "🌐 API Documentation" section says the
-documentation "is automatically generated using SpringDoc OpenAPI and can be accessed at" the Swagger UI and
-`/v3/api-docs` URLs; `AGENTS.md`'s Project Overview lists "API docs: Swagger UI at
-`http://localhost:8080/hpsc-web/swagger-ui/index.html`"; and `ARCHITECTURE.md`'s tech-stack table gives "Swagger UI at
-`/hpsc-web/swagger-ui/index.html`". `CONTRIBUTING.md` is accurate, as it reaches the docs only after starting the `dev`
-profile, but it does not say that no other profile serves them.
-
-**Why it matters:** The same shape as Gaps #27 and #30: documentation promises a setup that the properties files no
-longer provide. A contributor who runs the application with no profile, or anyone pointed at a `prod` deployment,
-gets a `404` from the URLs the README names, and `RELEASE_NOTES.md` tells clients to regenerate from the OpenAPI
-document, which only a `dev` instance now serves.
-
-**Proposed improvement:** In `README.md`, `AGENTS.md` and `ARCHITECTURE.md`, say that the OpenAPI document and Swagger
-UI are served only under the `dev` profile, are off by default and in `prod`, and are turned on elsewhere by setting
-the two `springdoc` properties to `true`. Add the same sentence to `CONTRIBUTING.md`'s step that starts the `dev`
-profile.
+*No gaps are currently open.*
 
 ---
 
@@ -1786,7 +1796,7 @@ profile.
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | #53 (API docs available only under `dev`) is open and #54 closed in v18.0.0; #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                            |
+| **Now**     | No items currently scoped — #53 and #54 closed in v18.0.0, #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                              |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath, and `flyway-mysql` until v16.4.0 (#50, closed); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
@@ -1914,12 +1924,12 @@ profile.
   describe each row being saved on its own and a failed row being reported, as the code does, closing Gap #51.
 - ✅ Met in v17.0.0: `TransactionService` declares no batch save that production code never calls: `saveMatches`,
   `saveMatchCompetitors` and `saveShooterResults` are removed with their tests, closing Gap #52.
+- ✅ Met in v18.0.0: `README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` say the OpenAPI document and
+  Swagger UI are served only under the `dev` profile, as `application.properties` and `application-dev.properties`
+  configure them, closing Gap #53.
 - ✅ Met in v18.0.0: `ARCHITECTURE.md`'s Domain Entities table and the sentence below it describe
   `ShooterLogOverall.matches` and the two `@ManyToMany` links, and the service and response descriptions mention an
   overall's `matchIds`, closing Gap #54.
-- `README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` say the OpenAPI document and Swagger UI are served
-  only under the `dev` profile, as `application.properties` and `application-dev.properties` configure them, closing
-  Gap #53.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

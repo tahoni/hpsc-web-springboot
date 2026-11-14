@@ -30,7 +30,8 @@ manages IPSC match data, competitor tracking, club operations, awards and image 
 is a pure API server.
 
 - **Port / context path:** `8080` / `/hpsc-web`
-- **API docs:** Swagger UI at `http://localhost:8080/hpsc-web/swagger-ui/index.html`
+- **API docs:** Swagger UI at `http://localhost:8080/hpsc-web/swagger-ui/index.html`, served only under the `dev`
+  profile — it and the OpenAPI document are off by default and under `prod`
 
 ---
 
