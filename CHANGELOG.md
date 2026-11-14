@@ -78,6 +78,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscShooterLogOverallServiceIntegrationTest`:** New cases record each competitor's best matches in the
   `shooter_log_overall_match` table, check that recalculating does not duplicate them or the overalls the queries
   return, that deleting an overall removes its match rows, and that both read endpoints return `matchIds`.
+- **`IpscShooterLogOverallControllerTest`:** New cases check that the create, get-all and get endpoints return each
+  overall's `matchIds`, including an empty list, and that `matchIds` serialises to a JSON array of identifiers.
 
 ---
 
