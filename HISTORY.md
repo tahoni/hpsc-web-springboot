@@ -47,7 +47,7 @@ evolution of architecture, features and design philosophy across all versions.
 - Scoped as `v18.0.0` **MAJOR**: the OpenAPI document and Swagger UI no longer being served by default breaks a
   deployment that relied on them, flagged **Breaking** in `CHANGELOG.md`
 - Improvement plan: Gaps #53, #54 and #55 are added and closed, leaving all 55 gaps closed and none open
-- The suite stands at 1,489 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
+- The suite stands at 1,495 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
 - Project version bumped to 18.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 17.0.0 (November 12, 2026)

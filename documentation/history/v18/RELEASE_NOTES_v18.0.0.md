@@ -84,9 +84,8 @@ Nothing is fixed.
 
 ### Removed
 
-- **Brittle tests:** The three exception test classes, `IpscCommonScoreTest`, `IpscMatchScoreTest`,
-  `IpscMatchStageScoreTest` and `TransactionServiceImplTest`, and the pass-through, duplicate, vacuous and
-  message-text tests across the services, controllers, models, enums, mappers, helpers and utils.
+- **Brittle tests:** `TransactionServiceImplTest`, and the pass-through, duplicate, vacuous and message-text tests
+  across the services, controllers, models, enums, mappers, helpers and utils.
 
 ---
 
@@ -108,11 +107,11 @@ No endpoint path, request or response contract is removed. Deployments and clien
 
 ## 📊 Statistics
 
-- **Files Changed:** 119 against `main` before this release's history and release notes; 1,549 insertions and 3,223
+- **Files Changed:** 116 against `main` before this release's history and release notes; 1,694 insertions and 2,834
   deletions
 - **New Source Files:** 1 (`V11_13_0__create_shooter_log_overall_match.sql`)
 - **New Test Files:** 1 (`ShooterLogOverallResponseTest`)
-- **Deleted Test Files:** 7 (three exception tests, three score tests and `TransactionServiceImplTest`)
+- **Deleted Test Files:** 1 (`TransactionServiceImplTest`)
 - **New Dependencies:** 0
 - **Improvement Plan:** Gaps #53, #54 and #55 added and closed, leaving all 55 closed
 
@@ -135,8 +134,8 @@ No endpoint path, request or response contract is removed. Deployments and clien
 
 ## 🧪 Testing
 
-- `./mvnw test` passes: 1,489 tests with no failures or errors, 3 of them skipped because `FlywayMysqlMigrationTest`
-  runs only where `FLYWAY_MYSQL_URL` is set; `./mvnw verify -Pcoverage` meets the 97% line and branch minimums, at 99.2%
+- `./mvnw test` passes: 1,495 tests with no failures or errors, 3 of them skipped because `FlywayMysqlMigrationTest`
+  runs only where `FLYWAY_MYSQL_URL` is set; `./mvnw verify -Pcoverage` meets the 97% line and branch minimums, at 98.6%
   line and 99.9% branch coverage.
 - New tests cover the recorded matches and their recalculation, the fetch joins of `ShooterLogOverallRepository`,
   matches whose club cannot be loaded and the calculation and reads without a surrounding transaction.

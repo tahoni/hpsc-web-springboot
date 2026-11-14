@@ -17,7 +17,7 @@
   of six entities are left out of `equals`, `hashCode` and `toString`; the OpenAPI document and Swagger UI are off by
   default; `README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` say so
 - **Removed:** brittle tests that mirrored the implementation, duplicated another layer's test or pinned message text,
-  including the exception, score and `TransactionServiceImplTest` classes
+  including `TransactionServiceImplTest`
 - **Documentation:** `ARCHITECTURE.md` lists `ShooterLogOverall`'s link to `IpscMatch` and the real test tree,
   `AGENTS.md` describes the service test tiers as they are, and `CHANGELOG.md`, `HISTORY.md`, `EVOLUTION_OVERVIEW.md`
   and `RELEASE_NOTES.md` cover 18.0.0; improvement plan Gaps #53, #54 and #55 are added and closed
@@ -25,8 +25,8 @@
 
 ## 🧪 Test Plan
 
-- [x] `./mvnw test` passes: 1,489 tests, no failures or errors, 3 skipped unless `FLYWAY_MYSQL_URL` is set
-- [x] `./mvnw verify -Pcoverage` meets the 97% line and branch minimums, at 99.2% line and 99.9% branch coverage
+- [x] `./mvnw test` passes: 1,495 tests, no failures or errors, 3 skipped unless `FLYWAY_MYSQL_URL` is set
+- [x] `./mvnw verify -Pcoverage` meets the 97% line and branch minimums, at 98.6% line and 99.9% branch coverage
 - [x] `CHANGELOG.md`'s `[Unreleased]` section synced against the branch and renamed to `[18.0.0]`
 - [ ] Start the application under the `dev` profile, calculate a shooter log's overalls and confirm each result lists
   its `matchIds`, then confirm `/v3/api-docs` answers under `dev` but not under `prod`

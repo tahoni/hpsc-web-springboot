@@ -127,6 +127,6 @@ Phases 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
 
 **Test Coverage:**
 
-- The suite stands at 1,489 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with line coverage at 99.2% and
+- The suite stands at 1,495 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with line coverage at 98.6% and
   branch coverage at 99.9%; brittle tests are removed or loosened, and new cases cover the recorded matches, the fetch
   joins and the calculation without a surrounding transaction
