@@ -607,7 +607,22 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-*No gaps are currently open.*
+**Swagger UI and OpenAPI docs availability** *(improvement-plan.md → Gap #53)*
+
+- [ ] Reword `README.md`'s "🌐 API Documentation" section to say the OpenAPI document and Swagger UI are served only
+  under the `dev` profile, and how to turn them on elsewhere
+- [ ] Say the same in `AGENTS.md`'s Project Overview "API docs" line and `ARCHITECTURE.md`'s tech-stack row
+- [ ] Add a sentence to `CONTRIBUTING.md`'s step that starts the `dev` profile, saying the other profiles do not serve
+  them
+
+**`ARCHITECTURE.md` entity docs for `ShooterLogOverall.matches`** *(improvement-plan.md → Gap #54)*
+
+- [ ] Add the many-to-many link to `IpscMatch` (through `shooter_log_overall_match`) to the `ShooterLogOverall` row of
+  the Domain Entities table
+- [ ] Reword the sentence below the table, which says every relationship's owning side declares a `@ManyToOne`, to cover
+  the `@ManyToMany`/`@JoinTable` links of `ShooterLog` and `ShooterLogOverall`
+- [ ] Say in the `IpscShooterLogOverallService` row and the `ShooterLogOverallResponse` sentence that an overall records
+  the matches it was calculated from as `matchIds`
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

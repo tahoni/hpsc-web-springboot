@@ -48,7 +48,7 @@ concretely, whenever a release is being prepped and `HISTORY.md` gains its new H
 | `AGENTS.md` (Test Conventions), `CLAUDE.md`         | Mockito-only controller tests (no Spring context), H2-backed service/repository integration tests, `<ClassName>Test` / `test<Scenario>_when<Condition>_then<Expectation>` naming, AssertJ unavailable (excluded in `pom.xml`)                                                                                                                                                                                                                                                                                                                                                                                         |
 | `pom.xml`                                           | Track current Spring Boot / Java releases closely (Java 25, Spring Boot 4.1.2) — this currency itself creates a maintenance constraint, including a standing set of version pins (see Gap #26 and [Gaps](#-gaps--improvement-opportunities))                                                                                                                                                                                                                                                                                                                                                                          |
 | `application.properties` (prod/dev/test)            | Flyway is the schema source of truth for MySQL (prod/dev), run at startup since v8.11.0 (Gap #30); the `test` profile bypasses it entirely via Hibernate `create-drop` against H2 — the two schema paths can silently diverge                                                                                                                                                                                                                                                                                                                                                                                         |
-| `CONTRIBUTING.md`, `application.properties`         | Five runtime profiles (none, `prod`, `dev`, special-purpose `local`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors (documented as configured since Gap #27)                                                                                                                                                                                                                                                                                                                                                                         |
+| `CONTRIBUTING.md`, `application.properties`         | Five runtime profiles (none, `prod`, `dev`, special-purpose `local`, `test`) with different database engines and DDL strategies must all stay usable without extra setup burden for new contributors (documented as configured since Gap #27); the OpenAPI document and Swagger UI are off by default and on only in `dev` (Gap #53)                                                                                                                                                                                                                                                                                  |
 
 ---
 
@@ -154,8 +154,11 @@ number or a newly met precondition on an existing gap — see the `update-improv
     closed in v17.0.0 (three methods removed with their tests)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
-- **⚪ Open (0):**
-  - *No gaps are currently open.*
+- **⚪ Open (2):**
+  - #53 The OpenAPI document and Swagger UI are now off by default, but three docs still present them as always
+    available
+  - #54 `ARCHITECTURE.md`'s entity table omits `ShooterLogOverall.matches`, and its relationship sentence is untrue
+    for both many-to-many links
 
 ### ✅ Completed
 
@@ -1727,7 +1730,47 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 ### ⚪ Open
 
-*No gaps are currently open.*
+#### 53. The OpenAPI document and Swagger UI are now off by default, but three docs still present them as always available
+
+**Evidence:** `application.properties` now sets `springdoc.api-docs.enabled=false` and
+`springdoc.swagger-ui.enabled=false`, `application-dev.properties` sets both back to `true`, and
+`application-prod.properties` sets neither, so it inherits `false` (`CHANGELOG.md`'s `[Unreleased]` Configuration
+entry). Three docs say the opposite without naming a profile: `README.md`'s "🌐 API Documentation" section says the
+documentation "is automatically generated using SpringDoc OpenAPI and can be accessed at" the Swagger UI and
+`/v3/api-docs` URLs; `AGENTS.md`'s Project Overview lists "API docs: Swagger UI at
+`http://localhost:8080/hpsc-web/swagger-ui/index.html`"; and `ARCHITECTURE.md`'s tech-stack table gives "Swagger UI at
+`/hpsc-web/swagger-ui/index.html`". `CONTRIBUTING.md` is accurate, as it reaches the docs only after starting the `dev`
+profile, but it does not say that no other profile serves them.
+
+**Why it matters:** The same shape as Gaps #27 and #30: documentation promises a setup that the properties files no
+longer provide. A contributor who runs the application with no profile, or anyone pointed at a `prod` deployment,
+gets a `404` from the URLs the README names, and `RELEASE_NOTES.md` tells clients to regenerate from the OpenAPI
+document, which only a `dev` instance now serves.
+
+**Proposed improvement:** In `README.md`, `AGENTS.md` and `ARCHITECTURE.md`, say that the OpenAPI document and Swagger
+UI are served only under the `dev` profile, are off by default and in `prod`, and are turned on elsewhere by setting
+the two `springdoc` properties to `true`. Add the same sentence to `CONTRIBUTING.md`'s step that starts the `dev`
+profile.
+
+#### 54. `ARCHITECTURE.md`'s entity table omits `ShooterLogOverall.matches`, and its relationship sentence is untrue for both many-to-many links
+
+**Evidence:** `ShooterLogOverall` now has a `matches` list, a `@ManyToMany` kept in the `shooter_log_overall_match` join
+table (`V11_13_0__create_shooter_log_overall_match.sql`; `CHANGELOG.md`'s `[Unreleased]` entries), recording the best
+matches each overall was calculated from, and `ShooterLogOverallResponse` returns them as `matchIds`.
+`ARCHITECTURE.md`'s Domain Entities table still lists `ShooterLogOverall` as "Many-to-one → `ShooterLog`,
+`Competitor`", and the sentence below it says "Every relationship's owning (child) side declares a
+`@ManyToOne`/`@JoinColumn`", which was already untrue for `ShooterLog.matches` (a `@ManyToMany` with a `@JoinTable`)
+and now is for two entities. The `IpscShooterLogOverallService` row, and the sentence naming
+`ShooterLogOverallResponse`, describe the results without the matches they were calculated from.
+
+**Why it matters:** The same shape as Gaps #21 and #34: architecture documentation that predates the code it describes.
+A contributor reading the table would not look for a join table behind an overall, and one deleting a match would not
+expect it to be referenced by `shooter_log_overall_match` as well as `shooter_log_match`.
+
+**Proposed improvement:** Add "Many-to-many → `IpscMatch` (through `shooter_log_overall_match`)" to the
+`ShooterLogOverall` row, reword the sentence below the table to cover the two `@ManyToMany`/`@JoinTable` links, and
+say in the `IpscShooterLogOverallService` row and the `ShooterLogOverallResponse` sentence that an overall records the
+matches it was calculated from as `matchIds`.
 
 ---
 
@@ -1735,7 +1778,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | No items currently scoped — #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                                                                                                         |
+| **Now**     | #53 (API docs available only under `dev`) and #54 (`ShooterLogOverall.matches` in `ARCHITECTURE.md`) are open; #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                      |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath, and `flyway-mysql` until v16.4.0 (#50, closed); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
@@ -1759,8 +1802,6 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 - ✅ Met in v8.3.1: `AwardService`/`ImageService` CSV processing is confirmed intentionally stateless, and
   `README.md`/`ARCHITECTURE.md` now say so explicitly, closing Gap #3's ambiguity between deliberate design and
   oversight.
-- A real `MatchScoreController`/`ShooterLogController` (or equivalent) exists and is tested, closing the gap
-  `README.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` currently described as "still being built".
 - ✅ Met in v8.3.0: `IpscMatchController.createMatches`/`IpscMatchService.createMatches` mirror the competitor bulk
   CSV import pattern, closing Gap #8 and removing the last asymmetry between the two CRUD domains' bulk-import
   support.
@@ -1865,6 +1906,12 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
   describe each row being saved on its own and a failed row being reported, as the code does, closing Gap #51.
 - ✅ Met in v17.0.0: `TransactionService` declares no batch save that production code never calls: `saveMatches`,
   `saveMatchCompetitors` and `saveShooterResults` are removed with their tests, closing Gap #52.
+- `README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` say the OpenAPI document and Swagger UI are served
+  only under the `dev` profile, as `application.properties` and `application-dev.properties` configure them, closing
+  Gap #53.
+- `ARCHITECTURE.md`'s Domain Entities table and the sentence below it describe `ShooterLogOverall.matches` and the
+  two `@ManyToMany` links, and the service and response descriptions mention an overall's `matchIds`, closing Gap
+  #54.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

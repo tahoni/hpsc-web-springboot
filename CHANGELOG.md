@@ -66,6 +66,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ShooterLogOverallRepository`:** `findAllByShooterLogIdWithDetails` and `findAllWithDetails` also fetch each
   overall's matches, so they can be read outside a transaction.
 
+##### Documentation
+
+- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Record two new open gaps, #53 (the OpenAPI document and
+  Swagger UI are off by default and on only in `dev`, but `README.md`, `AGENTS.md` and `ARCHITECTURE.md` present them as
+  always available) and #54 (`ARCHITECTURE.md`'s entity table omits `ShooterLogOverall.matches`), and remove a stale
+  Success Criteria entry for Gap #6, which the "✅ Met in v16.1.0" entry already supersedes.
+
 ##### Tests
 
 - **Brittle mapper, helper and util tests removed:** `ValueUtilTest` drops nine redundant or vacuous tests (special
