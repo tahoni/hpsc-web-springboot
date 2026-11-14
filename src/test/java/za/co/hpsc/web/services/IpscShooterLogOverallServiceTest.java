@@ -1,11 +1,13 @@
 package za.co.hpsc.web.services;
 
+import org.hibernate.LazyInitializationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.ShooterLog;
@@ -254,6 +256,30 @@ class IpscShooterLogOverallServiceTest {
 
         // Assert
         assertEquals(List.of(match), savedOverallResults().getFirst().getMatches());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenTheMatchesClubIsNotLoaded_thenRecordsTheMatchesWithoutLoadingIt()
+            throws NonFatalException {
+        // Arrange
+        // Outside a session a match's club is an unloaded proxy, and IpscMatch's generated equals and hashCode read it
+        IpscMatch first = match(10L, 1);
+        first.setClub(unloadedClub());
+        IpscMatch second = match(11L, 2);
+        second.setClub(unloadedClub());
+        ShooterLog shooterLog = shooterLog(1L, first, second);
+        Competitor competitor = competitor(5L);
+        stubLog(shooterLog, List.of(
+                shooterResult(100L, first, competitor, "90", Division.OPEN),
+                shooterResult(101L, first, competitor, "85", Division.OPEN),
+                shooterResult(102L, second, competitor, "80", Division.OPEN)), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        List<Long> matchIds = savedOverallResults().getFirst().getMatches().stream().map(IpscMatch::getId).toList();
+        assertEquals(List.of(10L, 11L), matchIds);
     }
 
     @Test
@@ -838,6 +864,21 @@ class IpscShooterLogOverallServiceTest {
         shooterLog.setEndDate(LocalDate.of(2026, 9, 30));
         shooterLog.setMatches(List.of(matches));
         return shooterLog;
+    }
+
+    /** A club that fails the way an unloaded Hibernate proxy does when it is read outside a session. */
+    private Club unloadedClub() {
+        return new Club() {
+            @Override
+            public int hashCode() {
+                throw new LazyInitializationException("Could not initialize proxy - no session");
+            }
+
+            @Override
+            public boolean equals(Object other) {
+                throw new LazyInitializationException("Could not initialize proxy - no session");
+            }
+        };
     }
 
     private IpscMatch match(Long id, int day) {

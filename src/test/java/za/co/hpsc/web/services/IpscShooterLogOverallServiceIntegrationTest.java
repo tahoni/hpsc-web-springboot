@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import za.co.hpsc.web.constants.IpscConstants;
+import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
@@ -21,11 +24,13 @@ import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.shooterlogoverall.response.ShooterLogOverallResponse;
 import za.co.hpsc.web.models.ipsc.shooterlogoverall.response.ShooterLogOverallResponseHolder;
+import za.co.hpsc.web.repositories.ClubRepository;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.repositories.ShooterLogRepository;
+import za.co.hpsc.web.repositories.ShooterResultRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -63,6 +68,12 @@ class IpscShooterLogOverallServiceIntegrationTest {
 
     @Autowired
     private ShooterLogOverallRepository shooterLogOverallRepository;
+
+    @Autowired
+    private ClubRepository clubRepository;
+
+    @Autowired
+    private ShooterResultRepository shooterResultRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -245,6 +256,75 @@ class IpscShooterLogOverallServiceIntegrationTest {
 
         // Assert
         assertEquals(0, countOverallMatchRows(shooterLog));
+    }
+
+    // Without a surrounding transaction
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void testCalculateShooterLogOverall_whenNoTransactionIsActive_thenCalculatesAndReadsBackWithoutAnOpenSession()
+            throws NonFatalException {
+        // Without this test's usual rolled-back transaction a match's club, and the matches of an overall, are lazy
+        // associations that can no longer be loaded once a service call returns, so nothing may read them afterwards.
+        Club club = null;
+        List<IpscMatch> matches = new ArrayList<>();
+        List<Competitor> competitors = new ArrayList<>();
+        List<MatchCompetitor> matchCompetitors = new ArrayList<>();
+        ShooterLog shooterLog = null;
+        try {
+            // Arrange
+            club = new Club();
+            club.setName("Overall Test Club");
+            club.setIdentifier(IpscConstants.HOME_CLUB_IDENTIFIER);
+            club = clubRepository.save(club);
+            for (int index = 0; index < 5; index++) {
+                IpscMatch match = new IpscMatch();
+                match.setName("Match " + (index + 1));
+                match.setScheduledDate(LocalDate.of(2026, 9, 1 + (index * 7)).atStartOfDay());
+                match.setClub(club);
+                matches.add(ipscMatchRepository.save(match));
+            }
+            shooterLog = createShooterLog(matches.toArray(new IpscMatch[0]));
+            Competitor shooter = createCompetitor("HPSC-SLO-NT-1");
+            Competitor rival = createCompetitor("HPSC-SLO-NT-2");
+            competitors.add(shooter);
+            competitors.add(rival);
+            String[] shooterPoints = {"90", "80", "70", "60", "50"};
+            for (int index = 0; index < 5; index++) {
+                matchCompetitors.add(createMatchCompetitor(shooter, matches.get(index), shooterPoints[index]));
+                matchCompetitors.add(createMatchCompetitor(rival, matches.get(index), "100"));
+            }
+            Long shooterLogId = shooterLog.getId();
+
+            // Act
+            ShooterLogOverallResponseHolder calculated = ipscShooterLogOverallService.calculateShooterLogOverall(shooterLogId);
+            ShooterLogOverallResponseHolder recalculated = ipscShooterLogOverallService.calculateShooterLogOverall(shooterLogId);
+            ShooterLogOverallResponseHolder read = ipscShooterLogOverallService.getShooterLogOverallResults(shooterLogId);
+            List<ShooterLogOverallResponseHolder> all = ipscShooterLogOverallService.getAllShooterLogOverallResults();
+
+            // Assert
+            for (ShooterLogOverallResponseHolder holder : List.of(calculated, recalculated, read)) {
+                assertEquals(2, holder.getShooterLogOverallResults().size());
+                holder.getShooterLogOverallResults()
+                        .forEach(overall -> assertEquals(4, overall.getMatchIds().size()));
+            }
+            assertTrue(all.stream().anyMatch(holder -> shooterLogId.equals(holder.getShooterLog().getShooterLogId())
+                    && (holder.getShooterLogOverallResults().size() == 2)));
+        } finally {
+            if (shooterLog != null) {
+                shooterLogOverallRepository.deleteAll(shooterLogOverallRepository.findAllByShooterLogId(shooterLog.getId()));
+            }
+            matches.forEach(match -> shooterResultRepository.deleteAll(
+                    shooterResultRepository.findAllByMatchIdWithDetails(match.getId())));
+            if (shooterLog != null) {
+                shooterLogRepository.deleteById(shooterLog.getId());
+            }
+            matchCompetitorRepository.deleteAll(matchCompetitors);
+            ipscMatchRepository.deleteAll(matches);
+            competitorRepository.deleteAll(competitors);
+            if (club != null) {
+                clubRepository.delete(club);
+            }
+        }
     }
 
     // getAllShooterLogOverallResults()

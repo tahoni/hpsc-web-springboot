@@ -262,12 +262,21 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
     /**
      * The matches the given shooter results are from, each once.
      *
+     * <p>
+     * Matches are told apart by identifier rather than by {@code equals}: {@link IpscMatch}'s generated {@code equals}
+     * and {@code hashCode} read its lazily loaded club, which fails with a {@code LazyInitializationException} once the
+     * persistence session has closed.
+     * </p>
+     *
      * @param results the shooter results.
      * @return the results' matches, as a new modifiable list, in the order of the results.
      */
     private List<IpscMatch> matchesOfResults(List<ShooterResult> results) {
-        return results.stream().map(ShooterResult::getMatch).distinct()
-                .collect(Collectors.toCollection(ArrayList::new));
+        Map<Long, IpscMatch> matchesById = new LinkedHashMap<>();
+        for (ShooterResult result : results) {
+            matchesById.putIfAbsent(result.getMatch().getId(), result.getMatch());
+        }
+        return new ArrayList<>(matchesById.values());
     }
 
     /**

@@ -55,6 +55,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   available during development; the production profile inherits the default. A deployment that serves the OpenAPI
   document, for example to generate a client from it, or the Swagger UI must set both properties to `true`.
 
+##### Domain
+
+- **Lazy associations left out of `equals`, `hashCode` and `toString`:** `Competitor.homeClub` and `emailAddresses`,
+  `IpscMatch.club`, `MatchCompetitor.competitor` and `match`, `ShooterLog.matches`, `ShooterLogOverall.shooterLog`,
+  `competitor` and `matches`, and `ShooterResult.match`, `competitor` and `matchCompetitor` no longer take part in the
+  generated methods. Hibernate calls `hashCode` on the matches of a `@ManyToMany` list when it compares them on commit,
+  which read the match's club and failed with a `LazyInitializationException` when calculating a shooter log's overall
+  results. Two entities now compare equal when their own columns match, whatever their lazy associations hold.
+
 ##### Services
 
 - **`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`:** Records the matches each overall was calculated

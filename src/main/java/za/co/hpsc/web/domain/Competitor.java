@@ -2,7 +2,9 @@ package za.co.hpsc.web.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import za.co.hpsc.web.converters.GenderConverter;
@@ -43,6 +45,8 @@ public class Competitor {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "home_club_id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Club homeClub;
 
     @Column(name = "sapsa_number")
@@ -63,6 +67,8 @@ public class Competitor {
     @ElementCollection
     @CollectionTable(name = "competitor_email", joinColumns = @JoinColumn(name = "competitor_id"))
     @Column(name = "email_address")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private List<String> emailAddresses = new ArrayList<>();
 
     @Column(name = "paid_up_sapsa")
