@@ -1,5 +1,7 @@
 package za.co.hpsc.web.models.ipsc.shooterlogoverall.response;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
@@ -70,6 +72,24 @@ class ShooterLogOverallResponseTest {
         assertEquals(1L, response.getShooterLogId());
         assertEquals(5L, response.getCompetitorId());
         assertEquals(Division.OPEN, response.getDivision());
+    }
+
+    // JSON serialisation
+    @Test
+    void testSerialisation_whenResponseHasMatchIds_thenMatchIdsIsAJsonArrayOfIds() {
+        // Arrange
+        ShooterLogOverallResponse response = new ShooterLogOverallResponse(overall());
+        response.setMatchIds(List.of(10L, 11L));
+
+        // Act
+        JsonNode json = new ObjectMapper().findAndRegisterModules().valueToTree(response);
+
+        // Assert
+        JsonNode matchIds = json.get("matchIds");
+        assertTrue(matchIds.isArray());
+        assertEquals(2, matchIds.size());
+        assertEquals(10L, matchIds.get(0).asLong());
+        assertEquals(11L, matchIds.get(1).asLong());
     }
 
     // Helpers

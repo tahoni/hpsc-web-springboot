@@ -35,7 +35,7 @@ public class AwardControllerTest {
 
     // createAwards()
     @Test
-    void testCreateAwards_whenValidCsvData_thenReturns200() throws ValidationException, FatalException {
+    void testCreateAwards_whenValidCsvData_thenReturns201() throws ValidationException, FatalException {
         // Arrange
         AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(List.of());
         when(awardService.createAwards(VALID_CSV)).thenReturn(holder);
@@ -45,20 +45,6 @@ public class AwardControllerTest {
 
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    }
-
-    @Test
-    void testCreateAwards_whenValidCsvData_thenResponseBodyIsReturnedFromService() throws ValidationException, FatalException {
-        // Arrange
-        AwardCeremonyResponseHolder holder = new AwardCeremonyResponseHolder(List.of());
-        when(awardService.createAwards(VALID_CSV)).thenReturn(holder);
-
-        // Act
-        ResponseEntity<AwardCeremonyResponseHolder> response = awardController.createAwards(VALID_CSV);
-
-        // Assert
-        assertNotNull(response.getBody());
-        assertSame(holder, response.getBody());
     }
 
 }

@@ -68,6 +68,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Tests
 
+- **Brittle controller, advice, repository and migration tests removed:** The controller tests that only stubbed a
+  service and asserted the same body came back, and the ones that checked an exception propagates (the controllers
+  have no handlers; `ControllerAdviceTest` covers the mapping), are deleted, keeping the status-decision tests, so each
+  endpoint still has a status test. `ControllerAdviceTest` drops its timestamp and blank-message tests and merges each
+  handler's single-assertion tests, and two misnamed tests are fixed. The repository tests filter by the IDs they
+  saved instead of counting a shared table, and `FlywayMysqlMigrationTest` now asserts no pending or failed
+  migrations instead of counting `.sql` files from the working directory. The `matchIds` JSON-shape check moves into
+  `ShooterLogOverallResponseTest`.
 - **Brittle service tests removed:** `IpscEntityClubServiceImplTest` and `IpscEntityCompetitorServiceImplTest` shrink
   to one test each and `TransactionServiceImplTest` is removed, as the interface tests already cover the same cases by
   result rather than by the order the mocks are consulted. Five of the six "reading the CSV fails" tests that mocked

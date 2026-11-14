@@ -40,29 +40,7 @@ class IpscShooterResultControllerTest {
         assertSame(response, result.getBody());
     }
 
-    @Test
-    void testCreateShooterResults_whenServiceThrows_thenPropagatesNonFatalException() throws NonFatalException {
-        // Arrange
-        when(ipscShooterResultService.calculateMatchShooterResult(99L)).thenThrow(new NonFatalException("not found"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscShooterResultController.createShooterResults(99L));
-    }
-
     // getAllShooterResults()
-    @Test
-    void testGetAllShooterResults_whenNoMatches_thenReturnsEmptyList() {
-        // Arrange
-        when(ipscShooterResultService.getAllShooterResults()).thenReturn(List.of());
-
-        // Act
-        ResponseEntity<List<ShooterResponseHolder>> result = ipscShooterResultController.getAllShooterResults();
-
-        // Assert
-        assertNotNull(result.getBody());
-        assertTrue(result.getBody().isEmpty());
-    }
-
     @Test
     void testGetAllShooterResults_whenServiceSucceeds_thenReturns200WithServiceBody() {
         // Arrange
@@ -92,12 +70,4 @@ class IpscShooterResultControllerTest {
         assertSame(response, result.getBody());
     }
 
-    @Test
-    void testGetShooterResults_whenServiceThrows_thenPropagatesNonFatalException() throws NonFatalException {
-        // Arrange
-        when(ipscShooterResultService.getShooterResults(99L)).thenThrow(new NonFatalException("not found"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscShooterResultController.getShooterResults(99L));
-    }
 }

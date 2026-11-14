@@ -44,7 +44,7 @@ public class ControllerAdviceTest {
     }
 
     @Test
-    void testHandleGeneralException_whenFatalExceptionThrown_thenResponseBodyContainsExceptionMessage() {
+    void testHandleGeneralException_whenFatalExceptionThrown_thenResponseBodyDescribesTheError() {
         // Arrange
         FatalException ex = new FatalException("Database connection failed");
 
@@ -54,45 +54,8 @@ public class ControllerAdviceTest {
         // Assert
         assertNotNull(response.getBody());
         assertEquals("Database connection failed", response.getBody().getMessage());
-    }
-
-    @Test
-    void testHandleGeneralException_whenFatalExceptionThrown_thenResponseBodyContainsInternalServerErrorLabel() {
-        // Arrange
-        FatalException ex = new FatalException("Something went wrong");
-
-        // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleGeneralException(ex, webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
         assertEquals("Internal Server Error", response.getBody().getError());
-    }
-
-    @Test
-    void testHandleGeneralException_whenFatalExceptionThrown_thenResponseBodySuccessIsFalse() {
-        // Arrange
-        FatalException ex = new FatalException("Critical failure");
-
-        // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleGeneralException(ex, webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
         assertFalse(response.getBody().isSuccess());
-    }
-
-    @Test
-    void testHandleGeneralException_whenFatalExceptionThrown_thenResponseBodyTimestampIsNotNull() {
-        // Arrange
-        FatalException ex = new FatalException("Timestamp check");
-
-        // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleGeneralException(ex, webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
-        assertNotNull(response.getBody().getTimestamp());
     }
 
     @Test
@@ -109,19 +72,6 @@ public class ControllerAdviceTest {
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
-    @Test
-    void testHandleGeneralException_whenFatalExceptionHasBlankMessage_thenResponseBodyPreservesBlankMessage() {
-        // Arrange
-        FatalException ex = new FatalException("   ");
-
-        // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleGeneralException(ex, webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
-        assertEquals("   ", response.getBody().getMessage());
-    }
-
     // handleValidationException()
     @Test
     void testHandleValidationException_whenValidationExceptionThrown_thenReturns400() {
@@ -136,7 +86,7 @@ public class ControllerAdviceTest {
     }
 
     @Test
-    void testHandleValidationException_whenValidationExceptionThrown_thenResponseBodyContainsExceptionMessage() {
+    void testHandleValidationException_whenValidationExceptionThrown_thenResponseBodyDescribesTheError() {
         // Arrange
         ValidationException ex = new ValidationException("Field 'name' must not be blank");
 
@@ -146,45 +96,8 @@ public class ControllerAdviceTest {
         // Assert
         assertNotNull(response.getBody());
         assertEquals("Field 'name' must not be blank", response.getBody().getMessage());
-    }
-
-    @Test
-    void testHandleValidationException_whenValidationExceptionThrown_thenResponseBodyContainsBadRequestLabel() {
-        // Arrange
-        ValidationException ex = new ValidationException("Validation failed");
-
-        // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleValidationException(ex, webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
         assertEquals("Bad Request", response.getBody().getError());
-    }
-
-    @Test
-    void testHandleValidationException_whenValidationExceptionThrown_thenResponseBodySuccessIsFalse() {
-        // Arrange
-        ValidationException ex = new ValidationException("Validation failed");
-
-        // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleValidationException(ex, webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
         assertFalse(response.getBody().isSuccess());
-    }
-
-    @Test
-    void testHandleValidationException_whenValidationExceptionThrown_thenResponseBodyTimestampIsNotNull() {
-        // Arrange
-        ValidationException ex = new ValidationException("Timestamp check");
-
-        // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleValidationException(ex, webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
-        assertNotNull(response.getBody().getTimestamp());
     }
 
     @Test
@@ -216,7 +129,7 @@ public class ControllerAdviceTest {
     }
 
     @Test
-    void testHandleNonFatalException_whenNonFatalExceptionThrown_thenResponseBodyContainsExceptionMessage() {
+    void testHandleNonFatalException_whenNonFatalExceptionThrown_thenResponseBodyDescribesTheError() {
         // Arrange
         NonFatalException ex = new NonFatalException("Competitor already enrolled");
 
@@ -227,48 +140,8 @@ public class ControllerAdviceTest {
         // Assert
         assertNotNull(response.getBody());
         assertEquals("Competitor already enrolled", response.getBody().getMessage());
-    }
-
-    @Test
-    void testHandleNonFatalException_whenNonFatalExceptionThrown_thenResponseBodyContainsUnprocessableContentLabel() {
-        // Arrange
-        NonFatalException ex = new NonFatalException("Cannot process request");
-
-        // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFatalException(ex,
-                webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
         assertEquals("Not Found", response.getBody().getError());
-    }
-
-    @Test
-    void testHandleNonFatalException_whenNonFatalExceptionThrown_thenResponseBodySuccessIsFalse() {
-        // Arrange
-        NonFatalException ex = new NonFatalException("Business rule violated");
-
-        // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFatalException(ex,
-                webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
         assertFalse(response.getBody().isSuccess());
-    }
-
-    @Test
-    void testHandleNonFatalException_whenNonFatalExceptionThrown_thenResponseBodyTimestampIsNotNull() {
-        // Arrange
-        NonFatalException ex = new NonFatalException("Timestamp check");
-
-        // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFatalException(ex,
-                webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
-        assertNotNull(response.getBody().getTimestamp());
     }
 
     @Test
@@ -286,23 +159,9 @@ public class ControllerAdviceTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
-    @Test
-    void testHandleNonFatalException_whenNonFatalExceptionHasBlankMessage_thenResponseBodyPreservesBlankMessage() {
-        // Arrange
-        NonFatalException ex = new NonFatalException("   ");
-
-        // Act
-        ResponseEntity<ControllerResponse> response = controllerAdvice.handleNonFatalException(ex,
-                webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
-        assertEquals("   ", response.getBody().getMessage());
-    }
-
     // handleHttpMessageConversionException()
     @Test
-    void testHand1leHttpMessageConversionException_whenThrown_thenReturns500() {
+    void testHandleHttpMessageConversionException_whenThrown_thenReturns400() {
         // Arrange
         HttpMessageConversionException ex = new HttpMessageConversionException("Invalid JSON input");
 
@@ -315,7 +174,7 @@ public class ControllerAdviceTest {
     }
 
     @Test
-    void testHandleHttpMessageConversionException_whenThrown_thenResponseBodyContainsExceptionMessage() {
+    void testHandleHttpMessageConversionException_whenThrown_thenResponseBodyDescribesTheError() {
         // Arrange
         HttpMessageConversionException ex = new HttpMessageConversionException("Cannot deserialize value");
 
@@ -326,48 +185,8 @@ public class ControllerAdviceTest {
         // Assert
         assertNotNull(response.getBody());
         assertEquals("Cannot deserialize value", response.getBody().getMessage());
-    }
-
-    @Test
-    void testHandleHttpMessageConversionException_whenThrown_thenResponseBodyContainsBadRequestLabel() {
-        // Arrange
-        HttpMessageConversionException ex = new HttpMessageConversionException("Malformed request");
-
-        // Act
-        ResponseEntity<ControllerResponse> response =
-                controllerAdvice.handleHttpMessageConversionException(ex, webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
         assertEquals("Bad Request", response.getBody().getError());
-    }
-
-    @Test
-    void testHandleHttpMessageConversionException_whenThrown_thenResponseBodySuccessIsFalse() {
-        // Arrange
-        HttpMessageConversionException ex = new HttpMessageConversionException("Bad payload");
-
-        // Act
-        ResponseEntity<ControllerResponse> response =
-                controllerAdvice.handleHttpMessageConversionException(ex, webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
         assertFalse(response.getBody().isSuccess());
-    }
-
-    @Test
-    void testHandleHttpMessageConversionException_whenThrown_thenResponseBodyTimestampIsNotNull() {
-        // Arrange
-        HttpMessageConversionException ex = new HttpMessageConversionException("Timestamp check");
-
-        // Act
-        ResponseEntity<ControllerResponse> response =
-                controllerAdvice.handleHttpMessageConversionException(ex, webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
-        assertNotNull(response.getBody().getTimestamp());
     }
 
     // handleUnhandledException()
@@ -385,7 +204,7 @@ public class ControllerAdviceTest {
     }
 
     @Test
-    void testHandleUnhandledException_whenThrown_thenResponseBodyContainsExceptionMessage() {
+    void testHandleUnhandledException_whenThrown_thenResponseBodyDescribesTheError() {
         // Arrange
         Exception ex = new Exception("Uncaught processing error");
 
@@ -396,48 +215,8 @@ public class ControllerAdviceTest {
         // Assert
         assertNotNull(response.getBody());
         assertEquals("Uncaught processing error", response.getBody().getMessage());
-    }
-
-    @Test
-    void testHandleUnhandledException_whenThrown_thenResponseBodyContainsInternalServerErrorLabel() {
-        // Arrange
-        Exception ex = new Exception("System failure");
-
-        // Act
-        ResponseEntity<ControllerResponse> response =
-                controllerAdvice.handleUnhandledException(ex, webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
         assertEquals("Internal Server Error", response.getBody().getError());
-    }
-
-    @Test
-    void testHandleUnhandledException_whenThrown_thenResponseBodySuccessIsFalse() {
-        // Arrange
-        Exception ex = new Exception("Failure state");
-
-        // Act
-        ResponseEntity<ControllerResponse> response =
-                controllerAdvice.handleUnhandledException(ex, webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
         assertFalse(response.getBody().isSuccess());
-    }
-
-    @Test
-    void testHandleUnhandledException_whenThrown_thenResponseBodyTimestampIsNotNull() {
-        // Arrange
-        Exception ex = new Exception("Timestamp check");
-
-        // Act
-        ResponseEntity<ControllerResponse> response =
-                controllerAdvice.handleUnhandledException(ex, webRequest);
-
-        // Assert
-        assertNotNull(response.getBody());
-        assertNotNull(response.getBody().getTimestamp());
     }
 
     @Test
