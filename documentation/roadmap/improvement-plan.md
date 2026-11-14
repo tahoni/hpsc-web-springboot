@@ -64,7 +64,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
 
 ### 🌳 At a Glance
 
-- **✅ Completed (52):**
+- **✅ Completed (53):**
   - #1 Match/competitor service and controller layer — closed v8.0.0
   - #2 No automatic build/test gate on pull requests — closed v8.3.1
   - #3 Award/Image CSV pipelines never persist — closed v8.3.1 (confirmed deliberate, no persistence planned)
@@ -152,13 +152,14 @@ number or a newly met precondition on an existing gap — see the `update-improv
     all-or-nothing — closed in v17.0.0 (sentences and both flow diagrams rewritten)
   - #52 `TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults` have no production caller —
     closed in v17.0.0 (three methods removed with their tests)
+  - #54 `ARCHITECTURE.md`'s entity table omits `ShooterLogOverall.matches`, and its relationship sentence is untrue
+    for both many-to-many links — closed in v18.0.0 (entity table, relationship sentence and the service and
+    response descriptions updated)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
-- **⚪ Open (2):**
+- **⚪ Open (1):**
   - #53 The OpenAPI document and Swagger UI are now off by default, but three docs still present them as always
     available
-  - #54 `ARCHITECTURE.md`'s entity table omits `ShooterLogOverall.matches`, and its relationship sentence is untrue
-    for both many-to-many links
 
 ### ✅ Completed
 
@@ -1720,6 +1721,33 @@ already stopped naming `saveMatches` when Gap #51 was closed, and a coverage bui
 and 100% branch coverage. If a bulk import returns to all-or-nothing, it can add the matching batch method with its
 first caller.
 
+#### 54. `ARCHITECTURE.md`'s entity table omits `ShooterLogOverall.matches`, and its relationship sentence is untrue for both many-to-many links — ✅ Closed in v18.0.0
+
+**Evidence:** `ShooterLogOverall` now has a `matches` list, a `@ManyToMany` kept in the `shooter_log_overall_match` join
+table (`V11_13_0__create_shooter_log_overall_match.sql`; `CHANGELOG.md`'s `[Unreleased]` entries), recording the best
+matches each overall was calculated from, and `ShooterLogOverallResponse` returns them as `matchIds`.
+`ARCHITECTURE.md`'s Domain Entities table still lists `ShooterLogOverall` as "Many-to-one → `ShooterLog`,
+`Competitor`", and the sentence below it says "Every relationship's owning (child) side declares a
+`@ManyToOne`/`@JoinColumn`", which was already untrue for `ShooterLog.matches` (a `@ManyToMany` with a `@JoinTable`)
+and now is for two entities. The `IpscShooterLogOverallService` row, and the sentence naming
+`ShooterLogOverallResponse`, describe the results without the matches they were calculated from.
+
+**Why it matters:** The same shape as Gaps #21 and #34: architecture documentation that predates the code it describes.
+A contributor reading the table would not look for a join table behind an overall, and one deleting a match would not
+expect it to be referenced by `shooter_log_overall_match` as well as `shooter_log_match`.
+
+**Proposed improvement:** Add "Many-to-many → `IpscMatch` (through `shooter_log_overall_match`)" to the
+`ShooterLogOverall` row, reword the sentence below the table to cover the two `@ManyToMany`/`@JoinTable` links, and
+say in the `IpscShooterLogOverallService` row and the `ShooterLogOverallResponse` sentence that an overall records the
+matches it was calculated from as `matchIds`.
+
+**Outcome:** Done as proposed. `ARCHITECTURE.md`'s `ShooterLogOverall` row now lists the many-to-many link to
+`IpscMatch` through `shooter_log_overall_match`, the sentence below the table says an owning side declares a
+`@ManyToOne`/`@JoinColumn` except `ShooterLog.matches` and `ShooterLogOverall.matches`, which are `@ManyToMany` links
+kept in the `shooter_log_match` and `shooter_log_overall_match` join tables, the `IpscShooterLogOverallService` row
+says the best matches each overall was calculated from are recorded, and the `ShooterLogOverallResponse` sentence
+says each overall lists its `matchIds`.
+
 ### 🟡 Partially Completed
 
 A gap moves here when it has at least one **Progress** paragraph (per
@@ -1752,35 +1780,15 @@ UI are served only under the `dev` profile, are off by default and in `prod`, an
 the two `springdoc` properties to `true`. Add the same sentence to `CONTRIBUTING.md`'s step that starts the `dev`
 profile.
 
-#### 54. `ARCHITECTURE.md`'s entity table omits `ShooterLogOverall.matches`, and its relationship sentence is untrue for both many-to-many links
-
-**Evidence:** `ShooterLogOverall` now has a `matches` list, a `@ManyToMany` kept in the `shooter_log_overall_match` join
-table (`V11_13_0__create_shooter_log_overall_match.sql`; `CHANGELOG.md`'s `[Unreleased]` entries), recording the best
-matches each overall was calculated from, and `ShooterLogOverallResponse` returns them as `matchIds`.
-`ARCHITECTURE.md`'s Domain Entities table still lists `ShooterLogOverall` as "Many-to-one → `ShooterLog`,
-`Competitor`", and the sentence below it says "Every relationship's owning (child) side declares a
-`@ManyToOne`/`@JoinColumn`", which was already untrue for `ShooterLog.matches` (a `@ManyToMany` with a `@JoinTable`)
-and now is for two entities. The `IpscShooterLogOverallService` row, and the sentence naming
-`ShooterLogOverallResponse`, describe the results without the matches they were calculated from.
-
-**Why it matters:** The same shape as Gaps #21 and #34: architecture documentation that predates the code it describes.
-A contributor reading the table would not look for a join table behind an overall, and one deleting a match would not
-expect it to be referenced by `shooter_log_overall_match` as well as `shooter_log_match`.
-
-**Proposed improvement:** Add "Many-to-many → `IpscMatch` (through `shooter_log_overall_match`)" to the
-`ShooterLogOverall` row, reword the sentence below the table to cover the two `@ManyToMany`/`@JoinTable` links, and
-say in the `IpscShooterLogOverallService` row and the `ShooterLogOverallResponse` sentence that an overall records the
-matches it was calculated from as `matchIds`.
-
 ---
 
 ## 🛤️ Roadmap
 
-| Phase       | Focus                                                                                                                                                                                                                                                                                                                                                      |
-|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | #53 (API docs available only under `dev`) and #54 (`ShooterLogOverall.matches` in `ARCHITECTURE.md`) are open; #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                      |
-| **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                     |
-| **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                  |
+| Phase       | Focus                                                                                                                                                                                                                                                                                                                                                                                                      |
+|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Now**     | #53 (API docs available only under `dev`) is open and #54 closed in v18.0.0; #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                            |
+| **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                                                                     |
+| **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath, and `flyway-mysql` until v16.4.0 (#50, closed); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
 ---
@@ -1906,12 +1914,12 @@ matches it was calculated from as `matchIds`.
   describe each row being saved on its own and a failed row being reported, as the code does, closing Gap #51.
 - ✅ Met in v17.0.0: `TransactionService` declares no batch save that production code never calls: `saveMatches`,
   `saveMatchCompetitors` and `saveShooterResults` are removed with their tests, closing Gap #52.
+- ✅ Met in v18.0.0: `ARCHITECTURE.md`'s Domain Entities table and the sentence below it describe
+  `ShooterLogOverall.matches` and the two `@ManyToMany` links, and the service and response descriptions mention an
+  overall's `matchIds`, closing Gap #54.
 - `README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` say the OpenAPI document and Swagger UI are served
   only under the `dev` profile, as `application.properties` and `application-dev.properties` configure them, closing
   Gap #53.
-- `ARCHITECTURE.md`'s Domain Entities table and the sentence below it describe `ShooterLogOverall.matches` and the
-  two `@ManyToMany` links, and the service and response descriptions mention an overall's `matchIds`, closing Gap
-  #54.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

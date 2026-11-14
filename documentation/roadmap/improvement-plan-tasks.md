@@ -593,6 +593,16 @@ Gap #41)* —
   `TransactionServiceTest` and `TransactionServiceIntegrationTest`, or give each a production caller — removed
 - [x] Correct `ARCHITECTURE.md`'s `TransactionService` description if it still names them
 
+**`ARCHITECTURE.md` entity docs for `ShooterLogOverall.matches`** *(improvement-plan.md → Gap #54)* —
+✅ Closed in v18.0.0
+
+- [x] Add the many-to-many link to `IpscMatch` (through `shooter_log_overall_match`) to the `ShooterLogOverall` row of
+  the Domain Entities table — done
+- [x] Reword the sentence below the table, which says every relationship's owning side declares a `@ManyToOne`, to cover
+  the `@ManyToMany`/`@JoinTable` links of `ShooterLog` and `ShooterLogOverall` — done
+- [x] Say in the `IpscShooterLogOverallService` row and the `ShooterLogOverallResponse` sentence that an overall records
+  the matches it was calculated from as `matchIds` — done
+
 ---
 
 ## 🟡 Partially Completed
@@ -614,15 +624,6 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 - [ ] Say the same in `AGENTS.md`'s Project Overview "API docs" line and `ARCHITECTURE.md`'s tech-stack row
 - [ ] Add a sentence to `CONTRIBUTING.md`'s step that starts the `dev` profile, saying the other profiles do not serve
   them
-
-**`ARCHITECTURE.md` entity docs for `ShooterLogOverall.matches`** *(improvement-plan.md → Gap #54)*
-
-- [ ] Add the many-to-many link to `IpscMatch` (through `shooter_log_overall_match`) to the `ShooterLogOverall` row of
-  the Domain Entities table
-- [ ] Reword the sentence below the table, which says every relationship's owning side declares a `@ManyToOne`, to cover
-  the `@ManyToMany`/`@JoinTable` links of `ShooterLog` and `ShooterLogOverall`
-- [ ] Say in the `IpscShooterLogOverallService` row and the `ShooterLogOverallResponse` sentence that an overall records
-  the matches it was calculated from as `matchIds`
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

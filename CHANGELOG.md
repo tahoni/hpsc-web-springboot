@@ -49,10 +49,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Configuration
 
-- **`springdoc.api-docs.enabled` and `springdoc.swagger-ui.enabled`:** Set to `false` in `application.properties`, so
-  the OpenAPI `/v3/api-docs` endpoint and the Swagger UI are no longer exposed by default, and to `true` in
-  `application-dev.properties`, so they stay available during development; the production profile inherits the
-  default.
+- **Breaking: the OpenAPI document and Swagger UI are off by default:** `springdoc.api-docs.enabled` and
+  `springdoc.swagger-ui.enabled` are set to `false` in `application.properties`, so the OpenAPI `/v3/api-docs` endpoint
+  and the Swagger UI are no longer exposed by default, and to `true` in `application-dev.properties`, so they stay
+  available during development; the production profile inherits the default. A deployment that serves the OpenAPI
+  document, for example to generate a client from it, or the Swagger UI must set both properties to `true`.
 
 ##### Services
 
@@ -68,6 +69,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Documentation
 
+- **`ARCHITECTURE.md`:** The Domain Entities table now lists `ShooterLogOverall`'s many-to-many link to `IpscMatch`
+  through `shooter_log_overall_match`, and the sentence below it says `ShooterLog.matches` and
+  `ShooterLogOverall.matches` are `@ManyToMany` links kept in join tables rather than a `@ManyToOne`. The
+  `IpscShooterLogOverallService` row and the `ShooterLogOverallResponse` description mention the matches an overall was
+  calculated from, as `matchIds`. Closes improvement plan Gap #54.
 - **`improvement-plan.md` and `improvement-plan-tasks.md`:** Record two new open gaps, #53 (the OpenAPI document and
   Swagger UI are off by default and on only in `dev`, but `README.md`, `AGENTS.md` and `ARCHITECTURE.md` present them as
   always available) and #54 (`ARCHITECTURE.md`'s entity table omits `ShooterLogOverall.matches`), and remove a stale
