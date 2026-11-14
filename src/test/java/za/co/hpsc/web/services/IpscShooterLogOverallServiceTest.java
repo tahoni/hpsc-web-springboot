@@ -155,6 +155,190 @@ class IpscShooterLogOverallServiceTest {
     }
 
     @Test
+    void testCalculateShooterLogOverall_whenPercentagesAreEqual_thenRecordsTheMostRecentMatchesFirst()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch first = match(10L, 1);
+        IpscMatch second = match(11L, 2);
+        IpscMatch third = match(12L, 3);
+        IpscMatch fourth = match(13L, 4);
+        IpscMatch fifth = match(14L, 5);
+        ShooterLog shooterLog = shooterLog(1L, first, second, third, fourth, fifth);
+        Competitor competitor = competitor(5L);
+        stubLog(shooterLog, List.of(
+                shooterResult(100L, first, competitor, "80", Division.OPEN),
+                shooterResult(101L, second, competitor, "80", Division.OPEN),
+                shooterResult(102L, third, competitor, "80", Division.OPEN),
+                shooterResult(103L, fourth, competitor, "80", Division.OPEN),
+                shooterResult(104L, fifth, competitor, "80", Division.OPEN)), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        // The oldest match is the one dropped
+        assertEquals(List.of(fifth, fourth, third, second), savedOverallResults().getFirst().getMatches());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenCompetitorHasFewerMatchesThanCount_thenRecordsAllOfThemBestFirst()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch first = match(10L, 1);
+        IpscMatch second = match(11L, 2);
+        ShooterLog shooterLog = shooterLog(1L, first, second);
+        Competitor competitor = competitor(5L);
+        stubLog(shooterLog, List.of(
+                shooterResult(100L, first, competitor, "80", Division.OPEN),
+                shooterResult(101L, second, competitor, "100", Division.OPEN)), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        assertEquals(List.of(second, first), savedOverallResults().getFirst().getMatches());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAResultHasNoPercentage_thenItsMatchIsNotRecorded()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch first = match(10L, 1);
+        IpscMatch second = match(11L, 2);
+        ShooterLog shooterLog = shooterLog(1L, first, second);
+        Competitor competitor = competitor(5L);
+        stubLog(shooterLog, List.of(
+                shooterResult(100L, first, competitor, "90", Division.OPEN),
+                shooterResult(101L, second, competitor, null, Division.OPEN)), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        ShooterLogOverall saved = savedOverallResults().getFirst();
+        assertEquals(List.of(first), saved.getMatches());
+        assertEquals(new BigDecimal("90.00"), saved.getPercentageInLog());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenNoResultHasAPercentage_thenNoMatchesAreRecorded()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor competitor = competitor(5L);
+        stubLog(shooterLog, List.of(shooterResult(100L, match, competitor, null, Division.OPEN)), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        ShooterLogOverall saved = savedOverallResults().getFirst();
+        assertTrue(saved.getMatches().isEmpty());
+        assertNull(saved.getPercentageInLog());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenTwoResultsAreFromTheSameMatch_thenTheMatchIsRecordedOnce()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor competitor = competitor(5L);
+        stubLog(shooterLog, List.of(
+                shooterResult(100L, match, competitor, "90", Division.OPEN),
+                shooterResult(101L, match, competitor, "80", Division.OPEN)), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        assertEquals(List.of(match), savedOverallResults().getFirst().getMatches());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAnExistingOverallHasDifferentMatches_thenReplacesThem()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor competitor = competitor(5L);
+        ShooterResult result = shooterResult(100L, match, competitor, "80", Division.OPEN);
+        result.setDateCalculated(LocalDateTime.of(2026, 10, 1, 10, 0));
+        ShooterLogOverall existing = overall(50L, shooterLog, competitor, LocalDateTime.of(2026, 10, 1, 9, 0));
+        existing.setMatches(new ArrayList<>(List.of(match(99L, 2))));
+        stubLog(shooterLog, List.of(result), List.of(existing));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        ShooterLogOverall saved = savedOverallResults().getFirst();
+        assertSame(existing, saved);
+        assertEquals(List.of(match), saved.getMatches());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAnOverallHasNoRecordedMatches_thenRecalculates()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor competitor = competitor(5L);
+        ShooterResult result = shooterResult(100L, match, competitor, "80", Division.OPEN);
+        ShooterLogOverall existing = overall(50L, shooterLog, competitor, LocalDateTime.of(2026, 10, 1, 9, 0));
+        existing.setMatches(null);
+        stubLog(shooterLog, List.of(result), List.of(existing));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        assertEquals(List.of(match), savedOverallResults().getFirst().getMatches());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAnOverallWasCalculatedFromOtherMatches_thenRecalculates()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor competitor = competitor(5L);
+        ShooterResult result = shooterResult(100L, match, competitor, "80", Division.OPEN);
+        ShooterLogOverall existing = overall(50L, shooterLog, competitor, LocalDateTime.of(2026, 10, 1, 9, 0));
+        existing.setMatches(new ArrayList<>(List.of(match(99L, 2))));
+        stubLog(shooterLog, List.of(result), List.of(existing));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        verify(transactionService).replaceShooterLogOverallResults(any(), any());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAnOverallRecordsTheSameMatchesInAnotherOrder_thenDoesNotRecalculate()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch first = match(10L, 1);
+        IpscMatch second = match(11L, 2);
+        ShooterLog shooterLog = shooterLog(1L, first, second);
+        Competitor competitor = competitor(5L);
+        ShooterLogOverall existing = overall(50L, shooterLog, competitor, LocalDateTime.of(2026, 10, 1, 9, 0));
+        existing.setMatches(new ArrayList<>(List.of(second, first)));
+        stubLog(shooterLog, List.of(
+                shooterResult(100L, first, competitor, "100", Division.OPEN),
+                shooterResult(101L, second, competitor, "80", Division.OPEN)), List.of(existing));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        // The best-first order is first, second; the recorded order is not part of the comparison
+        verify(transactionService, never()).replaceShooterLogOverallResults(any(), any());
+    }
+
+    @Test
     void testCalculateShooterLogOverall_whenCompetitorsAreInTheSameGroup_thenRanksThemByPercentageWithTiesShared()
             throws NonFatalException {
         // Arrange
@@ -584,6 +768,7 @@ class IpscShooterLogOverallServiceTest {
         assertEquals(1L, result.get(0).getShooterLog().getShooterLogId());
         assertEquals(List.of(10L), result.get(0).getShooterLog().getMatchIds());
         assertEquals(1, result.get(0).getShooterLogOverallResults().size());
+        assertEquals(List.of(10L), result.get(0).getShooterLogOverallResults().getFirst().getMatchIds());
         assertEquals(2L, result.get(1).getShooterLog().getShooterLogId());
         assertTrue(result.get(1).getShooterLogOverallResults().isEmpty());
     }
@@ -620,6 +805,7 @@ class IpscShooterLogOverallServiceTest {
         assertEquals(List.of("Jane Doe", "JD Doe"), response.getCompetitorNames());
         assertEquals(3, response.getRankInLog());
         assertEquals("87.50", response.getPercentageInLog());
+        assertEquals(List.of(10L), response.getMatchIds());
     }
 
     // Helpers

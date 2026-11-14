@@ -1,5 +1,7 @@
 package za.co.hpsc.web.services;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -29,6 +31,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,6 +63,9 @@ class IpscShooterLogOverallServiceIntegrationTest {
 
     @Autowired
     private ShooterLogOverallRepository shooterLogOverallRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     // calculateShooterLogOverall()
     @Test
@@ -180,7 +186,87 @@ class IpscShooterLogOverallServiceIntegrationTest {
         assertTrue(holder.getShooterLogOverallResults().isEmpty());
     }
 
+    @Test
+    void testCalculateShooterLogOverall_whenLogHasMoreMatchesThanCount_thenRecordsEachCompetitorsBestMatches()
+            throws NonFatalException {
+        // Arrange
+        ShooterLog shooterLog = createFiveMatchLogWithTwoCompetitors();
+        List<IpscMatch> matches = shooterLog.getMatches();
+        Competitor shooter = competitorRepository.findAll().stream()
+                .filter(competitor -> "HPSC-SLO-101".equals(competitor.getClubNumber())).findFirst().orElseThrow();
+        Competitor rival = competitorRepository.findAll().stream()
+                .filter(competitor -> "HPSC-SLO-102".equals(competitor.getClubNumber())).findFirst().orElseThrow();
+
+        // Act
+        ShooterLogOverallResponseHolder holder =
+                ipscShooterLogOverallService.calculateShooterLogOverall(shooterLog.getId());
+
+        // Assert
+        // The shooter's best four are the first four matches (90, 80, 70 and 60), dropping the 50
+        assertEquals(Set.of(matches.get(0).getId(), matches.get(1).getId(), matches.get(2).getId(),
+                matches.get(3).getId()), Set.copyOf(overallOf(holder, shooter).getMatchIds()));
+        // The rival is on 100 in every match, so the oldest match is the one dropped
+        assertEquals(Set.of(matches.get(1).getId(), matches.get(2).getId(), matches.get(3).getId(),
+                matches.get(4).getId()), Set.copyOf(overallOf(holder, rival).getMatchIds()));
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenCalledAgainAfterMatchesWereRecorded_thenDoesNotDuplicateThem()
+            throws NonFatalException {
+        // Arrange
+        ShooterLog shooterLog = createFiveMatchLogWithTwoCompetitors();
+        ipscShooterLogOverallService.calculateShooterLogOverall(shooterLog.getId());
+
+        // Act
+        ShooterLogOverallResponseHolder holder =
+                ipscShooterLogOverallService.calculateShooterLogOverall(shooterLog.getId());
+
+        // Assert
+        assertEquals(2, holder.getShooterLogOverallResults().size());
+        holder.getShooterLogOverallResults().forEach(overall -> assertEquals(4, overall.getMatchIds().size()));
+        assertEquals(8, countOverallMatchRows(shooterLog));
+        // Fetching the matches joins one row per match, so each overall must still be returned once
+        assertEquals(2, shooterLogOverallRepository.findAllByShooterLogIdWithDetails(shooterLog.getId()).size());
+        assertEquals(2, shooterLogOverallRepository.findAllWithDetails().stream()
+                .filter(overall -> shooterLog.getId().equals(overall.getShooterLog().getId())).count());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAnOverallIsDeleted_thenItsMatchRowsAreRemoved()
+            throws NonFatalException {
+        // Arrange
+        ShooterLog shooterLog = createFiveMatchLogWithTwoCompetitors();
+        ipscShooterLogOverallService.calculateShooterLogOverall(shooterLog.getId());
+        assertEquals(8, countOverallMatchRows(shooterLog));
+
+        // Act
+        shooterLogOverallRepository.deleteAll(shooterLogOverallRepository.findAllByShooterLogId(shooterLog.getId()));
+        shooterLogOverallRepository.flush();
+
+        // Assert
+        assertEquals(0, countOverallMatchRows(shooterLog));
+    }
+
     // getAllShooterLogOverallResults()
+    @Test
+    void testGetAllShooterLogOverallResults_whenOverallsWereCalculated_thenIncludesTheirMatchIds()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = createMatch("Match A", LocalDate.of(2026, 9, 12));
+        ShooterLog shooterLog = createShooterLog(match);
+        createMatchCompetitor(createCompetitor("HPSC-SLO-103"), match, "80");
+        ipscShooterLogOverallService.calculateShooterLogOverall(shooterLog.getId());
+
+        // Act
+        List<ShooterLogOverallResponseHolder> holders = ipscShooterLogOverallService.getAllShooterLogOverallResults();
+
+        // Assert
+        ShooterLogOverallResponseHolder holder = holders.stream()
+                .filter(candidate -> shooterLog.getId().equals(candidate.getShooterLog().getShooterLogId()))
+                .findFirst().orElseThrow();
+        assertEquals(List.of(match.getId()), holder.getShooterLogOverallResults().getFirst().getMatchIds());
+    }
+
     @Test
     void testGetAllShooterLogOverallResults_whenSeveralLogs_thenGroupsThemByLogIncludingOnesWithNoOverallResults()
             throws NonFatalException {
@@ -202,6 +288,22 @@ class IpscShooterLogOverallServiceIntegrationTest {
     }
 
     // getShooterLogOverallResults()
+    @Test
+    void testGetShooterLogOverallResults_whenOverallWasCalculated_thenIncludesItsMatchIds()
+            throws NonFatalException {
+        // Arrange
+        ShooterLog shooterLog = createFiveMatchLogWithTwoCompetitors();
+        ipscShooterLogOverallService.calculateShooterLogOverall(shooterLog.getId());
+
+        // Act
+        ShooterLogOverallResponseHolder holder =
+                ipscShooterLogOverallService.getShooterLogOverallResults(shooterLog.getId());
+
+        // Assert
+        assertEquals(2, holder.getShooterLogOverallResults().size());
+        holder.getShooterLogOverallResults().forEach(overall -> assertEquals(4, overall.getMatchIds().size()));
+    }
+
     @Test
     void testGetShooterLogOverallResults_whenShooterLogDoesNotExist_thenThrowsNonFatalException() {
         // Act & Assert
@@ -232,6 +334,35 @@ class IpscShooterLogOverallServiceIntegrationTest {
     }
 
     // Helpers
+    /**
+     * A log of five matches, a week apart, with two competitors in each: the shooter on 90, 80, 70, 60 and 50 against
+     * a rival on 100 in every match. The first competitor's club number is HPSC-SLO-101 and the rival's is
+     * HPSC-SLO-102.
+     */
+    private ShooterLog createFiveMatchLogWithTwoCompetitors() {
+        List<IpscMatch> matches = new ArrayList<>();
+        for (int index = 0; index < 5; index++) {
+            matches.add(createMatch("Match " + (index + 1), LocalDate.of(2026, 9, 1 + (index * 7))));
+        }
+        ShooterLog shooterLog = createShooterLog(matches.toArray(new IpscMatch[0]));
+        Competitor shooter = createCompetitor("HPSC-SLO-101");
+        Competitor rival = createCompetitor("HPSC-SLO-102");
+        String[] shooterPoints = {"90", "80", "70", "60", "50"};
+        for (int index = 0; index < 5; index++) {
+            createMatchCompetitor(shooter, matches.get(index), shooterPoints[index]);
+            createMatchCompetitor(rival, matches.get(index), "100");
+        }
+        return shooterLog;
+    }
+
+    private long countOverallMatchRows(ShooterLog shooterLog) {
+        return ((Number) entityManager.createNativeQuery("select count(*) from shooter_log_overall_match "
+                        + "where shooter_log_overall_id in "
+                        + "(select id from shooter_log_overall where shooter_log_id = :shooterLogId)")
+                .setParameter("shooterLogId", shooterLog.getId())
+                .getSingleResult()).longValue();
+    }
+
     private Competitor createCompetitor(String clubNumber) {
         Competitor competitor = new Competitor();
         competitor.setFirstName("Jane");
