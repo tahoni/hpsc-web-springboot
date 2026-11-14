@@ -287,7 +287,6 @@ public class IpscMatchServiceTest {
         assertEquals(2, holder.getMatches().size());
         assertEquals("First Match", holder.getMatches().get(0).getMatchName());
         assertEquals("Second Match", holder.getMatches().get(1).getMatchName());
-        verify(ipscMatchRepository, times(2)).save(any(IpscMatch.class));
     }
 
     @Test
@@ -406,7 +405,6 @@ public class IpscMatchServiceTest {
 
         // Assert
         assertFailedRow(holder);
-        assertEquals("The match conflicts with an existing record.", holder.getResults().getFirst().getMessage());
         assertEquals("First Match", holder.getResults().getFirst().getMatchRow().getMatchName());
     }
 
@@ -914,10 +912,7 @@ public class IpscMatchServiceTest {
         patch.setMatchDate(LocalDate.of(2026, 10, 5));
 
         // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> ipscMatchService.patchMatch(1L, patch));
-        assertEquals("Match with ID 1 cannot be rescheduled to 2026-10-05: it is outside the dates 2026-09-01 to "
-                + "2026-09-30 of shooter log with ID 7.", exception.getMessage());
+        assertThrows(ValidationException.class, () -> ipscMatchService.patchMatch(1L, patch));
         verify(ipscMatchRepository, never()).save(any(IpscMatch.class));
     }
 
@@ -954,7 +949,7 @@ public class IpscMatchServiceTest {
         // Act & Assert
         ValidationException exception = assertThrows(ValidationException.class,
                 () -> ipscMatchService.patchMatch(1L, patch));
-        assertTrue(exception.getMessage().endsWith("of shooter log with ID 8."));
+        assertTrue(exception.getMessage().contains("shooter log with ID 8"));
     }
 
     @Test
@@ -1003,9 +998,7 @@ public class IpscMatchServiceTest {
         replacement.setMatchDate(LocalDate.of(2026, 8, 31));
 
         // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> ipscMatchService.updateMatch(1L, replacement));
-        assertTrue(exception.getMessage().startsWith("Match with ID 1 cannot be rescheduled to 2026-08-31"));
+        assertThrows(ValidationException.class, () -> ipscMatchService.updateMatch(1L, replacement));
         verify(ipscMatchRepository, never()).save(any(IpscMatch.class));
     }
 

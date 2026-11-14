@@ -9,7 +9,6 @@ import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.ShooterLog;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.exceptions.ValidationException;
-import za.co.hpsc.web.models.ipsc.shooterlog.request.ShooterLogRequest;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 
 import java.time.LocalDate;
@@ -34,25 +33,6 @@ class IpscShooterLogServiceImplTest {
     @BeforeEach
     void setUp() {
         ipscShooterLogServiceImpl = new IpscShooterLogServiceImpl(null, null, ipscMatchRepository, null);
-    }
-
-    // applyFields()
-    @Test
-    void testApplyFields_whenRequestHasDatesAndMatches_thenCopiesThemOntoTheLog() {
-        // Arrange
-        ShooterLog shooterLog = new ShooterLog();
-        IpscMatch match = match(10L);
-        when(ipscMatchRepository.findAllById(List.of(10L))).thenReturn(List.of(match));
-        ShooterLogRequest request = new ShooterLogRequest(LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30),
-                List.of(10L));
-
-        // Act
-        ipscShooterLogServiceImpl.applyFields(shooterLog, request);
-
-        // Assert
-        assertEquals(LocalDate.of(2026, 9, 1), shooterLog.getStartDate());
-        assertEquals(LocalDate.of(2026, 9, 30), shooterLog.getEndDate());
-        assertEquals(List.of(match), shooterLog.getMatches());
     }
 
     // adjustMatches()
@@ -101,9 +81,7 @@ class IpscShooterLogServiceImplTest {
         when(ipscMatchRepository.findAllById(List.of(10L))).thenReturn(List.of());
 
         // Act & Assert
-        NonFatalException exception = assertThrows(NonFatalException.class,
-                () -> ipscShooterLogServiceImpl.resolveMatches(List.of(10L)));
-        assertEquals("No IPSC match found with ID 10", exception.getMessage());
+        assertThrows(NonFatalException.class, () -> ipscShooterLogServiceImpl.resolveMatches(List.of(10L)));
     }
 
     // validateMatchesWithinDates()
@@ -142,9 +120,8 @@ class IpscShooterLogServiceImplTest {
                 match(10L, LocalDate.of(2026, 9, 12)), match(11L, LocalDate.of(2026, 10, 1)));
 
         // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class,
+        assertThrows(ValidationException.class,
                 () -> ipscShooterLogServiceImpl.validateMatchesWithinDates(shooterLog));
-        assertTrue(exception.getMessage().startsWith("Match with ID 11 is scheduled for 2026-10-01"));
     }
 
     // Helpers

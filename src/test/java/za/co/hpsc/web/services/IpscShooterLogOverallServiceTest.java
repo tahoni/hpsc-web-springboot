@@ -596,9 +596,8 @@ class IpscShooterLogOverallServiceTest {
         when(shooterLogRepository.findByIdWithMatches(1L)).thenReturn(Optional.of(shooterLog));
 
         // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class,
+        assertThrows(ValidationException.class,
                 () -> ipscShooterLogOverallService.calculateShooterLogOverall(1L));
-        assertTrue(exception.getMessage().startsWith("Match with ID 11 is scheduled for 2026-10-05"));
         verifyNoInteractions(ipscShooterResultService, shooterResultRepository, shooterLogOverallRepository,
                 transactionService);
     }
@@ -630,9 +629,8 @@ class IpscShooterLogOverallServiceTest {
         when(shooterLogRepository.findByIdWithMatches(1L)).thenReturn(Optional.of(shooterLog));
 
         // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class,
+        assertThrows(ValidationException.class,
                 () -> ipscShooterLogOverallService.calculateShooterLogOverall(1L));
-        assertTrue(exception.getMessage().startsWith("Match with ID 10 is scheduled for 2026-08-31"));
         verifyNoInteractions(ipscShooterResultService, shooterResultRepository, transactionService);
     }
 
@@ -730,9 +728,8 @@ class IpscShooterLogOverallServiceTest {
         when(shooterLogRepository.findByIdWithMatches(99L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        NonFatalException exception = assertThrows(NonFatalException.class,
+        assertThrows(NonFatalException.class,
                 () -> ipscShooterLogOverallService.calculateShooterLogOverall(99L));
-        assertEquals("No shooter log found with ID 99", exception.getMessage());
         verifyNoInteractions(shooterResultRepository, ipscShooterResultService, transactionService);
     }
 

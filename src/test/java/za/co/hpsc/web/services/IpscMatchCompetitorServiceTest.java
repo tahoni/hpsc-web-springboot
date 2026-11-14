@@ -329,7 +329,7 @@ public class IpscMatchCompetitorServiceTest {
         assertEquals(CompetitorCategory.JUNIOR, response.getCompetitorCategory());
         assertEquals(FirearmType.HANDGUN, response.getFirearmType());
         assertEquals(Division.OPEN, response.getDivision());
-        verify(matchCompetitorRepository, times(1)).save(any(MatchCompetitor.class));
+        verify(matchCompetitorRepository).save(any(MatchCompetitor.class));
     }
 
     @Test
@@ -358,16 +358,16 @@ public class IpscMatchCompetitorServiceTest {
         assertTrue(response0.isSuccess());
         assertFalse(response1.isSuccess());
         assertFalse(response2.isSuccess());
-        assertTrue((response0.getMessage() == null) || (response0.getMessage().isBlank()));
-        assertFalse((response1.getMessage() == null) || (response1.getMessage().isBlank()));
-        assertFalse((response2.getMessage() == null) || (response2.getMessage().isBlank()));
+        assertNoMessage(response0);
+        assertHasMessage(response1);
+        assertHasMessage(response2);
         assertNotNull(response0.getMatchCompetitor());
         assertNull(response1.getMatchCompetitor());
         assertNull(response2.getMatchCompetitor());
         assertNull(response0.getMatchCompetitorRow());
         assertNotNull(response1.getMatchCompetitorRow());
         assertNotNull(response2.getMatchCompetitorRow());
-        verify(matchCompetitorRepository, times(1)).save(any(MatchCompetitor.class));
+        verify(matchCompetitorRepository).save(any(MatchCompetitor.class));
     }
 
     @Test
@@ -396,9 +396,9 @@ public class IpscMatchCompetitorServiceTest {
         assertTrue(matchCompetitorBulkResponse.isSuccess());
         assertNotNull(matchCompetitorBulkResponse.getMatchCompetitor());
         assertNull(matchCompetitorBulkResponse.getMatchCompetitorRow());
-        assertTrue((matchCompetitorBulkResponse.getMessage() == null) || (matchCompetitorBulkResponse.getMessage().isBlank()));
+        assertNoMessage(matchCompetitorBulkResponse);
         assertEquals(ClubIdentifier.SOSC, matchCompetitorBulkResponse.getMatchCompetitor().getMatchClub());
-        verify(matchCompetitorRepository, times(1)).save(any(MatchCompetitor.class));
+        verify(matchCompetitorRepository).save(any(MatchCompetitor.class));
     }
 
     @Test
@@ -418,7 +418,7 @@ public class IpscMatchCompetitorServiceTest {
         assertEquals(1, holder.getMatchCompetitorResults().size());
         MatchCompetitorBulkResponse matchCompetitorBulkResponse = holder.getMatchCompetitorResults().getFirst();
         assertFalse(matchCompetitorBulkResponse.isSuccess());
-        assertFalse((matchCompetitorBulkResponse.getMessage() == null) || (matchCompetitorBulkResponse.getMessage().isBlank()));
+        assertHasMessage(matchCompetitorBulkResponse);
         assertNull(matchCompetitorBulkResponse.getMatchCompetitor());
         assertNotNull(matchCompetitorBulkResponse.getMatchCompetitorRow());
         verify(matchCompetitorRepository, never()).save(any(MatchCompetitor.class));
@@ -442,7 +442,7 @@ public class IpscMatchCompetitorServiceTest {
         assertFalse(matchCompetitorBulkResponse.isSuccess());
         assertNull(matchCompetitorBulkResponse.getMatchCompetitor());
         assertNotNull(matchCompetitorBulkResponse.getMatchCompetitorRow());
-        assertFalse((matchCompetitorBulkResponse.getMessage() == null) || (matchCompetitorBulkResponse.getMessage().isBlank()));
+        assertHasMessage(matchCompetitorBulkResponse);
         verify(matchCompetitorRepository, never()).save(any(MatchCompetitor.class));
     }
 
@@ -470,10 +470,10 @@ public class IpscMatchCompetitorServiceTest {
         assertTrue(matchCompetitorBulkResponse0.isSuccess());
         assertFalse(matchCompetitorBulkResponse1.isSuccess());
         assertFalse(matchCompetitorBulkResponse2.isSuccess());
-        assertTrue((matchCompetitorBulkResponse0.getMessage() == null) || (matchCompetitorBulkResponse0.getMessage().isBlank()));
-        assertFalse((matchCompetitorBulkResponse1.getMessage() == null) || (matchCompetitorBulkResponse1.getMessage().isBlank()));
-        assertFalse((matchCompetitorBulkResponse2.getMessage() == null) || (matchCompetitorBulkResponse2.getMessage().isBlank()));
-        verify(matchCompetitorRepository, times(1)).save(any(MatchCompetitor.class));
+        assertNoMessage(matchCompetitorBulkResponse0);
+        assertHasMessage(matchCompetitorBulkResponse1);
+        assertHasMessage(matchCompetitorBulkResponse2);
+        verify(matchCompetitorRepository).save(any(MatchCompetitor.class));
     }
 
     @Test
@@ -506,7 +506,7 @@ public class IpscMatchCompetitorServiceTest {
         assertTrue(matchCompetitorBulkResponse.isSuccess());
         assertNotNull(matchCompetitorBulkResponse.getMatchCompetitor());
         assertNull(matchCompetitorBulkResponse.getMatchCompetitorRow());
-        assertTrue((matchCompetitorBulkResponse.getMessage() == null) || (matchCompetitorBulkResponse.getMessage().isBlank()));
+        assertNoMessage(matchCompetitorBulkResponse);
         assertEquals(5L, matchCompetitorBulkResponse.getMatchCompetitor().getMatchCompetitorId());
         verify(matchCompetitorRepository, never()).findByIdWithCompetitorAndMatch(any());
     }
@@ -541,7 +541,7 @@ public class IpscMatchCompetitorServiceTest {
         assertFalse(matchCompetitorBulkResponse.isSuccess());
         assertNull(matchCompetitorBulkResponse.getMatchCompetitor());
         assertNotNull(matchCompetitorBulkResponse.getMatchCompetitorRow());
-        assertFalse((matchCompetitorBulkResponse.getMessage() == null) || (matchCompetitorBulkResponse.getMessage().isBlank()));
+        assertHasMessage(matchCompetitorBulkResponse);
         verify(matchCompetitorRepository, never()).save(any());
     }
 
@@ -559,7 +559,7 @@ public class IpscMatchCompetitorServiceTest {
         assertFalse(matchCompetitorBulkResponse.isSuccess());
         assertNull(matchCompetitorBulkResponse.getMatchCompetitor());
         assertNotNull(matchCompetitorBulkResponse.getMatchCompetitorRow());
-        assertFalse((matchCompetitorBulkResponse.getMessage() == null) || (matchCompetitorBulkResponse.getMessage().isBlank()));
+        assertHasMessage(matchCompetitorBulkResponse);
         assertEquals("1", matchCompetitorBulkResponse.getMatchCompetitorRow().getCompetitorId());
         assertEquals("2", matchCompetitorBulkResponse.getMatchCompetitorRow().getMatchId());
         verify(matchCompetitorRepository, never()).save(any());
@@ -582,7 +582,7 @@ public class IpscMatchCompetitorServiceTest {
         assertFalse(matchCompetitorBulkResponse.isSuccess());
         assertNull(matchCompetitorBulkResponse.getMatchCompetitor());
         assertNotNull(matchCompetitorBulkResponse.getMatchCompetitorRow());
-        assertFalse((matchCompetitorBulkResponse.getMessage() == null) || (matchCompetitorBulkResponse.getMessage().isBlank()));
+        assertHasMessage(matchCompetitorBulkResponse);
         assertEquals("1", matchCompetitorBulkResponse.getMatchCompetitorRow().getCompetitorId());
         assertEquals("2", matchCompetitorBulkResponse.getMatchCompetitorRow().getMatchId());
         assertEquals(ClubIdentifier.HPSC.getName(), matchCompetitorBulkResponse.getMatchCompetitorRow().getMatchClub());
@@ -608,7 +608,7 @@ public class IpscMatchCompetitorServiceTest {
         assertFalse(result.isSuccess());
         assertNull(result.getMatchCompetitor());
         assertNotNull(result.getMatchCompetitorRow());
-        assertFalse((result.getMessage() == null) || (result.getMessage().isBlank()));
+        assertHasMessage(result);
         verify(matchCompetitorRepository, never()).save(any());
     }
 
@@ -664,9 +664,9 @@ public class IpscMatchCompetitorServiceTest {
         assertNull(matchCompetitorBulkResponse0.getMatchCompetitorRow());
         assertNull(matchCompetitorBulkResponse1.getMatchCompetitor());
         assertNotNull(matchCompetitorBulkResponse1.getMatchCompetitorRow());
-        assertTrue((matchCompetitorBulkResponse0.getMessage() == null) || (matchCompetitorBulkResponse0.getMessage().isBlank()));
-        assertFalse((matchCompetitorBulkResponse1.getMessage() == null) || (matchCompetitorBulkResponse1.getMessage().isBlank()));
-        verify(matchCompetitorRepository, times(1)).save(any());
+        assertNoMessage(matchCompetitorBulkResponse0);
+        assertHasMessage(matchCompetitorBulkResponse1);
+        verify(matchCompetitorRepository).save(any());
     }
 
     @Test
@@ -697,8 +697,8 @@ public class IpscMatchCompetitorServiceTest {
         assertNotNull(matchCompetitorBulkResponse0.getMatchCompetitorRow());
         assertNotNull(matchCompetitorBulkResponse1.getMatchCompetitor());
         assertNull(matchCompetitorBulkResponse1.getMatchCompetitorRow());
-        assertFalse((matchCompetitorBulkResponse0.getMessage() == null) || (matchCompetitorBulkResponse0.getMessage().isBlank()));
-        assertTrue((matchCompetitorBulkResponse1.getMessage() == null) || (matchCompetitorBulkResponse1.getMessage().isBlank()));
+        assertHasMessage(matchCompetitorBulkResponse0);
+        assertNoMessage(matchCompetitorBulkResponse1);
         assertEquals(5L, matchCompetitorBulkResponse1.getMatchCompetitor().getMatchCompetitorId());
     }
 
@@ -718,7 +718,7 @@ public class IpscMatchCompetitorServiceTest {
         assertFalse(matchCompetitorBulkResponse.isSuccess());
         assertNull(matchCompetitorBulkResponse.getMatchCompetitor());
         assertNotNull(matchCompetitorBulkResponse.getMatchCompetitorRow());
-        assertFalse((matchCompetitorBulkResponse.getMessage() == null) || matchCompetitorBulkResponse.getMessage().isBlank());
+        assertHasMessage(matchCompetitorBulkResponse);
     }
 
     // updateMatchCompetitor()
@@ -1088,8 +1088,7 @@ public class IpscMatchCompetitorServiceTest {
         // Assert
         assertTrue(result.isSuccess());
         assertNotNull(result.getMatchCompetitor());
-        assertEquals("Imported, but competitor with ID 1 is not verified, so this entry is left out of shooter "
-                + "results until the competitor is verified.", result.getMessage());
+        assertTrue(result.getMessage().contains("is not verified"));
     }
 
     @Test
@@ -1125,10 +1124,18 @@ public class IpscMatchCompetitorServiceTest {
 
         // Assert
         assertTrue(result.isSuccess());
-        assertEquals("", result.getMessage());
+        assertNoMessage(result);
     }
 
     // Helpers
+    private static void assertHasMessage(MatchCompetitorBulkResponse response) {
+        assertFalse(response.getMessage() == null || response.getMessage().isBlank());
+    }
+
+    private static void assertNoMessage(MatchCompetitorBulkResponse response) {
+        assertTrue(response.getMessage() == null || response.getMessage().isBlank());
+    }
+
     private void stubCompetitorAndMatch() {
         when(competitorRepository.findById(1L)).thenReturn(Optional.of(competitor(1L)));
         when(ipscMatchRepository.findById(2L)).thenReturn(Optional.of(match(2L)));

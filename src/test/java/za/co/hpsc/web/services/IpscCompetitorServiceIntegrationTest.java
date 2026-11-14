@@ -380,7 +380,7 @@ class IpscCompetitorServiceIntegrationTest {
 
         // Assert
         assertNotEquals(existing.getCompetitorId(), holder.getCompetitors().getFirst().getCompetitorId());
-        assertEquals("", holder.getResults().getFirst().getMessage());
+        assertTrue(holder.getResults().getFirst().isSuccess());
         assertEquals(countBefore + 1, competitorRepository.count());
     }
 
@@ -421,7 +421,7 @@ class IpscCompetitorServiceIntegrationTest {
         assertNotEquals(existing.getCompetitorId(), holder.getCompetitors().get(0).getCompetitorId());
         assertEquals(existing.getCompetitorId(), holder.getCompetitors().get(1).getCompetitorId());
         assertEquals(List.of(1, 2), holder.getResults().stream().map(result -> result.getRowNumber()).toList());
-        assertEquals("", holder.getResults().get(0).getMessage());
+        assertTrue(holder.getResults().get(0).isSuccess());
         assertSame(holder.getCompetitors().get(0), holder.getResults().get(0).getCompetitor());
     }
 
@@ -556,17 +556,18 @@ class IpscCompetitorServiceIntegrationTest {
 
     // getAllCompetitors()
     @Test
-    void testGetAllCompetitors_whenNoCompetitorsExist_thenReturnsEmptyList() {
+    void testGetAllCompetitors_whenCalled_thenReturnsOneResponsePerStoredCompetitor() {
         // Act
         List<CompetitorResponse> competitors = ipscCompetitorService.getAllCompetitors();
 
         // Assert
-        assertTrue(competitors.isEmpty());
+        assertEquals(competitorRepository.count(), competitors.size());
     }
 
     @Test
     void testGetAllCompetitors_whenCompetitorsExist_thenReturnsAll() {
         // Arrange
+        int countBefore = ipscCompetitorService.getAllCompetitors().size();
         CompetitorResponse first = ipscCompetitorService.createCompetitor(validRequest("HPSC-001"));
         CompetitorRequest secondRequest = validRequest("HPSC-002");
         secondRequest.setFirstName("John");
@@ -576,7 +577,7 @@ class IpscCompetitorServiceIntegrationTest {
         List<CompetitorResponse> competitors = ipscCompetitorService.getAllCompetitors();
 
         // Assert
-        assertEquals(2, competitors.size());
+        assertEquals(countBefore + 2, competitors.size());
         assertTrue(competitors.stream().anyMatch(competitor ->
                 competitor.getCompetitorId().equals(first.getCompetitorId())));
         assertTrue(competitors.stream().anyMatch(competitor ->
@@ -899,7 +900,7 @@ class IpscCompetitorServiceIntegrationTest {
         assertEquals(3, holder.getCompetitorResults().size());
         assertTrue(holder.getCompetitorResults().get(0).isSuccess());
         assertFalse(holder.getCompetitorResults().get(1).isSuccess());
-        assertEquals("No competitor found with ID 999999", holder.getCompetitorResults().get(1).getMessage());
+        assertTrue(holder.getCompetitorResults().get(1).getMessage().contains("999999"));
         assertTrue(holder.getCompetitorResults().get(2).isSuccess());
         assertTrue(ipscCompetitorService.getCompetitor(first.getCompetitorId()).getIsVerified());
         assertTrue(ipscCompetitorService.getCompetitor(second.getCompetitorId()).getIsVerified());
@@ -916,7 +917,7 @@ class IpscCompetitorServiceIntegrationTest {
         CompetitorVerifyResponseHolder holder = ipscCompetitorService.verifyCompetitors(request);
 
         // Assert
-        assertEquals("Already verified.", holder.getCompetitorResults().getFirst().getMessage());
+        assertTrue(holder.getCompetitorResults().getFirst().getMessage().contains("Already verified"));
     }
 
     @Test

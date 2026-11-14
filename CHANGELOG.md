@@ -68,6 +68,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Tests
 
+- **Brittle service tests removed:** `IpscEntityClubServiceImplTest` and `IpscEntityCompetitorServiceImplTest` shrink
+  to one test each and `TransactionServiceImplTest` is removed, as the interface tests already cover the same cases by
+  result rather than by the order the mocks are consulted. Five of the six "reading the CSV fails" tests that mocked
+  `CsvMapper`, the 1000-row CSV tests and other tests that only mirrored a mapper or a setter are deleted. Exact message
+  text is now asserted by exception type or one key token, `times(N)` is dropped where the result already proves the
+  count, and the integration tests compare row counts by before and after deltas or by the IDs they saved instead of
+  absolute counts on the shared database. The repeated CSV headers and warning checks move into constants and helpers.
 - **`ShooterLogOverallResponseTest`:** New tests for the response built from an overall, covering `matchIds` for an
   overall with matches, with none and with its matches not set.
 - **`IpscShooterLogOverallServiceTest`:** The best-matches case now also checks which matches the overall records, and

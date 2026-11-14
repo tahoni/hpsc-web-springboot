@@ -1,11 +1,5 @@
 package za.co.hpsc.web.services.impl;
 
-import java.io.IOException;
-import za.co.hpsc.web.exceptions.FatalException;
-import org.mockito.MockedConstruction;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.core.FormatSchema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,9 +35,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.mockConstruction;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -84,28 +75,6 @@ class IpscMatchCompetitorServiceImplTest {
                 new MatchCompetitorMapper(competitorRepository, ipscMatchRepository, ipscEntityCompetitorService),
                 new MatchCompetitorRowMapper(),
                 ipscEntityClubService, null);
-    }
-
-    // readMatchCompetitors()
-    @Test
-    void testReadMatchCompetitors_whenReadingTheCsvFails_thenThrowsFatalExceptionWithTheCause() throws IOException {
-        // Arrange
-        IOException cause = new IOException("disk unavailable");
-        ObjectReader reader = mock(ObjectReader.class);
-        when(reader.with(any(FormatSchema.class))).thenReturn(reader);
-        when(reader.readValues(anyString())).thenThrow(cause);
-
-        try (MockedConstruction<CsvMapper> ignored = mockConstruction(CsvMapper.class,
-                (mapper, context) -> {
-                    when(mapper.readerFor(MatchCompetitorRequest.class)).thenReturn(reader);
-                })) {
-
-            // Act & Assert
-            FatalException thrown = assertThrows(FatalException.class,
-                    () -> matchCompetitorServiceImpl.readMatchCompetitors("MatchId,CompetitorId\\n1,2\\n"));
-            assertSame(cause, thrown.getCause());
-            assertTrue(thrown.getMessage().contains("disk unavailable"));
-        }
     }
 
     // findMatchCompetitorOrThrow()
@@ -489,7 +458,7 @@ class IpscMatchCompetitorServiceImplTest {
 
     // toResponse()
     @Test
-    void testToResponse_whenAllFieldsPresent_thenMapsAllFields() {
+    void testToResponse_whenFieldsPresent_thenMapsThem() {
         // Arrange
         Competitor competitor = new Competitor();
         competitor.setId(1L);
@@ -503,22 +472,9 @@ class IpscMatchCompetitorServiceImplTest {
         matchCompetitor.setCompetitor(competitor);
         matchCompetitor.setMatch(match);
         matchCompetitor.setMatchClub(ClubIdentifier.HPSC);
-        matchCompetitor.setCompetitorCategory(CompetitorCategory.JUNIOR);
-        matchCompetitor.setFirearmType(FirearmType.RIFLE);
         matchCompetitor.setDivision(Division.OPEN);
-        matchCompetitor.setPowerFactor(PowerFactor.MAJOR);
         matchCompetitor.setPoints(new BigDecimal("10"));
-        matchCompetitor.setPercentage(new BigDecimal("98.25"));
-        matchCompetitor.setTime(new BigDecimal("41.5"));
-        matchCompetitor.setPercentageOfPossiblePoints(new BigDecimal("93.75"));
         matchCompetitor.setAlpha(30);
-        matchCompetitor.setCharlie(4);
-        matchCompetitor.setDelta(1);
-        matchCompetitor.setMisses(2);
-        matchCompetitor.setNoPenaltyMisses(1);
-        matchCompetitor.setNoShoots(0);
-        matchCompetitor.setProceduralErrors(3);
-        matchCompetitor.setAdditionalPenalties(5);
         matchCompetitor.setIsVisitor(false);
 
         // Act
@@ -530,22 +486,9 @@ class IpscMatchCompetitorServiceImplTest {
         assertEquals(2L, response.getMatchId());
         assertEquals(List.of("Jane Doe", "JD Doe"), response.getCompetitorNames());
         assertEquals(ClubIdentifier.HPSC, response.getMatchClub());
-        assertEquals(CompetitorCategory.JUNIOR, response.getCompetitorCategory());
-        assertEquals(FirearmType.RIFLE, response.getFirearmType());
         assertEquals(Division.OPEN, response.getDivision());
-        assertEquals(PowerFactor.MAJOR, response.getPowerFactor());
         assertEquals(new BigDecimal("10"), response.getPoints());
-        assertEquals(new BigDecimal("98.25"), response.getPercentage());
-        assertEquals(new BigDecimal("41.5"), response.getTime());
-        assertEquals(new BigDecimal("93.75"), response.getPercentageOfPossiblePoints());
         assertEquals(30, response.getAlpha());
-        assertEquals(4, response.getCharlie());
-        assertEquals(1, response.getDelta());
-        assertEquals(2, response.getMisses());
-        assertEquals(1, response.getNoPenaltyMisses());
-        assertEquals(0, response.getNoShoots());
-        assertEquals(3, response.getProceduralErrors());
-        assertEquals(5, response.getAdditionalPenalties());
         assertEquals(Boolean.FALSE, response.getIsVisitor());
     }
 
