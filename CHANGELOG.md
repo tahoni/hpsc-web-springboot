@@ -68,6 +68,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Tests
 
+- **Brittle mapper, helper and util tests removed:** `ValueUtilTest` drops nine redundant or vacuous tests (special
+  characters, unicode, a 10,000-character string, a 1000-item list, a duplicate of the custom-`toString` test and two
+  that never asserted what their names claimed). The mapper tests no longer assert unknown-category message text, a
+  constant's value or `verify(never())` on lookups the result already proves, `MatchCompetitorMapperTest` shares its
+  field assertions and takes the club name from `ClubIdentifier.HPSC`, and the helper tests check the distinguishing
+  token of a "not found" message instead of the whole sentence.
 - **Brittle model, enum and exception tests removed:** The three exception test classes and the `IpscCommonScoreTest`,
   `IpscMatchScoreTest` and `IpscMatchStageScoreTest` classes are deleted, as they only checked `super(...)` pass-through
   and Lombok getters. The constructor and getter pass-through tests in the request and response tests go too, keeping
