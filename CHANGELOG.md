@@ -135,11 +135,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`IpscShooterLogOverallServiceTest`:** The best-matches case now also checks which matches the overall records, and
   the existing overall fixtures carry their matches. New cases cover equal percentages, fewer matches than the limit,
   results without a percentage, a match shared by two results, replacing an existing overall's matches, and an overall
-  being recalculated when its matches are missing or differ but not when only their order does. The read cases now
-  check `matchIds`.
+  being recalculated when its matches are missing or differ but not when only their order does, and a case with matches
+  whose club cannot be loaded. The read cases now check `matchIds`.
 - **`IpscShooterLogOverallServiceIntegrationTest`:** New cases record each competitor's best matches in the
   `shooter_log_overall_match` table, check that recalculating does not duplicate them or the overalls the queries
-  return, that deleting an overall removes its match rows, and that both read endpoints return `matchIds`.
+  return, that deleting an overall removes its match rows, and that both read endpoints return `matchIds`. A further
+  case runs the calculation and reads the results without a surrounding transaction, which is what exposed the
+  `LazyInitializationException` fixed under Domain above.
 - **`IpscShooterLogOverallControllerTest`:** New cases check that the create, get-all and get endpoints return each
   overall's `matchIds`, including an empty list, and that `matchIds` serialises to a JSON array of identifiers.
 - **`ShooterLogOverallRepositoryIntegrationTest`:** New cases check that `findAllByShooterLogIdWithDetails` and
