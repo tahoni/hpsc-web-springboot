@@ -21,6 +21,35 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 18.0.0 (November 14, 2026)
+
+**Theme:** Recording the Matches Behind a Shooter Log Overall
+
+**Key Focus:**
+
+- `ShooterLogOverall.matches` records the matches an overall was calculated from, being the competitor's best
+  `SHOOTER_LOG_BEST_MATCHES` results by percentage, in the new `shooter_log_overall_match` table (`V11_13_0`), and
+  `ShooterLogOverallResponse.matchIds` returns them
+- `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` picks those results once and averages the same ones,
+  takes equal percentages from the most recent match first, and treats an overall calculated before its matches were
+  recorded, or from other matches, as out of date; `ShooterLogOverallRepository` fetches the matches with each overall
+- The lazy associations of `Competitor`, `IpscMatch`, `MatchCompetitor`, `ShooterLog`, `ShooterLogOverall` and
+  `ShooterResult` are left out of the generated `equals`, `hashCode` and `toString`, after Hibernate's comparison of an
+  overall's matches on commit read a match's lazy club and failed with a `LazyInitializationException`
+- The OpenAPI document and Swagger UI are off by default and on only under the `dev` profile, flagged **Breaking** in
+  `CHANGELOG.md`; `README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` say so
+- Brittle tests are removed or loosened across the suite: mirrors of the implementation, duplicates of another layer's
+  test, exact message text, over-specified `verify` calls and absolute row counts on the shared database
+- `@since` tags are added to the four mapper classes and 74 public and package-private methods and constructors, each
+  with the release that first contained it
+- `ARCHITECTURE.md` lists `ShooterLogOverall`'s link to `IpscMatch`, and `AGENTS.md` and `ARCHITECTURE.md` describe the
+  service test tiers and test tree as they are
+- Scoped as `v18.0.0` **MAJOR**: the OpenAPI document and Swagger UI no longer being served by default breaks a
+  deployment that relied on them, flagged **Breaking** in `CHANGELOG.md`
+- Improvement plan: Gaps #53, #54 and #55 are added and closed, leaving all 55 gaps closed and none open
+- The suite stands at 1,489 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
+- Project version bumped to 18.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 17.0.0 (November 12, 2026)
 
 **Theme:** Reporting Failed Rows in the Competitor and Match Imports
@@ -105,6 +134,16 @@ Milestones 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
 - A match import answers with a result for every row, and every bulk row now carries its `rowNumber`
 - `MatchResponse.warnings` is renamed `messages`, and `TransactionService`'s three unused batch saves are removed
 - Improvement plan Gaps #51 and #52 are added and closed, so every tracked gap stays closed
+
+### Milestone 62: Recording the Matches Behind a Shooter Log Overall (v18.0.0)
+
+- A shooter log overall records the matches it was calculated from, in a new join table, and returns their identifiers
+  as `matchIds`
+- The entities' lazy associations no longer take part in `equals`, `hashCode` or `toString`, so calculating overalls
+  works once the session has closed
+- The OpenAPI document and Swagger UI are off by default, flagged **Breaking**
+- Brittle tests are removed or loosened, and `@since` tags are added to the mappers and public methods
+- Improvement plan Gaps #53, #54 and #55 are added and closed, so every tracked gap stays closed
 
 ---
 
@@ -400,6 +439,11 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   Because that changes what the match import answers, what a bad row does to the request and the name of a response
   field, v17.0.0 is the project's ninth consecutive major version, with each breaking change flagged in `CHANGELOG.md`
   as it landed.
+- **Version 18.x (v18.0.0):** Make a shooter log overall say which matches it was calculated from — each competitor's
+  best matches in the log — and keep that reliable once the persistence session has closed, while taking the OpenAPI
+  document and Swagger UI off by default so a deployment serves them only on purpose. Because that changes what a
+  running deployment serves, v18.0.0 is the project's tenth consecutive major version, with the breaking change flagged
+  in `CHANGELOG.md` as it landed.
 
 ### Initial Phase (v1.0.0)
 
@@ -688,7 +732,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 20. **Tighten a Type Where Bad Data Can Still Be Refused (v11.0.0):** Changing a column's type is safe only if the
     data can be converted, and a migration that cannot convert it should stop rather than guess
     - `V11_1_0` turns `competitor_number` into an `INT` and is refused when a stored number is non-numeric, so an old
-      value that was never a number surfaces at migration time instead of being lost
+      value that was never a number, surfaces at migration time instead of being lost
     - Keeping `competitorNumber` a string in the requests while holding a number in the entity left the JSON and CSV
       contract readable by existing clients, and put the whole-number rule in one place
     - A lookup that depends on the number being comparable (`findCompetitor`) was only worth building once the number
@@ -698,7 +742,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v17.0.0, the following areas are identified for future enhancement:
+Based on the evolution to v18.0.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -712,7 +756,21 @@ The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, i
 The completed-work logs for versions 14.0.0 to 16.4.1 are archived, unchanged, in
 [`documentation/archive/v14-v16/HISTORY_v14-v16.md`](/documentation/archive/v14-v16/HISTORY_v14-v16.md).
 
-### Recently Completed (v17.0.0)
+### Recently Completed (v18.0.0)
+
+- `ShooterLogOverall.matches` records the matches an overall was calculated from in the new `shooter_log_overall_match`
+  table (`V11_13_0`), and `ShooterLogOverallResponse.matchIds` returns them
+- `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` picks each competitor's best matches once, averages the
+  same results and recalculates an overall whose matches are missing or differ
+- The lazy associations of six entities are left out of `equals`, `hashCode` and `toString`, fixing a
+  `LazyInitializationException` when calculating overalls outside a session
+- The OpenAPI document and Swagger UI are off by default and on only under `dev`, and the docs say so
+- Brittle tests are removed or loosened, and `@since` tags are added to the mappers and 74 public methods
+- `ARCHITECTURE.md` and `AGENTS.md` describe the entity links, service test tiers and test tree as they are
+- Improvement plan: Gaps #53, #54 and #55 are added and closed, leaving all 55 gaps closed and none open
+- Project version bumped to 18.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v17.0.0)
 
 - `IpscCompetitorServiceImpl.createCompetitors` and `IpscMatchServiceImpl.createMatches` save each row in its own
   transaction and report a failed row, with `CompetitorBulkResponse` and the new `MatchBulkResponse` carrying its

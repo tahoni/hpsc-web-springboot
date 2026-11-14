@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 17.0.0](#-1700---2026-11-12) ← Current
+- [🧾 Version 18.0.0](#-1800---2026-11-14) ← Current
+- [🧾 Version 17.0.0](#-1700---2026-11-12)
 - [🗄️ Archived Versions 14.0.0 – 16.4.1](/documentation/archive/v14-v16/CHANGELOG_v14-v16.md)
 - [🗄️ Archived Versions 10.0.0 – 13.3.0](/documentation/archive/v10-v13/CHANGELOG_v10-v13.md)
 - [🗄️ Archived Versions 8.0.0 – 9.1.0](/documentation/archive/v8-v9/CHANGELOG_v8-v9.md)
@@ -26,6 +27,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [18.0.0] - 2026-11-14
 
 #### ➕ Added
 
@@ -103,7 +108,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ##### Tests
 
 - **Brittle mapper, helper and util tests removed:** `ValueUtilTest` drops nine redundant or vacuous tests (special
-  characters, unicode, a 10,000-character string, a 1000-item list, a duplicate of the custom-`toString` test and two
+  characters, Unicode, a 10,000-character string, a 1000-item list, a duplicate of the custom-`toString` test and two
   that never asserted what their names claimed). The mapper tests no longer assert unknown-category message text, a
   constant's value or `verify(never())` on lookups the result already proves, `MatchCompetitorMapperTest` shares its
   field assertions and takes the club name from `ClubIdentifier.HPSC`, and the helper tests check the distinguishing
@@ -208,7 +213,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Documentation
 
-- **`ARCHITECTURE.md`:** The competitor and match bulk CSV import flows, and the sentences around them, now say each row
+- **`ARCHITECTURE.md`:** The competitor and match bulk CSV import flows, and the surrounding sentences, now say each row
   is saved in its own transaction and a failed row is reported and skipped, instead of all rows being saved in one
   transaction so that a bad row leaves none persisted. The flows end in `CompetitorBulkResponseHolder` and
   `MatchBulkResponseHolder`, each with a result per row. Closes improvement plan Gap #51.
@@ -347,5 +352,6 @@ For issues, feature requests or questions:
 
 **Last Updated:** 2026-08-25
 
-[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v17.0.0...HEAD
+[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v18.0.0...HEAD
+[18.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v17.0.0...v18.0.0
 [17.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.4.1...v17.0.0
