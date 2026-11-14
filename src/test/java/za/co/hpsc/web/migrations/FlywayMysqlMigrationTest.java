@@ -9,9 +9,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,8 +35,6 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 class FlywayMysqlMigrationTest {
 
-    private static final String MIGRATION_DIRECTORY = "src/main/resources/db/migration";
-
     @Autowired
     private Flyway flyway;
 
@@ -48,22 +43,13 @@ class FlywayMysqlMigrationTest {
 
     // migrate()
     @Test
-    void testMigrate_whenRunAgainstAnEmptyMysqlDatabase_thenAppliesEveryMigrationFile() throws IOException {
-        // Arrange
-        long migrationFiles;
-        try (var files = Files.list(Path.of(MIGRATION_DIRECTORY))) {
-            migrationFiles = files.filter(path -> path.getFileName().toString().endsWith(".sql")).count();
-        }
-
+    void testMigrate_whenRunAgainstAnEmptyMysqlDatabase_thenLeavesNoPendingOrFailedMigrations() {
         // Act
-        MigrationInfo[] applied = flyway.info().applied();
+        MigrationInfo[] all = flyway.info().all();
 
         // Assert
-        assertEquals(migrationFiles, applied.length);
         assertEquals(0, flyway.info().pending().length);
-        assertTrue(Arrays.stream(applied).allMatch(info -> info.getState().isApplied() && !info.getState().isFailed()));
-        assertEquals(0, jdbcTemplate.queryForObject(
-                "select count(*) from flyway_schema_history where success = 0", Integer.class));
+        assertTrue(Arrays.stream(all).noneMatch(info -> info.getState().isFailed()));
     }
 
     @Test

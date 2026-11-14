@@ -77,3 +77,56 @@ Phases 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
 - The suite stands at 1,601 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with new tests for the row classes,
   the `messages` JSON, failed rows, row numbers, a repeated club number, data integrity conflicts and CSV read failures,
   taking line coverage to 99.2% and branch coverage to 100%
+
+---
+
+### Phase 62: Recording the Matches Behind a Shooter Log Overall (v18.0.0)
+
+**Database & Domain**
+
+- `V11_13_0__create_shooter_log_overall_match.sql` creates the `shooter_log_overall_match` join table, with foreign keys
+  to `shooter_log_overall` and `ipsc_match` and an index on `match_id`
+- `ShooterLogOverall.matches` keeps the matches an overall was calculated from, being the competitor's best
+  `SHOOTER_LOG_BEST_MATCHES` results in the shooter log
+- The lazy associations of `Competitor`, `IpscMatch`, `MatchCompetitor`, `ShooterLog`, `ShooterLogOverall` and
+  `ShooterResult` are left out of the generated `equals`, `hashCode` and `toString`: Hibernate compares the matches of
+  an overall on commit, which read a match's lazy club and failed with a `LazyInitializationException` outside a session
+
+**Controllers & Services**
+
+- `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` picks each competitor's best results once, averages
+  those same results, records their matches, takes equal percentages from the most recent match first and recalculates
+  an overall calculated before its matches were recorded or from other matches
+- `ShooterLogOverallRepository.findAllByShooterLogIdWithDetails` and `findAllWithDetails` fetch each overall's matches
+
+**Models**
+
+- `ShooterLogOverallResponse.matchIds` lists the identifiers of the matches an overall was calculated from
+
+**Configuration**
+
+- `springdoc.api-docs.enabled` and `springdoc.swagger-ui.enabled` are `false` in `application.properties` and `true` in
+  `application-dev.properties`, so the OpenAPI document and Swagger UI are served only under `dev`, flagged **Breaking**
+
+**Documentation**
+
+- `README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` say the OpenAPI document and Swagger UI are served
+  only under `dev`; `ARCHITECTURE.md` lists `ShooterLogOverall`'s link to `IpscMatch` and drops the removed
+  `exceptions/` test directory, and `AGENTS.md` describes the service test tiers as they are
+- `@since` tags are added to the four mapper classes and 74 public and package-private methods and constructors
+
+**Build & Metadata**
+
+- Improvement plan: Gaps #53, #54 and #55 are added and closed, leaving all 55 gaps closed and none open
+- Project version bumped to 18.0.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Making an overall say which matches it was calculated from, making the calculation safe once the session has closed,
+  and scoping the release as a MAJOR for taking the OpenAPI document and Swagger UI off by default
+
+**Test Coverage:**
+
+- The suite stands at 1,495 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with line coverage at 98.6% and
+  branch coverage at 99.9%; brittle tests are removed or loosened, and new cases cover the recorded matches, the fetch
+  joins and the calculation without a surrounding transaction

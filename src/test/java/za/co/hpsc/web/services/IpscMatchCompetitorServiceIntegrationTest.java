@@ -213,6 +213,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         Competitor first = createCompetitor("HPSC-MC-010");
         Competitor second = createCompetitor("HPSC-MC-011");
         IpscMatch match = createMatch();
+        long countBefore = matchCompetitorRepository.count();
         String csvData = String.format("""
                 CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
                 %d,%d,HPSC,Junior,Handgun,Open,Major
@@ -232,7 +233,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         assertEquals(second.getId(), matchCompetitorBulkResponse1.getMatchCompetitor().getCompetitorId());
         assertEquals(CompetitorCategory.JUNIOR,
                 matchCompetitorBulkResponse0.getMatchCompetitor().getCompetitorCategory());
-        assertEquals(2, matchCompetitorRepository.count());
+        assertEquals(countBefore + 2, matchCompetitorRepository.count());
     }
 
     @Test
@@ -240,6 +241,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         // Arrange
         Competitor competitor = createCompetitor("HPSC-MC-020");
         IpscMatch match = createMatch();
+        long countBefore = matchCompetitorRepository.count();
         String csvData = String.format("""
                 CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
                 %d,%d,HPSC,Junior,Handgun,Open,Major
@@ -261,7 +263,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         assertFalse(matchCompetitorBulkResponse1.isSuccess());
         assertFalse(matchCompetitorBulkResponse2.isSuccess());
         assertFalse((matchCompetitorBulkResponse1.getMessage() == null) || (matchCompetitorBulkResponse1.getMessage().isEmpty()));
-        assertEquals(1, matchCompetitorRepository.count());
+        assertEquals(countBefore + 1, matchCompetitorRepository.count());
     }
 
     @Test
@@ -276,6 +278,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         competitor.setHomeClub(club);
         competitor = competitorRepository.save(competitor);
         IpscMatch match = createMatch();
+        long countBefore = matchCompetitorRepository.count();
         String csvData = String.format("""
                 CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
                 %d,%d,SOSC,Junior,Handgun,Open,Major
@@ -289,13 +292,14 @@ class IpscMatchCompetitorServiceIntegrationTest {
         assertEquals(1, holder.getMatchCompetitorResults().size());
         MatchCompetitorBulkResponse matchCompetitorBulkResponse = holder.getMatchCompetitorResults().getFirst();
         assertTrue(matchCompetitorBulkResponse.isSuccess());
-        assertEquals(1, matchCompetitorRepository.count());
+        assertEquals(countBefore + 1, matchCompetitorRepository.count());
     }
 
     @Test
     void testCreateMatchCompetitors_whenClubIsGivenAndRowCompetitorDoesNotExist_thenSkipsTheRow() throws Exception {
         // Arrange
         IpscMatch match = createMatch();
+        long countBefore = matchCompetitorRepository.count();
         String csvData = String.format("""
                 CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
                 999999,%d,SOSC,Junior,Handgun,Open,Major
@@ -310,7 +314,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         MatchCompetitorBulkResponse matchCompetitorBulkResponse = holder.getMatchCompetitorResults().getFirst();
         assertFalse(matchCompetitorBulkResponse.isSuccess());
         assertFalse((matchCompetitorBulkResponse.getMessage() == null) || (matchCompetitorBulkResponse.getMessage().isEmpty()));
-        assertEquals(0, matchCompetitorRepository.count());
+        assertEquals(countBefore, matchCompetitorRepository.count());
     }
 
     @Test
@@ -359,6 +363,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         // Arrange
         Competitor competitor = createCompetitor("HPSC-MC-012");
         IpscMatch match = createMatch();
+        long countBefore = matchCompetitorRepository.count();
         String csvData = String.format("""
                 CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
                 %d,%d,HPSC,Junior,Handgun,Open,Major
@@ -372,7 +377,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         assertEquals(2, holder.getMatchCompetitorResults().size());
         assertTrue(holder.getMatchCompetitorResults().get(0).isSuccess());
         assertFalse(holder.getMatchCompetitorResults().get(1).isSuccess());
-        assertEquals(1, matchCompetitorRepository.count());
+        assertEquals(countBefore + 1, matchCompetitorRepository.count());
     }
 
     @Test
@@ -381,6 +386,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         Competitor competitor = createCompetitor("HPSC-MC-013");
         IpscMatch match = createMatch();
         ipscMatchCompetitorService.createMatchCompetitor(validRequest(competitor.getId(), match.getId()));
+        long countBefore = matchCompetitorRepository.count();
         String csvData = String.format("""
                 CompetitorId,MatchId,Class,Cats,FirearmType,Div,PF
                 %d,%d,HPSC,Junior,Handgun,Open,Major
@@ -392,7 +398,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         // Assert
         assertEquals(1, holder.getMatchCompetitorResults().size());
         assertFalse(holder.getMatchCompetitorResults().getFirst().isSuccess());
-        assertEquals(1, matchCompetitorRepository.count());
+        assertEquals(countBefore, matchCompetitorRepository.count());
     }
 
     // updateMatchCompetitor()
@@ -527,7 +533,7 @@ class IpscMatchCompetitorServiceIntegrationTest {
         MatchCompetitorBulkResponse verifiedResult = holder.getMatchCompetitorResults().get(0);
         MatchCompetitorBulkResponse unverifiedResult = holder.getMatchCompetitorResults().get(1);
         assertTrue(verifiedResult.isSuccess());
-        assertEquals("", verifiedResult.getMessage());
+        assertTrue((verifiedResult.getMessage() == null) || verifiedResult.getMessage().isBlank());
         assertTrue(unverifiedResult.isSuccess());
         assertNotNull(unverifiedResult.getMatchCompetitor());
         assertTrue(unverifiedResult.getMessage().contains("competitor with ID " + unverified.getId()

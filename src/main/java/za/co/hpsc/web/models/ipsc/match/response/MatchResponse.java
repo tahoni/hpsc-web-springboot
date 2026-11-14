@@ -67,6 +67,7 @@ public class MatchResponse {
      * @param match the match to convert.
      *              Must not be null and must have a scheduled date.
      *              The lazily loaded club is read here, so call this while the persistence session is still open.
+     * @since 13.0.0
      */
     public MatchResponse(@NonNull IpscMatch match) {
         this.matchId = match.getId();

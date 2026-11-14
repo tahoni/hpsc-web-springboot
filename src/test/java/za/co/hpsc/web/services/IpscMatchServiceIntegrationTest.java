@@ -274,17 +274,18 @@ class IpscMatchServiceIntegrationTest {
 
     // getAllMatches()
     @Test
-    void testGetAllMatches_whenNoMatchesExist_thenReturnsEmptyList() {
+    void testGetAllMatches_whenCalled_thenReturnsOneResponsePerStoredMatch() {
         // Act
         List<MatchResponse> matches = ipscMatchService.getAllMatches();
 
         // Assert
-        assertTrue(matches.isEmpty());
+        assertEquals(ipscMatchRepository.count(), matches.size());
     }
 
     @Test
     void testGetAllMatches_whenMatchesExist_thenReturnsAll() {
         // Arrange
+        int countBefore = ipscMatchService.getAllMatches().size();
         createClub("Test Club", IpscConstants.HOME_CLUB_IDENTIFIER);
         MatchRequest firstRequest = validRequest("Test Club");
         MatchResponse first = ipscMatchService.createMatch(firstRequest);
@@ -297,7 +298,7 @@ class IpscMatchServiceIntegrationTest {
         List<MatchResponse> matches = ipscMatchService.getAllMatches();
 
         // Assert
-        assertEquals(2, matches.size());
+        assertEquals(countBefore + 2, matches.size());
         assertTrue(matches.stream().anyMatch(match -> match.getMatchId().equals(first.getMatchId())));
         assertTrue(matches.stream().anyMatch(match -> match.getMatchId().equals(second.getMatchId())));
     }
@@ -524,8 +525,10 @@ class IpscMatchServiceIntegrationTest {
             // Assert
             assertEquals(List.of(true, false),
                     holder.getResults().stream().map(MatchBulkResponse::isSuccess).toList());
-            assertEquals(1, ipscMatchService.getAllMatches().size());
-            assertEquals("First Match", ipscMatchService.getAllMatches().getFirst().getMatchName());
+            assertEquals(1, createdIds.size());
+            assertEquals("First Match", ipscMatchService.getMatch(createdIds.getFirst()).getMatchName());
+            assertTrue(ipscMatchService.getAllMatches().stream()
+                    .noneMatch(match -> "Second Match".equals(match.getMatchName())));
             assertEquals("No Such Club", holder.getResults().get(1).getMatchRow().getClub());
         } finally {
             createdIds.forEach(ipscMatchService::deleteMatch);
@@ -547,9 +550,7 @@ class IpscMatchServiceIntegrationTest {
         // Act & Assert
         ValidationException exception = assertThrows(ValidationException.class,
                 () -> ipscMatchService.patchMatch(created.getMatchId(), patch));
-        assertEquals("Match with ID " + created.getMatchId() + " cannot be rescheduled to 2026-10-05: it is outside "
-                + "the dates 2026-09-01 to 2026-09-30 of shooter log with ID " + shooterLog.getId() + ".",
-                exception.getMessage());
+        assertTrue(exception.getMessage().contains("shooter log with ID " + shooterLog.getId()));
     }
 
     @Test

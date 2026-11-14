@@ -73,6 +73,7 @@ public abstract class AwardRequestForCSV {
      * @param title          the title of the award. Must not be null or blank.
      * @param ceremonyTitle  the title of the award ceremony. Must not be null or blank.
      * @param firstPlaceName the name of the first-place winner. Must not be null or blank.
+     * @since 1.1.0
      */
     @JsonCreator
     public AwardRequestForCSV(@JsonProperty(value = "title", required = true) String title,

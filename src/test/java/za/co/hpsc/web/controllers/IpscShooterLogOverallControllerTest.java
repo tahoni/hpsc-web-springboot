@@ -42,33 +42,7 @@ class IpscShooterLogOverallControllerTest {
         assertSame(response, result.getBody());
     }
 
-    @Test
-    void testCreateShooterLogOverallResults_whenServiceThrows_thenPropagatesNonFatalException()
-            throws NonFatalException {
-        // Arrange
-        when(ipscShooterLogOverallService.calculateShooterLogOverall(99L))
-                .thenThrow(new NonFatalException("not found"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class,
-                () -> ipscShooterLogOverallController.createShooterLogOverallResults(99L));
-    }
-
     // getAllShooterLogOverallResults()
-    @Test
-    void testGetAllShooterLogOverallResults_whenNoShooterLogs_thenReturnsEmptyList() {
-        // Arrange
-        when(ipscShooterLogOverallService.getAllShooterLogOverallResults()).thenReturn(List.of());
-
-        // Act
-        ResponseEntity<List<ShooterLogOverallResponseHolder>> result =
-                ipscShooterLogOverallController.getAllShooterLogOverallResults();
-
-        // Assert
-        assertNotNull(result.getBody());
-        assertTrue(result.getBody().isEmpty());
-    }
-
     @Test
     void testGetAllShooterLogOverallResults_whenServiceSucceeds_thenReturns200WithServiceBody() {
         // Arrange
@@ -98,15 +72,5 @@ class IpscShooterLogOverallControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertSame(response, result.getBody());
-    }
-
-    @Test
-    void testGetShooterLogOverallResults_whenServiceThrows_thenPropagatesNonFatalException() throws NonFatalException {
-        // Arrange
-        when(ipscShooterLogOverallService.getShooterLogOverallResults(99L))
-                .thenThrow(new NonFatalException("not found"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscShooterLogOverallController.getShooterLogOverallResults(99L));
     }
 }

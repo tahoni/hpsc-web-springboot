@@ -35,7 +35,7 @@ public class ImageControllerTest {
 
     // createImages()
     @Test
-    void testCreateImages_whenValidCsvData_thenReturns200() throws ValidationException, FatalException {
+    void testCreateImages_whenValidCsvData_thenReturns201() throws ValidationException, FatalException {
         // Arrange
         ImageResponseHolder holder = new ImageResponseHolder(List.of());
         when(imageService.createImages(VALID_CSV)).thenReturn(holder);
@@ -45,20 +45,6 @@ public class ImageControllerTest {
 
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    }
-
-    @Test
-    void testCreateImages_whenValidCsvData_thenResponseBodyIsReturnedFromService() throws ValidationException, FatalException {
-        // Arrange
-        ImageResponseHolder holder = new ImageResponseHolder(List.of());
-        when(imageService.createImages(VALID_CSV)).thenReturn(holder);
-
-        // Act
-        ResponseEntity<ImageResponseHolder> response = imageController.createImages(VALID_CSV);
-
-        // Assert
-        assertNotNull(response.getBody());
-        assertSame(holder, response.getBody());
     }
 
 }

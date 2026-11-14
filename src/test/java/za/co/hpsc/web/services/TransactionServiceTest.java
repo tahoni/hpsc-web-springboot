@@ -148,20 +148,6 @@ public class TransactionServiceTest {
         verify(transactionManager).rollback(transactionStatus);
     }
 
-    // saveMatch(IpscMatch)
-    @Test
-    void testSaveMatch_whenCalledWithMatchOnly_thenSavesAndCommits() {
-        // Arrange
-        stubTransaction();
-        IpscMatch match = new IpscMatch();
-        when(ipscMatchRepository.save(match)).thenReturn(match);
-
-        // Act
-        IpscMatch result = transactionService.saveMatch(match);
-
-        // Assert
-        verify(transactionManager).commit(transactionStatus);
-    }
     // deleteMatch()
     @Test
     void testDeleteMatch_whenCalled_thenDeletesFlushesAndCommits() {

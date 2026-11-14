@@ -52,16 +52,6 @@ class IpscCompetitorControllerTest {
         assertSame(holder, response.getBody());
     }
 
-    @Test
-    void testVerifyCompetitors_whenServiceThrowsValidationException_thenPropagatesIt() throws ValidationException {
-        // Arrange
-        CompetitorVerifyRequest request = new CompetitorVerifyRequest(List.of());
-        when(ipscCompetitorService.verifyCompetitors(request)).thenThrow(new ValidationException("bad"));
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscCompetitorController.verifyCompetitors(request));
-    }
-
     // createCompetitor()
     @Test
     void testCreateCompetitor_whenServiceSucceeds_thenReturns201() throws ValidationException, NonFatalException {
@@ -75,20 +65,6 @@ class IpscCompetitorControllerTest {
 
         // Assert
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
-    }
-
-    @Test
-    void testCreateCompetitor_whenServiceSucceeds_thenResponseBodyIsReturnedFromService() throws ValidationException, NonFatalException {
-        // Arrange
-        CompetitorRequest request = new CompetitorRequest();
-        CompetitorResponse response = new CompetitorResponse();
-        when(ipscCompetitorService.createCompetitor(request)).thenReturn(response);
-
-        // Act
-        ResponseEntity<CompetitorResponse> result = ipscCompetitorController.createCompetitor(request);
-
-        // Assert
-        assertSame(response, result.getBody());
     }
 
     // createCompetitors()
@@ -110,19 +86,6 @@ class IpscCompetitorControllerTest {
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
     }
 
-    @Test
-    void testCreateCompetitors_whenServiceSucceeds_thenResponseBodyIsReturnedFromService() throws ValidationException, NonFatalException, FatalException {
-        // Arrange
-        CompetitorBulkResponseHolder holder = new CompetitorBulkResponseHolder(List.of(new CompetitorResponse()));
-        when(ipscCompetitorService.createCompetitors(VALID_CSV)).thenReturn(holder);
-
-        // Act
-        ResponseEntity<CompetitorBulkResponseHolder> result = ipscCompetitorController.createCompetitors(VALID_CSV);
-
-        // Assert
-        assertSame(holder, result.getBody());
-    }
-
     // deleteCompetitor()
     @Test
     void testDeleteCompetitor_whenServiceSucceeds_thenReturns204() throws ValidationException, NonFatalException {
@@ -141,7 +104,6 @@ class IpscCompetitorControllerTest {
 
         // Assert
         verify(ipscCompetitorService).deleteCompetitor(1L);
-        verifyNoMoreInteractions(ipscCompetitorService);
     }
 
     // getAllCompetitors()

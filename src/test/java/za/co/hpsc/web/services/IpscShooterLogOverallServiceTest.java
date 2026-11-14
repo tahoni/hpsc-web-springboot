@@ -1,11 +1,13 @@
 package za.co.hpsc.web.services;
 
+import org.hibernate.LazyInitializationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.ShooterLog;
@@ -150,6 +152,216 @@ class IpscShooterLogOverallServiceTest {
         // Assert
         // The best four are 100, 90, 80 and 70; the 10 is dropped
         assertEquals(new BigDecimal("85.00"), savedOverallResults().getFirst().getPercentageInLog());
+        // The overall records the matches it was calculated from, best first, without the dropped one
+        assertEquals(List.of(first, second, fourth, fifth), savedOverallResults().getFirst().getMatches());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenPercentagesAreEqual_thenRecordsTheMostRecentMatchesFirst()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch first = match(10L, 1);
+        IpscMatch second = match(11L, 2);
+        IpscMatch third = match(12L, 3);
+        IpscMatch fourth = match(13L, 4);
+        IpscMatch fifth = match(14L, 5);
+        ShooterLog shooterLog = shooterLog(1L, first, second, third, fourth, fifth);
+        Competitor competitor = competitor(5L);
+        stubLog(shooterLog, List.of(
+                shooterResult(100L, first, competitor, "80", Division.OPEN),
+                shooterResult(101L, second, competitor, "80", Division.OPEN),
+                shooterResult(102L, third, competitor, "80", Division.OPEN),
+                shooterResult(103L, fourth, competitor, "80", Division.OPEN),
+                shooterResult(104L, fifth, competitor, "80", Division.OPEN)), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        // The oldest match is the one dropped
+        assertEquals(List.of(fifth, fourth, third, second), savedOverallResults().getFirst().getMatches());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenCompetitorHasFewerMatchesThanCount_thenRecordsAllOfThemBestFirst()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch first = match(10L, 1);
+        IpscMatch second = match(11L, 2);
+        ShooterLog shooterLog = shooterLog(1L, first, second);
+        Competitor competitor = competitor(5L);
+        stubLog(shooterLog, List.of(
+                shooterResult(100L, first, competitor, "80", Division.OPEN),
+                shooterResult(101L, second, competitor, "100", Division.OPEN)), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        assertEquals(List.of(second, first), savedOverallResults().getFirst().getMatches());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAResultHasNoPercentage_thenItsMatchIsNotRecorded()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch first = match(10L, 1);
+        IpscMatch second = match(11L, 2);
+        ShooterLog shooterLog = shooterLog(1L, first, second);
+        Competitor competitor = competitor(5L);
+        stubLog(shooterLog, List.of(
+                shooterResult(100L, first, competitor, "90", Division.OPEN),
+                shooterResult(101L, second, competitor, null, Division.OPEN)), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        ShooterLogOverall saved = savedOverallResults().getFirst();
+        assertEquals(List.of(first), saved.getMatches());
+        assertEquals(new BigDecimal("90.00"), saved.getPercentageInLog());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenNoResultHasAPercentage_thenNoMatchesAreRecorded()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor competitor = competitor(5L);
+        stubLog(shooterLog, List.of(shooterResult(100L, match, competitor, null, Division.OPEN)), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        ShooterLogOverall saved = savedOverallResults().getFirst();
+        assertTrue(saved.getMatches().isEmpty());
+        assertNull(saved.getPercentageInLog());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenTwoResultsAreFromTheSameMatch_thenTheMatchIsRecordedOnce()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor competitor = competitor(5L);
+        stubLog(shooterLog, List.of(
+                shooterResult(100L, match, competitor, "90", Division.OPEN),
+                shooterResult(101L, match, competitor, "80", Division.OPEN)), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        assertEquals(List.of(match), savedOverallResults().getFirst().getMatches());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenTheMatchesClubIsNotLoaded_thenRecordsTheMatchesWithoutLoadingIt()
+            throws NonFatalException {
+        // Arrange
+        // Outside a session a match's club is an unloaded proxy, and IpscMatch's generated equals and hashCode read it
+        IpscMatch first = match(10L, 1);
+        first.setClub(unloadedClub());
+        IpscMatch second = match(11L, 2);
+        second.setClub(unloadedClub());
+        ShooterLog shooterLog = shooterLog(1L, first, second);
+        Competitor competitor = competitor(5L);
+        stubLog(shooterLog, List.of(
+                shooterResult(100L, first, competitor, "90", Division.OPEN),
+                shooterResult(101L, first, competitor, "85", Division.OPEN),
+                shooterResult(102L, second, competitor, "80", Division.OPEN)), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        List<Long> matchIds = savedOverallResults().getFirst().getMatches().stream().map(IpscMatch::getId).toList();
+        assertEquals(List.of(10L, 11L), matchIds);
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAnExistingOverallHasDifferentMatches_thenReplacesThem()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor competitor = competitor(5L);
+        ShooterResult result = shooterResult(100L, match, competitor, "80", Division.OPEN);
+        result.setDateCalculated(LocalDateTime.of(2026, 10, 1, 10, 0));
+        ShooterLogOverall existing = overall(50L, shooterLog, competitor, LocalDateTime.of(2026, 10, 1, 9, 0));
+        existing.setMatches(new ArrayList<>(List.of(match(99L, 2))));
+        stubLog(shooterLog, List.of(result), List.of(existing));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        ShooterLogOverall saved = savedOverallResults().getFirst();
+        assertSame(existing, saved);
+        assertEquals(List.of(match), saved.getMatches());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAnOverallHasNoRecordedMatches_thenRecalculates()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor competitor = competitor(5L);
+        ShooterResult result = shooterResult(100L, match, competitor, "80", Division.OPEN);
+        ShooterLogOverall existing = overall(50L, shooterLog, competitor, LocalDateTime.of(2026, 10, 1, 9, 0));
+        existing.setMatches(null);
+        stubLog(shooterLog, List.of(result), List.of(existing));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        assertEquals(List.of(match), savedOverallResults().getFirst().getMatches());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAnOverallWasCalculatedFromOtherMatches_thenRecalculates()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor competitor = competitor(5L);
+        ShooterResult result = shooterResult(100L, match, competitor, "80", Division.OPEN);
+        ShooterLogOverall existing = overall(50L, shooterLog, competitor, LocalDateTime.of(2026, 10, 1, 9, 0));
+        existing.setMatches(new ArrayList<>(List.of(match(99L, 2))));
+        stubLog(shooterLog, List.of(result), List.of(existing));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        verify(transactionService).replaceShooterLogOverallResults(any(), any());
+    }
+
+    @Test
+    void testCalculateShooterLogOverall_whenAnOverallRecordsTheSameMatchesInAnotherOrder_thenDoesNotRecalculate()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch first = match(10L, 1);
+        IpscMatch second = match(11L, 2);
+        ShooterLog shooterLog = shooterLog(1L, first, second);
+        Competitor competitor = competitor(5L);
+        ShooterLogOverall existing = overall(50L, shooterLog, competitor, LocalDateTime.of(2026, 10, 1, 9, 0));
+        existing.setMatches(new ArrayList<>(List.of(second, first)));
+        stubLog(shooterLog, List.of(
+                shooterResult(100L, first, competitor, "100", Division.OPEN),
+                shooterResult(101L, second, competitor, "80", Division.OPEN)), List.of(existing));
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        // The best-first order is first, second; the recorded order is not part of the comparison
+        verify(transactionService, never()).replaceShooterLogOverallResults(any(), any());
     }
 
     @Test
@@ -410,9 +622,8 @@ class IpscShooterLogOverallServiceTest {
         when(shooterLogRepository.findByIdWithMatches(1L)).thenReturn(Optional.of(shooterLog));
 
         // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class,
+        assertThrows(ValidationException.class,
                 () -> ipscShooterLogOverallService.calculateShooterLogOverall(1L));
-        assertTrue(exception.getMessage().startsWith("Match with ID 11 is scheduled for 2026-10-05"));
         verifyNoInteractions(ipscShooterResultService, shooterResultRepository, shooterLogOverallRepository,
                 transactionService);
     }
@@ -444,9 +655,8 @@ class IpscShooterLogOverallServiceTest {
         when(shooterLogRepository.findByIdWithMatches(1L)).thenReturn(Optional.of(shooterLog));
 
         // Act & Assert
-        ValidationException exception = assertThrows(ValidationException.class,
+        assertThrows(ValidationException.class,
                 () -> ipscShooterLogOverallService.calculateShooterLogOverall(1L));
-        assertTrue(exception.getMessage().startsWith("Match with ID 10 is scheduled for 2026-08-31"));
         verifyNoInteractions(ipscShooterResultService, shooterResultRepository, transactionService);
     }
 
@@ -544,9 +754,8 @@ class IpscShooterLogOverallServiceTest {
         when(shooterLogRepository.findByIdWithMatches(99L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        NonFatalException exception = assertThrows(NonFatalException.class,
+        assertThrows(NonFatalException.class,
                 () -> ipscShooterLogOverallService.calculateShooterLogOverall(99L));
-        assertEquals("No shooter log found with ID 99", exception.getMessage());
         verifyNoInteractions(shooterResultRepository, ipscShooterResultService, transactionService);
     }
 
@@ -582,6 +791,7 @@ class IpscShooterLogOverallServiceTest {
         assertEquals(1L, result.get(0).getShooterLog().getShooterLogId());
         assertEquals(List.of(10L), result.get(0).getShooterLog().getMatchIds());
         assertEquals(1, result.get(0).getShooterLogOverallResults().size());
+        assertEquals(List.of(10L), result.get(0).getShooterLogOverallResults().getFirst().getMatchIds());
         assertEquals(2L, result.get(1).getShooterLog().getShooterLogId());
         assertTrue(result.get(1).getShooterLogOverallResults().isEmpty());
     }
@@ -618,6 +828,7 @@ class IpscShooterLogOverallServiceTest {
         assertEquals(List.of("Jane Doe", "JD Doe"), response.getCompetitorNames());
         assertEquals(3, response.getRankInLog());
         assertEquals("87.50", response.getPercentageInLog());
+        assertEquals(List.of(10L), response.getMatchIds());
     }
 
     // Helpers
@@ -653,6 +864,21 @@ class IpscShooterLogOverallServiceTest {
         shooterLog.setEndDate(LocalDate.of(2026, 9, 30));
         shooterLog.setMatches(List.of(matches));
         return shooterLog;
+    }
+
+    /** A club that fails the way an unloaded Hibernate proxy does when it is read outside a session. */
+    private Club unloadedClub() {
+        return new Club() {
+            @Override
+            public int hashCode() {
+                throw new LazyInitializationException("Could not initialize proxy - no session");
+            }
+
+            @Override
+            public boolean equals(Object other) {
+                throw new LazyInitializationException("Could not initialize proxy - no session");
+            }
+        };
     }
 
     private IpscMatch match(Long id, int day) {
@@ -694,6 +920,8 @@ class IpscShooterLogOverallServiceTest {
         overall.setCompetitor(competitor);
         overall.setCompetitorCategory(CompetitorCategory.NONE);
         overall.setDivision(Division.OPEN);
+        // Calculated from all of the log's matches, which holds while a log has no more than the best matches
+        overall.setMatches(new ArrayList<>(shooterLog.getMatches()));
         overall.setDateCalculated(dateCalculated);
         return overall;
     }

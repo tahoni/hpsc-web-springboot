@@ -72,7 +72,7 @@ class CompetitorRepositoryIntegrationTest {
     @Test
     void testFindByIdWithHomeClubAndEmailAddresses_whenCompetitorDoesNotExist_thenReturnsEmpty() {
         // Act & Assert
-        assertTrue(competitorRepository.findByIdWithHomeClubAndEmailAddresses(999L).isEmpty());
+        assertTrue(competitorRepository.findByIdWithHomeClubAndEmailAddresses(Long.MAX_VALUE).isEmpty());
     }
 
     // findAllWithHomeClubAndEmailAddresses()
@@ -82,11 +82,15 @@ class CompetitorRepositoryIntegrationTest {
         Competitor first = newCompetitor("Jane");
         first.setHomeClub(createClub());
         first.setEmailAddresses(List.of("jane.doe@example.com", "jane@example.org"));
-        competitorRepository.saveAll(List.of(first, newCompetitor("John")));
+        List<Long> savedIds = competitorRepository.saveAll(List.of(first, newCompetitor("John"))).stream()
+                .map(Competitor::getId)
+                .toList();
         flushAndClear();
 
         // Act
-        List<Competitor> competitors = competitorRepository.findAllWithHomeClubAndEmailAddresses();
+        List<Competitor> competitors = competitorRepository.findAllWithHomeClubAndEmailAddresses().stream()
+                .filter(competitor -> savedIds.contains(competitor.getId()))
+                .toList();
 
         // Assert
         assertEquals(2, competitors.size());
@@ -109,7 +113,9 @@ class CompetitorRepositoryIntegrationTest {
         flushAndClear();
 
         // Assert
-        assertEquals(0L, ((Number) entityManager.createNativeQuery("select count(*) from competitor_email")
+        assertEquals(0L, ((Number) entityManager
+                .createNativeQuery("select count(*) from competitor_email where competitor_id = :competitorId")
+                .setParameter("competitorId", competitorId)
                 .getSingleResult()).longValue());
     }
 

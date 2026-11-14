@@ -31,24 +31,24 @@ Practical Shooting Club (HPSC) Spring Boot backend.
 
 ## ⚙️ Technology Stack
 
-| Component         | Technology                                                              |
-|-------------------|-------------------------------------------------------------------------|
-| Framework         | Spring Boot (see `pom.xml` for the pinned version)                      |
-| Language          | Java (see `<java.version>` in `pom.xml`)                                |
-| Build             | Maven, via the provided `./mvnw` wrapper                                |
-| Database (prod)   | MySQL (profile `prod`; env vars `MYSQL_USER` / `MYSQL_PASSWORD`)        |
-| Database (test)   | H2 in-memory (`create-drop`, profile `test`)                            |
-| ORM               | Spring Data JPA, Hibernate                                              |
-| Schema migrations | Flyway (`src/main/resources/db/migration/`), applied at startup         |
-| Data processing   | Jackson (JSON/CSV)                                                      |
-| API documentation | SpringDoc OpenAPI (Swagger UI at `/hpsc-web/swagger-ui/index.html`)     |
-| Validation        | Hibernate Validator, Jakarta Validation                                 |
-| Health checks     | Spring Boot Actuator (`/hpsc-web/actuator/health`)                      |
-| Testing           | JUnit, Mockito, Spring Test                                             |
-| Code coverage     | JaCoCo (Maven `coverage` profile)                                       |
-| Code generation   | Lombok                                                                  |
-| Containerisation  | Docker (`Dockerfile`), Docker Compose with MySQL (`docker-compose.yml`) |
-| Port / context    | `8080` / `/hpsc-web`                                                    |
+| Component         | Technology                                                                                               |
+|-------------------|----------------------------------------------------------------------------------------------------------|
+| Framework         | Spring Boot (see `pom.xml` for the pinned version)                                                       |
+| Language          | Java (see `<java.version>` in `pom.xml`)                                                                 |
+| Build             | Maven, via the provided `./mvnw` wrapper                                                                 |
+| Database (prod)   | MySQL (profile `prod`; env vars `MYSQL_USER` / `MYSQL_PASSWORD`)                                         |
+| Database (test)   | H2 in-memory (`create-drop`, profile `test`)                                                             |
+| ORM               | Spring Data JPA, Hibernate                                                                               |
+| Schema migrations | Flyway (`src/main/resources/db/migration/`), applied at startup                                          |
+| Data processing   | Jackson (JSON/CSV)                                                                                       |
+| API documentation | SpringDoc OpenAPI (Swagger UI at `/hpsc-web/swagger-ui/index.html`, served only under the `dev` profile) |
+| Validation        | Hibernate Validator, Jakarta Validation                                                                  |
+| Health checks     | Spring Boot Actuator (`/hpsc-web/actuator/health`)                                                       |
+| Testing           | JUnit, Mockito, Spring Test                                                                              |
+| Code coverage     | JaCoCo (Maven `coverage` profile)                                                                        |
+| Code generation   | Lombok                                                                                                   |
+| Containerisation  | Docker (`Dockerfile`), Docker Compose with MySQL (`docker-compose.yml`)                                  |
+| Port / context    | `8080` / `/hpsc-web`                                                                                     |
 
 ---
 
@@ -107,7 +107,6 @@ Practical Shooting Club (HPSC) Spring Boot backend.
     ├───controllers/            # Controller unit tests (Mockito, no Spring context)
     ├───converters/             # AttributeConverter unit tests
     ├───enums/                  # Enum unit tests
-    ├───exceptions/             # Exception hierarchy unit tests
     ├───helpers/                # Helper unit tests
     ├───mappers/                # Mapper unit tests
     ├───migrations/             # Flyway migration test against MySQL (runs only when FLYWAY_MYSQL_URL is set)
@@ -183,19 +182,19 @@ All controllers:
 
 Contains all business logic.
 
-| Interface                      | Implementation                     | Role                                                                                                                                                                                       |
-|--------------------------------|------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `AwardService`                 | `AwardServiceImpl`                 | Award CSV processing (deliberately stateless — see below)                                                                                                                                  |
-| `ImageService`                 | `ImageServiceImpl`                 | Image CSV processing (deliberately stateless — see below)                                                                                                                                  |
-| `IpscMatchService`             | `IpscMatchServiceImpl`             | IPSC match CRUD + bulk CSV import                                                                                                                                                          |
-| `IpscCompetitorService`        | `IpscCompetitorServiceImpl`        | IPSC competitor CRUD + bulk CSV import                                                                                                                                                     |
-| `IpscMatchCompetitorService`   | `IpscMatchCompetitorServiceImpl`   | IPSC match competitor CRUD + bulk CSV import                                                                                                                                               |
-| `IpscShooterLogService`        | `IpscShooterLogServiceImpl`        | IPSC shooter log CRUD + bulk CSV import, with the matches a log covers set by ID                                                                                                           |
-| `IpscShooterResultService`     | `IpscShooterResultServiceImpl`     | Calculates a match's shooter results (rank and percentage) for verified competitors with points, and reads them                                                                            |
-| `IpscShooterLogOverallService` | `IpscShooterLogOverallServiceImpl` | Calculates a shooter log's overall results (rank and percentage) for verified competitors from its matches' shooter results, refusing a log with a match outside its dates, and reads them |
-| `IpscEntityCompetitorService`  | `IpscEntityCompetitorServiceImpl`  | Looks up a persisted competitor from the loosely-specified identity in imported data                                                                                                       |
-| `IpscEntityClubService`        | `IpscEntityClubServiceImpl`        | Resolves clubs by code, abbreviation or name; null-safe comparisons of clubs                                                                                                               |
-| `TransactionService`           | `TransactionServiceImpl`           | Commits competitor/match/match competitor/shooter log/shooter result/shooter log overall result writes, each in its own transaction                                                        |
+| Interface                      | Implementation                     | Role                                                                                                                                                                                                                                            |
+|--------------------------------|------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `AwardService`                 | `AwardServiceImpl`                 | Award CSV processing (deliberately stateless — see below)                                                                                                                                                                                       |
+| `ImageService`                 | `ImageServiceImpl`                 | Image CSV processing (deliberately stateless — see below)                                                                                                                                                                                       |
+| `IpscMatchService`             | `IpscMatchServiceImpl`             | IPSC match CRUD + bulk CSV import                                                                                                                                                                                                               |
+| `IpscCompetitorService`        | `IpscCompetitorServiceImpl`        | IPSC competitor CRUD + bulk CSV import                                                                                                                                                                                                          |
+| `IpscMatchCompetitorService`   | `IpscMatchCompetitorServiceImpl`   | IPSC match competitor CRUD + bulk CSV import                                                                                                                                                                                                    |
+| `IpscShooterLogService`        | `IpscShooterLogServiceImpl`        | IPSC shooter log CRUD + bulk CSV import, with the matches a log covers set by ID                                                                                                                                                                |
+| `IpscShooterResultService`     | `IpscShooterResultServiceImpl`     | Calculates a match's shooter results (rank and percentage) for verified competitors with points, and reads them                                                                                                                                 |
+| `IpscShooterLogOverallService` | `IpscShooterLogOverallServiceImpl` | Calculates a shooter log's overall results (rank and percentage) for verified competitors from its matches' shooter results, recording the best matches each was calculated from, refusing a log with a match outside its dates, and reads them |
+| `IpscEntityCompetitorService`  | `IpscEntityCompetitorServiceImpl`  | Looks up a persisted competitor from the loosely-specified identity in imported data                                                                                                                                                            |
+| `IpscEntityClubService`        | `IpscEntityClubServiceImpl`        | Resolves clubs by code, abbreviation or name; null-safe comparisons of clubs                                                                                                                                                                    |
+| `TransactionService`           | `TransactionServiceImpl`           | Commits competitor/match/match competitor/shooter log/shooter result/shooter log overall result writes, each in its own transaction                                                                                                             |
 
 > `AwardService.createAwards()`/`ImageService.createImages()` are stateless by design, not an unfinished persistence
 > layer: each parses CSV into response records only, with no repository write — a preview/validation transform
@@ -224,20 +223,22 @@ Contains all business logic.
 
 The JPA entities map to database tables:
 
-| Entity              | Table                 | Key Relationships                                                      |
-|---------------------|-----------------------|------------------------------------------------------------------------|
-| `Club`              | `club`                | No outgoing references; targeted by `Competitor` and `IpscMatch` below |
-| `Competitor`        | `competitor`          | Many-to-one → `Club` (home club, optional)                             |
-| `IpscMatch`         | `ipsc_match`          | Many-to-one → `Club`                                                   |
-| `MatchCompetitor`   | `match_competitor`    | Many-to-one → `Competitor`, `IpscMatch`                                |
-| `ShooterLog`        | `shooter_log`         | Many-to-many → `IpscMatch` (through `shooter_log_match`)               |
-| `ShooterLogOverall` | `shooter_log_overall` | Many-to-one → `ShooterLog`, `Competitor`                               |
-| `ShooterResult`     | `shooter_result`      | Many-to-one → `IpscMatch`, `Competitor`, `MatchCompetitor`             |
+| Entity              | Table                 | Key Relationships                                                                                          |
+|---------------------|-----------------------|------------------------------------------------------------------------------------------------------------|
+| `Club`              | `club`                | No outgoing references; targeted by `Competitor` and `IpscMatch` below                                     |
+| `Competitor`        | `competitor`          | Many-to-one → `Club` (home club, optional)                                                                 |
+| `IpscMatch`         | `ipsc_match`          | Many-to-one → `Club`                                                                                       |
+| `MatchCompetitor`   | `match_competitor`    | Many-to-one → `Competitor`, `IpscMatch`                                                                    |
+| `ShooterLog`        | `shooter_log`         | Many-to-many → `IpscMatch` (through `shooter_log_match`)                                                   |
+| `ShooterLogOverall` | `shooter_log_overall` | Many-to-one → `ShooterLog`, `Competitor`; many-to-many → `IpscMatch` (through `shooter_log_overall_match`) |
+| `ShooterResult`     | `shooter_result`      | Many-to-one → `IpscMatch`, `Competitor`, `MatchCompetitor`                                                 |
 
-Every relationship's owning (child) side declares a `@ManyToOne`/`@JoinColumn`, all `FetchType.LAZY` — the queries that
-build responses load what they need with `left join fetch` (see Repositories below). Every
-relationship is unidirectional, with no back-referencing collection and no cascade, so a record still referenced by
-results or shooter logs is refused on delete rather than cascaded (see the note above).
+A relationship's owning (child) side declares a `@ManyToOne`/`@JoinColumn`, except `ShooterLog.matches` and
+`ShooterLogOverall.matches`, which are `@ManyToMany` links kept in the `shooter_log_match` and
+`shooter_log_overall_match` join tables; all are `FetchType.LAZY` — the queries that build responses load what they
+need with `left join fetch` (see Repositories below). Every relationship is unidirectional, with no back-referencing
+collection and no cascade, so a record still referenced by results or shooter logs is refused on delete rather than
+cascaded (see the note above).
 
 #### Custom JPA Attribute Converters (`za.co.hpsc.web.converters`)
 
@@ -300,7 +301,8 @@ matches it covers, consumed by `IpscShooterLogController`; `ShooterLogResponse` 
 #### `models/ipsc/shooterlogoverall/response/`
 
 `ShooterLogOverallResponse` and `ShooterLogOverallResponseHolder` — a shooter log linked to its
-overall results, consumed by `IpscShooterLogOverallController`.
+overall results, each listing the identifiers of the matches it was calculated from as `matchIds`, consumed by
+`IpscShooterLogOverallController`.
 
 ---
 

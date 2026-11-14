@@ -36,6 +36,7 @@ public class ShooterLogRow {
      * Describes a request by the values it supplied.
      *
      * @param request the request to describe; may be null, as for an empty row, in which case every value is empty.
+     * @since 16.3.0
      */
     public ShooterLogRow(ShooterLogRequest request) {
         if (request == null) {

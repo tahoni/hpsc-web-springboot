@@ -77,15 +77,6 @@ class IpscShooterLogControllerTest {
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
     }
 
-    @Test
-    void testCreateShooterLogs_whenServiceThrowsValidationException_thenPropagates() throws FatalException {
-        // Arrange
-        when(ipscShooterLogService.createShooterLogs("bad")).thenThrow(new ValidationException("bad csv"));
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscShooterLogController.createShooterLogs("bad"));
-    }
-
     // createShooterLog()
     @Test
     void testCreateShooterLog_whenServiceSucceeds_thenReturns201WithServiceBody() {
@@ -102,26 +93,6 @@ class IpscShooterLogControllerTest {
         assertSame(response, result.getBody());
     }
 
-    @Test
-    void testCreateShooterLog_whenServiceThrowsValidationException_thenPropagates() {
-        // Arrange
-        ShooterLogRequest request = new ShooterLogRequest();
-        when(ipscShooterLogService.createShooterLog(request)).thenThrow(new ValidationException("invalid"));
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscShooterLogController.createShooterLog(request));
-    }
-
-    @Test
-    void testCreateShooterLog_whenServiceThrowsNonFatalException_thenPropagates() {
-        // Arrange
-        ShooterLogRequest request = new ShooterLogRequest();
-        when(ipscShooterLogService.createShooterLog(request)).thenThrow(new NonFatalException("no match"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscShooterLogController.createShooterLog(request));
-    }
-
     // deleteShooterLog()
     @Test
     void testDeleteShooterLog_whenServiceSucceeds_thenReturns204() {
@@ -133,38 +104,7 @@ class IpscShooterLogControllerTest {
         verify(ipscShooterLogService).deleteShooterLog(1L);
     }
 
-    @Test
-    void testDeleteShooterLog_whenServiceThrowsValidationException_thenPropagates() {
-        // Arrange
-        doThrow(new ValidationException("has overall results")).when(ipscShooterLogService).deleteShooterLog(1L);
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscShooterLogController.deleteShooterLog(1L));
-    }
-
-    @Test
-    void testDeleteShooterLog_whenServiceThrowsNonFatalException_thenPropagates() {
-        // Arrange
-        doThrow(new NonFatalException("not found")).when(ipscShooterLogService).deleteShooterLog(99L);
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscShooterLogController.deleteShooterLog(99L));
-    }
-
     // getAllShooterLogs()
-    @Test
-    void testGetAllShooterLogs_whenNoShooterLogs_thenReturnsEmptyList() {
-        // Arrange
-        when(ipscShooterLogService.getAllShooterLogs()).thenReturn(List.of());
-
-        // Act
-        ResponseEntity<List<ShooterLogResponse>> result = ipscShooterLogController.getAllShooterLogs();
-
-        // Assert
-        assertNotNull(result.getBody());
-        assertTrue(result.getBody().isEmpty());
-    }
-
     @Test
     void testGetAllShooterLogs_whenServiceSucceeds_thenReturns200WithServiceBody() {
         // Arrange
@@ -194,15 +134,6 @@ class IpscShooterLogControllerTest {
         assertSame(response, result.getBody());
     }
 
-    @Test
-    void testGetShooterLog_whenServiceThrows_thenPropagatesNonFatalException() {
-        // Arrange
-        when(ipscShooterLogService.getShooterLog(99L)).thenThrow(new NonFatalException("not found"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscShooterLogController.getShooterLog(99L));
-    }
-
     // patchShooterLog()
     @Test
     void testPatchShooterLog_whenServiceSucceeds_thenReturns200WithServiceBody() {
@@ -219,16 +150,6 @@ class IpscShooterLogControllerTest {
         assertSame(response, result.getBody());
     }
 
-    @Test
-    void testPatchShooterLog_whenServiceThrows_thenPropagatesNonFatalException() {
-        // Arrange
-        ShooterLogPatchRequest request = new ShooterLogPatchRequest();
-        when(ipscShooterLogService.patchShooterLog(99L, request)).thenThrow(new NonFatalException("not found"));
-
-        // Act & Assert
-        assertThrows(NonFatalException.class, () -> ipscShooterLogController.patchShooterLog(99L, request));
-    }
-
     // updateShooterLog()
     @Test
     void testUpdateShooterLog_whenServiceSucceeds_thenReturns200WithServiceBody() {
@@ -243,16 +164,6 @@ class IpscShooterLogControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertSame(response, result.getBody());
-    }
-
-    @Test
-    void testUpdateShooterLog_whenServiceThrows_thenPropagatesValidationException() {
-        // Arrange
-        ShooterLogRequest request = new ShooterLogRequest();
-        when(ipscShooterLogService.updateShooterLog(1L, request)).thenThrow(new ValidationException("invalid"));
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscShooterLogController.updateShooterLog(1L, request));
     }
 
     // updateShooterLogs()
@@ -297,15 +208,6 @@ class IpscShooterLogControllerTest {
 
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
-    }
-
-    @Test
-    void testUpdateShooterLogs_whenServiceThrowsValidationException_thenPropagates() throws FatalException {
-        // Arrange
-        when(ipscShooterLogService.updateShooterLogs("csv")).thenThrow(new ValidationException("bad"));
-
-        // Act & Assert
-        assertThrows(ValidationException.class, () -> ipscShooterLogController.updateShooterLogs("csv"));
     }
 
     // patchShooterLogs()

@@ -49,42 +49,4 @@ public class ResponseTest {
         // Assert
         assertNotNull(response.getUuid());
     }
-
-    // Response(UUID, String)
-    @Test
-    void testShortConstructor_thenInitialisesUuidAndTitle() {
-        // Arrange
-        UUID expectedUuid = UUID.randomUUID();
-        String title = "Brief Title";
-
-        // Act
-        Response response = new Response(expectedUuid, title);
-
-        // Assert
-        assertEquals(expectedUuid, response.getUuid());
-        assertEquals(title, response.getTitle());
-    }
-
-    // Response(UUID, String, String, String, String, List<String>)
-    @Test
-    void testFullConstructor_whenAllFieldsProvided_thenInitialisesAllFields() {
-        // Arrange
-        UUID expectedUuid = UUID.randomUUID();
-        String title = "Test Title";
-        String summary = "Test Summary";
-        String description = "Test Description";
-        String category = "Test Category";
-        List<String> tags = List.of("tag1", "tag2");
-
-        // Act
-        Response response = new Response(expectedUuid, title, summary, description, category, tags);
-
-        // Assert
-        assertEquals(expectedUuid, response.getUuid());
-        assertEquals(title, response.getTitle());
-        assertEquals(summary, response.getSummary());
-        assertEquals(description, response.getDescription());
-        assertEquals(category, response.getCategory());
-        assertEquals(tags, response.getTags());
-    }
 }

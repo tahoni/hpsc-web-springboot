@@ -167,10 +167,14 @@ MySQL's data persists in a named volume, and Flyway creates the schema on first 
 
 ## 🌐 API Documentation
 
-Interactive API documentation is automatically generated using SpringDoc OpenAPI and can be accessed at:
+Interactive API documentation is generated using SpringDoc OpenAPI. It is served only under the `dev` profile:
+`application.properties` turns the OpenAPI document and the Swagger UI off, so they are not available by default or
+under `prod`. Under `dev` they can be accessed at:
 
 - **Swagger UI**: `http://localhost:8080/hpsc-web/swagger-ui/index.html`
 - **OpenAPI JSON**: `http://localhost:8080/hpsc-web/v3/api-docs`
+
+To serve them under another profile, set `springdoc.api-docs.enabled=true` and `springdoc.swagger-ui.enabled=true`.
 
 The Swagger UI provides a comprehensive, interactive interface for exploring and testing all available REST endpoints.
 

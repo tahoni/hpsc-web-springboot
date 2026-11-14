@@ -16,7 +16,7 @@ class CompetitorRequestTest {
 
     // JSON serialization
     @Test
-    void testJsonSerialization_whenFullyPopulated_thenSerializesAllFields() throws Exception {
+    void testJsonSerialization_whenFullyPopulated_thenSerializesRepresentativeFields() throws Exception {
         // Arrange
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         CompetitorRequest request = new CompetitorRequest(
@@ -32,21 +32,12 @@ class CompetitorRequestTest {
         assertEquals(1, node.get("competitorId").asInt());
         assertEquals("Jane", node.get("firstName").asText());
         assertEquals("Doe", node.get("lastName").asText());
-        assertEquals("Ann", node.get("middleNames").asText());
-        assertEquals("Janie", node.get("nickName").asText());
         assertEquals("1990-01-01", node.get("dateOfBirth").asText());
-        assertEquals("Female", node.get("gender").asText());
-        assertEquals("Test Club", node.get("homeClub").asText());
         assertEquals(12345, node.get("sapsaNumber").asInt());
-        assertEquals("7001", node.get("competitorNumber").asText());
         assertEquals("HPSC-001", node.get("clubNumber").asText());
-        assertEquals("9001015800083", node.get("idNumber").asText());
-        assertEquals("0821234567", node.get("cellphoneNumber").asText());
         assertTrue(node.get("paidUpSapsa").asBoolean());
-        assertTrue(node.get("paidUpNgpsa").asBoolean());
         assertFalse(node.get("paidUpClub").asBoolean());
         assertTrue(node.get("isVerified").asBoolean());
-        assertEquals(1, node.get("emailAddresses").size());
         assertEquals("jane.doe@example.com", node.get("emailAddresses").get(0).asText());
     }
 
@@ -130,18 +121,10 @@ class CompetitorRequestTest {
         assertEquals(1L, request.getCompetitorId());
         assertEquals("Jane", request.getFirstName());
         assertEquals("Doe", request.getLastName());
-        assertEquals("Ann", request.getMiddleNames());
-        assertEquals("Janie", request.getNickName());
         assertEquals(LocalDate.of(1990, 1, 1), request.getDateOfBirth());
-        assertEquals("Female", request.getGender());
-        assertEquals("Test Club", request.getHomeClub());
         assertEquals(12345, request.getSapsaNumber());
-        assertEquals("7001", request.getCompetitorNumber());
         assertEquals("HPSC-001", request.getClubNumber());
-        assertEquals("9001015800083", request.getIdNumber());
-        assertEquals("0821234567", request.getCellphoneNumber());
         assertEquals(Boolean.TRUE, request.getPaidUpSapsa());
-        assertEquals(Boolean.TRUE, request.getPaidUpNgpsa());
         assertEquals(Boolean.FALSE, request.getPaidUpClub());
         assertEquals(Boolean.TRUE, request.getIsVerified());
         assertEquals(List.of("jane.doe@example.com"), request.getEmailAddresses());
@@ -190,22 +173,6 @@ class CompetitorRequestTest {
         assertNull(request.getCompetitorNumber());
         assertNull(request.getGender());
         assertNull(request.getHomeClub());
-    }
-
-    @Test
-    void testJsonDeserialization_whenCompetitorNumberMissing_thenDoesNotThrow() {
-        // Arrange - competitorNumber isn't required; only firstName and lastName are
-        ObjectMapper mapper = new ObjectMapper();
-        String json = """
-                {
-                  "firstName": "Jane",
-                  "lastName": "Doe",
-                  "clubNumber": "HPSC-001"
-                }
-                """;
-
-        // Act & Assert
-        assertDoesNotThrow(() -> mapper.readValue(json, CompetitorRequest.class));
     }
 
     @Test

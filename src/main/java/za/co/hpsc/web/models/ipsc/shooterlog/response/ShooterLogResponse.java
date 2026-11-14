@@ -37,6 +37,7 @@ public class ShooterLogResponse {
      *
      * @param shooterLog the shooter log to convert. Must not be null. Its lazily loaded matches are read here, so
      *                   call this after fetch-joining them or while the persistence session is still open.
+     * @since 16.1.0
      */
     public ShooterLogResponse(ShooterLog shooterLog) {
         this.shooterLogId = shooterLog.getId();

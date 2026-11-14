@@ -42,6 +42,7 @@ public class ShooterLogBulkRequest extends ShooterLogRequest {
      * @param matchIds     the identifiers of the matches the shooter log covers; may be null or empty.
      * @param addMatchIds  the identifiers of the matches to add to the log; may be null or empty.
      * @param removeMatchIds the identifiers of the matches to remove from the log; may be null or empty.
+     * @since 16.4.0
      */
     public ShooterLogBulkRequest(Long shooterLogId, LocalDate startDate, LocalDate endDate, List<Long> matchIds,
                                  List<Long> addMatchIds, List<Long> removeMatchIds) {

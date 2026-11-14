@@ -74,6 +74,7 @@ public class MatchRequest {
      * @param startTime        time the match started; may be null.
      * @param endTime          time the match ended; may be null.
      * @param url              a URL with more information about this match; may be null.
+     * @since 8.1.0
      */
     @JsonCreator
     public MatchRequest(@JsonProperty("matchId") Long matchId,
@@ -108,6 +109,7 @@ public class MatchRequest {
      * @param startTime        time the match started; may be null.
      * @param endTime          time the match ended; may be null.
      * @param url              a URL with more information about this match; may be null.
+     * @since 8.1.0
      */
     public MatchRequest(LocalDate matchDate, String matchName, String club, String matchFirearmType,
                         String matchCategory, LocalTime startTime, LocalTime endTime, String url) {
@@ -126,6 +128,7 @@ public class MatchRequest {
      * </p>
      *
      * @throws ValidationException if the match name, match date or match firearm type is missing.
+     * @since 13.0.0
      */
     public void validate() {
         if (!hasText(getMatchName())) {

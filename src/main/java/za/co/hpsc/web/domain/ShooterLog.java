@@ -2,7 +2,9 @@ package za.co.hpsc.web.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -29,6 +31,8 @@ public class ShooterLog {
     @JoinTable(name = "shooter_log_match",
             joinColumns = @JoinColumn(name = "shooter_log_id"),
             inverseJoinColumns = @JoinColumn(name = "match_id"))
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private List<IpscMatch> matches;
 
     @CreationTimestamp

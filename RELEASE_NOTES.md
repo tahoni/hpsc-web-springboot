@@ -1,48 +1,51 @@
-# Release Notes – Version 17.0.0
+# Release Notes – Version 18.0.0
 
-**Release Date:** November 12, 2026 **Status:** ✨ Stable
+**Release Date:** November 14, 2026 **Status:** ✨ Stable
 
 ---
 
 ## 🎯 Theme
 
-**Reporting Failed Rows in the Competitor and Match Imports**
+**Recording the Matches Behind a Shooter Log Overall**
 
-Version 17.0.0 is a major release. The bulk competitor import and the bulk match import used to save every row in one
-transaction, so a single bad row failed the whole request with a `400` or `404` and left nothing saved. They now work
-as the match competitor and shooter log imports already did: each row is saved in its own transaction, and a row that
-cannot be imported is reported, with its row number, its reason and the values it supplied, while the other rows are
-still imported. Because that changes what the match import answers, what a bad row does to a request and the name of a
-response field, it is a breaking release.
+Version 18.0.0 is a major release. A shooter log overall averages each competitor's best matches in the log, but gave no
+sign of which matches those were. It now records them in a new join table and returns their identifiers as `matchIds`.
+Recording them exposed a `LazyInitializationException` when overalls were calculated outside a session, which is fixed
+by keeping the entities' lazy associations out of their generated `equals`, `hashCode` and `toString`. The release also
+turns the OpenAPI document and Swagger UI off by default, so a deployment serves them only on purpose. That last change
+alters what a running deployment serves, so it is a breaking release.
 
 ---
 
 ## ⭐ Key Highlights
 
-### 🛡️ A Bad Row No Longer Hides the Good Ones
+### 🧮 An Overall That Names Its Matches
 
-- A competitor row that is missing a required field, has an unrecognised gender, names an unknown home club or lacks a
-  required club number is reported with `success` `false` and skipped
-- A match row that is missing a required field, has an unrecognised firearm type or category or names an unknown club is
-  reported and skipped
-- Each row is saved in its own transaction, so the other rows are still imported
-- A CSV that is blank or cannot be parsed still fails the request
+- `ShooterLogOverall.matches` records the matches an overall was calculated from, being the competitor's best
+  `SHOOTER_LOG_BEST_MATCHES` results by percentage, in the new `shooter_log_overall_match` table
+- `ShooterLogOverallResponse.matchIds` returns their identifiers, empty if an overall was calculated from none
+- Equal percentages are taken from the most recent match first, so the same matches are picked every time
+- An overall calculated before its matches were recorded, or from other matches, is recalculated
 
-### 🔢 A Result for Every Row
+### 🛡️ Safe Outside a Session
 
-- `MatchBulkResponseHolder.results` holds a `MatchBulkResponse` for every match row: its `rowNumber`, `success`,
-  `message`, the created `match` and, for a failed row, a `matchRow` with every value the row supplied
-- `CompetitorBulkResponse` gains `rowNumber`, `success` and a `competitorRow`, and the match competitor and shooter log
-  bulk responses gain `rowNumber`, so every bulk row says which line of the file it came from
-- A competitor row that repeats a club number an earlier row of the same file already imported is reported as failed
-  instead of silently updating the competitor that row just saved
+- The lazy associations of `Competitor`, `IpscMatch`, `MatchCompetitor`, `ShooterLog`, `ShooterLogOverall` and
+  `ShooterResult` no longer take part in the generated `equals`, `hashCode` and `toString`
+- Calculating, reading and recalculating overalls works without an open persistence session, which a new test without a
+  surrounding transaction proves
 
-### ♻️ Tidier Code
+### 🔒 API Docs Off by Default
 
-- `MatchResponse.warnings` is renamed `messages`
-- `TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults` are removed, as nothing called them
-- Branches that could never run are removed from the match competitor mapper and the match competitor and shooter log
-  services
+- The OpenAPI document (`/v3/api-docs`) and Swagger UI are off in `application.properties`, so also under `prod`, and on
+  in `application-dev.properties`
+- `README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md` say so, and how to serve them under another profile
+
+### 🧹 A Leaner, Sturdier Suite
+
+- Tests that only mirrored the implementation, duplicated another layer's test or asserted incidental message text,
+  `verify` counts or row counts on the shared database are removed or loosened
+- `@since` tags are added to the four mapper classes and 74 public and package-private methods and constructors
+- `ARCHITECTURE.md` and `AGENTS.md` describe the entity links, service test tiers and test tree as they are
 
 ---
 
@@ -50,37 +53,30 @@ response field, it is a breaking release.
 
 ### Added
 
-- **`CompetitorBulkResponse.rowNumber`, `success` and `competitorRow`:** Each row of the bulk competitor import reports
-  its row number, whether it was created or updated and, for a failed row, a `CompetitorRow` holding every value it
-  supplied, with the email addresses in one value separated by `;`.
-- **`MatchBulkResponse` and `MatchRow`:** New per-row result and failed-row types for the bulk match import.
-- **`MatchCompetitorBulkResponse.rowNumber` and `ShooterLogBulkResponse.rowNumber`:** Each row of the bulk match
-  competitor import and of the bulk shooter log create, replace and update imports carries its `rowNumber`.
-- **Tests:** New `CompetitorRowTest`, `MatchRowTest`, `MatchResponseTest`, `ShooterLogResponseTest` and
-  `ShooterResultResponseTest`, and new service, mapper and impl cases, bringing line coverage to 99.2% and branch
-  coverage to 100%.
+- **`V11_13_0__create_shooter_log_overall_match.sql`:** Creates the `shooter_log_overall_match` join table, with foreign
+  keys to `shooter_log_overall` and `ipsc_match` and an index on `match_id`.
+- **`ShooterLogOverall.matches`:** The matches an overall was calculated from.
+- **`ShooterLogOverallResponse.matchIds`:** The identifiers of those matches.
+- **Tests:** New cases for the recorded matches, the fetch joins of `ShooterLogOverallRepository`, matches whose club
+  cannot be loaded and the calculation without a surrounding transaction, and a new `ShooterLogOverallResponseTest`.
+- **`@since` tags:** On the four mapper classes and 74 public and package-private methods and constructors.
 
 ### Changed
 
-- **Breaking: `MatchResponse.warnings` renamed to `messages`:** The list keeps its behaviour, left out of the JSON when
-  empty, but is serialised as `messages`.
-- **Breaking: bulk match import reports failed rows:** `MatchResponseHolder` is renamed `MatchBulkResponseHolder` and
-  carries a `results` list; a bad row is reported and skipped instead of failing the request.
-- **Breaking: bulk competitor import reports failed rows:** A bad row is reported with `success` `false` and skipped
-  instead of failing the request with a `400` or `404`.
-- **`CompetitorResponseHolder`:** Renamed `CompetitorBulkResponseHolder`, and so is its OpenAPI schema name; the JSON it
-  serialises to is unchanged.
-- **`IpscCompetitorServiceImpl.createCompetitors`:** A row that repeats a club number an earlier row of the same file
-  already imported is reported as failed. A club number that matches a competitor already in the database still updates
-  and verifies it.
-- **`MatchCompetitorMapper.resolveFirearmType`, `IpscMatchCompetitorServiceImpl` and `IpscShooterLogServiceImpl`:**
-  Branches that could never run are removed, with no change in behaviour.
-- **`ARCHITECTURE.md`:** The competitor and match bulk CSV import flows say each row is saved in its own transaction.
-  Closes improvement plan Gap #51.
-- **Archived versions 14.0.0 – 16.4.1:** Their `CHANGELOG`, `HISTORY` and `EVOLUTION_OVERVIEW` entries move, unchanged,
-  into `documentation/archive/v14-v16/`, with the v14 – v16 release notes and pull request descriptions from
-  `documentation/history/`, which now starts at v17.0.0; `README.md`, `AGENTS.md` and the `prep-version-release`
-  skill follow the new locations.
+- **Breaking: the OpenAPI document and Swagger UI are off by default:** `springdoc.api-docs.enabled` and
+  `springdoc.swagger-ui.enabled` are `false` in `application.properties` and `true` in `application-dev.properties`;
+  the production profile inherits the default.
+- **`IpscShooterLogOverallServiceImpl.calculateShooterLogOverall`:** Records the best matches each overall was
+  calculated from, averages those same results, takes equal percentages from the most recent match first and
+  recalculates an overall whose matches are missing or differ.
+- **`ShooterLogOverallRepository`:** `findAllByShooterLogIdWithDetails` and `findAllWithDetails` also fetch each
+  overall's matches.
+- **Lazy associations left out of `equals`, `hashCode` and `toString`:** On six entities, so Hibernate's comparison of
+  an overall's matches on commit no longer reads a match's lazy club.
+- **`README.md`, `AGENTS.md`, `ARCHITECTURE.md` and `CONTRIBUTING.md`:** Say the OpenAPI document and Swagger UI are
+  served only under `dev`. `ARCHITECTURE.md` lists `ShooterLogOverall`'s link to `IpscMatch` and drops the removed
+  `exceptions/` test directory, and `AGENTS.md` describes the service test tiers as they are. Closes improvement plan
+  Gaps #53, #54 and #55.
 
 ### Fixed
 
@@ -88,58 +84,61 @@ Nothing is fixed.
 
 ### Removed
 
-- **`TransactionService.saveMatches`, `saveMatchCompetitors` and `saveShooterResults`:** Removed with their tests, as no
-  production code called them. Closes improvement plan Gap #52.
+- **Brittle tests:** `TransactionServiceImplTest`, and the pass-through, duplicate, vacuous and message-text tests
+  across the services, controllers, models, enums, mappers, helpers and utils.
 
 ---
 
 ## 🚀 Migration Guide
 
-No configuration property, database schema or endpoint path changes. Clients of the bulk imports need to adapt:
+No endpoint path, request or response contract is removed. Deployments and clients need to adapt:
 
-1. **Read `messages` instead of `warnings`.** Any client that reads a match's `warnings` from a read, edit or shooter
-   log response must read `messages`.
-2. **Check each row of a bulk match or competitor import.** A bad row no longer fails the request with a `400` or
-   `404`: read each result's `success` and, when it is `false`, its `message` and `matchRow` or `competitorRow`. A
-   blank or unparseable CSV still answers `400`.
-3. **Read the match import's `results`.** The bulk match import answers with a `MatchBulkResponseHolder` whose `results`
-   lists every row; the `MatchResponseHolder` type is gone.
-4. **Regenerate any client built from the OpenAPI document.** `MatchResponseHolder` is now `MatchBulkResponseHolder`
-   and `CompetitorResponseHolder` is now `CompetitorBulkResponseHolder`.
+1. **Serve the OpenAPI document and Swagger UI on purpose.** They are off by default and under `prod`. A deployment that
+   serves them, or a client that is generated from the OpenAPI document, must set `springdoc.api-docs.enabled` and
+   `springdoc.swagger-ui.enabled` to `true`. The `dev` profile already does.
+2. **Let Flyway apply `V11_13_0`.** It runs at startup and creates the `shooter_log_overall_match` table; nothing else
+   in the schema changes.
+3. **Expect overalls to be recalculated once.** Existing overalls have no recorded matches, so the next call to
+   calculate a shooter log's overalls recalculates each one and records them.
+4. **Read `matchIds` if you want the matches.** It is a new field on each overall result; clients that ignore it are
+   unaffected.
 
 ---
 
 ## 📊 Statistics
 
-- **Files Changed:** 53 against `main` before this release's history and release notes; 1,654 insertions and 447
+- **Files Changed:** 116 against `main` before this release's history and release notes; 1,694 insertions and 2,834
   deletions
-- **New Source Files:** 4 (`CompetitorRow`, `MatchBulkResponse`, `MatchBulkResponseHolder`, `MatchRow`)
-- **Renamed Source Files:** 1 (`CompetitorResponseHolder` to `CompetitorBulkResponseHolder`)
-- **Deleted Source Files:** 1 (`MatchResponseHolder`)
+- **New Source Files:** 1 (`V11_13_0__create_shooter_log_overall_match.sql`)
+- **New Test Files:** 1 (`ShooterLogOverallResponseTest`)
+- **Deleted Test Files:** 1 (`TransactionServiceImplTest`)
 - **New Dependencies:** 0
-- **Archived Documentation:** 20 release notes and pull request descriptions moved, and 3 archive files created
+- **Improvement Plan:** Gaps #53, #54 and #55 added and closed, leaving all 55 closed
 
 ---
 
 ## 🧭 Design Notes
 
-- **One import behaviour everywhere.** Match competitors and shooter logs already reported failed rows and carried on;
-  competitors and matches now do too, so a client handles every bulk import the same way.
-- **A failed row reports what it was given.** `CompetitorRow` and `MatchRow` hold the values as text, so a row that
-  failed to parse can still be shown back to the person who supplied it.
-- **A file is not a database.** A repeated club number within one file is reported rather than treated as an update,
-  since the second row would otherwise overwrite what the first just saved.
-- **A MAJOR.** The renamed `messages` field, the new match import response and a bad row no longer failing the request
-  are backward-incompatible, which `AGENTS.md`'s Semantic Versioning rules classify as MAJOR.
+- **Name the matches, don't recompute them.** An overall stores the matches it used, so a client can show them without
+  repeating the best-of selection, and a change to those matches can be detected.
+- **Entities compare by their own columns.** Generated `equals`, `hashCode` and `toString` must not load a lazy
+  association: Hibernate itself calls `hashCode` on collection elements, and a log line would otherwise load them too.
+- **Turn docs on, not off.** An API description is useful to a developer and a client generator, but it is also a map
+  of a deployment, so it is served only where it is asked for.
+- **Tests should fail for a reason.** A test that mirrors the code, repeats another layer's test or pins a sentence
+  fails when nothing is wrong and passes when something is; those are removed or loosened.
+- **A MAJOR.** An existing deployment that served the OpenAPI document or Swagger UI stops doing so without a
+  configuration change, which `AGENTS.md`'s Semantic Versioning rules classify as MAJOR.
 
 ---
 
 ## 🧪 Testing
 
-- `./mvnw test` passes: 1,601 tests with no failures or errors, 3 of them skipped because `FlywayMysqlMigrationTest`
-  runs only where `FLYWAY_MYSQL_URL` is set.
-- New tests cover the row classes, the `messages` field's JSON, failed rows, row numbers, a repeated club number, data
-  integrity conflicts, CSV read failures and the shooter log bulk patch.
+- `./mvnw test` passes: 1,495 tests with no failures or errors, 3 of them skipped because `FlywayMysqlMigrationTest`
+  runs only where `FLYWAY_MYSQL_URL` is set; `./mvnw verify -Pcoverage` meets the 97% line and branch minimums, at 98.6%
+  line and 99.9% branch coverage.
+- New tests cover the recorded matches and their recalculation, the fetch joins of `ShooterLogOverallRepository`,
+  matches whose club cannot be loaded and the calculation and reads without a surrounding transaction.
 
 ---
 
@@ -168,5 +167,6 @@ No configuration property, database schema or endpoint path changes. Clients of 
 
 ## 📝 Notes
 
-Version 17.0.0 gives the bulk competitor and match imports the per-row, report-and-continue behaviour of the other bulk
-imports. It leaves the improvement plan with all 52 gaps closed and none open.
+Version 18.0.0 makes a shooter log overall name the matches it was calculated from and keeps its calculation safe once
+the persistence session has closed, and it turns the OpenAPI document and Swagger UI off by default. It leaves the
+improvement plan with all 55 gaps closed and none open.

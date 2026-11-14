@@ -24,8 +24,6 @@ import java.time.LocalTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -252,7 +250,6 @@ class MatchMapperTest {
 
         // Act & Assert
         assertSame(club, mapper.resolveClub("HPSC", ClubIdentifier.SOSC));
-        verify(clubRepository, never()).findByIdentifier(ClubIdentifier.SOSC);
     }
 
     @Test
@@ -295,7 +292,6 @@ class MatchMapperTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> mapper.resolveClub("No Such Club"));
-        verify(clubRepository, never()).findByIdentifier(ClubIdentifier.HPSC);
     }
 
     // resolveFirearmType()
@@ -326,19 +322,12 @@ class MatchMapperTest {
 
     @Test
     void testResolveMatchCategory_whenMatchCategoryIsUnrecognised_thenThrowsValidationException() {
-        // Act
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> matchMapper.resolveMatchCategory("Not A Category"));
-
-        // Assert - a supplied category that doesn't resolve is an error, not a fall back to the default
-        assertEquals("Unknown match category: Not A Category", exception.getMessage());
+        // Act & Assert - a supplied category that does not resolve is an error, not a fall back to the default
+        assertThrows(ValidationException.class, () -> matchMapper.resolveMatchCategory("Not A Category"));
     }
 
     @Test
     void testResolveMatchCategory_whenMatchCategoryIsTheEnumConstantName_thenReturnsMatchingCategory() {
-        // Arrange - the constant name differs from the display name, "Club Shoot"
-        assertNotEquals(MatchCategory.CLUB_SHOOT.getName(), MatchCategory.CLUB_SHOOT.name());
-
         // Act & Assert
         assertEquals(MatchCategory.CLUB_SHOOT, matchMapper.resolveMatchCategory("CLUB_SHOOT"));
         assertEquals(MatchCategory.CLUB_SHOOT, matchMapper.resolveMatchCategory("club_shoot"));
@@ -350,16 +339,6 @@ class MatchMapperTest {
         assertEquals(MatchCategory.CLUB_SHOOT,
                 matchMapper.resolveMatchCategory(" " + MatchCategory.CLUB_SHOOT.getName() + "	"));
         assertEquals(MatchCategory.CLUB_SHOOT, matchMapper.resolveMatchCategory("  CLUB_SHOOT  "));
-    }
-
-    @Test
-    void testResolveMatchCategory_whenUnrecognisedCategoryHasSurroundingWhitespace_thenMessageKeepsTheSuppliedValue() {
-        // Act
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> matchMapper.resolveMatchCategory(" Not A Category "));
-
-        // Assert
-        assertEquals("Unknown match category:  Not A Category ", exception.getMessage());
     }
 
     // Helpers

@@ -112,6 +112,7 @@ public class MatchCompetitorRequest extends IpscMatchScore {
      * @param additionalPenalties         the competitor's total additional penalties applied across the match.
      * @param isVisitor          whether the competitor was a visitor at the match; stored as {@code null} when
      *                           omitted.
+     * @since 9.1.0
      */
     @JsonCreator
     public MatchCompetitorRequest(@JsonProperty("matchCompetitorId") Long matchCompetitorId,
@@ -189,6 +190,7 @@ public class MatchCompetitorRequest extends IpscMatchScore {
      * @param proceduralErrors            the total procedural penalties; may be null.
      * @param additionalPenalties         the total additional penalties; may be null.
      * @param isVisitor                   whether the competitor was a visitor; may be null.
+     * @since 9.1.0
      */
     public MatchCompetitorRequest(Long competitorId, String competitorName, String competitorNumber, Long matchId,
                                   String matchClub, String competitorCategory, String firearmType, String division,
@@ -226,6 +228,7 @@ public class MatchCompetitorRequest extends IpscMatchScore {
      * @throws ValidationException if the competitor ID, number and name are all missing, if the match ID,
      *                             competitor category, division or power factor is missing, or if the division does not
      *                             belong to the firearm type.
+     * @since 13.0.0
      */
     public void validate() {
         if ((getCompetitorId() == null) && !hasText(getCompetitorNumber())

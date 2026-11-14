@@ -2,7 +2,9 @@ package za.co.hpsc.web.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import za.co.hpsc.web.converters.CompetitorCategoryConverter;
@@ -12,6 +14,7 @@ import za.co.hpsc.web.enums.Division;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -25,10 +28,14 @@ public class ShooterLogOverall {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shooter_log_id", nullable = false)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private ShooterLog shooterLog;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "competitor_id", nullable = false)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Competitor competitor;
 
     @Convert(converter = CompetitorCategoryConverter.class)
@@ -44,6 +51,17 @@ public class ShooterLogOverall {
 
     @Column(name = "percentage_in_log", precision = 19, scale = 6)
     private BigDecimal percentageInLog;
+
+    /**
+     * The matches used to calculate this overall, being the best matches in the shooter log's matches.
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "shooter_log_overall_match",
+            joinColumns = @JoinColumn(name = "shooter_log_overall_id"),
+            inverseJoinColumns = @JoinColumn(name = "match_id"))
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private List<IpscMatch> matches;
 
     @Column(name = "date_calculated")
     private LocalDateTime dateCalculated;

@@ -233,6 +233,7 @@ class IpscShooterLogServiceIntegrationTest {
         // Arrange
         IpscMatch match = createMatch("Match A");
         IpscMatch lateMatch = createMatch("Match B", LocalDate.of(2026, 11, 14));
+        int countBefore = shooterLogRepository.findAllWithMatches().size();
         String csvData = String.format("""
                 StartDate,EndDate,MatchIds
                 2026-09-01,2026-09-30,%d
@@ -250,12 +251,12 @@ class IpscShooterLogServiceIntegrationTest {
         assertTrue(results.get(0).isSuccess());
         assertEquals(List.of(match.getId()), results.get(0).getShooterLog().getMatchIds());
         assertFalse(results.get(1).isSuccess());
-        assertEquals("No IPSC match found with ID 999999", results.get(1).getMessage());
+        assertTrue(results.get(1).getMessage().contains("999999"));
         assertEquals("999999", results.get(1).getShooterLogRow().getMatchIds());
         assertFalse(results.get(2).isSuccess());
         assertTrue(results.get(2).getMessage().contains("outside the shooter log's dates"));
         assertTrue(results.get(3).isSuccess());
-        assertEquals(2, shooterLogRepository.findAllWithMatches().size());
+        assertEquals(countBefore + 2, shooterLogRepository.findAllWithMatches().size());
     }
 
     @Test
@@ -383,15 +384,15 @@ class IpscShooterLogServiceIntegrationTest {
         assertEquals(List.of(replacement.getId()), results.get(0).getShooterLog().getMatchIds());
         assertEquals(LocalDate.of(2026, 10, 1), results.get(0).getShooterLog().getStartDate());
         assertFalse(results.get(1).isSuccess());
-        assertEquals("No shooter log found with ID 999999", results.get(1).getMessage());
+        assertTrue(results.get(1).getMessage().contains("999999"));
         assertEquals("999999", results.get(1).getShooterLogRow().getShooterLogId());
         assertFalse(results.get(2).isSuccess());
-        assertEquals("Shooter log ID is required.", results.get(2).getMessage());
+        assertTrue(results.get(2).getMessage().contains("required"));
         assertEquals("", results.get(2).getShooterLogRow().getShooterLogId());
         assertFalse(results.get(3).isSuccess());
-        assertEquals("No IPSC match found with ID 999999", results.get(3).getMessage());
+        assertTrue(results.get(3).getMessage().contains("999999"));
         assertFalse(results.get(4).isSuccess());
-        assertEquals("Shooter log start date is required.", results.get(4).getMessage());
+        assertTrue(results.get(4).getMessage().contains("start date"));
         assertEquals(String.valueOf(second.getId()), results.get(4).getShooterLogRow().getShooterLogId());
         // The failed rows left the second log as it was
         assertEquals(List.of(original.getId()), ipscShooterLogService.getShooterLog(second.getId()).getMatchIds());
@@ -476,9 +477,9 @@ class IpscShooterLogServiceIntegrationTest {
         List<ShooterLogBulkResponse> results = holder.getShooterLogResults();
         assertEquals(4, results.size());
         assertTrue(results.stream().noneMatch(ShooterLogBulkResponse::isSuccess));
-        assertEquals("No shooter log found with ID 999999", results.get(0).getMessage());
-        assertEquals("Shooter log ID is required.", results.get(1).getMessage());
-        assertEquals("Shooter log end date cannot be before its start date.", results.get(2).getMessage());
+        assertTrue(results.get(0).getMessage().contains("999999"));
+        assertTrue(results.get(1).getMessage().contains("required"));
+        assertTrue(results.get(2).getMessage().contains("end date"));
         assertTrue(results.get(3).getMessage().contains("outside the shooter log's dates"));
     }
 

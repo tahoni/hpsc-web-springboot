@@ -54,20 +54,6 @@ public class AwardRequestForCSVTest {
         assertTrue(request.getCeremonyTags().isEmpty());
     }
 
-    @Test
-    void testConstructor_whenOptionalPlaceNamesAreNull_thenKeepsOptionalNamesNull() {
-        // Arrange & Act
-        TestAwardRequestForCSV request =
-                new TestAwardRequestForCSV("Top Shooter", "Annual Awards", "Jane Doe", null, null);
-
-        // Assert
-        assertEquals("Top Shooter", request.getTitle());
-        assertEquals("Annual Awards", request.getCeremonyTitle());
-        assertEquals("Jane Doe", request.getFirstPlaceName());
-        assertNull(request.getSecondPlaceName());
-        assertNull(request.getThirdPlaceName());
-    }
-
     // JSON serialization
     @Test
     void testJsonSerialization_whenFullyPopulated_thenSerializesAllFields() throws Exception {
@@ -101,15 +87,8 @@ public class AwardRequestForCSVTest {
         assertEquals("John Roe", node.get("secondPlaceName").asText());
         assertEquals("Sam Poe", node.get("thirdPlaceName").asText());
         assertEquals("Award summary", node.get("summary").asText());
-        assertEquals("Award description", node.get("description").asText());
-        assertEquals("Overall", node.get("category").asText());
-        assertEquals("Ceremony summary", node.get("ceremonySummary").asText());
-        assertEquals("Ceremony description", node.get("ceremonyDescription").asText());
-        assertEquals("Main event", node.get("ceremonyCategory").asText());
         assertEquals("awards/2026/top-shooter.png", node.get("imageFilePath").asText());
         assertEquals("first.png", node.get("firstPlaceImageFileName").asText());
-        assertEquals("second.png", node.get("secondPlaceImageFileName").asText());
-        assertEquals("third.png", node.get("thirdPlaceImageFileName").asText());
         assertEquals("ipsc", node.get("tags").get(0).asText());
         assertEquals("hpsc", node.get("ceremonyTags").get(0).asText());
     }

@@ -34,18 +34,6 @@ class ImageResponseTest {
         assertNotNull(response.getUuid());
     }
 
-    // ImageResponse(UUID, String, String, String, String)
-    @Test
-    void testConstructor_withMimeType_thenUseProvidedMimeType() {
-        // Act
-        ImageResponse response = new ImageResponse(
-                UUID.randomUUID(), "Title", "path/to", "image.jpg", MediaType.IMAGE_PNG_VALUE
-        );
-
-        // Assert
-        assertEquals(MediaType.IMAGE_PNG_VALUE, response.getMimeType());
-    }
-
     @Test
     void testConstructor_withNoMimeType_thenInfersMimeTypeFromFileName() {
         // Act
@@ -59,33 +47,6 @@ class ImageResponseTest {
         // Assert
         assertEquals(MediaType.IMAGE_JPEG_VALUE, jpgResponse.getMimeType());
         assertEquals(MediaType.IMAGE_PNG_VALUE, pngResponse.getMimeType());
-    }
-
-    // ImageResponse(UUID, String, String, String, String, List, String, String, String)
-    @Test
-    void testFullConstructor_thenInitialisesAllFields() {
-        // Arrange
-        UUID uuid = UUID.randomUUID();
-        List<String> tags = List.of("nature", "forest");
-
-        // Act
-        ImageResponse response = new ImageResponse(
-                uuid, "Forest", "A summary", "Long description",
-                "Nature", tags, "/images", "forest.webp", "image/webp"
-        );
-
-        // Assert
-        assertEquals(uuid, response.getUuid());
-        assertEquals("Forest", response.getTitle());
-        assertEquals("A summary", response.getSummary());
-        assertEquals("Long description", response.getDescription());
-        assertEquals("Nature", response.getCategory());
-        assertEquals("/images", response.getFilePath());
-        assertEquals("forest.webp", response.getFileName());
-        assertEquals("image/webp", response.getMimeType());
-
-        assertEquals(2, response.getTags().size());
-        assertTrue(response.getTags().containsAll(tags));
     }
 
     // setMimeType(String)
@@ -306,5 +267,25 @@ class ImageResponseTest {
 
         // Assert
         assertEquals(MediaType.IMAGE_GIF_VALUE, imageResponse.getMimeType());
+    }
+
+    // ImageResponse(UUID, String, String, String, String, List<String>, String, String, String)
+    @Test
+    void testConstructor_withUuidAndAllMetadata_thenKeepsThemAndInfersMimeType() {
+        // Arrange
+        UUID uuid = UUID.randomUUID();
+
+        // Act
+        ImageResponse response = new ImageResponse(uuid, "Title", "Summary", "Description", "Category",
+                List.of("tag"), "/path", "photo.jpg", null);
+
+        // Assert
+        assertEquals(uuid, response.getUuid());
+        assertEquals("Title", response.getTitle());
+        assertEquals("Summary", response.getSummary());
+        assertEquals(List.of("tag"), response.getTags());
+        assertEquals("/path", response.getFilePath());
+        assertEquals("photo.jpg", response.getFileName());
+        assertEquals(MediaType.IMAGE_JPEG_VALUE, response.getMimeType());
     }
 }

@@ -125,6 +125,7 @@ public class ControllerAdvice {
      * @param ex      the exception carrying the validation errors.
      * @param request the current web request, used to log the request URL.
      * @return a {@link ResponseEntity} carrying a {@link ControllerResponse} that describes the error.
+     * @since 13.1.0
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ControllerResponse> handleMethodArgumentNotValidException(

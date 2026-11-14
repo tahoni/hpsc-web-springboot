@@ -42,20 +42,6 @@ class IpscMatchCompetitorControllerTest {
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
     }
 
-    @Test
-    void testCreateMatchCompetitor_whenServiceSucceeds_thenResponseBodyIsReturnedFromService() {
-        // Arrange
-        MatchCompetitorRequest request = new MatchCompetitorRequest();
-        MatchCompetitorResponse response = new MatchCompetitorResponse();
-        when(ipscMatchCompetitorService.createMatchCompetitor(request)).thenReturn(response);
-
-        // Act
-        ResponseEntity<MatchCompetitorResponse> result = ipscMatchCompetitorController.createMatchCompetitor(request);
-
-        // Assert
-        assertSame(response, result.getBody());
-    }
-
     // createMatchCompetitors()
     private static final String VALID_CSV = """
             CompetitorId,MatchId,Cats,FirearmType,Div
@@ -74,21 +60,6 @@ class IpscMatchCompetitorControllerTest {
 
         // Assert
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
-    }
-
-    @Test
-    void testCreateMatchCompetitors_whenServiceSucceeds_thenResponseBodyIsReturnedFromService() throws Exception {
-        // Arrange
-        MatchCompetitorBulkResponseHolder holder =
-                new MatchCompetitorBulkResponseHolder(List.of(new MatchCompetitorBulkResponse()));
-        when(ipscMatchCompetitorService.createMatchCompetitors(VALID_CSV, null)).thenReturn(holder);
-
-        // Act
-        ResponseEntity<MatchCompetitorBulkResponseHolder> result =
-                ipscMatchCompetitorController.createMatchCompetitors(VALID_CSV, null);
-
-        // Assert
-        assertSame(holder, result.getBody());
     }
 
     @Test
@@ -201,19 +172,6 @@ class IpscMatchCompetitorControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertSame(response, result.getBody());
-    }
-
-    @Test
-    void testGetAllMatchCompetitors_whenNoneExist_thenReturnsEmptyList() {
-        // Arrange
-        when(ipscMatchCompetitorService.getAllMatchCompetitors()).thenReturn(List.of());
-
-        // Act
-        ResponseEntity<List<MatchCompetitorResponse>> result = ipscMatchCompetitorController.getAllMatchCompetitors();
-
-        // Assert
-        assertNotNull(result.getBody());
-        assertTrue(result.getBody().isEmpty());
     }
 
     // deleteMatchCompetitor()

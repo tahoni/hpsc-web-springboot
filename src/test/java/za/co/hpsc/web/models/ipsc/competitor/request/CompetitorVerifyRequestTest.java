@@ -1,6 +1,7 @@
 package za.co.hpsc.web.models.ipsc.competitor.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.junit.jupiter.api.Test;
 import za.co.hpsc.web.exceptions.ValidationException;
 
@@ -26,7 +27,7 @@ class CompetitorVerifyRequestTest {
     @Test
     void testDeserialise_whenCompetitorIdsAreMissing_thenFails() {
         // Act & Assert
-        assertThrows(Exception.class, () -> mapper.readValue("{}", CompetitorVerifyRequest.class));
+        assertThrows(MismatchedInputException.class, () -> mapper.readValue("{}", CompetitorVerifyRequest.class));
     }
 
     // validate()

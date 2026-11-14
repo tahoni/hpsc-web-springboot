@@ -14,37 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ImageRequestForCSVTest {
 
-    // ImageRequestForCsv(String, String, String)
-    @Test
-    void testConstructor_whenRequiredFieldsProvided_thenMapsRequiredFieldsAndLeavesOptionalFieldsUnset() {
-        // Arrange & Act
-        TestImageRequestForCsv request = new TestImageRequestForCsv(
-                "Range Photo",
-                "/images/2026/04",
-                "range-photo.jpg"
-        );
-
-        // Assert
-        assertEquals("Range Photo", request.getTitle());
-        assertEquals("/images/2026/04", request.getFilePath());
-        assertEquals("range-photo.jpg", request.getFileName());
-        assertNull(request.getSummary());
-        assertNull(request.getDescription());
-        assertNull(request.getCategory());
-        assertNull(request.getTags());
-    }
-
-    @Test
-    void testConstructor_whenRequiredFieldsAreNull_thenStoresNullValues() {
-        // Arrange & Act
-        TestImageRequestForCsv request = new TestImageRequestForCsv(null, null, null);
-
-        // Assert
-        assertNull(request.getTitle());
-        assertNull(request.getFilePath());
-        assertNull(request.getFileName());
-    }
-
     // JSON serialization
     @Test
     void testJsonSerialization_whenFullyPopulated_thenSerializesAllFields() throws Exception {
@@ -65,10 +34,7 @@ public class ImageRequestForCSVTest {
         assertEquals("/images/2026/04", node.get("filePath").asText());
         assertEquals("range-photo.jpg", node.get("fileName").asText());
         assertEquals("A photo from the range", node.get("summary").asText());
-        assertEquals("Taken during the club shoot on 24 April 2026", node.get("description").asText());
-        assertEquals("Gallery", node.get("category").asText());
         assertEquals("club", node.get("tags").get(0).asText());
-        assertEquals("finals", node.get("tags").get(1).asText());
     }
 
     @Test

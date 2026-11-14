@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Spring-context integration test for {@link IpscMatchRepository}'s custom queries and
+ * Spring-context integration test for {@link IpscMatchRepository}'s custom queries
  * against the H2 {@code test} profile database. Each test flushes and clears the persistence context before
  * reading back, so it observes what was really written rather than cached entities.
  */
@@ -65,7 +65,7 @@ class IpscMatchRepositoryIntegrationTest {
     @Test
     void testFindByIdWithClub_whenMatchDoesNotExist_thenReturnsEmpty() {
         // Act & Assert
-        assertTrue(ipscMatchRepository.findByIdWithClub(999L).isEmpty());
+        assertTrue(ipscMatchRepository.findByIdWithClub(Long.MAX_VALUE).isEmpty());
     }
 
     // findAllWithClub()
@@ -77,11 +77,16 @@ class IpscMatchRepositoryIntegrationTest {
         first.setClub(club);
         IpscMatch second = newMatch("Second Match");
         second.setClub(club);
-        ipscMatchRepository.saveAll(List.of(first, second, newMatch("Clubless Match")));
+        List<Long> savedIds = ipscMatchRepository.saveAll(List.of(first, second, newMatch("Clubless Match")))
+                .stream()
+                .map(IpscMatch::getId)
+                .toList();
         flushAndClear();
 
         // Act
-        List<IpscMatch> matches = ipscMatchRepository.findAllWithClub();
+        List<IpscMatch> matches = ipscMatchRepository.findAllWithClub().stream()
+                .filter(match -> savedIds.contains(match.getId()))
+                .toList();
 
         // Assert
         assertEquals(3, matches.size());
