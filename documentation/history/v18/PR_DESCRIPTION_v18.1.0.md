@@ -28,7 +28,7 @@
 - [x] `CHANGELOG.md`'s `[Unreleased]` section synced against the branch and renamed to `[18.1.0]`
 - [ ] Start the application, calculate a match's results and confirm each verified competitor with points has a rank
   and percentage, then read them back from `GET /ipsc/match-results/matches/{matchId}` and `GET /ipsc/match-results`
-- [ ] Run the migrations against MySQL, with `FLYWAY_MYSQL_URL` set, and confirm `V11_14_0` applies
+- [x] Run the migrations against MySQL, with `FLYWAY_MYSQL_URL` set, and confirm `V11_14_0` applies
 
 ## 🔗 Related Documentation
 
