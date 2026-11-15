@@ -49,6 +49,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### Configuration
+
+- **`pom.xml`:** `logback.version` is raised from `1.6.5` to `1.6.7`, and `h2.version` is pinned to `2.5.252`; the
+  comment explaining the Jackson BOM property overrides is removed
+
 ##### Documentation
 
 - **`ARCHITECTURE.md`, `README.md` and `flyway-migration-versioning.md`:** Describe `MatchResult`, the
