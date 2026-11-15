@@ -617,6 +617,18 @@ Gap #41)* —
   `ImplTest` only where the impl has helper methods worth testing directly, without the list of five services — done
 - [x] Remove the `exceptions/` line from `ARCHITECTURE.md`'s test tree — done
 
+**`MatchResult` documentation** *(improvement-plan.md → Gap #56)* — ✅ Closed in v18.1.0
+
+- [x] Add `IpscMatchResultController` (`/ipsc/match-results`) to `ARCHITECTURE.md`'s controller table, and an
+  **IPSC Match Results** row to its System Overview — done
+- [x] Add `MatchResult` (`match_result`; many-to-one → `IpscMatch`, `Competitor`, `MatchCompetitor`) to the Domain
+  Entities table, and a `models/ipsc/matchresult/response/` subsection — done
+- [x] Describe `IpscMatchResultService`, `MatchResultRepository` and `TransactionService.replaceMatchResults` where
+  the other services and repositories are described — done
+- [x] Add a match result bullet to `README.md`'s feature list — done
+- [x] Add the `V11_14_0__create_match_result.sql` row to `flyway-migration-versioning.md`'s Current State table once
+  its release version is known — done, as v18.1.0
+
 ---
 
 ## 🟡 Partially Completed
@@ -631,17 +643,7 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-**`MatchResult` documentation** *(improvement-plan.md → Gap #56)*
-
-- [ ] Add `IpscMatchResultController` (`/ipsc/match-results`) to `ARCHITECTURE.md`'s controller table, and an
-  **IPSC Match Results** row to its System Overview
-- [ ] Add `MatchResult` (`match_result`; many-to-one → `IpscMatch`, `Competitor`, `MatchCompetitor`) to the Domain
-  Entities table, and a `models/ipsc/matchresult/response/` subsection
-- [ ] Describe `IpscMatchResultService`, `MatchResultRepository` and `TransactionService.replaceMatchResults` where
-  the other services and repositories are described
-- [ ] Add a match result bullet to `README.md`'s feature list
-- [ ] Add the `V11_14_0__create_match_result.sql` row to `flyway-migration-versioning.md`'s Current State table once
-  its release version is known
+*No gaps are currently open.*
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.

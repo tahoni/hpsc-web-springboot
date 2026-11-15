@@ -47,6 +47,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - `IpscMatchResultController`, `IpscMatchResultService`, `MatchResultRepository`, `TransactionService.replaceMatchResults`
   and the `MatchResultResponse`, `MatchResultMatchResponse` and `MatchResultResponseHolder` response classes
 
+#### 🔄 Changed
+
+##### Documentation
+
+- **`ARCHITECTURE.md`, `README.md` and `flyway-migration-versioning.md`:** Describe `MatchResult`, the
+  `IpscMatchResultController` and `IpscMatchResultService`, the match result response models and the
+  `V11_14_0__create_match_result.sql` migration, which they left out
+- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Record Gap #56, the missing `MatchResult` documentation,
+  and its closure
+
 ---
 
 ### 🧾 [18.0.0] - 2026-11-14

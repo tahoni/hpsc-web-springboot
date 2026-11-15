@@ -131,6 +131,7 @@ responsibilities:
 | **IPSC Competitors & Matches** | Full CRUD for competitor and match records, plus bulk CSV import for both, via `IpscCompetitorController`/`IpscMatchController`; a match cannot be rescheduled outside the dates of a shooter log that covers it, and one already outside them reports it in its `messages` when read or edited            |
 | **IPSC Match Competitors**     | Full CRUD for a competitor's entry in a match, plus bulk CSV import, via `IpscMatchCompetitorController`                                                                                                                                                                                                   |
 | **IPSC Shooter Results**       | Calculation of a match's ranked results per firearm type, division and competitor category for verified competitors with points, and reading them, via `IpscShooterResultController`                                                                                                                       |
+| **IPSC Match Results**         | Calculation of each verified competitor's rank and percentage in a match overall, with points above zero, ranked together regardless of firearm type, division or competitor category, and reading them, via `IpscMatchResultController`                                                                   |
 | **Shooter Logs**               | Full CRUD for shooter logs (a date range and the matches it covers) via `IpscShooterLogController`, and calculation of each competitor's overall rank and percentage per division and competitor category from the log's matches' shooter results, and reading them, via `IpscShooterLogOverallController` |
 
 The application follows a strict **N-Tier Layered Architecture** with unidirectional dependencies:
@@ -164,6 +165,7 @@ Handles incoming HTTP requests. Does not contain business logic.
 | `IpscMatchCompetitorController`   | `/ipsc/match-competitors`           | IPSC match competitor CRUD + bulk CSV import     |
 | `IpscShooterLogController`        | `/ipsc/shooter-logs`                | IPSC shooter log CRUD + bulk CSV import          |
 | `IpscShooterResultController`     | `/ipsc/shooter-results`             | IPSC shooter result calculation and reading      |
+| `IpscMatchResultController`       | `/ipsc/match-results`               | IPSC match result calculation and reading        |
 | `IpscShooterLogOverallController` | `/ipsc/shooter-log-overall-results` | IPSC shooter log overall calculation and reading |
 
 All controllers:
@@ -191,10 +193,11 @@ Contains all business logic.
 | `IpscMatchCompetitorService`   | `IpscMatchCompetitorServiceImpl`   | IPSC match competitor CRUD + bulk CSV import                                                                                                                                                                                                    |
 | `IpscShooterLogService`        | `IpscShooterLogServiceImpl`        | IPSC shooter log CRUD + bulk CSV import, with the matches a log covers set by ID                                                                                                                                                                |
 | `IpscShooterResultService`     | `IpscShooterResultServiceImpl`     | Calculates a match's shooter results (rank and percentage) for verified competitors with points, and reads them                                                                                                                                 |
+| `IpscMatchResultService`       | `IpscMatchResultServiceImpl`       | Calculates a match's results (rank and percentage across the whole match) for verified competitors with points, and reads them                                                                                                                  |
 | `IpscShooterLogOverallService` | `IpscShooterLogOverallServiceImpl` | Calculates a shooter log's overall results (rank and percentage) for verified competitors from its matches' shooter results, recording the best matches each was calculated from, refusing a log with a match outside its dates, and reads them |
 | `IpscEntityCompetitorService`  | `IpscEntityCompetitorServiceImpl`  | Looks up a persisted competitor from the loosely-specified identity in imported data                                                                                                                                                            |
 | `IpscEntityClubService`        | `IpscEntityClubServiceImpl`        | Resolves clubs by code, abbreviation or name; null-safe comparisons of clubs                                                                                                                                                                    |
-| `TransactionService`           | `TransactionServiceImpl`           | Commits competitor/match/match competitor/shooter log/shooter result/shooter log overall result writes, each in its own transaction                                                                                                             |
+| `TransactionService`           | `TransactionServiceImpl`           | Commits competitor/match/match competitor/shooter log/shooter result/shooter log overall result/match result writes, each in its own transaction                                                                                                             |
 
 > `AwardService.createAwards()`/`ImageService.createImages()` are stateless by design, not an unfinished persistence
 > layer: each parses CSV into response records only, with no repository write — a preview/validation transform
@@ -232,6 +235,7 @@ The JPA entities map to database tables:
 | `ShooterLog`        | `shooter_log`         | Many-to-many → `IpscMatch` (through `shooter_log_match`)                                                   |
 | `ShooterLogOverall` | `shooter_log_overall` | Many-to-one → `ShooterLog`, `Competitor`; many-to-many → `IpscMatch` (through `shooter_log_overall_match`) |
 | `ShooterResult`     | `shooter_result`      | Many-to-one → `IpscMatch`, `Competitor`, `MatchCompetitor`                                                 |
+| `MatchResult`       | `match_result`        | Many-to-one → `IpscMatch`, `Competitor`, `MatchCompetitor`                                                 |
 
 A relationship's owning (child) side declares a `@ManyToOne`/`@JoinColumn`, except `ShooterLog.matches` and
 `ShooterLogOverall.matches`, which are `@ManyToMany` links kept in the `shooter_log_match` and
@@ -291,6 +295,11 @@ shared Comstock-scoring fields in `IpscCommonScore`/`IpscMatchScore`/`IpscMatchS
 
 `ShooterResultResponse`, `ShooterMatchResultResponse` and `ShooterResponseHolder` — a match linked to its shooter
 results, consumed by `IpscShooterResultController`.
+
+#### `models/ipsc/matchresult/response/`
+
+`MatchResultResponse`, `MatchResultMatchResponse` and `MatchResultResponseHolder` — a match linked to its match
+results, consumed by `IpscMatchResultController`.
 
 #### `models/ipsc/shooterlog/request/` and `models/ipsc/shooterlog/response/`
 

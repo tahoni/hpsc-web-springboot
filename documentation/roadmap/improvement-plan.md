@@ -160,11 +160,13 @@ number or a newly met precondition on an existing gap — see the `update-improv
     response descriptions updated)
   - #55 The test cleanup left `AGENTS.md`'s 3-tier service rule and `ARCHITECTURE.md`'s test tree describing tests
     that no longer exist — closed in v18.0.0 (rule reworded, `exceptions/` removed from the test tree)
+  - #56 `MatchResult` and its `/ipsc/match-results` endpoints are built, but `ARCHITECTURE.md`, `README.md` and the
+    Flyway migration table don't mention them — closed in v18.1.0 (controller, service, entity, response models and
+    migration documented)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
-- **⚪ Open (1):**
-  - #56 `MatchResult` and its `/ipsc/match-results` endpoints are built, but `ARCHITECTURE.md`, `README.md` and the
-    Flyway migration table don't mention them
+- **⚪ Open (0):**
+  - *No gaps are currently open.*
 
 ### ✅ Completed
 
@@ -1808,17 +1810,7 @@ integration test, and an `ImplTest` only where its impl has helper methods worth
 `TransactionService` as one that has none, and no longer list five services; `ARCHITECTURE.md`'s test tree no longer
 lists `exceptions/`.
 
-### 🟡 Partially Completed
-
-A gap moves here when it has at least one **Progress** paragraph (per
-`update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
-but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
-
-*No gaps are currently partially completed.*
-
-### ⚪ Open
-
-#### 56. `MatchResult` and its `/ipsc/match-results` endpoints are built, but `ARCHITECTURE.md`, `README.md` and the Flyway migration table don't mention them
+#### 56. `MatchResult` and its `/ipsc/match-results` endpoints are built, but `ARCHITECTURE.md`, `README.md` and the Flyway migration table don't mention them — ✅ Closed in v18.1.0
 
 **Evidence:** The `[Unreleased]` section of `CHANGELOG.md` records the `MatchResult` entity, the
 `V11_14_0__create_match_result.sql` migration, `IpscMatchResultController` (`/ipsc/match-results`),
@@ -1843,13 +1835,31 @@ its Domain Entities table (many-to-one → `IpscMatch`, `Competitor`, `MatchComp
 repository descriptions; add a match result bullet to `README.md`'s feature list; and add the
 `V11_14_0__create_match_result.sql` row to the Flyway Current State table once the version it ships in is known.
 
+**Outcome:** Done as proposed. `ARCHITECTURE.md` lists `IpscMatchResultController` and `IpscMatchResultService`, the
+`MatchResult` entity, an **IPSC Match Results** domain row and a `models/ipsc/matchresult/response/` subsection, and
+names match results among the writes `TransactionService` commits; `README.md`'s feature list has a match result
+entry; and the Flyway Current State table lists `V11_14_0__create_match_result.sql` as v18.1.0, the version the
+`@since` tags give the new classes.
+
+### 🟡 Partially Completed
+
+A gap moves here when it has at least one **Progress** paragraph (per
+`update-improvement-plan-gaps`'/`sync-improvement-plan-gaps`' "— 🟡 Partially completed in vX.Y.Z" header suffix)
+but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once it does.
+
+*No gaps are currently partially completed.*
+
+### ⚪ Open
+
+*No gaps are currently open.*
+
 ---
 
 ## 🛤️ Roadmap
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | #56 (document `MatchResult` in `ARCHITECTURE.md`, `README.md` and the Flyway table) — #53, #54 and #55 closed in v18.0.0, #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                         |
+| **Now**     | No items currently scoped — #56 closed in v18.1.0, #53, #54 and #55 closed in v18.0.0, #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                         |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath, and `flyway-mysql` until v16.4.0 (#50, closed); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
@@ -1985,6 +1995,8 @@ repository descriptions; add a match result bullet to `README.md`'s feature list
   overall's `matchIds`, closing Gap #54.
 - ✅ Met in v18.0.0: `AGENTS.md`'s 3-tier service test rule matches the `ImplTest` classes that exist, and
   `ARCHITECTURE.md`'s test tree lists only directories that exist, closing Gap #55.
+- ✅ Met in v18.1.0: `ARCHITECTURE.md`, `README.md` and `flyway-migration-versioning.md` describe `MatchResult`, its
+  `/ipsc/match-results` endpoints and the `V11_14_0` migration, as the code has them, closing Gap #56.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.
