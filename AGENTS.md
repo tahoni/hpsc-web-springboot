@@ -439,7 +439,7 @@ updating if `.claude/`'s own layout changes, not for individual skill additions.
    `TransactionServiceIntegrationTest` is the one integration test deliberately not `@Transactional`, since a
    surrounding test transaction would hide whether `TransactionService` really commits or rolls back; it deletes its
    committed data after each test instead. See the `scaffold-unit-tests`/`scaffold-integration-tests` skills for the
-   detailed per-tier rules (what each tier should and shouldn't cover, Spring Boot 4 auto-configuration gotchas,
+   detailed per-tier rules (what each tier should and shouldn't cover, Spring Boot 4 autoconfiguration gotchas,
    etc.).
 - Test class names follow `<ClassName>Test`; test method names follow
   `test<Scenario>_when<Condition>_then<Expectation>`.

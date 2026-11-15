@@ -37,7 +37,7 @@ Version 7.2.0 touches no domain entities, repositories, or API surface — it's 
 ### 🤖 Two New Claude Code Commands
 
 - **`/scaffold-unit-tests`** — migrated from a stale `.github/prompts/scaffold-unit-tests.prompt.md` that referenced a different project's package (`za.co.signio.apexservices`) and an invented "Layer 1/2/3" abstract-interface-test pattern that doesn't exist in this codebase. Corrected to the real convention: interface-contract tests named `[Class]Test` in `services/`, impl-only helper tests in `services/impl/`, no Lombok-only tests.
-- **`/scaffold-integration-tests`** — new, `@SpringBootTest`-based, following `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` as the template: mandatory `@ActiveProfiles("test")`, `@EnableAutoConfiguration` excluding datasource/JPA/messaging auto-configuration, and public-interface-only calls (never an impl class's protected/private helpers).
+- **`/scaffold-integration-tests`** — new, `@SpringBootTest`-based, following `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` as the template: mandatory `@ActiveProfiles("test")`, `@EnableAutoConfiguration` excluding datasource/JPA/messaging autoconfiguration, and public-interface-only calls (never an impl class's protected/private helpers).
 - Both commands accept multiple targets per invocation, defer to their loaded `AGENTS.md`/`CLAUDE.md` rather than restating conventions inline (so they can't drift out of sync), and never commit on their own.
 
 ### 📦 Spring Boot 4.0.7 → 4.1.0
@@ -74,7 +74,7 @@ Version 7.2.0 touches no domain entities, repositories, or API surface — it's 
 
 #### Testing
 
-- `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` now exclude datasource/JPA/messaging auto-configuration
+- `AwardServiceIntegrationTest`/`ImageServiceIntegrationTest` now exclude datasource/JPA/messaging autoconfiguration
 - `HpscWebApplicationTests` renamed to `HpscWebApplicationTest`
 - 26 test files retrofitted with the `// methodName()` grouping/ordering convention
 

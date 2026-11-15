@@ -83,8 +83,8 @@ versions, [`CHANGELOG_v1-v4.md`](/documentation/archive/v1-v4/CHANGELOG_v1-v4.md
 ##### Configuration
 
 - **`.gitignore`:** Refreshed the JetBrains, Visual Studio Code, Eclipse and Node sections from the latest
-  upstream templates — adds entries for SonarLint, Apifox Helper, GitHub Copilot, stylelint, pnpm, yarn v3, Vite,
-  Sveltekit, vitepress and Docusaurus, fixes the `.apt_generated_test/` → `.apt_generated_tests/` typo and the stale
+  upstream templates — adds entries for SonarLint, Apifox Helper, GitHub Copilot, Stylelint, pnpm, yarn v3, Vite,
+  SvelteKit, vitepress and Docusaurus, fixes the `.apt_generated_test/` → `.apt_generated_tests/` typo and the stale
   "Editor-based Rest Client" comment, and adds new OS, Version Control and Secrets & Credentials sections; the custom
   TAHONI block now also ignores `tsdocs/` and `logs/`, and generalises `.claude/*.local.json` to
   `.claude/*.local.*` (supersedes the `.claude/*.local.json` entry above)
@@ -1243,3 +1243,16 @@ No breaking removals in this release. All features from version 4.1.0 remain ava
 - **New:** Detailed CHANGELOG.md (this file) following Keep a Changelog format
 - **Updated:** Architecture documentation updated to reflect entity initialisation patterns
 - **Reference:** Legacy release notes archived in ARCHIVE.md with a deprecation notice
+
+[7.4.1]: https://github.com/tahoni/hpsc-web-springboot/compare/v7.4.0...v7.4.1
+[7.4.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v7.3.0...v7.4.0
+[7.3.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v7.2.0...v7.3.0
+[7.2.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v7.1.0...v7.2.0
+[7.1.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v7.0.0...v7.1.0
+[7.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v6.0.0...v7.0.0
+[6.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v5.4.0...v6.0.0
+[5.4.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v5.3.0...v5.4.0
+[5.3.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v5.2.0...v5.3.0
+[5.2.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v5.1.0...v5.2.0
+[5.1.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v5.0.0...v5.1.0
+[5.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v4.1.0...v5.0.0

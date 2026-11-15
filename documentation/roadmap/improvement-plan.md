@@ -158,8 +158,11 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #54 `ARCHITECTURE.md`'s entity table omits `ShooterLogOverall.matches`, and its relationship sentence is untrue
     for both many-to-many links — closed in v18.0.0 (entity table, relationship sentence and the service and
     response descriptions updated)
-  - #55 The test cleanup left `AGENTS.md`'s 3-tier service rule and `ARCHITECTURE.md`'s test tree describing tests
+  - #55 The test clean-up left `AGENTS.md`'s 3-tier service rule and `ARCHITECTURE.md`'s test tree describing tests
     that no longer exist — closed in v18.0.0 (rule reworded, `exceptions/` removed from the test tree)
+  - #56 `MatchResult` and its `/ipsc/match-results` endpoints are built, but `ARCHITECTURE.md`, `README.md` and the
+    Flyway migration table don't mention them — closed in v18.1.0 (controller, service, entity, response models and
+    migration documented)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
 - **⚪ Open (0):**
@@ -850,7 +853,7 @@ Issues ("The domain model has repository integration tests but no entity-level u
 #24 closed only the repository half of the original claim, and its Outcome records that `HISTORY.md` merely "narrows the
 remaining work to entity-level unit tests" — nothing here tracks that remainder. There is still no
 `src/test/java/za/co/hpsc/web/domain/` directory. The eight entities under `src/main/java/za/co/hpsc/web/domain/` are
-Lombok field holders with no hand-written methods of their own; their cascade, orphan-removal and element-collection
+Lombok field holders with no handwritten methods of their own; their cascade, orphan-removal and element-collection
 behaviour is already exercised by the repository integration tests Gap #24 added.
 
 **Why it matters:** A stated-but-unbuilt goal repeated in two places, yet untracked here, so it will keep being
@@ -869,7 +872,7 @@ excluded from Lombok's `toString`/`equals`/`hashCode` because `IpscMatchStage.ma
 dropping either exclusion makes both methods recurse into a `StackOverflowError`. A new `IpscMatchTest` covers that
 (`toString`/`hashCode` on a match with a linked stage, and `equals` ignoring `stages`) plus the `stages` list being
 initialised empty and mutable; removing the exclusions was confirmed to fail three of its four tests. The other
-seven entities have no hand-written behaviour and are left to the repository integration tests from Gap #24. The
+seven entities have no handwritten behaviour and are left to the repository integration tests from Gap #24. The
 bullet was dropped from `HISTORY.md`'s Short-term list, `ARCHITECTURE.md`'s test tree gained a `domain/` entry
 and `README.md`'s unit-test categories now include entities.
 
@@ -1003,7 +1006,7 @@ default branch would also move where Dependabot reads its configuration from.
 "`none` (Flyway migrations)" and says schema changes "are managed by Flyway ... for every profile except `test`";
 `application.properties` sets `spring.flyway.enabled=true`, and `application-local.properties` configures
 `baseline-on-migrate`. But `pom.xml` depended only on `org.flywaydb:flyway-core`, and Spring Boot 4 moved Flyway's
-auto-configuration out of `spring-boot-autoconfigure` into its own `spring-boot-flyway` module. With that module
+autoconfiguration out of `spring-boot-autoconfigure` into its own `spring-boot-flyway` module. With that module
 absent, nothing runs Flyway at startup and every `spring.flyway.*` property is silently ignored, in every profile —
 existing databases were only ever migrated by hand through `flyway-maven-plugin` (`flyway:migrate`). It surfaced when
 the new Docker Compose setup's empty MySQL database came up with no tables.
@@ -1013,7 +1016,7 @@ source of truth for MySQL, yet a fresh database was never created, and a new mig
 remembered to run the Maven plugin by hand. `ddl-auto=none` means Hibernate doesn't fill the gap either, so the
 application starts against a missing or stale schema and fails only at the first query.
 
-**Proposed improvement:** Replace `flyway-core` with `spring-boot-starter-flyway`, so Boot's auto-configuration runs
+**Proposed improvement:** Replace `flyway-core` with `spring-boot-starter-flyway`, so Boot's autoconfiguration runs
 the migrations at startup. Check the one database that already exists without Flyway's history — production, built
 by hand before Flyway ran — and give the `prod` profile the same `baseline-on-migrate` at `7.0.0` that `local`
 already has, so its first start doesn't fail on the existing tables.
@@ -1780,16 +1783,16 @@ kept in the `shooter_log_match` and `shooter_log_overall_match` join tables, the
 says the best matches each overall was calculated from are recorded, and the `ShooterLogOverallResponse` sentence
 says each overall lists its `matchIds`.
 
-#### 55. The test cleanup left `AGENTS.md`'s 3-tier service rule and `ARCHITECTURE.md`'s test tree describing tests that no longer exist — ✅ Closed in v18.0.0
+#### 55. The test clean-up left `AGENTS.md`'s 3-tier service rule and `ARCHITECTURE.md`'s test tree describing tests that no longer exist — ✅ Closed in v18.0.0
 
 **Evidence:** `AGENTS.md:437`'s Test Conventions say "All five services (`AwardService`, `ImageService`,
 `IpscCompetitorService`, `IpscMatchService`, `TransactionService`) follow this split", the split being an interface
 test, a `<Service>ImplTest` for the impl's own helper methods and an integration test. `services/` now declares eleven
 service interfaces and `services/impl/` holds eight `ImplTest` classes: `TransactionServiceImplTest` is removed in the
-`[Unreleased]` test cleanup (`CHANGELOG.md`'s "Brittle service tests removed" entry), and `IpscShooterLogOverallService`
+`[Unreleased]` test clean-up (`CHANGELOG.md`'s "Brittle service tests removed" entry), and `IpscShooterLogOverallService`
 and `IpscShooterResultService` never had one, so `TransactionService`, which the sentence names, no longer follows it.
 `ARCHITECTURE.md:110`'s test tree still lists `exceptions/ # Exception hierarchy unit tests`, but the
-`FatalException`, `NonFatalException` and `ValidationException` tests were deleted in the same cleanup as `super(...)`
+`FatalException`, `NonFatalException` and `ValidationException` tests were deleted in the same clean-up as `super(...)`
 pass-through, so `src/test/java/za/co/hpsc/web/exceptions/` no longer exists.
 
 **Why it matters:** The same shape as Gaps #20 and #34: test documentation that predates the tests it describes. A
@@ -1806,6 +1809,37 @@ line from `ARCHITECTURE.md`'s test tree.
 integration test, and an `ImplTest` only where its impl has helper methods worth testing directly, name
 `TransactionService` as one that has none, and no longer list five services; `ARCHITECTURE.md`'s test tree no longer
 lists `exceptions/`.
+
+#### 56. `MatchResult` and its `/ipsc/match-results` endpoints are built, but `ARCHITECTURE.md`, `README.md` and the Flyway migration table don't mention them — ✅ Closed in v18.1.0
+
+**Evidence:** The `[Unreleased]` section of `CHANGELOG.md` records the `MatchResult` entity, the
+`V11_14_0__create_match_result.sql` migration, `IpscMatchResultController` (`/ipsc/match-results`),
+`IpscMatchResultService`, `MatchResultRepository`, `TransactionService.replaceMatchResults` and the
+`MatchResultResponse`, `MatchResultMatchResponse` and `MatchResultResponseHolder` response classes, all present under
+`src/`. `ARCHITECTURE.md` still lists seven controllers (the table at line 166 stops at
+`IpscShooterLogOverallController`), seven entities (the Domain Entities table at line 234 stops at `ShooterResult`) and
+six domains in its System Overview, and its `models/ipsc/shooterresult/response/` subsection has no `matchresult`
+counterpart. `README.md`'s feature list (line 38) has no match result entry, and
+`documentation/recommendations/flyway-migration-versioning.md`'s Current State table stops at
+`V11_13_0__create_shooter_log_overall_match.sql`.
+
+**Why it matters:** The same shape as Gaps #34, #51 and #54: the documentation describes the system as it was before
+the latest work. A contributor looking for where a match-wide ranking lives, or choosing the next migration number,
+reads `ShooterResult` and `V11_13_0` as the latest, and one deleting a match would not know `match_result` now
+references it. The release checklist reverse-syncs these files only when a release is cut, so the drift stays until then
+unless it is tracked.
+
+**Proposed improvement:** Add `IpscMatchResultController` to `ARCHITECTURE.md`'s controller table, `MatchResult` to
+its Domain Entities table (many-to-one → `IpscMatch`, `Competitor`, `MatchCompetitor`, as `ShooterResult`), an
+**IPSC Match Results** row to the System Overview, a `models/ipsc/matchresult/response/` subsection and the service and
+repository descriptions; add a match result bullet to `README.md`'s feature list; and add the
+`V11_14_0__create_match_result.sql` row to the Flyway Current State table once the version it ships in is known.
+
+**Outcome:** Done as proposed. `ARCHITECTURE.md` lists `IpscMatchResultController` and `IpscMatchResultService`, the
+`MatchResult` entity, an **IPSC Match Results** domain row and a `models/ipsc/matchresult/response/` subsection, and
+names match results among the writes `TransactionService` commits; `README.md`'s feature list has a match result
+entry; and the Flyway Current State table lists `V11_14_0__create_match_result.sql` as v18.1.0, the version the
+`@since` tags give the new classes.
 
 ### 🟡 Partially Completed
 
@@ -1825,10 +1859,10 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | No items currently scoped — #53, #54 and #55 closed in v18.0.0, #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                         |
+| **Now**     | No items currently scoped — #56 closed in v18.1.0, #53, #54 and #55 closed in v18.0.0, #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                         |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                                                                  |
-| **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath, and `flyway-mysql` until v16.4.0 (#50, closed); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
+| **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath, and `flyway-mysql` until v16.4.0 (#50, closed), and `logback.version` and `h2.version` are set above the 1.5.38 and 2.4.240 Spring Boot 4.1.2 manages (`h2.version` for a vulnerability in 2.4.240); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
 ---
 
@@ -1949,7 +1983,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
   read, and when it is edited without changing day, closing Gap #49.
 - ✅ Met in v16.4.0: `flyway-mysql` takes the Flyway version Spring Boot manages, so `flyway-core`, the MySQL module
   and the Maven plugin share one version, and all 38 migrations apply to MySQL 8.4 on it, closing Gap #50.
-- ✅ Met in v17.0.0: `ARCHITECTURE.md`'s Competitor and Match bulk CSV import flows, and the sentences around them,
+- ✅ Met in v17.0.0: `ARCHITECTURE.md`'s Competitor and Match bulk CSV import flows, and the surrounding sentences,
   describe each row being saved on its own and a failed row being reported, as the code does, closing Gap #51.
 - ✅ Met in v17.0.0: `TransactionService` declares no batch save that production code never calls: `saveMatches`,
   `saveMatchCompetitors` and `saveShooterResults` are removed with their tests, closing Gap #52.
@@ -1961,6 +1995,8 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
   overall's `matchIds`, closing Gap #54.
 - ✅ Met in v18.0.0: `AGENTS.md`'s 3-tier service test rule matches the `ImplTest` classes that exist, and
   `ARCHITECTURE.md`'s test tree lists only directories that exist, closing Gap #55.
+- ✅ Met in v18.1.0: `ARCHITECTURE.md`, `README.md` and `flyway-migration-versioning.md` describe `MatchResult`, its
+  `/ipsc/match-results` endpoints and the `V11_14_0` migration, as the code has them, closing Gap #56.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

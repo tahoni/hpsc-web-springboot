@@ -21,6 +21,32 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 18.1.0 (November 15, 2026)
+
+**Theme:** Ranking Competitors Across the Whole Match
+
+**Key Focus:**
+
+- `MatchResult` and its `match_result` table (`V11_14_0`) hold each verified competitor's result in a match overall,
+  ranked against every other competitor in the match with no split by firearm type, division or competitor category
+- `IpscMatchResultController` serves `POST /ipsc/match-results/matches/{matchId}` to calculate a match's results,
+  `GET /ipsc/match-results/matches/{matchId}` to read them and `GET /ipsc/match-results` to read every match's;
+  `IpscMatchResultService`, `MatchResultRepository` and `TransactionService.replaceMatchResults` sit behind it
+- Competitors on equal points share a rank and the next rank is skipped, and each percentage is the competitor's points
+  as a percentage of the winner's; results are recalculated only once the match or one of its competitors was updated
+  at least five minutes after they were calculated
+- `ARCHITECTURE.md`, `README.md` and `flyway-migration-versioning.md` describe `MatchResult`, its endpoints and the
+  migration
+- `pom.xml` raises `logback.version` to `1.6.7` and pins `h2.version` to `2.5.252`, after the `2.4.240` Spring Boot
+  manages was found to have a known vulnerability
+- Link definitions are added for the version headings of the archived changelogs, and bracketed text that is not a link
+  is escaped, so no link label is left unresolved
+- Scoped as `v18.1.0` **MINOR**: the new endpoints are backward-compatible additions and nothing in the public API is
+  removed or changed
+- Improvement plan: Gap #56 is added and closed, leaving all 56 gaps closed and none open
+- The suite stands at 1,537 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
+- Project version bumped to 18.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 18.0.0 (November 14, 2026)
 
 **Theme:** Recording the Matches Behind a Shooter Log Overall
@@ -144,6 +170,15 @@ Milestones 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
 - The OpenAPI document and Swagger UI are off by default, flagged **Breaking**
 - Brittle tests are removed or loosened, and `@since` tags are added to the mappers and public methods
 - Improvement plan Gaps #53, #54 and #55 are added and closed, so every tracked gap stays closed
+
+### Milestone 63: Ranking Competitors Across the Whole Match (v18.1.0)
+
+- A match's verified competitors with points are ranked together, whatever their firearm type, division or category,
+  in a new `match_result` table served by `/ipsc/match-results`
+- A new calculation endpoint and two read endpoints are backward-compatible additions, so the release is a MINOR
+- `logback.version` is raised and `h2.version` pinned above the versions Spring Boot manages, the latter for a known
+  vulnerability
+- Improvement plan Gap #56 is added and closed, so every tracked gap stays closed
 
 ---
 
@@ -439,11 +474,13 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   Because that changes what the match import answers, what a bad row does to the request and the name of a response
   field, v17.0.0 is the project's ninth consecutive major version, with each breaking change flagged in `CHANGELOG.md`
   as it landed.
-- **Version 18.x (v18.0.0):** Make a shooter log overall say which matches it was calculated from — each competitor's
+- **Version 18.x (v18.0.0 – v18.1.0):** Make a shooter log overall say which matches it was calculated from — each competitor's
   best matches in the log — and keep that reliable once the persistence session has closed, while taking the OpenAPI
   document and Swagger UI off by default so a deployment serves them only on purpose. Because that changes what a
   running deployment serves, v18.0.0 is the project's tenth consecutive major version, with the breaking change flagged
   in `CHANGELOG.md` as it landed.
+  v18.1.0 then ranks every verified competitor across the whole match, independent of firearm type, division and
+  category, through new match result endpoints, and is a MINOR because it only adds to the API.
 
 ### Initial Phase (v1.0.0)
 
@@ -742,7 +779,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v18.0.0, the following areas are identified for future enhancement:
+Based on the evolution to v18.1.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -756,7 +793,22 @@ The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, i
 The completed-work logs for versions 14.0.0 to 16.4.1 are archived, unchanged, in
 [`documentation/archive/v14-v16/HISTORY_v14-v16.md`](/documentation/archive/v14-v16/HISTORY_v14-v16.md).
 
-### Recently Completed (v18.0.0)
+### Recently Completed (v18.1.0)
+
+- `MatchResult` and the `match_result` table (`V11_14_0`) hold each verified competitor's rank and percentage in a match
+  overall, calculated and read through `IpscMatchResultController` at `/ipsc/match-results`
+- `IpscMatchResultServiceImpl` ranks the match's verified competitors with points together, shares a rank between equal
+  points, and recalculates only results that are out of date; `TransactionService.replaceMatchResults` saves and
+  deletes them in one transaction
+- `ARCHITECTURE.md`, `README.md` and `flyway-migration-versioning.md` describe `MatchResult`, its endpoints and the
+  migration
+- `logback.version` is raised to `1.6.7` and `h2.version` pinned to `2.5.252`, for a known vulnerability in the
+  `2.4.240` Spring Boot manages
+- Link definitions are added for the archived changelogs' version headings
+- Improvement plan: Gap #56 is added and closed, leaving all 56 gaps closed and none open
+- Project version bumped to 18.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v18.0.0)
 
 - `ShooterLogOverall.matches` records the matches an overall was calculated from in the new `shooter_log_overall_match`
   table (`V11_13_0`), and `ShooterLogOverallResponse.matchIds` returns them

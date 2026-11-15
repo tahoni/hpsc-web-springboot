@@ -752,3 +752,11 @@ same versions, [`CHANGELOG_v8-v9.md`](/documentation/archive/v8-v9/CHANGELOG_v8-
   `MatchStageScoresRequestForCSV`:** The `ipsc.scores.request` package and its tests are deleted — they modelled
   per-stage and overall match scores for the `MatchStage` table and entities, which were removed, and nothing
   references them any more; the overall-score fields now live on `MatchCompetitor`
+
+[13.3.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v13.2.0...v13.3.0
+[13.2.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v13.1.0...v13.2.0
+[13.1.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v13.0.0...v13.1.0
+[13.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v12.0.0...v13.0.0
+[12.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v11.0.0...v12.0.0
+[11.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v10.0.0...v11.0.0
+[10.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v9.1.0...v10.0.0

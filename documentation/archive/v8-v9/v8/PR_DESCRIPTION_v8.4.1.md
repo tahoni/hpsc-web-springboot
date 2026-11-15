@@ -30,7 +30,7 @@
 **Fixed**
 
 - `CHANGELOG.md` — removed a duplicate, truncated `[5.0.0]` section that had broken its Table of Contents anchor
-- `documentation/history/RELEASE_NOTES_v6.0.0.md`/`v7.0.0.md`/`v7.2.0.md`/`v8.0.0.md` — five archived sub-headings
+- `documentation/history/RELEASE_NOTES_v6.0.0.md`/`v7.0.0.md`/`v7.2.0.md`/`v8.0.0.md` — five archived subheadings
   reusing an already-registered icon, corrected
 - `RELEASE_NOTES.md`/17 archived per-version release notes — "Migration Guide" heading switched to `🚀`, matching
   `CHANGELOG.md`'s "Upgrade Guide"

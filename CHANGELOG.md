@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 18.0.0](#-1800---2026-11-14) ← Current
+- [🧾 Version 18.1.0](#-1810---2026-11-15) ← Current
+- [🧾 Version 18.0.0](#-1800---2026-11-14)
 - [🧾 Version 17.0.0](#-1700---2026-11-12)
 - [🗄️ Archived Versions 14.0.0 – 16.4.1](/documentation/archive/v14-v16/CHANGELOG_v14-v16.md)
 - [🗄️ Archived Versions 10.0.0 – 13.3.0](/documentation/archive/v10-v13/CHANGELOG_v10-v13.md)
@@ -27,6 +28,54 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [18.1.0] - 2026-11-15
+
+#### ➕ Added
+
+##### Database
+
+- Migration `V11_14_0__create_match_result.sql` creates `match_result`, backing the new `MatchResult` entity
+
+##### Domain
+
+- `MatchResult` entity, with the same structure as `ShooterResult`, for calculating a shooter's rank in the match
+  overall, independent of competitor category and division
+
+##### API
+
+- `POST /ipsc/match-results/matches/{matchId}` calculates `rankInLog` and `percentageInLog` for every verified
+  competitor with points in a match, ranked together across the whole match with no split by firearm type, division
+  or competitor category; `GET /ipsc/match-results/matches/{matchId}` and `GET /ipsc/match-results` read them back
+- `IpscMatchResultController`, `IpscMatchResultService`, `MatchResultRepository`, `TransactionService.replaceMatchResults`
+  and the `MatchResultResponse`, `MatchResultMatchResponse` and `MatchResultResponseHolder` response classes
+
+##### Tests
+
+- **`IpscMatchResultServiceTest`, `IpscMatchResultServiceIntegrationTest`, `IpscMatchResultControllerTest` and
+  `MatchResultResponseTest`:** Cover match result calculation, ranking and percentages, the five-minute staleness
+  rule, retrieval, the controller endpoints and the response mapping; `TransactionServiceTest` and the service tests
+  that build `TransactionServiceImpl` now pass it a `MatchResultRepository`
+
+#### 🔄 Changed
+
+##### Configuration
+
+- **`pom.xml`:** `logback.version` is raised from `1.6.5` to `1.6.7`, and `h2.version` is pinned to `2.5.252`, since
+  the `2.4.240` Spring Boot manages has a known vulnerability
+
+##### Documentation
+
+- **`ARCHITECTURE.md`, `README.md` and `flyway-migration-versioning.md`:** Describe `MatchResult`, the
+  `IpscMatchResultController` and `IpscMatchResultService`, the match result response models and the
+  `V11_14_0__create_match_result.sql` migration, which they left out
+- **Archived changelogs and release notes:** Version headings in `CHANGELOG_v1-v4.md`, `CHANGELOG_v5-v7.md`,
+  `CHANGELOG_v8-v9.md` and `CHANGELOG_v10-v13.md` now have link definitions, and bracketed text that is not a link is
+  escaped, so no link label is left unresolved
+- **`improvement-plan.md` and `improvement-plan-tasks.md`:** Record Gap #56, the missing `MatchResult` documentation,
+  and its closure, and add the `logback.version` and `h2.version` overrides to the roadmap's Ongoing row
 
 ---
 
@@ -115,11 +164,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   token of a "not found" message instead of the whole sentence.
 - **Brittle model, enum and exception tests removed:** The constructor and getter pass-through tests in the request and
   response tests go, keeping the UUID, MIME type, derived-success and default-list logic and one test for each
-  hand-written constructor, and the enum tests drop their repeated lookups and `toString` restatements. The JSON
+  handwritten constructor, and the enum tests drop their repeated lookups and `toString` restatements. The JSON
   serialisation tests check representative fields instead of every property, `AwardCeremonyResponseTest` uses a fixed
   date instead of `LocalDate.now()`, and `CompetitorVerifyRequestTest` expects `MismatchedInputException` rather than
   any `Exception`. The exception tests and the `IpscCommonScoreTest`, `IpscMatchScoreTest` and
-  `IpscMatchStageScoreTest` classes stay, as their hand-written constructors need them to keep line coverage above the
+  `IpscMatchStageScoreTest` classes stay, as their handwritten constructors need them to keep line coverage above the
   97% minimum.
 - **Brittle controller, advice, repository and migration tests removed:** The controller tests that only stubbed a
   service and asserted the same body came back, and the ones that checked an exception propagates (the controllers
@@ -353,6 +402,7 @@ For issues, feature requests or questions:
 
 **Last Updated:** 2026-08-25
 
-[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v18.0.0...HEAD
+[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v18.1.0...HEAD
+[18.1.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v18.0.0...v18.1.0
 [18.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v17.0.0...v18.0.0
 [17.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.4.1...v17.0.0

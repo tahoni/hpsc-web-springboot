@@ -3,6 +3,7 @@ package za.co.hpsc.web.services;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.domain.MatchResult;
 import za.co.hpsc.web.domain.ShooterLog;
 import za.co.hpsc.web.domain.ShooterLogOverall;
 import za.co.hpsc.web.domain.ShooterResult;
@@ -135,6 +136,20 @@ public interface TransactionService {
      * @since 16.1.1
      */
     List<ShooterResult> replaceShooterResults(List<ShooterResult> toSave, List<ShooterResult> toDelete);
+
+    /**
+     * Saves some match results and deletes others in one transaction, flushing before it commits so a constraint
+     * violation surfaces from this call rather than at commit.
+     *
+     * @param toSave   the match results to save; a new one is created when its ID is {@code null}. Must not be null.
+     * @param toDelete the match results to delete. Must not be null.
+     * @return the saved match results, in the order given.
+     * @throws org.springframework.dao.DataIntegrityViolationException if a unique constraint is violated, such as
+     *                                                                  a second result for the same match and match
+     *                                                                  competitor.
+     * @since 18.1.0
+     */
+    List<MatchResult> replaceMatchResults(List<MatchResult> toSave, List<MatchResult> toDelete);
 
     /**
      * Saves some shooter log overall results and deletes others in one transaction, flushing before it commits so a
