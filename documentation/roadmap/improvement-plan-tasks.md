@@ -624,7 +624,8 @@ Gap #41)* —
 - [x] Add `MatchResult` (`match_result`; many-to-one → `IpscMatch`, `Competitor`, `MatchCompetitor`) to the Domain
   Entities table, and a `models/ipsc/matchresult/response/` subsection — done
 - [x] Describe `IpscMatchResultService`, `MatchResultRepository` and `TransactionService.replaceMatchResults` where
-  the other services and repositories are described — done
+  the other services and repositories are described — done differently: `ARCHITECTURE.md` has no repository table to
+  add to, so the repository is covered by the service row and the `MatchResult` entity row
 - [x] Add a match result bullet to `README.md`'s feature list — done
 - [x] Add the `V11_14_0__create_match_result.sql` row to `flyway-migration-versioning.md`'s Current State table once
   its release version is known — done, as v18.1.0
