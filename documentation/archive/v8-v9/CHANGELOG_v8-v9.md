@@ -779,7 +779,7 @@ versions, [`CHANGELOG_v5-v7.md`](/documentation/archive/v5-v7/CHANGELOG_v5-v7.md
   lives in `CONTRIBUTING.md`'s Database Profiles section — removed the incorrect bullet and folded its claim into the
   `CONTRIBUTING.md` entry
 - **`improvement-plan.md`:** Reverted "low-regression backstop" to "low regression backstop" — the hyphen bound "low"
-  to "regression" instead of the intended "low [threshold], regression backstop" reading, nearly inverting the
+  to "regression" instead of the intended "low \[threshold\], regression backstop" reading, nearly inverting the
   meaning
 - **`ARCHITECTURE.md`, `CONTRIBUTING.md`, `AGENTS.md`:** The CI/CD & Quality Gates documentation left out the two
   live Claude Code workflows — `ARCHITECTURE.md`'s table gains "Automated Code Review" (`claude-code-review.yml`, every
@@ -2341,3 +2341,29 @@ versions, [`CHANGELOG_v5-v7.md`](/documentation/archive/v5-v7/CHANGELOG_v5-v7.md
 - **`FatalExceptionTest`, `NonFatalExceptionTest`, `ValidationExceptionTest`:** Deleted — every test in these files only
   exercised the JDK superclass constructor delegation (`Exception`/`RuntimeException`/`IllegalArgumentException` storing
   a message/cause), with no HPSC-specific logic of their own to protect against regression
+
+[9.1.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v9.0.0...v9.1.0
+[9.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.12.0...v9.0.0
+[8.12.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.11.1...v8.12.0
+[8.11.1]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.11.0...v8.11.1
+[8.11.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.10.2...v8.11.0
+[8.10.2]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.10.1...v8.10.2
+[8.10.1]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.10.0...v8.10.1
+[8.10.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.9.0...v8.10.0
+[8.9.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.8.0...v8.9.0
+[8.8.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.7.0...v8.8.0
+[8.7.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.6.2...v8.7.0
+[8.6.2]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.6.1...v8.6.2
+[8.6.1]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.6.0...v8.6.1
+[8.6.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.5.1...v8.6.0
+[8.5.1]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.5.0...v8.5.1
+[8.5.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.4.2...v8.5.0
+[8.4.2]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.4.1...v8.4.2
+[8.4.1]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.4.0...v8.4.1
+[8.4.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.3.1...v8.4.0
+[8.3.1]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.3.0...v8.3.1
+[8.3.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.2.0...v8.3.0
+[8.2.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.1.1...v8.2.0
+[8.1.1]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.1.0...v8.1.1
+[8.1.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v8.0.0...v8.1.0
+[8.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v7.4.1...v8.0.0

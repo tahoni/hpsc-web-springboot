@@ -59,6 +59,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - **`ARCHITECTURE.md`, `README.md` and `flyway-migration-versioning.md`:** Describe `MatchResult`, the
   `IpscMatchResultController` and `IpscMatchResultService`, the match result response models and the
   `V11_14_0__create_match_result.sql` migration, which they left out
+- **Archived changelogs and release notes:** Version headings in `CHANGELOG_v1-v4.md`, `CHANGELOG_v5-v7.md`,
+  `CHANGELOG_v8-v9.md` and `CHANGELOG_v10-v13.md` now have link definitions, and bracketed text that is not a link is
+  escaped, so no link label is left unresolved
 - **`improvement-plan.md` and `improvement-plan-tasks.md`:** Record Gap #56, the missing `MatchResult` documentation,
   and its closure
 
