@@ -128,7 +128,7 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Spring Boot 4 moved Flyway's auto-configuration into its own module: without the starter,
+        <!-- Spring Boot 4 moved Flyway's autoconfiguration into its own module: without the starter,
              flyway-core alone is never run at startup and spring.flyway.* is ignored -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

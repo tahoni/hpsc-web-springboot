@@ -159,11 +159,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   token of a "not found" message instead of the whole sentence.
 - **Brittle model, enum and exception tests removed:** The constructor and getter pass-through tests in the request and
   response tests go, keeping the UUID, MIME type, derived-success and default-list logic and one test for each
-  hand-written constructor, and the enum tests drop their repeated lookups and `toString` restatements. The JSON
+  handwritten constructor, and the enum tests drop their repeated lookups and `toString` restatements. The JSON
   serialisation tests check representative fields instead of every property, `AwardCeremonyResponseTest` uses a fixed
   date instead of `LocalDate.now()`, and `CompetitorVerifyRequestTest` expects `MismatchedInputException` rather than
   any `Exception`. The exception tests and the `IpscCommonScoreTest`, `IpscMatchScoreTest` and
-  `IpscMatchStageScoreTest` classes stay, as their hand-written constructors need them to keep line coverage above the
+  `IpscMatchStageScoreTest` classes stay, as their handwritten constructors need them to keep line coverage above the
   97% minimum.
 - **Brittle controller, advice, repository and migration tests removed:** The controller tests that only stubbed a
   service and asserted the same body came back, and the ones that checked an exception propagates (the controllers

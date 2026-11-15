@@ -267,7 +267,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 
 **Entity-level unit tests** *(improvement-plan.md → Gap #25)* — ✅ Closed in v8.10.0
 
-- [x] Decide whether entity-level unit tests are still wanted, given the entities hold no hand-written behaviour and
+- [x] Decide whether entity-level unit tests are still wanted, given the entities hold no handwritten behaviour and
   their persistence behaviour is covered by the repository integration tests — decided per entity: only `IpscMatch`
   has behaviour worth a unit test (its `stages` exclusion from Lombok's `toString`/`equals`/`hashCode`)
 - [x] If so, add unit tests for the entity behaviour that warrants it (e.g. empty-collection defaults); if not, drop
@@ -314,7 +314,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 **Flyway at startup** *(improvement-plan.md → Gap #30)* — ✅ Closed in v8.11.0
 
 - [x] Replace `flyway-core` with `spring-boot-starter-flyway` in `pom.xml`, so Spring Boot 4's Flyway
-  auto-configuration runs the migrations at startup
+  autoconfiguration runs the migrations at startup
 - [x] Baseline the hand-built production schema at `7.0.0` (`baseline-on-migrate` in `application-prod.properties`,
   as `local` already does), and name it in `CONTRIBUTING.md`'s Database Profiles table and `AGENTS.md`'s Flyway note
 

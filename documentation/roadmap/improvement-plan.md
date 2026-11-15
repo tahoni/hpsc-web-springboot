@@ -853,7 +853,7 @@ Issues ("The domain model has repository integration tests but no entity-level u
 #24 closed only the repository half of the original claim, and its Outcome records that `HISTORY.md` merely "narrows the
 remaining work to entity-level unit tests" — nothing here tracks that remainder. There is still no
 `src/test/java/za/co/hpsc/web/domain/` directory. The eight entities under `src/main/java/za/co/hpsc/web/domain/` are
-Lombok field holders with no hand-written methods of their own; their cascade, orphan-removal and element-collection
+Lombok field holders with no handwritten methods of their own; their cascade, orphan-removal and element-collection
 behaviour is already exercised by the repository integration tests Gap #24 added.
 
 **Why it matters:** A stated-but-unbuilt goal repeated in two places, yet untracked here, so it will keep being
@@ -872,7 +872,7 @@ excluded from Lombok's `toString`/`equals`/`hashCode` because `IpscMatchStage.ma
 dropping either exclusion makes both methods recurse into a `StackOverflowError`. A new `IpscMatchTest` covers that
 (`toString`/`hashCode` on a match with a linked stage, and `equals` ignoring `stages`) plus the `stages` list being
 initialised empty and mutable; removing the exclusions was confirmed to fail three of its four tests. The other
-seven entities have no hand-written behaviour and are left to the repository integration tests from Gap #24. The
+seven entities have no handwritten behaviour and are left to the repository integration tests from Gap #24. The
 bullet was dropped from `HISTORY.md`'s Short-term list, `ARCHITECTURE.md`'s test tree gained a `domain/` entry
 and `README.md`'s unit-test categories now include entities.
 
@@ -1006,7 +1006,7 @@ default branch would also move where Dependabot reads its configuration from.
 "`none` (Flyway migrations)" and says schema changes "are managed by Flyway ... for every profile except `test`";
 `application.properties` sets `spring.flyway.enabled=true`, and `application-local.properties` configures
 `baseline-on-migrate`. But `pom.xml` depended only on `org.flywaydb:flyway-core`, and Spring Boot 4 moved Flyway's
-auto-configuration out of `spring-boot-autoconfigure` into its own `spring-boot-flyway` module. With that module
+autoconfiguration out of `spring-boot-autoconfigure` into its own `spring-boot-flyway` module. With that module
 absent, nothing runs Flyway at startup and every `spring.flyway.*` property is silently ignored, in every profile —
 existing databases were only ever migrated by hand through `flyway-maven-plugin` (`flyway:migrate`). It surfaced when
 the new Docker Compose setup's empty MySQL database came up with no tables.
@@ -1016,7 +1016,7 @@ source of truth for MySQL, yet a fresh database was never created, and a new mig
 remembered to run the Maven plugin by hand. `ddl-auto=none` means Hibernate doesn't fill the gap either, so the
 application starts against a missing or stale schema and fails only at the first query.
 
-**Proposed improvement:** Replace `flyway-core` with `spring-boot-starter-flyway`, so Boot's auto-configuration runs
+**Proposed improvement:** Replace `flyway-core` with `spring-boot-starter-flyway`, so Boot's autoconfiguration runs
 the migrations at startup. Check the one database that already exists without Flyway's history — production, built
 by hand before Flyway ran — and give the `prod` profile the same `baseline-on-migrate` at `7.0.0` that `local`
 already has, so its first start doesn't fail on the existing tables.
