@@ -169,7 +169,7 @@ Phase-by-phase narrative, [`HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HIST
   `.env` copied from `.env.example`, named volumes for the database and logs, and a health-gated start order
 - New `spring-boot-starter-actuator` dependency exposes `/hpsc-web/actuator/health`, including a database check,
   which the image's `HEALTHCHECK` polls
-- Bringing up the Compose database exposed a long-standing defect: Spring Boot 4 moved Flyway's auto-configuration
+- Bringing up the Compose database exposed a long-standing defect: Spring Boot 4 moved Flyway's autoconfiguration
   into its own module, so with only `flyway-core` on the classpath Flyway had never run at startup and every
   `spring.flyway.*` property was ignored; `spring-boot-starter-flyway` replaces it
 - The `prod` profile now baselines a hand-built schema without Flyway's history at `7.0.0`, as `local` already did,

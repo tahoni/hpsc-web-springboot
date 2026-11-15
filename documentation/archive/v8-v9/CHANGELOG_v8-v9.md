@@ -476,7 +476,7 @@ versions, [`CHANGELOG_v5-v7.md`](/documentation/archive/v5-v7/CHANGELOG_v5-v7.md
 ##### Build & Configuration
 
 - **`spring-boot-starter-flyway`:** Flyway migrations now run at startup. Spring Boot 4 moved Flyway's
-  auto-configuration into its own `spring-boot-flyway` module, so with only `flyway-core` on the classpath the
+  autoconfiguration into its own `spring-boot-flyway` module, so with only `flyway-core` on the classpath the
   application never migrated and `spring.flyway.*` was ignored in every profile — found when the Docker Compose
   database came up empty. The starter replaces the direct `flyway-core` dependency
 - **`application-prod.properties`:** Baselines a non-empty production schema without Flyway's history at `7.0.0`
@@ -569,7 +569,7 @@ versions, [`CHANGELOG_v5-v7.md`](/documentation/archive/v5-v7/CHANGELOG_v5-v7.md
 
 - **`IpscMatchTest`:** New entity unit test guarding `IpscMatch.stages`' exclusion from Lombok's `toString`/`equals`/
   `hashCode` — `IpscMatchStage.match` points straight back, so dropping either exclusion makes both recurse into a
-  `StackOverflowError` — plus `stages` initialising empty and mutable. The other seven entities have no hand-written
+  `StackOverflowError` — plus `stages` initialising empty and mutable. The other seven entities have no handwritten
   behaviour, so get no unit tests of their own; closes `improvement-plan.md`'s Gap #25
 
 ##### Documentation
