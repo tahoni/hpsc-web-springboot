@@ -162,8 +162,9 @@ number or a newly met precondition on an existing gap — see the `update-improv
     that no longer exist — closed in v18.0.0 (rule reworded, `exceptions/` removed from the test tree)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
-- **⚪ Open (0):**
-  - *No gaps are currently open.*
+- **⚪ Open (1):**
+  - #56 `MatchResult` and its `/ipsc/match-results` endpoints are built, but `ARCHITECTURE.md`, `README.md` and the
+    Flyway migration table don't mention them
 
 ### ✅ Completed
 
@@ -1817,7 +1818,30 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 ### ⚪ Open
 
-*No gaps are currently open.*
+#### 56. `MatchResult` and its `/ipsc/match-results` endpoints are built, but `ARCHITECTURE.md`, `README.md` and the Flyway migration table don't mention them
+
+**Evidence:** The `[Unreleased]` section of `CHANGELOG.md` records the `MatchResult` entity, the
+`V11_14_0__create_match_result.sql` migration, `IpscMatchResultController` (`/ipsc/match-results`),
+`IpscMatchResultService`, `MatchResultRepository`, `TransactionService.replaceMatchResults` and the
+`MatchResultResponse`, `MatchResultMatchResponse` and `MatchResultResponseHolder` response classes, all present under
+`src/`. `ARCHITECTURE.md` still lists seven controllers (the table at line 166 stops at
+`IpscShooterLogOverallController`), seven entities (the Domain Entities table at line 234 stops at `ShooterResult`) and
+six domains in its System Overview, and its `models/ipsc/shooterresult/response/` subsection has no `matchresult`
+counterpart. `README.md`'s feature list (line 38) has no match result entry, and
+`documentation/recommendations/flyway-migration-versioning.md`'s Current State table stops at
+`V11_13_0__create_shooter_log_overall_match.sql`.
+
+**Why it matters:** The same shape as Gaps #34, #51 and #54: the documentation describes the system as it was before
+the latest work. A contributor looking for where a match-wide ranking lives, or choosing the next migration number,
+reads `ShooterResult` and `V11_13_0` as the latest, and one deleting a match would not know `match_result` now
+references it. The release checklist reverse-syncs these files only when a release is cut, so the drift stays until then
+unless it is tracked.
+
+**Proposed improvement:** Add `IpscMatchResultController` to `ARCHITECTURE.md`'s controller table, `MatchResult` to
+its Domain Entities table (many-to-one → `IpscMatch`, `Competitor`, `MatchCompetitor`, as `ShooterResult`), an
+**IPSC Match Results** row to the System Overview, a `models/ipsc/matchresult/response/` subsection and the service and
+repository descriptions; add a match result bullet to `README.md`'s feature list; and add the
+`V11_14_0__create_match_result.sql` row to the Flyway Current State table once the version it ships in is known.
 
 ---
 
@@ -1825,7 +1849,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | No items currently scoped — #53, #54 and #55 closed in v18.0.0, #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                         |
+| **Now**     | #56 (document `MatchResult` in `ARCHITECTURE.md`, `README.md` and the Flyway table) — #53, #54 and #55 closed in v18.0.0, #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                         |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath, and `flyway-mysql` until v16.4.0 (#50, closed); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
