@@ -28,6 +28,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### ➕ Added
+
+##### Database
+
+- Migration `V11_14_0__create_match_result.sql` creates `match_result`, backing the new `MatchResult` entity
+
+##### Domain
+
+- `MatchResult` entity, with the same structure as `ShooterResult`, for calculating a shooter's rank in the match
+  overall, independent of competitor category and division
+
 ---
 
 ### 🧾 [18.0.0] - 2026-11-14
