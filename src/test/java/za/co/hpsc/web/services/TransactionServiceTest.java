@@ -20,6 +20,7 @@ import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.repositories.ShooterLogRepository;
+import za.co.hpsc.web.repositories.MatchResultRepository;
 import za.co.hpsc.web.repositories.ShooterResultRepository;
 import za.co.hpsc.web.services.impl.TransactionServiceImpl;
 
@@ -51,6 +52,9 @@ public class TransactionServiceTest {
     private ShooterResultRepository shooterResultRepository;
 
     @Mock
+    private MatchResultRepository matchResultRepository;
+
+    @Mock
     private ShooterLogOverallRepository shooterLogOverallRepository;
 
     @Mock
@@ -67,7 +71,7 @@ public class TransactionServiceTest {
     @BeforeEach
     void setUp() {
         transactionService = new TransactionServiceImpl(competitorRepository, ipscMatchRepository,
-                matchCompetitorRepository, shooterResultRepository, shooterLogOverallRepository,
+                matchCompetitorRepository, shooterResultRepository, matchResultRepository, shooterLogOverallRepository,
                 shooterLogRepository, transactionManager);
     }
 

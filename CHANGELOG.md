@@ -39,6 +39,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - `MatchResult` entity, with the same structure as `ShooterResult`, for calculating a shooter's rank in the match
   overall, independent of competitor category and division
 
+##### API
+
+- `POST /ipsc/match-results/matches/{matchId}` calculates `rankInLog` and `percentageInLog` for every verified
+  competitor with points in a match, ranked together across the whole match with no split by firearm type, division
+  or competitor category; `GET /ipsc/match-results/matches/{matchId}` and `GET /ipsc/match-results` read them back
+- `IpscMatchResultController`, `IpscMatchResultService`, `MatchResultRepository`, `TransactionService.replaceMatchResults`
+  and the `MatchResultResponse`, `MatchResultMatchResponse` and `MatchResultResponseHolder` response classes
+
 ---
 
 ### 🧾 [18.0.0] - 2026-11-14
