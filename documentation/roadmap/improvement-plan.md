@@ -158,7 +158,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
   - #54 `ARCHITECTURE.md`'s entity table omits `ShooterLogOverall.matches`, and its relationship sentence is untrue
     for both many-to-many links — closed in v18.0.0 (entity table, relationship sentence and the service and
     response descriptions updated)
-  - #55 The test cleanup left `AGENTS.md`'s 3-tier service rule and `ARCHITECTURE.md`'s test tree describing tests
+  - #55 The test clean-up left `AGENTS.md`'s 3-tier service rule and `ARCHITECTURE.md`'s test tree describing tests
     that no longer exist — closed in v18.0.0 (rule reworded, `exceptions/` removed from the test tree)
   - #56 `MatchResult` and its `/ipsc/match-results` endpoints are built, but `ARCHITECTURE.md`, `README.md` and the
     Flyway migration table don't mention them — closed in v18.1.0 (controller, service, entity, response models and
@@ -1783,16 +1783,16 @@ kept in the `shooter_log_match` and `shooter_log_overall_match` join tables, the
 says the best matches each overall was calculated from are recorded, and the `ShooterLogOverallResponse` sentence
 says each overall lists its `matchIds`.
 
-#### 55. The test cleanup left `AGENTS.md`'s 3-tier service rule and `ARCHITECTURE.md`'s test tree describing tests that no longer exist — ✅ Closed in v18.0.0
+#### 55. The test clean-up left `AGENTS.md`'s 3-tier service rule and `ARCHITECTURE.md`'s test tree describing tests that no longer exist — ✅ Closed in v18.0.0
 
 **Evidence:** `AGENTS.md:437`'s Test Conventions say "All five services (`AwardService`, `ImageService`,
 `IpscCompetitorService`, `IpscMatchService`, `TransactionService`) follow this split", the split being an interface
 test, a `<Service>ImplTest` for the impl's own helper methods and an integration test. `services/` now declares eleven
 service interfaces and `services/impl/` holds eight `ImplTest` classes: `TransactionServiceImplTest` is removed in the
-`[Unreleased]` test cleanup (`CHANGELOG.md`'s "Brittle service tests removed" entry), and `IpscShooterLogOverallService`
+`[Unreleased]` test clean-up (`CHANGELOG.md`'s "Brittle service tests removed" entry), and `IpscShooterLogOverallService`
 and `IpscShooterResultService` never had one, so `TransactionService`, which the sentence names, no longer follows it.
 `ARCHITECTURE.md:110`'s test tree still lists `exceptions/ # Exception hierarchy unit tests`, but the
-`FatalException`, `NonFatalException` and `ValidationException` tests were deleted in the same cleanup as `super(...)`
+`FatalException`, `NonFatalException` and `ValidationException` tests were deleted in the same clean-up as `super(...)`
 pass-through, so `src/test/java/za/co/hpsc/web/exceptions/` no longer exists.
 
 **Why it matters:** The same shape as Gaps #20 and #34: test documentation that predates the tests it describes. A
@@ -1983,7 +1983,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
   read, and when it is edited without changing day, closing Gap #49.
 - ✅ Met in v16.4.0: `flyway-mysql` takes the Flyway version Spring Boot manages, so `flyway-core`, the MySQL module
   and the Maven plugin share one version, and all 38 migrations apply to MySQL 8.4 on it, closing Gap #50.
-- ✅ Met in v17.0.0: `ARCHITECTURE.md`'s Competitor and Match bulk CSV import flows, and the sentences around them,
+- ✅ Met in v17.0.0: `ARCHITECTURE.md`'s Competitor and Match bulk CSV import flows, and the surrounding sentences,
   describe each row being saved on its own and a failed row being reported, as the code does, closing Gap #51.
 - ✅ Met in v17.0.0: `TransactionService` declares no batch save that production code never calls: `saveMatches`,
   `saveMatchCompetitors` and `saveShooterResults` are removed with their tests, closing Gap #52.
