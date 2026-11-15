@@ -47,6 +47,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - `IpscMatchResultController`, `IpscMatchResultService`, `MatchResultRepository`, `TransactionService.replaceMatchResults`
   and the `MatchResultResponse`, `MatchResultMatchResponse` and `MatchResultResponseHolder` response classes
 
+##### Tests
+
+- **`IpscMatchResultServiceTest`, `IpscMatchResultServiceIntegrationTest`, `IpscMatchResultControllerTest` and
+  `MatchResultResponseTest`:** Cover match result calculation, ranking and percentages, the five-minute staleness
+  rule, retrieval, the controller endpoints and the response mapping; `TransactionServiceTest` and the service tests
+  that build `TransactionServiceImpl` now pass it a `MatchResultRepository`
+
 #### 🔄 Changed
 
 ##### Configuration
