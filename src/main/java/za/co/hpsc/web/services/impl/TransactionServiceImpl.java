@@ -8,12 +8,14 @@ import org.springframework.transaction.support.TransactionTemplate;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
+import za.co.hpsc.web.domain.MatchResult;
 import za.co.hpsc.web.domain.ShooterLog;
 import za.co.hpsc.web.domain.ShooterLogOverall;
 import za.co.hpsc.web.domain.ShooterResult;
 import za.co.hpsc.web.repositories.CompetitorRepository;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
 import za.co.hpsc.web.repositories.MatchCompetitorRepository;
+import za.co.hpsc.web.repositories.MatchResultRepository;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.repositories.ShooterLogRepository;
 import za.co.hpsc.web.repositories.ShooterResultRepository;
@@ -27,6 +29,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final IpscMatchRepository ipscMatchRepository;
     private final MatchCompetitorRepository matchCompetitorRepository;
     private final ShooterResultRepository shooterResultRepository;
+    private final MatchResultRepository matchResultRepository;
     private final ShooterLogOverallRepository shooterLogOverallRepository;
     private final ShooterLogRepository shooterLogRepository;
     private final TransactionTemplate transactionTemplate;
@@ -34,6 +37,7 @@ public class TransactionServiceImpl implements TransactionService {
     public TransactionServiceImpl(CompetitorRepository competitorRepository, IpscMatchRepository ipscMatchRepository,
                                   MatchCompetitorRepository matchCompetitorRepository,
                                   ShooterResultRepository shooterResultRepository,
+                                  MatchResultRepository matchResultRepository,
                                   ShooterLogOverallRepository shooterLogOverallRepository,
                                   ShooterLogRepository shooterLogRepository,
                                   PlatformTransactionManager transactionManager) {
@@ -41,6 +45,7 @@ public class TransactionServiceImpl implements TransactionService {
         this.ipscMatchRepository = ipscMatchRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.shooterResultRepository = shooterResultRepository;
+        this.matchResultRepository = matchResultRepository;
         this.shooterLogOverallRepository = shooterLogOverallRepository;
         this.shooterLogRepository = shooterLogRepository;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
@@ -108,6 +113,20 @@ public class TransactionServiceImpl implements TransactionService {
                     .map(shooterResultRepository::save)
                     .toList();
             shooterResultRepository.flush();
+            return saved;
+        });
+    }
+
+    @Override
+    public List<MatchResult> replaceMatchResults(List<MatchResult> toSave, List<MatchResult> toDelete) {
+        // Deleted and saved in one transaction and flushed inside it, so a constraint violation surfaces
+        // from this call as a DataIntegrityViolationException the caller can handle.
+        return transactionTemplate.execute(status -> {
+            matchResultRepository.deleteAll(toDelete);
+            List<MatchResult> saved = toSave.stream()
+                    .map(matchResultRepository::save)
+                    .toList();
+            matchResultRepository.flush();
             return saved;
         });
     }

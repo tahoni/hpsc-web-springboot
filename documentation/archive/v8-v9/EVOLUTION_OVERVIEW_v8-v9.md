@@ -1223,7 +1223,7 @@ Boot 4, which is fixed here.
 
 **Schema Migrations**
 
-- Spring Boot 4 moved Flyway's auto-configuration into its own `spring-boot-flyway` module, so with only `flyway-core`
+- Spring Boot 4 moved Flyway's autoconfiguration into its own `spring-boot-flyway` module, so with only `flyway-core`
   on the classpath Flyway never ran at startup and `spring.flyway.*` was ignored in every profile; databases had only
   been migrated by hand through the Maven plugin. `spring-boot-starter-flyway` replaces `flyway-core`
 - `application-prod.properties` baselines a non-empty schema without Flyway's history at `7.0.0`, as

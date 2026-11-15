@@ -267,7 +267,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 
 **Entity-level unit tests** *(improvement-plan.md → Gap #25)* — ✅ Closed in v8.10.0
 
-- [x] Decide whether entity-level unit tests are still wanted, given the entities hold no hand-written behaviour and
+- [x] Decide whether entity-level unit tests are still wanted, given the entities hold no handwritten behaviour and
   their persistence behaviour is covered by the repository integration tests — decided per entity: only `IpscMatch`
   has behaviour worth a unit test (its `stages` exclusion from Lombok's `toString`/`equals`/`hashCode`)
 - [x] If so, add unit tests for the entity behaviour that warrants it (e.g. empty-collection defaults); if not, drop
@@ -314,7 +314,7 @@ evidence and reasoning there; within each section, gaps stay in ascending number
 **Flyway at startup** *(improvement-plan.md → Gap #30)* — ✅ Closed in v8.11.0
 
 - [x] Replace `flyway-core` with `spring-boot-starter-flyway` in `pom.xml`, so Spring Boot 4's Flyway
-  auto-configuration runs the migrations at startup
+  autoconfiguration runs the migrations at startup
 - [x] Baseline the hand-built production schema at `7.0.0` (`baseline-on-migrate` in `application-prod.properties`,
   as `local` already does), and name it in `CONTRIBUTING.md`'s Database Profiles table and `AGENTS.md`'s Flyway note
 
@@ -611,11 +611,24 @@ Gap #41)* —
 - [x] Say in the `IpscShooterLogOverallService` row and the `ShooterLogOverallResponse` sentence that an overall records
   the matches it was calculated from as `matchIds` — done
 
-**Test docs after the cleanup** *(improvement-plan.md → Gap #55)* — ✅ Closed in v18.0.0
+**Test docs after the clean-up** *(improvement-plan.md → Gap #55)* — ✅ Closed in v18.0.0
 
 - [x] Reword `AGENTS.md`'s 3-tier sentence so every service has an interface test and an integration test, and an
   `ImplTest` only where the impl has helper methods worth testing directly, without the list of five services — done
 - [x] Remove the `exceptions/` line from `ARCHITECTURE.md`'s test tree — done
+
+**`MatchResult` documentation** *(improvement-plan.md → Gap #56)* — ✅ Closed in v18.1.0
+
+- [x] Add `IpscMatchResultController` (`/ipsc/match-results`) to `ARCHITECTURE.md`'s controller table, and an
+  **IPSC Match Results** row to its System Overview — done
+- [x] Add `MatchResult` (`match_result`; many-to-one → `IpscMatch`, `Competitor`, `MatchCompetitor`) to the Domain
+  Entities table, and a `models/ipsc/matchresult/response/` subsection — done
+- [x] Describe `IpscMatchResultService`, `MatchResultRepository` and `TransactionService.replaceMatchResults` where
+  the other services and repositories are described — done differently: `ARCHITECTURE.md` has no repository table to
+  add to, so the repository is covered by the service row and the `MatchResult` entity row
+- [x] Add a match result bullet to `README.md`'s feature list — done
+- [x] Add the `V11_14_0__create_match_result.sql` row to `flyway-migration-versioning.md`'s Current State table once
+  its release version is known — done, as v18.1.0
 
 ---
 

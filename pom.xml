@@ -12,7 +12,7 @@
     <!-- Application definition -->
     <groupId>za.co.hpsc</groupId>
     <artifactId>hpsc-web</artifactId>
-    <version>18.0.0</version>
+    <version>18.1.0</version>
     <name>hpsc-web</name>
     <description>HPSC website backend</description>
 
@@ -43,7 +43,10 @@
         <maven.compiler.target>25</maven.compiler.target>
         <jacoco.reportPath>${project.build.directory}/site/jacoco/jacoco.xml</jacoco.reportPath>
         <jacoco.version>0.8.16</jacoco.version>
-        <logback.version>1.6.5</logback.version>
+        <logback.version>1.6.7</logback.version>
+        <!-- H2 is test-scoped and its version is managed by Spring Boot; the managed 2.4.240 has a known
+             vulnerability, so override it until the parent manages a fixed release. -->
+        <h2.version>2.5.252</h2.version>
         <!-- Spring Boot imports the Jackson BOMs through these properties; override them rather than importing a
              Jackson POM, whose parent chain would also re-pin junit-bom. -->
         <jackson-2-bom.version>2.22.4</jackson-2-bom.version>
@@ -125,7 +128,7 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Spring Boot 4 moved Flyway's auto-configuration into its own module: without the starter,
+        <!-- Spring Boot 4 moved Flyway's autoconfiguration into its own module: without the starter,
              flyway-core alone is never run at startup and spring.flyway.* is ignored -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

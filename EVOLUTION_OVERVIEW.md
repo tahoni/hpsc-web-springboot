@@ -130,3 +130,58 @@ Phases 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
 - The suite stands at 1,495 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with line coverage at 98.6% and
   branch coverage at 99.9%; brittle tests are removed or loosened, and new cases cover the recorded matches, the fetch
   joins and the calculation without a surrounding transaction
+
+---
+
+### Phase 63: Ranking Competitors Across the Whole Match (v18.1.0)
+
+**Database & Domain**
+
+- `V11_14_0__create_match_result.sql` creates the `match_result` table, with foreign keys to `ipsc_match`, `competitor`
+  and `match_competitor`
+- `MatchResult` has the same structure as `ShooterResult`, and ranks a competitor in the match overall, independent of
+  competitor category and division
+
+**Controllers & Services**
+
+- `IpscMatchResultController` serves `POST /ipsc/match-results/matches/{matchId}`,
+  `GET /ipsc/match-results/matches/{matchId}` and `GET /ipsc/match-results`
+- `IpscMatchResultServiceImpl` ranks a match's verified competitors with points above zero together by match points,
+  shares a rank between competitors on equal points and skips the next, and sets each percentage against the winner's
+  points; it recalculates only when the match, or a competitor, was updated at least five minutes after the results
+  were calculated, a competitor has no result yet or a result belongs to a competitor who no longer qualifies
+- `TransactionService.replaceMatchResults` saves and deletes a match's results in one transaction, flushing so a
+  constraint violation surfaces from the call
+- `MatchResultRepository` reads a match's results, and every match's, with their associations fetched
+
+**Models**
+
+- `MatchResultResponse`, `MatchResultMatchResponse` and `MatchResultResponseHolder` return a match linked to its results
+
+**Configuration**
+
+- `logback.version` is raised from `1.6.5` to `1.6.7`, and `h2.version` is pinned to `2.5.252`, since the `2.4.240`
+  Spring Boot manages has a known vulnerability
+
+**Documentation**
+
+- `ARCHITECTURE.md`, `README.md` and `flyway-migration-versioning.md` describe `MatchResult`, its controller, service,
+  response models and migration
+- Link definitions are added for the version headings of the archived changelogs, and bracketed text that is not a
+  link is escaped
+
+**Build & Metadata**
+
+- Improvement plan: Gap #56 is added and closed, leaving all 56 gaps closed and none open
+- Project version bumped to 18.1.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Ranking each verified competitor against the whole match rather than only within their firearm type, division and
+  category, and scoping the release as a MINOR for adding endpoints without changing any existing contract
+
+**Test Coverage:**
+
+- The suite stands at 1,537 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with line coverage at 98.7% and
+  branch coverage at 99.9%; new cases cover the calculation, ranking, the staleness rule, the controller endpoints
+  and the response mapping

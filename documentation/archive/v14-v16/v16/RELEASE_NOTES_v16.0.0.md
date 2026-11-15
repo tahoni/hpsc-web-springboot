@@ -141,7 +141,7 @@ send:
 ## 👥 Contributors
 
 - Leoni Lubbinge
-- dependabot[bot]
+- dependabot\[bot\]
 - Claude Code (Claude Sonnet 5.5) — co-author of the release's commits
 
 ---

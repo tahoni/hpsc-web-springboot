@@ -193,3 +193,14 @@ versions, and [`CHANGELOG_v5-v7.md`](/documentation/archive/v5-v7/CHANGELOG_v5-v
 - Competitor and club management
 - Image gallery support
 - Award ceremony management
+
+[4.1.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v4.0.0...v4.1.0
+[4.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v3.1.0...v4.0.0
+[3.1.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v3.0.0...v3.1.0
+[3.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v2.0.0...v3.0.0
+[2.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v1.1.3...v2.0.0
+[1.1.3]: https://github.com/tahoni/hpsc-web-springboot/compare/v1.1.2...v1.1.3
+[1.1.2]: https://github.com/tahoni/hpsc-web-springboot/compare/v1.1.1...v1.1.2
+[1.1.1]: https://github.com/tahoni/hpsc-web-springboot/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/tahoni/hpsc-web-springboot/releases/tag/v1.0.0

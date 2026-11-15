@@ -97,7 +97,7 @@ Commas convention.
 - **`CHANGELOG.md`:** Removed a duplicate, truncated `[5.0.0]` section whose heading collision had broken its
   Table of Contents anchor
 - **`documentation/history/RELEASE_NOTES_v6.0.0.md`/`v7.0.0.md`/`v7.2.0.md`/`v8.0.0.md`:** Five archived
-  sub-headings reusing an already-registered icon for an unrelated concept, corrected
+  subheadings reusing an already-registered icon for an unrelated concept, corrected
 - **`AGENTS.md`/`README.md`/`HISTORY.md`/`documentation/roadmap/improvement-plan.md`:** Several heading icons
   corrected for internal consistency (Documentation Conventions, Documentation File Map/Roadmap Planning, API
   Documentation vs Documentation, Future Roadmap Implications)

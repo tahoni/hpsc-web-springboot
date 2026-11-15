@@ -86,7 +86,7 @@ production schema instead of failing on it.
 #### Build & Configuration
 
 - **`spring-boot-starter-flyway`:** Flyway migrations now run at startup. Spring Boot 4 moved Flyway's
-  auto-configuration into its own `spring-boot-flyway` module, so with only `flyway-core` on the classpath the
+  autoconfiguration into its own `spring-boot-flyway` module, so with only `flyway-core` on the classpath the
   application never migrated and `spring.flyway.*` was ignored in every profile. The starter replaces the direct
   `flyway-core` dependency
 - **`application-prod.properties`:** Baselines a non-empty production schema without Flyway's history at `7.0.0`, so

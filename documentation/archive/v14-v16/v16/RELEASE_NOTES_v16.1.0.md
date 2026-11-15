@@ -156,7 +156,7 @@ read them, so check that no external report or query still uses the table before
 ## 👥 Contributors
 
 - Leoni Lubbinge
-- dependabot[bot]
+- dependabot\[bot\]
 - Claude Code (Claude Sonnet 5.5) — co-author of the release's commits
 
 ---

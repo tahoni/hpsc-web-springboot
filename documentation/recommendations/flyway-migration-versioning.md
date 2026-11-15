@@ -105,6 +105,7 @@ current at the time it's authored. Treat any resemblance between the two as coin
 | `V11_11_0__rename_semi_auto_rifle_division_names.sql`                       | v16.0.0                | Renames the stored `division` "Rifle Open" and "Rifle Standard" in the three division tables to "Rifle Semi Auto Open" and "Rifle Semi Auto Standard"                                 |
 | `V11_12_0__drop_shooter_log_competitor.sql`                                 | v16.1.0                | Drops the `shooter_log_competitor` table, along with the `ShooterLogCompetitor` entity                                                                                                |
 | `V11_13_0__create_shooter_log_overall_match.sql`                            | v18.0.0                | Creates the `shooter_log_overall_match` join table linking `shooter_log_overall` to `ipsc_match`, backing `ShooterLogOverall.matches`                                                 |
+| `V11_14_0__create_match_result.sql`                                         | v18.1.0                | Creates the `match_result` table, backing the `MatchResult` entity, with foreign keys to `ipsc_match`, `competitor` and `match_competitor`                                            |
 
 ---
 
