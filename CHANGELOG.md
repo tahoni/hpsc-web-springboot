@@ -70,7 +70,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `CHANGELOG_v8-v9.md` and `CHANGELOG_v10-v13.md` now have link definitions, and bracketed text that is not a link is
   escaped, so no link label is left unresolved
 - **`improvement-plan.md` and `improvement-plan-tasks.md`:** Record Gap #56, the missing `MatchResult` documentation,
-  and its closure
+  and its closure, and add the `logback.version` and `h2.version` overrides to the roadmap's Ongoing row
 
 ---
 
