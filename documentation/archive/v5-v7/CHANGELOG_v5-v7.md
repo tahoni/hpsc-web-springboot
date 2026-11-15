@@ -83,8 +83,8 @@ versions, [`CHANGELOG_v1-v4.md`](/documentation/archive/v1-v4/CHANGELOG_v1-v4.md
 ##### Configuration
 
 - **`.gitignore`:** Refreshed the JetBrains, Visual Studio Code, Eclipse and Node sections from the latest
-  upstream templates — adds entries for SonarLint, Apifox Helper, GitHub Copilot, stylelint, pnpm, yarn v3, Vite,
-  Sveltekit, vitepress and Docusaurus, fixes the `.apt_generated_test/` → `.apt_generated_tests/` typo and the stale
+  upstream templates — adds entries for SonarLint, Apifox Helper, GitHub Copilot, Stylelint, pnpm, yarn v3, Vite,
+  SvelteKit, vitepress and Docusaurus, fixes the `.apt_generated_test/` → `.apt_generated_tests/` typo and the stale
   "Editor-based Rest Client" comment, and adds new OS, Version Control and Secrets & Credentials sections; the custom
   TAHONI block now also ignores `tsdocs/` and `logs/`, and generalises `.claude/*.local.json` to
   `.claude/*.local.*` (supersedes the `.claude/*.local.json` entry above)
