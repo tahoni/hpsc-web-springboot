@@ -11,7 +11,8 @@
 
 - **Added:** `V11_15_0`, which clears `date_calculated` on `shooter_result` and `shooter_log_overall`, and
   `StartupRecalculationRunner`, which recalculates every match and shooter log with such a row in the background at
-  startup
+  startup, and `StartupRecalculationStatus` with `RecalculationInProgressException`, which make the two calculation
+  `POST`s answer `409 Conflict` while it runs
 - **Changed:** `IpscShooterResultServiceImpl` groups by firearm type and division and `IpscShooterLogOverallServiceImpl`
   by division, instead of also by competitor category; the Javadoc and OpenAPI text of both services and controllers
   say so; `pom.xml` pins `tomcat.version` to `11.0.29`
@@ -23,10 +24,12 @@
 
 ## 🧪 Test Plan
 
-- [x] `./mvnw clean verify -Pcoverage` passes: 1,546 tests, no failures or errors, 3 skipped unless `FLYWAY_MYSQL_URL`
-  is set, meeting the 97% line and branch minimums at 98.7% line and 99.9% branch coverage
+- [x] `./mvnw clean verify -Pcoverage` passes: 1,558 tests, no failures or errors, 3 skipped unless `FLYWAY_MYSQL_URL`
+  is set, meeting the 97% line and branch minimums at 98.6% line and 99.9% branch coverage
 - [x] `CHANGELOG.md`'s `[Unreleased]` section synced against the branch and renamed to `[18.1.1]`
 - [x] Run the migrations against MySQL, with `FLYWAY_MYSQL_URL` set, and confirm `V11_15_0` applies
+- [ ] While the startup recalculation runs, `POST` a calculation and confirm it answers `409`, then confirm it succeeds
+  once the log reports the recalculation finished
 - [ ] Start the application against data calculated before this release and confirm the log reports the recalculation
   and the old ranks are gone
 - [ ] Start the application, calculate a match with competitors in different categories in one division and confirm
