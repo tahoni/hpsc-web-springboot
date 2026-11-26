@@ -34,13 +34,16 @@ evolution of architecture, features and design philosophy across all versions.
   and `README.md` stop saying results are ranked per competitor category
 - `V11_15_0` clears `date_calculated` on `shooter_result` and `shooter_log_overall`, so the services treat every stored
   result as out of date and rank each match and shooter log again, without category, the next time it is calculated
+- `StartupRecalculationRunner` calculates every match, and then every shooter log, with a row whose `date_calculated`
+  is `null` when the application starts, logging and skipping one that fails, so existing data is ranked without a
+  request
 - `pom.xml` pins `tomcat.version` to `11.0.29`, after the `11.0.27` Spring Boot manages was found to have a known
   vulnerability
 - Scoped as `v18.1.1` **PATCH**: no endpoint, request field or response field is added, removed or changed, so
   `AGENTS.md`'s Semantic Versioning rules call for neither a MAJOR nor a MINOR, though the rank and percentage values
   clients see can differ for competitors in different categories
 - Improvement plan: Gap #57 is added and closed, leaving all 57 gaps closed and none open
-- The suite stands at 1,538 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
+- The suite stands at 1,544 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
 - Project version bumped to 18.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 18.1.0 (November 15, 2026)
@@ -206,7 +209,8 @@ Milestones 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
 
 - Shooter results are ranked within a firearm type and division, and shooter log overall results within a division,
   whatever the competitor category
-- A migration marks every stored shooter result and overall result for recalculation
+- A migration marks every stored shooter result and overall result for recalculation, and a startup runner
+  recalculates them
 - No contract changes, so the release is a PATCH
 - `tomcat.version` is pinned above the version Spring Boot manages, for a known vulnerability
 - Improvement plan Gap #57 is added and closed, so every tracked gap stays closed
@@ -833,6 +837,7 @@ The completed-work logs for versions 14.0.0 to 16.4.1 are archived, unchanged, i
   the competitor category, which is still stored on each row
 - `V11_15_0` marks every stored shooter result and shooter log overall result as not yet calculated, so each is ranked
   again, without category, the next time its match or log is calculated
+- `StartupRecalculationRunner` recalculates every match and shooter log with such a row when the application starts
 - The Javadoc and OpenAPI text of both services and controllers, `ARCHITECTURE.md` and `README.md` describe the new
   ranking
 - `tomcat.version` is pinned to `11.0.29`, for a known vulnerability in the `11.0.27` Spring Boot manages
