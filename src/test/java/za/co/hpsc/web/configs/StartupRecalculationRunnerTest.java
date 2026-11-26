@@ -18,6 +18,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -41,26 +42,27 @@ class StartupRecalculationRunnerTest {
     private StartupRecalculationRunner runner;
 
     @Test
-    void testRun_whenNothingIsUncalculated_thenCalculatesNothing() {
+    void testRecalculate_whenNothingIsUncalculated_thenCalculatesNothing() {
         // Arrange
         when(shooterResultRepository.findMatchIdsWithoutDateCalculated()).thenReturn(List.of());
         when(shooterLogOverallRepository.findShooterLogIdsWithoutDateCalculated()).thenReturn(List.of());
 
         // Act
-        runner.run(null);
+        runner.recalculate();
 
         // Assert
         verifyNoInteractions(ipscShooterResultService, ipscShooterLogOverallService);
     }
 
     @Test
-    void testRun_whenMatchesAndLogsAreUncalculated_thenCalculatesEachMatchBeforeTheLogs() throws NonFatalException {
+    void testRecalculate_whenMatchesAndLogsAreUncalculated_thenCalculatesEachMatchBeforeTheLogs()
+            throws NonFatalException {
         // Arrange
         when(shooterResultRepository.findMatchIdsWithoutDateCalculated()).thenReturn(List.of(1L, 2L));
         when(shooterLogOverallRepository.findShooterLogIdsWithoutDateCalculated()).thenReturn(List.of(7L));
 
         // Act
-        runner.run(null);
+        runner.recalculate();
 
         // Assert
         var order = inOrder(ipscShooterResultService, ipscShooterLogOverallService);
@@ -70,7 +72,7 @@ class StartupRecalculationRunnerTest {
     }
 
     @Test
-    void testRun_whenAMatchFails_thenStillCalculatesTheOthersAndTheLogs() throws NonFatalException {
+    void testRecalculate_whenAMatchFails_thenStillCalculatesTheOthersAndTheLogs() throws NonFatalException {
         // Arrange
         when(shooterResultRepository.findMatchIdsWithoutDateCalculated()).thenReturn(List.of(1L, 2L));
         when(shooterLogOverallRepository.findShooterLogIdsWithoutDateCalculated()).thenReturn(List.of(7L));
@@ -78,21 +80,46 @@ class StartupRecalculationRunnerTest {
                 .when(ipscShooterResultService).calculateMatchShooterResult(1L);
 
         // Act & Assert
-        assertDoesNotThrow(() -> runner.run(null));
+        assertDoesNotThrow(() -> runner.recalculate());
         verify(ipscShooterResultService).calculateMatchShooterResult(2L);
         verify(ipscShooterLogOverallService).calculateShooterLogOverall(7L);
     }
 
     @Test
-    void testRun_whenALogFailsUnexpectedly_thenStillCalculatesTheOtherLogsWithoutThrowing() throws NonFatalException {
+    void testRecalculate_whenALogFailsUnexpectedly_thenStillCalculatesTheOtherLogsWithoutThrowing()
+            throws NonFatalException {
         // Arrange
         when(shooterResultRepository.findMatchIdsWithoutDateCalculated()).thenReturn(List.of());
         when(shooterLogOverallRepository.findShooterLogIdsWithoutDateCalculated()).thenReturn(List.of(7L, 8L));
         doThrow(new IllegalStateException("boom")).when(ipscShooterLogOverallService).calculateShooterLogOverall(7L);
 
         // Act & Assert
-        assertDoesNotThrow(() -> runner.run(null));
+        assertDoesNotThrow(() -> runner.recalculate());
         verify(ipscShooterLogOverallService).calculateShooterLogOverall(8L);
         verify(ipscShooterResultService, never()).calculateMatchShooterResult(anyLong());
+    }
+
+    @Test
+    void testRecalculate_whenTheQueryFails_thenDoesNotThrow() {
+        // Arrange
+        when(shooterResultRepository.findMatchIdsWithoutDateCalculated())
+                .thenThrow(new IllegalStateException("database unavailable"));
+
+        // Act & Assert
+        assertDoesNotThrow(() -> runner.recalculate());
+        verifyNoInteractions(ipscShooterResultService, ipscShooterLogOverallService);
+    }
+
+    @Test
+    void testRun_whenMatchesAreUncalculated_thenCalculatesThemOnAnotherThread() throws NonFatalException {
+        // Arrange
+        when(shooterResultRepository.findMatchIdsWithoutDateCalculated()).thenReturn(List.of(1L));
+        when(shooterLogOverallRepository.findShooterLogIdsWithoutDateCalculated()).thenReturn(List.of());
+
+        // Act
+        runner.run(null);
+
+        // Assert
+        verify(ipscShooterResultService, timeout(5000)).calculateMatchShooterResult(1L);
     }
 }

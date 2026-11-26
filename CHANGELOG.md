@@ -44,11 +44,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ##### Services
 
-- `StartupRecalculationRunner` recalculates, when the application starts, the shooter results of every match, and then
-  the overall results of every shooter log, that has a row whose `date_calculated` is `null`, using
-  `ShooterResultRepository.findMatchIdsWithoutDateCalculated` and
-  `ShooterLogOverallRepository.findShooterLogIdsWithoutDateCalculated`. A match or shooter log that fails is logged and
-  skipped, so it neither stops the others nor prevents startup, and is tried again on the next start
+- `StartupRecalculationRunner` recalculates, in a background thread started with the application, the shooter results of
+  every match, and then the overall results of every shooter log, that has a row whose `date_calculated` is `null`,
+  using `ShooterResultRepository.findMatchIdsWithoutDateCalculated` and
+  `ShooterLogOverallRepository.findShooterLogIdsWithoutDateCalculated`. It does not delay startup, a match or shooter
+  log that fails is logged and skipped, and is tried again on the next start
 
 ##### Tests
 

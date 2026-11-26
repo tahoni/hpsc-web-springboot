@@ -12,10 +12,15 @@ import za.co.hpsc.web.services.IpscShooterResultService;
 import java.util.List;
 
 /**
- * Recalculates, when the application starts, every match's shooter results and every shooter log's overall results that
- * have a row whose {@code date_calculated} is {@code null}. Such a row was never calculated, or was marked for
+ * Recalculates, in a background thread started when the application starts, every match's shooter results and every
+ * shooter log's overall results that have a row whose {@code date_calculated} is {@code null}. Such a row was never calculated, or was marked for
  * recalculation by a migration, such as {@code V11_15_0}, after the way results are ranked changed; the shooter result
  * and shooter log overall services treat it as out of date, so calculating ranks it again.
+ *
+ * <p>
+ * It runs in the background so a large database does not delay startup: the application serves requests while it
+ * works, and a match or shooter log still returns its old results until it has been recalculated.
+ * </p>
  *
  * <p>
  * A match or shooter log that fails to recalculate is logged and skipped, so one bad record neither stops the others
@@ -45,6 +50,23 @@ public class StartupRecalculationRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
+        // A daemon thread, so an unfinished recalculation never keeps the JVM alive after the application stops
+        Thread.ofPlatform().name("startup-recalculation").daemon().start(this::recalculate);
+    }
+
+    /**
+     * Recalculates every match and shooter log that has a row without a {@code date_calculated}. Nothing is thrown, as
+     * this runs on a thread of its own where there is nobody to handle it.
+     */
+    void recalculate() {
+        try {
+            recalculateUncalculated();
+        } catch (RuntimeException e) {
+            log.warn("Could not recalculate the shooter results and shooter log overall results: {}", e.getMessage());
+        }
+    }
+
+    private void recalculateUncalculated() {
         // Matches first, as a shooter log's overall results are calculated from its matches' shooter results
         List<Long> matchIds = shooterResultRepository.findMatchIdsWithoutDateCalculated();
         List<Long> shooterLogIds = shooterLogOverallRepository.findShooterLogIdsWithoutDateCalculated();
