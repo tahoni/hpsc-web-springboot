@@ -2,7 +2,8 @@
 
 - Shooter results are now ranked within their firearm type and division, and shooter log overall results within their
   division, whatever the competitor category, which is still stored on every row
-- A PATCH release: no endpoint, request field or response field is added, removed or changed
+- A MINOR release: no request or response field is added, removed or changed, but the startup recalculation and the
+  `409 Conflict` its lock adds to the two calculation endpoints are externally visible additions
 - `tomcat.version` is pinned above the version Spring Boot manages, which has a known vulnerability
 - A migration marks every stored result for recalculation, and a startup runner recalculates every marked match and
   shooter log in the background, so existing data is ranked again without a request or a slower start
@@ -18,15 +19,15 @@
   say so; `pom.xml` pins `tomcat.version` to `11.0.29`
 - **Tests:** the shooter result category test expects one ranking, and a new overall test does the same
 - **Documentation:** `ARCHITECTURE.md` and `README.md` stop saying results are ranked per competitor category;
-  `CHANGELOG.md`, `HISTORY.md`, `EVOLUTION_OVERVIEW.md` and `RELEASE_NOTES.md` cover 18.1.1; improvement plan Gap #57 is
+  `CHANGELOG.md`, `HISTORY.md`, `EVOLUTION_OVERVIEW.md` and `RELEASE_NOTES.md` cover 18.2.0; improvement plan Gap #57 is
   added and closed
-- **Build:** project version bumped to 18.1.1 in `pom.xml` and the OpenAPI annotation
+- **Build:** project version bumped to 18.2.0 in `pom.xml` and the OpenAPI annotation
 
 ## 🧪 Test Plan
 
 - [x] `./mvnw clean verify -Pcoverage` passes: 1,558 tests, no failures or errors, 3 skipped unless `FLYWAY_MYSQL_URL`
   is set, meeting the 97% line and branch minimums at 98.6% line and 99.9% branch coverage
-- [x] `CHANGELOG.md`'s `[Unreleased]` section synced against the branch and renamed to `[18.1.1]`
+- [x] `CHANGELOG.md`'s `[Unreleased]` section synced against the branch and renamed to `[18.2.0]`
 - [x] Run the migrations against MySQL, with `FLYWAY_MYSQL_URL` set, and confirm `V11_15_0` applies
 - [ ] While the startup recalculation runs, `POST` a calculation and confirm it answers `409`, then confirm it succeeds
   once the log reports the recalculation finished
