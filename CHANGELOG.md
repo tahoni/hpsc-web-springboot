@@ -34,6 +34,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧾 [18.1.1] - 2026-11-26
 
+#### ➕ Added
+
+##### Database
+
+- Migration `V11_15_0__mark_shooter_results_for_recalculation.sql` clears `date_calculated` on `shooter_result` and
+  `shooter_log_overall`, so each match and shooter log is ranked again, without competitor category, the next time it is
+  calculated, instead of its old results being returned as up to date
+
 #### 🔄 Changed
 
 ##### Configuration

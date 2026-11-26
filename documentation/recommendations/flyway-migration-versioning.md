@@ -106,6 +106,7 @@ current at the time it's authored. Treat any resemblance between the two as coin
 | `V11_12_0__drop_shooter_log_competitor.sql`                                 | v16.1.0                | Drops the `shooter_log_competitor` table, along with the `ShooterLogCompetitor` entity                                                                                                |
 | `V11_13_0__create_shooter_log_overall_match.sql`                            | v18.0.0                | Creates the `shooter_log_overall_match` join table linking `shooter_log_overall` to `ipsc_match`, backing `ShooterLogOverall.matches`                                                 |
 | `V11_14_0__create_match_result.sql`                                         | v18.1.0                | Creates the `match_result` table, backing the `MatchResult` entity, with foreign keys to `ipsc_match`, `competitor` and `match_competitor`                                            |
+| `V11_15_0__mark_shooter_results_for_recalculation.sql`                      | v18.1.1                | Clears `date_calculated` on `shooter_result` and `shooter_log_overall`, so their ranks are recalculated without competitor category                                                   |
 
 ---
 
