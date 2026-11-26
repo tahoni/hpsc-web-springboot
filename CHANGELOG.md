@@ -29,6 +29,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+#### 🔄 Changed
+
+##### Services
+
+- Shooter results are now ranked within their firearm type and division only; competitor category no longer splits
+  the ranking groups (it is still stored on each row)
+
 ---
 
 ### 🧾 [18.1.0] - 2026-11-15

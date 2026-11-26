@@ -54,7 +54,7 @@ public class IpscShooterResultController {
     @PostMapping(value = "/matches/{matchId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Calculate shooter results for match", description = "Calculate the result of "
             + "every verified competitor with points above zero in a match: each is ranked by match points within "
-            + "their firearm type, division and competitor category (no category is a group of its own), with their "
+            + "their firearm type and division, regardless of competitor category, with their "
             + "percentage set relative to the group winner. Competitors who are not verified, or have no points, get "
             + "no result. Calculating again updates the existing results and removes those of competitors who no "
             + "longer qualify.")

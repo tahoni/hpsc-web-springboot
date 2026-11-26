@@ -6,7 +6,6 @@ import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
 import za.co.hpsc.web.domain.ShooterResult;
-import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.exceptions.NonFatalException;
@@ -87,12 +86,12 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
             return getShooterResults(matchId);
         }
 
-        // Competitors are ranked against the others in their firearm type, division and competitor category, with
-        // competitors in the NONE category a group of their own. The category is never null: the column is NOT NULL
+        // Competitors are ranked against the others in their firearm type and division, regardless of competitor
+        // category
         Map<ResultGroup, List<MatchCompetitor>> groups = new LinkedHashMap<>();
         for (MatchCompetitor matchCompetitor : matchCompetitors) {
-            groups.computeIfAbsent(new ResultGroup(matchCompetitor.getFirearmType(), matchCompetitor.getDivision(),
-                    matchCompetitor.getCompetitorCategory()), group -> new ArrayList<>()).add(matchCompetitor);
+            groups.computeIfAbsent(new ResultGroup(matchCompetitor.getFirearmType(), matchCompetitor.getDivision()),
+                    group -> new ArrayList<>()).add(matchCompetitor);
         }
 
         LocalDateTime dateCalculated = LocalDateTime.now();
@@ -230,8 +229,8 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
      * Ranks a group of match competitors by match points, highest first. Competitors on equal points share a rank
      * and the next rank is skipped, so points of 90, 90 and 80 rank 1, 1 and 3.
      *
-     * @param group the match competitors to rank, who shot the same firearm type and division, are in the same
-     *              competitor category and all have points, as {@link #hasPoints} has already excluded the others.
+     * @param group the match competitors to rank, who shot the same firearm type and division, whatever their
+     *              competitor category, and all have points, as {@link #hasPoints} has already excluded the others.
      * @return each match competitor's rank, by match competitor ID.
      */
     private Map<Long, Integer> rank(List<MatchCompetitor> group) {
@@ -251,7 +250,7 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
         return ranks;
     }
 
-    /** The firearm type, division and competitor category that match competitors are ranked within. */
-    private record ResultGroup(FirearmType firearmType, Division division, CompetitorCategory competitorCategory) {
+    /** The firearm type and division that match competitors are ranked within. */
+    private record ResultGroup(FirearmType firearmType, Division division) {
     }
 }
