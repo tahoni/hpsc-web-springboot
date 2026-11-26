@@ -36,6 +36,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 - Shooter results are now ranked within their firearm type and division only, and shooter log overall results within
   their division only; competitor category no longer splits the ranking groups (it is still stored on each row)
 
+##### Documentation
+
+- **`ARCHITECTURE.md` and `README.md`:** The **IPSC Shooter Results** and **Shooter Logs** rows and the **IPSC Shooter
+  Log Overall Results** bullet now say shooter results are ranked per firearm type and division, and overall results
+  per division, whatever the competitor category, instead of per category. Closes improvement plan Gap #57.
+
 ---
 
 ### 🧾 [18.1.0] - 2026-11-15
