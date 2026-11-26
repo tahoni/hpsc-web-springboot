@@ -49,10 +49,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   using `ShooterResultRepository.findMatchIdsWithoutDateCalculated` and
   `ShooterLogOverallRepository.findShooterLogIdsWithoutDateCalculated`. It does not delay startup, a match or shooter
   log that fails is logged and skipped, and is tried again on the next start
+- `StartupRecalculationStatus` records whether that recalculation is running, and
+  `IpscShooterResultServiceImpl.calculateMatchShooterResult` and
+  `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` refuse a calculation while it is, so
+  `POST /ipsc/shooter-results/matches/{matchId}` and `POST /ipsc/shooter-log-overall-results/logs/{shooterLogId}` answer
+  `409 Conflict` instead of writing the same results as the runner. The runner's own thread is exempt, and the runner
+  does not run under the `test` profile
+- `RecalculationInProgressException`, a `NonFatalException` that `ControllerAdvice` maps to `409 Conflict` instead of
+  `404 Not Found`, and the `409` response in the OpenAPI description of both `POST` endpoints
 
 ##### Tests
 
-- `StartupRecalculationRunnerTest`, and repository integration tests for the two new queries
+- `StartupRecalculationRunnerTest`, `StartupRecalculationStatusTest`, a `409` case in `ControllerAdviceTest`, a refusal
+  case in each calculation service's test, and repository integration tests for the two new queries
 
 #### 🔄 Changed
 

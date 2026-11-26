@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import za.co.hpsc.web.configs.StartupRecalculationStatus;
 import za.co.hpsc.web.domain.Club;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
@@ -16,6 +17,7 @@ import za.co.hpsc.web.domain.ShooterResult;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.exceptions.NonFatalException;
+import za.co.hpsc.web.exceptions.RecalculationInProgressException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ipsc.shooterlogoverall.response.ShooterLogOverallResponse;
 import za.co.hpsc.web.models.ipsc.shooterlogoverall.response.ShooterLogOverallResponseHolder;
@@ -53,8 +55,24 @@ class IpscShooterLogOverallServiceTest {
     @Mock
     private TransactionService transactionService;
 
+    @Mock
+    private StartupRecalculationStatus startupRecalculationStatus;
+
     @InjectMocks
     private IpscShooterLogOverallServiceImpl ipscShooterLogOverallService;
+
+    // calculateShooterLogOverall() while the startup recalculation runs
+    @Test
+    void testCalculateShooterLogOverall_whenTheStartupRecalculationIsRunning_thenThrowsAndTouchesNothing() {
+        // Arrange
+        doThrow(new RecalculationInProgressException("busy")).when(startupRecalculationStatus).ensureNotRunning();
+
+        // Act & Assert
+        assertThrows(RecalculationInProgressException.class,
+                () -> ipscShooterLogOverallService.calculateShooterLogOverall(1L));
+        verifyNoInteractions(shooterLogRepository, shooterLogOverallRepository, shooterResultRepository,
+                ipscShooterResultService, transactionService);
+    }
 
     // calculateShooterLogOverall()
     @Test

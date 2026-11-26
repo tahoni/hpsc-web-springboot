@@ -2,6 +2,7 @@ package za.co.hpsc.web.services.impl;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import za.co.hpsc.web.configs.StartupRecalculationStatus;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
@@ -42,19 +43,23 @@ public class IpscShooterResultServiceImpl implements IpscShooterResultService {
     private final ShooterResultRepository shooterResultRepository;
     private final MatchCompetitorRepository matchCompetitorRepository;
     private final TransactionService transactionService;
+    private final StartupRecalculationStatus startupRecalculationStatus;
 
     public IpscShooterResultServiceImpl(IpscMatchRepository ipscMatchRepository,
                                         ShooterResultRepository shooterResultRepository,
                                         MatchCompetitorRepository matchCompetitorRepository,
-                                        TransactionService transactionService) {
+                                        TransactionService transactionService,
+                                        StartupRecalculationStatus startupRecalculationStatus) {
         this.ipscMatchRepository = ipscMatchRepository;
         this.shooterResultRepository = shooterResultRepository;
         this.matchCompetitorRepository = matchCompetitorRepository;
         this.transactionService = transactionService;
+        this.startupRecalculationStatus = startupRecalculationStatus;
     }
 
     @Override
     public ShooterResponseHolder calculateMatchShooterResult(Long matchId) throws NonFatalException {
+        startupRecalculationStatus.ensureNotRunning();
         IpscMatch match = findMatchOrThrow(matchId);
         // Only verified competitors are included. Competitors without points (none, or 0) did not score, so they get
         // no result and are not ranked against the others

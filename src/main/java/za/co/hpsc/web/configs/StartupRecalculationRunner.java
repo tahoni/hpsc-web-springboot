@@ -3,6 +3,7 @@ package za.co.hpsc.web.configs;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import za.co.hpsc.web.repositories.ShooterLogOverallRepository;
 import za.co.hpsc.web.repositories.ShooterResultRepository;
@@ -13,13 +14,19 @@ import java.util.List;
 
 /**
  * Recalculates, in a background thread started when the application starts, every match's shooter results and every
- * shooter log's overall results that have a row whose {@code date_calculated} is {@code null}. Such a row was never calculated, or was marked for
- * recalculation by a migration, such as {@code V11_15_0}, after the way results are ranked changed; the shooter result
- * and shooter log overall services treat it as out of date, so calculating ranks it again.
+ * shooter log's overall results that have a row whose {@code date_calculated} is {@code null}. Such a row was never
+ * calculated, or was marked for recalculation by a migration, such as {@code V11_15_0}, after the way results are
+ * ranked changed; the shooter result and shooter log overall services treat it as out of date, so calculating ranks it
+ * again.
  *
  * <p>
  * It runs in the background so a large database does not delay startup: the application serves requests while it
- * works, and a match or shooter log still returns its old results until it has been recalculated.
+ * works, and a match or shooter log still returns its old results until it has been recalculated. A request to
+ * calculate shooter results or shooter log overall results is refused with a
+ * {@link za.co.hpsc.web.exceptions.RecalculationInProgressException} while it runs, as set out by
+ * {@link StartupRecalculationStatus}, so two calculations never write the same results at once. It does not run
+ * under the {@code test} profile, whose in-memory database is empty at startup and whose tests call the services
+ * themselves.
  * </p>
  *
  * <p>
@@ -32,26 +39,44 @@ import java.util.List;
  */
 @Slf4j
 @Component
+@Profile("!test")
 public class StartupRecalculationRunner implements ApplicationRunner {
     private final ShooterResultRepository shooterResultRepository;
     private final ShooterLogOverallRepository shooterLogOverallRepository;
     private final IpscShooterResultService ipscShooterResultService;
     private final IpscShooterLogOverallService ipscShooterLogOverallService;
+    private final StartupRecalculationStatus startupRecalculationStatus;
 
     public StartupRecalculationRunner(ShooterResultRepository shooterResultRepository,
                                       ShooterLogOverallRepository shooterLogOverallRepository,
                                       IpscShooterResultService ipscShooterResultService,
-                                      IpscShooterLogOverallService ipscShooterLogOverallService) {
+                                      IpscShooterLogOverallService ipscShooterLogOverallService,
+                                      StartupRecalculationStatus startupRecalculationStatus) {
         this.shooterResultRepository = shooterResultRepository;
         this.shooterLogOverallRepository = shooterLogOverallRepository;
         this.ipscShooterResultService = ipscShooterResultService;
         this.ipscShooterLogOverallService = ipscShooterLogOverallService;
+        this.startupRecalculationStatus = startupRecalculationStatus;
     }
 
     @Override
     public void run(ApplicationArguments args) {
-        // A daemon thread, so an unfinished recalculation never keeps the JVM alive after the application stops
-        Thread.ofPlatform().name("startup-recalculation").daemon().start(this::recalculate);
+        // Marked as running before the thread starts, so a calculation requested in between is refused too
+        startupRecalculationStatus.begin();
+        try {
+            // A daemon thread, so an unfinished recalculation never keeps the JVM alive after the application stops
+            Thread.ofPlatform().name("startup-recalculation").daemon().start(() -> {
+                startupRecalculationStatus.attach();
+                try {
+                    recalculate();
+                } finally {
+                    startupRecalculationStatus.end();
+                }
+            });
+        } catch (RuntimeException | Error e) {
+            startupRecalculationStatus.end();
+            throw e;
+        }
     }
 
     /**

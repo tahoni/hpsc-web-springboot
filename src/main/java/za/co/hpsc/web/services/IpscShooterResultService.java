@@ -38,6 +38,8 @@ public interface IpscShooterResultService {
      * @return the match, linked to its shooter results, freshly calculated unless they were already up to date; the
      * results are empty if the match has no qualifying competitors.
      * @throws NonFatalException if no match with {@code matchId} exists.
+     * @throws za.co.hpsc.web.exceptions.RecalculationInProgressException if the application is still recalculating
+     *                                                                   results after it started.
      * @since 15.0.0
      */
     ShooterResponseHolder calculateMatchShooterResult(Long matchId) throws NonFatalException;

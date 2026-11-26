@@ -49,7 +49,8 @@ public class IpscShooterLogOverallController {
      * @param shooterLogId the identifier of the shooter log to calculate overall results for.
      * @return the {@link ShooterLogOverallResponseHolder} linking the shooter log to its freshly calculated overall
      * results.
-     * @throws NonFatalException if no shooter log with {@code shooterLogId} exists.
+     * @throws NonFatalException if no shooter log with {@code shooterLogId} exists, or the application is still
+     *                           recalculating results after it started.
      * @since 16.1.0
      */
     @PostMapping(value = "/logs/{shooterLogId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -70,6 +71,10 @@ public class IpscShooterLogOverallController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "No shooter log with this ID could be found.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "409", description = "The application is still recalculating results after "
+                    + "it started; try again shortly.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })

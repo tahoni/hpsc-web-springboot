@@ -38,6 +38,9 @@ class StartupRecalculationRunnerTest {
     @Mock
     private IpscShooterLogOverallService ipscShooterLogOverallService;
 
+    @Mock
+    private StartupRecalculationStatus startupRecalculationStatus;
+
     @InjectMocks
     private StartupRecalculationRunner runner;
 
@@ -121,5 +124,34 @@ class StartupRecalculationRunnerTest {
 
         // Assert
         verify(ipscShooterResultService, timeout(5000)).calculateMatchShooterResult(1L);
+    }
+
+    @Test
+    void testRun_whenItRuns_thenMarksTheRecalculationRunningBeforeTheThreadAndFinishedAfterIt() {
+        // Arrange
+        when(shooterResultRepository.findMatchIdsWithoutDateCalculated()).thenReturn(List.of());
+        when(shooterLogOverallRepository.findShooterLogIdsWithoutDateCalculated()).thenReturn(List.of());
+
+        // Act
+        runner.run(null);
+
+        // Assert
+        var order = inOrder(startupRecalculationStatus);
+        order.verify(startupRecalculationStatus).begin();
+        order.verify(startupRecalculationStatus, timeout(5000)).attach();
+        order.verify(startupRecalculationStatus, timeout(5000)).end();
+    }
+
+    @Test
+    void testRun_whenTheRecalculationFails_thenStillMarksItFinished() {
+        // Arrange
+        when(shooterResultRepository.findMatchIdsWithoutDateCalculated())
+                .thenThrow(new IllegalStateException("database unavailable"));
+
+        // Act
+        runner.run(null);
+
+        // Assert
+        verify(startupRecalculationStatus, timeout(5000)).end();
     }
 }

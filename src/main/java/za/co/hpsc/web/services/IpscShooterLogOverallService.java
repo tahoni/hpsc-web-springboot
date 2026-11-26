@@ -56,6 +56,8 @@ public interface IpscShooterLogOverallService {
      *                           cannot be calculated.
      * @throws za.co.hpsc.web.exceptions.ValidationException if a match the log covers is scheduled before its start
      *                                                      date or after its end date.
+     * @throws za.co.hpsc.web.exceptions.RecalculationInProgressException if the application is still recalculating
+     *                                                                   results after it started.
      * @since 16.1.0
      */
     ShooterLogOverallResponseHolder calculateShooterLogOverall(Long shooterLogId) throws NonFatalException;

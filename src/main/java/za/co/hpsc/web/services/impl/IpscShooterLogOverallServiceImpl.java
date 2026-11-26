@@ -2,6 +2,7 @@ package za.co.hpsc.web.services.impl;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
+import za.co.hpsc.web.configs.StartupRecalculationStatus;
 import za.co.hpsc.web.constants.IpscConstants;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.ShooterLog;
@@ -39,21 +40,25 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
     private final ShooterResultRepository shooterResultRepository;
     private final IpscShooterResultService ipscShooterResultService;
     private final TransactionService transactionService;
+    private final StartupRecalculationStatus startupRecalculationStatus;
 
     public IpscShooterLogOverallServiceImpl(ShooterLogRepository shooterLogRepository,
                                             ShooterLogOverallRepository shooterLogOverallRepository,
                                             ShooterResultRepository shooterResultRepository,
                                             IpscShooterResultService ipscShooterResultService,
-                                            TransactionService transactionService) {
+                                            TransactionService transactionService,
+                                            StartupRecalculationStatus startupRecalculationStatus) {
         this.shooterLogRepository = shooterLogRepository;
         this.shooterLogOverallRepository = shooterLogOverallRepository;
         this.shooterResultRepository = shooterResultRepository;
         this.ipscShooterResultService = ipscShooterResultService;
         this.transactionService = transactionService;
+        this.startupRecalculationStatus = startupRecalculationStatus;
     }
 
     @Override
     public ShooterLogOverallResponseHolder calculateShooterLogOverall(Long shooterLogId) throws NonFatalException {
+        startupRecalculationStatus.ensureNotRunning();
         ShooterLog shooterLog = findShooterLogOrThrow(shooterLogId);
         // A match can be rescheduled after it was added to the log, so check the dates again before using any of them
         ShooterLogHelpers.validateMatchesWithinDates(shooterLog);

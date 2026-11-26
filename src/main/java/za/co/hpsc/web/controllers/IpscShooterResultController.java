@@ -48,7 +48,8 @@ public class IpscShooterResultController {
      *
      * @param matchId the identifier of the match to calculate results for.
      * @return the {@link ShooterResponseHolder} linking the match to its freshly calculated shooter results.
-     * @throws NonFatalException if no match with {@code matchId} exists.
+     * @throws NonFatalException if no match with {@code matchId} exists, or the application is still recalculating
+     *                           results after it started.
      * @since 15.0.0
      */
     @PostMapping(value = "/matches/{matchId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -63,6 +64,10 @@ public class IpscShooterResultController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ShooterResponseHolder.class))),
             @ApiResponse(responseCode = "404", description = "No match with this ID could be found.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "409", description = "The application is still recalculating results after "
+                    + "it started; try again shortly.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
+import za.co.hpsc.web.exceptions.RecalculationInProgressException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 import za.co.hpsc.web.utils.ValueUtil;
@@ -72,6 +73,25 @@ public class ControllerAdvice {
                                                                         WebRequest request) {
         logError(ex, request);
         HttpStatus status = HttpStatus.BAD_REQUEST;
+        ControllerResponse errorResponse = buildErrorResponse(ex.getMessage(), status);
+        return new ResponseEntity<>(errorResponse, status);
+    }
+
+    /**
+     * Handles a {@link RecalculationInProgressException} raised by a controller, mapping it to an HTTP
+     * {@code 409 Conflict} response. It is more specific than {@link NonFatalException}, which it extends, so it is
+     * handled here instead of as a {@code 404 Not Found}.
+     *
+     * @param ex      the recalculation-in-progress exception that was thrown.
+     * @param request the current web request, used to log the request URL.
+     * @return a {@link ResponseEntity} carrying a {@link ControllerResponse} that describes the error.
+     * @since 18.1.1
+     */
+    @ExceptionHandler(RecalculationInProgressException.class)
+    public ResponseEntity<ControllerResponse> handleRecalculationInProgressException(
+            RecalculationInProgressException ex, WebRequest request) {
+        logError(ex, request);
+        HttpStatus status = HttpStatus.CONFLICT;
         ControllerResponse errorResponse = buildErrorResponse(ex.getMessage(), status);
         return new ResponseEntity<>(errorResponse, status);
     }
