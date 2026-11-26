@@ -85,7 +85,7 @@ public class ControllerAdvice {
      * @param ex      the recalculation-in-progress exception that was thrown.
      * @param request the current web request, used to log the request URL.
      * @return a {@link ResponseEntity} carrying a {@link ControllerResponse} that describes the error.
-     * @since 18.1.1
+     * @since 18.2.0
      */
     @ExceptionHandler(RecalculationInProgressException.class)
     public ResponseEntity<ControllerResponse> handleRecalculationInProgressException(

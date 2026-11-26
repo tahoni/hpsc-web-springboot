@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * overall results can be refused while it is, instead of both writing the same results at once. The thread doing the
  * recalculation is the one thread that may calculate while it runs.
  *
- * @since 18.1.1
+ * @since 18.2.0
  */
 @Component
 public class StartupRecalculationStatus {

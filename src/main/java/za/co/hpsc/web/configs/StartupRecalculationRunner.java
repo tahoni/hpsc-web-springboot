@@ -35,7 +35,7 @@ import java.util.List;
  * still have no {@code date_calculated}.
  * </p>
  *
- * @since 18.1.1
+ * @since 18.2.0
  */
 @Slf4j
 @Component
