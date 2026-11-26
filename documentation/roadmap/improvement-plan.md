@@ -165,8 +165,9 @@ number or a newly met precondition on an existing gap — see the `update-improv
     migration documented)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
-- **⚪ Open (0):**
-  - *No gaps are currently open.*
+- **⚪ Open (1):**
+  - #57 `ARCHITECTURE.md` and `README.md` still say shooter results and overall results are ranked per competitor
+    category, which the ranking no longer does
 
 ### ✅ Completed
 
@@ -1851,7 +1852,28 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 ### ⚪ Open
 
-*No gaps are currently open.*
+#### 57. `ARCHITECTURE.md` and `README.md` still say shooter results and overall results are ranked per competitor category, which the ranking no longer does
+
+**Evidence:** `IpscShooterResultServiceImpl` now ranks a match's competitors within their firearm type and division,
+and `IpscShooterLogOverallServiceImpl` ranks a shooter log's competitors within their division, both regardless of
+competitor category; the `[Unreleased]` section of `CHANGELOG.md` records the change and the Javadoc and OpenAPI text
+of both services and controllers were updated with it. `ARCHITECTURE.md` still describes the ranking by category: the
+**IPSC Shooter Results** row of its System Overview (line 134) says "ranked results per firearm type, division and
+competitor category", and its **Shooter Logs** row (line 136) says "overall rank and percentage per division and
+competitor category". `README.md`'s **IPSC Shooter Log Overall Results** bullet (lines 46–47) says "within their
+division and competitor category". The category is still stored on every `ShooterResult` and `ShooterLogOverall`, so
+a reader has no sign that these sentences are out of date.
+
+**Why it matters:** The same shape as Gaps #34, #51, #54 and #56: the evergreen docs describe the system as it was
+before the latest work. A contributor, or a client reading a league table, would expect a junior and a senior in one
+division to be ranked separately, when they now share one ranking. The release checklist reverse-syncs these files
+only when a release is cut, so the drift stays until then unless it is tracked.
+
+**Proposed improvement:** Reword the two `ARCHITECTURE.md` rows to say shooter results are ranked per firearm type and
+division, and overall results per division, and note that competitor category is stored but does not split the
+rankings; reword `README.md`'s bullet the same way. Leave `HISTORY.md` and the per-version release notes as they are,
+since they record what each version did at the time. Check the Release Checklist's reverse-sync picks the wording up
+when the version that ships this change is cut.
 
 ---
 
@@ -1859,7 +1881,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | No items currently scoped — #56 closed in v18.1.0, #53, #54 and #55 closed in v18.0.0, #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                         |
+| **Now**     | #57 — reword the `ARCHITECTURE.md` rows and `README.md` bullet that still rank shooter results and overall results by competitor category; #56 closed in v18.1.0, #53, #54 and #55 closed in v18.0.0, #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                         |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                                                                  |
 | **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed), and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath, and `flyway-mysql` until v16.4.0 (#50, closed), and `logback.version` and `h2.version` are set above the 1.5.38 and 2.4.240 Spring Boot 4.1.2 manages (`h2.version` for a vulnerability in 2.4.240); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
@@ -1997,6 +2019,9 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
   `ARCHITECTURE.md`'s test tree lists only directories that exist, closing Gap #55.
 - ✅ Met in v18.1.0: `ARCHITECTURE.md`, `README.md` and `flyway-migration-versioning.md` describe `MatchResult`, its
   `/ipsc/match-results` endpoints and the `V11_14_0` migration, as the code has them, closing Gap #56.
+- ⚪ Not yet met: `ARCHITECTURE.md` and `README.md` say shooter results are ranked per firearm type and division,
+  and shooter log overall results per division, regardless of competitor category, as the services rank them, which
+  would close Gap #57.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s
   Future Roadmap Implications section (or its Historical Timeline entries) rather than being deleted silently from
   here.

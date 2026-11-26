@@ -1,4 +1,4 @@
-# Roadmap Task List
+  # Roadmap Task List
 
 A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s gaps, grouped by that
 document's completion status — ✅ Completed, 🟡 Partially Completed, ⚪ Open — matching its own "🔍 Gaps &
@@ -644,7 +644,15 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-*No gaps are currently open.*
+**Competitor category ranking docs** *(improvement-plan.md → Gap #57)*
+
+- [ ] Reword the **IPSC Shooter Results** row of `ARCHITECTURE.md`'s System Overview to say a match's results are ranked
+  per firearm type and division, not per competitor category
+- [ ] Reword the **Shooter Logs** row to say overall rank and percentage are calculated per division, not per division
+  and competitor category
+- [ ] Reword `README.md`'s **IPSC Shooter Log Overall Results** bullet to say competitors are ranked within their
+  division, and say once that competitor category is stored but does not split the rankings
+- [ ] Leave `HISTORY.md` and the per-version release notes unchanged, as they record what each version did at the time
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.
