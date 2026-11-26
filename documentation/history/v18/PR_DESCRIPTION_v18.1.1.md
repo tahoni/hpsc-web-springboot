@@ -5,12 +5,13 @@
 - A PATCH release: no endpoint, request field or response field is added, removed or changed
 - `tomcat.version` is pinned above the version Spring Boot manages, which has a known vulnerability
 - A migration marks every stored result for recalculation, and a startup runner recalculates every marked match and
-  shooter log, so existing data is ranked again without a request
+  shooter log in the background, so existing data is ranked again without a request or a slower start
 
 ## 📦 Key Changes
 
 - **Added:** `V11_15_0`, which clears `date_calculated` on `shooter_result` and `shooter_log_overall`, and
-  `StartupRecalculationRunner`, which recalculates every match and shooter log with such a row at startup
+  `StartupRecalculationRunner`, which recalculates every match and shooter log with such a row in the background at
+  startup
 - **Changed:** `IpscShooterResultServiceImpl` groups by firearm type and division and `IpscShooterLogOverallServiceImpl`
   by division, instead of also by competitor category; the Javadoc and OpenAPI text of both services and controllers
   say so; `pom.xml` pins `tomcat.version` to `11.0.29`
@@ -22,10 +23,10 @@
 
 ## 🧪 Test Plan
 
-- [x] `./mvnw clean verify -Pcoverage` passes: 1,544 tests, no failures or errors, 3 skipped unless `FLYWAY_MYSQL_URL`
+- [x] `./mvnw clean verify -Pcoverage` passes: 1,546 tests, no failures or errors, 3 skipped unless `FLYWAY_MYSQL_URL`
   is set, meeting the 97% line and branch minimums at 98.7% line and 99.9% branch coverage
 - [x] `CHANGELOG.md`'s `[Unreleased]` section synced against the branch and renamed to `[18.1.1]`
-- [ ] Run the migrations against MySQL, with `FLYWAY_MYSQL_URL` set, and confirm `V11_15_0` applies
+- [x] Run the migrations against MySQL, with `FLYWAY_MYSQL_URL` set, and confirm `V11_15_0` applies
 - [ ] Start the application against data calculated before this release and confirm the log reports the recalculation
   and the old ranks are gone
 - [ ] Start the application, calculate a match with competitors in different categories in one division and confirm
