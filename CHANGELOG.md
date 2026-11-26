@@ -42,6 +42,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
   `shooter_log_overall`, so each match and shooter log is ranked again, without competitor category, the next time it is
   calculated, instead of its old results being returned as up to date
 
+##### Services
+
+- `StartupRecalculationRunner` recalculates, when the application starts, the shooter results of every match, and then
+  the overall results of every shooter log, that has a row whose `date_calculated` is `null`, using
+  `ShooterResultRepository.findMatchIdsWithoutDateCalculated` and
+  `ShooterLogOverallRepository.findShooterLogIdsWithoutDateCalculated`. A match or shooter log that fails is logged and
+  skipped, so it neither stops the others nor prevents startup, and is tried again on the next start
+
+##### Tests
+
+- `StartupRecalculationRunnerTest`, and repository integration tests for the two new queries
+
 #### 🔄 Changed
 
 ##### Configuration

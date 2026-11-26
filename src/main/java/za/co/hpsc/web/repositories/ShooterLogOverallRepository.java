@@ -24,4 +24,9 @@ public interface ShooterLogOverallRepository extends JpaRepository<ShooterLogOve
     @Query("select distinct slo from ShooterLogOverall slo join fetch slo.shooterLog join fetch slo.competitor "
             + "left join fetch slo.matches order by slo.id")
     List<ShooterLogOverall> findAllWithDetails();
+
+    // The shooter logs that have an overall result which was never calculated, or was marked for recalculation.
+    @Query("select distinct slo.shooterLog.id from ShooterLogOverall slo where slo.dateCalculated is null "
+            + "order by slo.shooterLog.id")
+    List<Long> findShooterLogIdsWithoutDateCalculated();
 }
