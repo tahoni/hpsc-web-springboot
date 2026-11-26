@@ -7,7 +7,6 @@ import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.ShooterLog;
 import za.co.hpsc.web.domain.ShooterLogOverall;
 import za.co.hpsc.web.domain.ShooterResult;
-import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.exceptions.NonFatalException;
 import za.co.hpsc.web.helpers.ShooterLogHelpers;
@@ -88,10 +87,10 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
             return getShooterLogOverallResults(shooterLogId);
         }
 
-        // Competitors are ranked against the others in their division and competitor category, taken from their most
-        // recent match in the log, with competitors in the NONE category a group of their own. A match's scheduled date
-        // and a result's category are never null: both columns are NOT NULL
-        Map<OverallGroup, List<ShooterLogOverall>> groups = new LinkedHashMap<>();
+        // Competitors are ranked against the others in their division, taken from their most recent match in the
+        // log, regardless of competitor category. A match's scheduled date and a result's category are never null:
+        // both columns are NOT NULL
+        Map<Division, List<ShooterLogOverall>> groups = new LinkedHashMap<>();
         LocalDateTime dateCalculated = LocalDateTime.now();
         for (Map.Entry<Long, List<ShooterResult>> entry : resultsByCompetitorId.entrySet()) {
             List<ShooterResult> results = entry.getValue();
@@ -99,19 +98,17 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
                     .max(Comparator.comparing((ShooterResult result) -> result.getMatch().getScheduledDate())
                             .thenComparing(ShooterResult::getId))
                     .orElseThrow();
-            CompetitorCategory category = latest.getCompetitorCategory();
 
             ShooterLogOverall overall = existingByCompetitorId.getOrDefault(entry.getKey(), new ShooterLogOverall());
             overall.setShooterLog(shooterLog);
             overall.setCompetitor(latest.getCompetitor());
-            overall.setCompetitorCategory(category);
+            overall.setCompetitorCategory(latest.getCompetitorCategory());
             overall.setDivision(latest.getDivision());
             List<ShooterResult> bestResults = bestResults(results);
             overall.setPercentageInLog(averagePercentage(bestResults));
             overall.setMatches(matchesOfResults(bestResults));
             overall.setDateCalculated(dateCalculated);
-            groups.computeIfAbsent(new OverallGroup(latest.getDivision(), category), group -> new ArrayList<>())
-                    .add(overall);
+            groups.computeIfAbsent(latest.getDivision(), group -> new ArrayList<>()).add(overall);
         }
 
         List<ShooterLogOverall> toSave = new ArrayList<>();
@@ -302,7 +299,7 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
      * overall without a percentage is not ranked, for the same reason {@link #averagePercentage} tolerates a missing
      * percentage: it can only come from a row that {@code IpscShooterResultServiceImpl} did not write.
      *
-     * @param group the overall results to rank, which are in the same division and competitor category.
+     * @param group the overall results to rank, which are in the same division, whatever their competitor category.
      */
     private void rank(List<ShooterLogOverall> group) {
         List<ShooterLogOverall> scored = group.stream()
@@ -320,9 +317,5 @@ public class IpscShooterLogOverallServiceImpl implements IpscShooterLogOverallSe
             }
             scored.get(index).setRankInLog(rank);
         }
-    }
-
-    /** The division and competitor category that overall results are ranked within. */
-    private record OverallGroup(Division division, CompetitorCategory competitorCategory) {
     }
 }

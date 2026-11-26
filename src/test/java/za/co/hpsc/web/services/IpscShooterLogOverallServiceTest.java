@@ -413,6 +413,28 @@ class IpscShooterLogOverallServiceTest {
     }
 
     @Test
+    void testCalculateShooterLogOverall_whenCompetitorsAreInDifferentCategories_thenRanksThemTogetherByDivision()
+            throws NonFatalException {
+        // Arrange
+        IpscMatch match = match(10L, 1);
+        ShooterLog shooterLog = shooterLog(1L, match);
+        Competitor junior = competitor(5L);
+        Competitor none = competitor(6L);
+        ShooterResult juniorResult = shooterResult(100L, match, junior, "60", Division.OPEN);
+        juniorResult.setCompetitorCategory(CompetitorCategory.JUNIOR);
+        ShooterResult noneResult = shooterResult(101L, match, none, "100", Division.OPEN);
+        stubLog(shooterLog, List.of(juniorResult, noneResult), List.of());
+
+        // Act
+        ipscShooterLogOverallService.calculateShooterLogOverall(1L);
+
+        // Assert
+        List<ShooterLogOverall> saved = savedOverallResults();
+        assertEquals(1, overallOf(saved, none).getRankInLog());
+        assertEquals(2, overallOf(saved, junior).getRankInLog());
+    }
+
+    @Test
     void testCalculateShooterLogOverall_whenCompetitorChangedDivision_thenUsesTheMostRecentMatchsDivision()
             throws NonFatalException {
         // Arrange
