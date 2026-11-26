@@ -188,7 +188,7 @@ Phases 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
 
 ---
 
-### Phase 64: Ranking Competitors Within Their Division (v18.1.1)
+### Phase 64: Ranking Competitors Within Their Division (v18.2.0)
 
 **Services**
 
@@ -196,12 +196,12 @@ Phases 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
   division, and `IpscShooterLogOverallServiceImpl` ranks a shooter log's overalls within their division, instead of
   also splitting each group by competitor category; the category is still stored on every `ShooterResult` and
   `ShooterLogOverall`
-- `StartupRecalculationRunner` calculates, in a background thread when the application starts, every match's shooter results and then every
-  shooter log's overall results that have a row whose `date_calculated` is `null`, using two new repository queries; a
-  match or log that fails is logged and skipped, so startup is not prevented
+- `StartupRecalculationRunner` calculates, in a background thread when the application starts, every match's shooter
+  results and then every shooter log's overall results that have a row whose `date_calculated` is `null`, using two new
+  repository queries; a match or log that fails is logged and skipped, so startup is not prevented
 - `StartupRecalculationStatus` records that it is running, and the shooter result and shooter log overall calculations
-  throw `RecalculationInProgressException`, which `ControllerAdvice` maps to `409 Conflict`, so a `POST` never writes the
-  same results as the runner
+  throw `RecalculationInProgressException`, which `ControllerAdvice` maps to `409 Conflict`, so a `POST` never writes
+  the same results as the runner
 
 **Database**
 
@@ -221,12 +221,13 @@ Phases 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
 **Build & Metadata**
 
 - Improvement plan: Gap #57 is added and closed, leaving all 57 gaps closed and none open
-- Project version bumped to 18.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- Project version bumped to 18.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 **Technical Focus:**
 
 - Ranking competitors against the others in their division whatever their category, and scoping the release as a
-  PATCH because no endpoint or response field changes
+  MINOR because the startup recalculation and its `409` are externally visible, though no request or response field
+  changes
 
 **Test Coverage:**
 

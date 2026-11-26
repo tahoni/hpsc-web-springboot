@@ -164,7 +164,7 @@ number or a newly met precondition on an existing gap — see the `update-improv
     Flyway migration table don't mention them — closed in v18.1.0 (controller, service, entity, response models and
     migration documented)
   - #57 `ARCHITECTURE.md` and `README.md` still say shooter results and overall results are ranked per competitor
-    category, which the ranking no longer does — closed in v18.1.1 (System Overview rows and feature bullet reworded)
+    category, which the ranking no longer does — closed in v18.2.0 (System Overview rows and feature bullet reworded)
 - **🟡 Partially Completed (0):**
   - *No gaps are currently partially completed.*
 - **⚪ Open (0):**
@@ -1843,7 +1843,7 @@ names match results among the writes `TransactionService` commits; `README.md`'s
 entry; and the Flyway Current State table lists `V11_14_0__create_match_result.sql` as v18.1.0, the version the
 `@since` tags give the new classes.
 
-#### 57. `ARCHITECTURE.md` and `README.md` still say shooter results and overall results are ranked per competitor category, which the ranking no longer does — ✅ Closed in v18.1.1
+#### 57. `ARCHITECTURE.md` and `README.md` still say shooter results and overall results are ranked per competitor category, which the ranking no longer does — ✅ Closed in v18.2.0
 
 **Evidence:** `IpscShooterResultServiceImpl` now ranks a match's competitors within their firearm type and division,
 and `IpscShooterLogOverallServiceImpl` ranks a shooter log's competitors within their division, both regardless of
@@ -1890,10 +1890,10 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
 
 | Phase       | Focus                                                                                                                                                                                                                                                                                                                                                                                                      |
 |-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Now**     | No items currently scoped — #57 closed in v18.1.1, #56 closed in v18.1.0, #53, #54 and #55 closed in v18.0.0, #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                         |
+| **Now**     | No items currently scoped — #57 closed in v18.2.0, #56 closed in v18.1.0, #53, #54 and #55 closed in v18.0.0, #51 and #52 closed in v17.0.0, #48, #49 and #50 closed in v16.4.0, #47 in v16.3.0, #46 in v16.2.0, #45 in v16.1.2, #43 and #44 in v16.1.1, #6 and #42 in v16.1.0 after the match competitor half shipped in v9.1.0 and grew in v10.0.0 and v15.0.0                                                                                         |
 | **Next**    | No items currently scoped — #36 and #37 closed in v12.0.0, #38, #39 and #40 in v14.0.0, #41 in v16.1.0                                                                                                                                                                                                                                                                                                     |
 | **Later**   | No items currently scoped — #23 (not applicable) and #24 closed in v8.9.0                                                                                                                                                                                                                                                                                                                                  |
-| **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed) and is pinned again from v18.1.1 for a vulnerability in the version Spring Boot manages, and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath, and `flyway-mysql` until v16.4.0 (#50, closed), and `logback.version` and `h2.version` are set above the 1.5.38 and 2.4.240 Spring Boot 4.1.2 manages (`h2.version` for a vulnerability in 2.4.240); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
+| **Ongoing** | #5's overrides are gone as of v8.1.1, but `tomcat.version` was pinned from v8.3.1 until v16.0.0 (#26, closed) and is pinned again from v18.2.0 for a vulnerability in the version Spring Boot manages, and `asm.version` from v15.0.0 until `json-smart` was excluded from the test classpath, and `flyway-mysql` until v16.4.0 (#50, closed), and `logback.version` and `h2.version` are set above the 1.5.38 and 2.4.240 Spring Boot 4.1.2 manages (`h2.version` for a vulnerability in 2.4.240); re-check each release whether the parent's managed version has caught up, and drop any override that has become redundant per the Release Checklist |
 
 ---
 
@@ -2028,7 +2028,7 @@ but hasn't yet reached a final **Outcome** — it moves on to ✅ Completed once
   `ARCHITECTURE.md`'s test tree lists only directories that exist, closing Gap #55.
 - ✅ Met in v18.1.0: `ARCHITECTURE.md`, `README.md` and `flyway-migration-versioning.md` describe `MatchResult`, its
   `/ipsc/match-results` endpoints and the `V11_14_0` migration, as the code has them, closing Gap #56.
-- ✅ Met in v18.1.1: `ARCHITECTURE.md` and `README.md` say shooter results are ranked per firearm type and division,
+- ✅ Met in v18.2.0: `ARCHITECTURE.md` and `README.md` say shooter results are ranked per firearm type and division,
   and shooter log overall results per division, regardless of competitor category, as the services rank them, closing
   Gap #57.
 - This document's Gaps section shrinks over time as items close — closed items should move into `HISTORY.md`'s

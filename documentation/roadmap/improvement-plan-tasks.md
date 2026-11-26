@@ -630,7 +630,7 @@ Gap #41)* —
 - [x] Add the `V11_14_0__create_match_result.sql` row to `flyway-migration-versioning.md`'s Current State table once
   its release version is known — done, as v18.1.0
 
-**Competitor category ranking docs** *(improvement-plan.md → Gap #57)* — ✅ Closed in v18.1.1
+**Competitor category ranking docs** *(improvement-plan.md → Gap #57)* — ✅ Closed in v18.2.0
 
 - [x] Reword the **IPSC Shooter Results** row of `ARCHITECTURE.md`'s System Overview to say a match's results are ranked
   per firearm type and division, not per competitor category — done

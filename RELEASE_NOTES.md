@@ -1,4 +1,4 @@
-# Release Notes – Version 18.1.1
+# Release Notes – Version 18.2.0
 
 **Release Date:** November 26, 2026 **Status:** ✨ Stable
 
@@ -8,14 +8,15 @@
 
 **Ranking Competitors Within Their Division**
 
-Version 18.1.1 is a patch release. Shooter results ranked a competitor only against the others in their firearm type,
+Version 18.2.0 is a minor release. Shooter results ranked a competitor only against the others in their firearm type,
 division and competitor category, and a shooter log's overall results only against those in their division and
 category, so a junior and a senior in the same division never appeared in one ranking. Shooter results are now ranked
 within a firearm type and division, and overall results within a division, whatever the competitor category. The
 category is still stored on every row, a new migration marks every stored result as not yet calculated, and the
 application recalculates those results in the background when it starts, so existing data is ranked again without a
 request. The release also pins `tomcat.version` above the version Spring Boot manages, after that version was found to
-have a known vulnerability. No endpoint, request field or response field changes, so it is a patch release.
+have a known vulnerability. No request field or response field changes, but the calculation endpoints can now answer
+`409 Conflict` while the recalculation runs, an externally visible addition, so it is a minor release.
 
 ---
 
@@ -148,8 +149,9 @@ release without changes, apart from retrying a refused calculation:
   state.
 - **Pin what is vulnerable, and say why.** `tomcat.version` is overridden because the managed version has a known
   vulnerability, and the pin stays until the Spring Boot parent manages a fixed release.
-- **A PATCH.** The release adds nothing and changes no contract, which `AGENTS.md`'s Semantic Versioning rules classify
-  as PATCH, though the rank values clients see can differ.
+- **A MINOR.** The release changes no request or response field, but it adds a startup recalculation and a `409`
+  response the calculation endpoints did not have, which `AGENTS.md`'s Semantic Versioning rules classify as MINOR
+  since they are externally visible additions; the rank values clients see can also differ.
 
 ---
 
@@ -198,7 +200,7 @@ release without changes, apart from retrying a refused calculation:
 
 ## 📝 Notes
 
-Version 18.1.1 ranks shooter results within a firearm type and division, and shooter log overall results within a
+Version 18.2.0 ranks shooter results within a firearm type and division, and shooter log overall results within a
 division, whatever the competitor category, marks the stored results for recalculation and recalculates them at startup,
 and pins `tomcat.version` above a vulnerable managed version. It leaves the improvement plan with all 57 gaps closed
 and none open.

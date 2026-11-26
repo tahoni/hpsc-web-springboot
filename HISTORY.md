@@ -21,7 +21,7 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
-### Version 18.1.1 (November 26, 2026)
+### Version 18.2.0 (November 26, 2026)
 
 **Theme:** Ranking Competitors Within Their Division
 
@@ -40,12 +40,12 @@ evolution of architecture, features and design philosophy across all versions.
   until it finishes, a calculation request is refused with `409 Conflict` so it never writes the same results
 - `pom.xml` pins `tomcat.version` to `11.0.29`, after the `11.0.27` Spring Boot manages was found to have a known
   vulnerability
-- Scoped as `v18.1.1` **PATCH**: no endpoint, request field or response field is added, removed or changed, so
-  `AGENTS.md`'s Semantic Versioning rules call for neither a MAJOR nor a MINOR, though the rank and percentage values
-  clients see can differ for competitors in different categories
+- Scoped as `v18.2.0` **MINOR**: no endpoint, request field or response field is added, removed or changed, but the
+  startup recalculation and the `409 Conflict` the two calculation endpoints answer while it runs are externally visible
+  additions, and the rank and percentage values clients see can differ for competitors in different categories
 - Improvement plan: Gap #57 is added and closed, leaving all 57 gaps closed and none open
 - The suite stands at 1,558 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
-- Project version bumped to 18.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+- Project version bumped to 18.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 18.1.0 (November 15, 2026)
 
@@ -206,13 +206,14 @@ Milestones 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
   vulnerability
 - Improvement plan Gap #56 is added and closed, so every tracked gap stays closed
 
-### Milestone 64: Ranking Competitors Within Their Division (v18.1.1)
+### Milestone 64: Ranking Competitors Within Their Division (v18.2.0)
 
 - Shooter results are ranked within a firearm type and division, and shooter log overall results within a division,
   whatever the competitor category
 - A migration marks every stored shooter result and overall result for recalculation, and a startup runner
   recalculates them
-- No contract changes, so the release is a PATCH
+- No request or response field changes, but the startup recalculation and the `409` its lock adds are externally visible
+  additions, so the release is a MINOR
 - `tomcat.version` is pinned above the version Spring Boot manages, for a known vulnerability
 - Improvement plan Gap #57 is added and closed, so every tracked gap stays closed
 
@@ -510,15 +511,16 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   Because that changes what the match import answers, what a bad row does to the request and the name of a response
   field, v17.0.0 is the project's ninth consecutive major version, with each breaking change flagged in `CHANGELOG.md`
   as it landed.
-- **Version 18.x (v18.0.0 – v18.1.1):** Make a shooter log overall say which matches it was calculated from — each competitor's
+- **Version 18.x (v18.0.0 – v18.2.0):** Make a shooter log overall say which matches it was calculated from — each competitor's
   best matches in the log — and keep that reliable once the persistence session has closed, while taking the OpenAPI
   document and Swagger UI off by default so a deployment serves them only on purpose. Because that changes what a
   running deployment serves, v18.0.0 is the project's tenth consecutive major version, with the breaking change flagged
   in `CHANGELOG.md` as it landed.
   v18.1.0 then ranks every verified competitor across the whole match, independent of firearm type, division and
   category, through new match result endpoints, and is a MINOR because it only adds to the API.
-  v18.1.1 then stops splitting shooter results and overall results by competitor category, ranking them within a
-  firearm type and division, and a division, and is a PATCH because no contract changes.
+  v18.2.0 then stops splitting shooter results and overall results by competitor category, ranking them within a
+  firearm type and division, and a division, and is a MINOR because it adds a startup recalculation and
+  a `409` response, though it changes no request or response field.
 
 ### Initial Phase (v1.0.0)
 
@@ -817,7 +819,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v18.1.1, the following areas are identified for future enhancement:
+Based on the evolution to v18.2.0, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -831,7 +833,7 @@ The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, i
 The completed-work logs for versions 14.0.0 to 16.4.1 are archived, unchanged, in
 [`documentation/archive/v14-v16/HISTORY_v14-v16.md`](/documentation/archive/v14-v16/HISTORY_v14-v16.md).
 
-### Recently Completed (v18.1.1)
+### Recently Completed (v18.2.0)
 
 - `IpscShooterResultServiceImpl` ranks a match's verified competitors with points within their firearm type and
   division, and `IpscShooterLogOverallServiceImpl` ranks a shooter log's overalls within their division, both whatever
@@ -844,7 +846,7 @@ The completed-work logs for versions 14.0.0 to 16.4.1 are archived, unchanged, i
   ranking
 - `tomcat.version` is pinned to `11.0.29`, for a known vulnerability in the `11.0.27` Spring Boot manages
 - Improvement plan: Gap #57 is added and closed, leaving all 57 gaps closed and none open
-- Project version bumped to 18.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+- Project version bumped to 18.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation
 
 ### Previously Completed (v18.1.0)
 
