@@ -4,10 +4,12 @@
   division, whatever the competitor category, which is still stored on every row
 - A PATCH release: no endpoint, request field or response field is added, removed or changed
 - `tomcat.version` is pinned above the version Spring Boot manages, which has a known vulnerability
-- Results already calculated keep their old ranks until the match or a competitor is updated after them
+- A migration marks every stored result for recalculation, so each match and shooter log is ranked again the next time
+  it is calculated
 
 ## 📦 Key Changes
 
+- **Added:** `V11_15_0`, which clears `date_calculated` on `shooter_result` and `shooter_log_overall`
 - **Changed:** `IpscShooterResultServiceImpl` groups by firearm type and division and `IpscShooterLogOverallServiceImpl`
   by division, instead of also by competitor category; the Javadoc and OpenAPI text of both services and controllers
   say so; `pom.xml` pins `tomcat.version` to `11.0.29`
@@ -22,6 +24,7 @@
 - [x] `./mvnw clean verify -Pcoverage` passes: 1,538 tests, no failures or errors, 3 skipped unless `FLYWAY_MYSQL_URL`
   is set, meeting the 97% line and branch minimums at 98.7% line and 99.9% branch coverage
 - [x] `CHANGELOG.md`'s `[Unreleased]` section synced against the branch and renamed to `[18.1.1]`
+- [ ] Run the migrations against MySQL, with `FLYWAY_MYSQL_URL` set, and confirm `V11_15_0` applies
 - [ ] Start the application, calculate a match with competitors in different categories in one division and confirm
   they share one ranking in `GET /ipsc/shooter-results/matches/{matchId}`, then calculate a shooter log's overall
   results and confirm the same
