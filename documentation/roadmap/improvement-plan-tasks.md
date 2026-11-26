@@ -630,6 +630,18 @@ Gap #41)* —
 - [x] Add the `V11_14_0__create_match_result.sql` row to `flyway-migration-versioning.md`'s Current State table once
   its release version is known — done, as v18.1.0
 
+**Competitor category ranking docs** *(improvement-plan.md → Gap #57)* — ✅ Closed in v18.1.1
+
+- [x] Reword the **IPSC Shooter Results** row of `ARCHITECTURE.md`'s System Overview to say a match's results are ranked
+  per firearm type and division, not per competitor category — done
+- [x] Reword the **Shooter Logs** row to say overall rank and percentage are calculated per division, not per division
+  and competitor category — done
+- [x] Reword `README.md`'s **IPSC Shooter Log Overall Results** bullet to say competitors are ranked within their
+  division, and say once that competitor category is stored but does not split the rankings — done differently: the
+  bullet says "whatever their competitor category", and nothing says the category is still stored
+- [x] Leave `HISTORY.md` and the per-version release notes unchanged, as they record what each version did at the
+  time — done
+
 ---
 
 ## 🟡 Partially Completed
@@ -644,15 +656,7 @@ checked and the gap's own header there carries a "✅ Closed" suffix.
 
 ## ⚪ Open
 
-**Competitor category ranking docs** *(improvement-plan.md → Gap #57)*
-
-- [ ] Reword the **IPSC Shooter Results** row of `ARCHITECTURE.md`'s System Overview to say a match's results are ranked
-  per firearm type and division, not per competitor category
-- [ ] Reword the **Shooter Logs** row to say overall rank and percentage are calculated per division, not per division
-  and competitor category
-- [ ] Reword `README.md`'s **IPSC Shooter Log Overall Results** bullet to say competitors are ranked within their
-  division, and say once that competitor category is stored but does not split the rankings
-- [ ] Leave `HISTORY.md` and the per-version release notes unchanged, as they record what each version did at the time
+*No gaps are currently open.*
 
 When checking an item off, add a short note after it if it was fulfilled differently from its original wording
 (e.g. "— done differently: ..."), or strike it through (`~~...~~`) with a note if it became unnecessary.
