@@ -32,6 +32,8 @@ evolution of architecture, features and design philosophy across all versions.
   no longer splits either ranking, though it is still stored on every row
 - The Javadoc and OpenAPI descriptions of both services and controllers describe the new ranking, and `ARCHITECTURE.md`
   and `README.md` stop saying results are ranked per competitor category
+- `V11_15_0` clears `date_calculated` on `shooter_result` and `shooter_log_overall`, so the services treat every stored
+  result as out of date and rank each match and shooter log again, without category, the next time it is calculated
 - `pom.xml` pins `tomcat.version` to `11.0.29`, after the `11.0.27` Spring Boot manages was found to have a known
   vulnerability
 - Scoped as `v18.1.1` **PATCH**: no endpoint, request field or response field is added, removed or changed, so
@@ -204,6 +206,7 @@ Milestones 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
 
 - Shooter results are ranked within a firearm type and division, and shooter log overall results within a division,
   whatever the competitor category
+- A migration marks every stored shooter result and overall result for recalculation
 - No contract changes, so the release is a PATCH
 - `tomcat.version` is pinned above the version Spring Boot manages, for a known vulnerability
 - Improvement plan Gap #57 is added and closed, so every tracked gap stays closed
@@ -828,6 +831,8 @@ The completed-work logs for versions 14.0.0 to 16.4.1 are archived, unchanged, i
 - `IpscShooterResultServiceImpl` ranks a match's verified competitors with points within their firearm type and
   division, and `IpscShooterLogOverallServiceImpl` ranks a shooter log's overalls within their division, both whatever
   the competitor category, which is still stored on each row
+- `V11_15_0` marks every stored shooter result and shooter log overall result as not yet calculated, so each is ranked
+  again, without category, the next time its match or log is calculated
 - The Javadoc and OpenAPI text of both services and controllers, `ARCHITECTURE.md` and `README.md` describe the new
   ranking
 - `tomcat.version` is pinned to `11.0.29`, for a known vulnerability in the `11.0.27` Spring Boot manages

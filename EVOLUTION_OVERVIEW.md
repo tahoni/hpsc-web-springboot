@@ -197,6 +197,12 @@ Phases 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
   also splitting each group by competitor category; the category is still stored on every `ShooterResult` and
   `ShooterLogOverall`
 
+**Database**
+
+- `V11_15_0__mark_shooter_results_for_recalculation.sql` clears `date_calculated` on `shooter_result` and
+  `shooter_log_overall`, which the services treat as out of date, so each match and shooter log is ranked again the next
+  time it is calculated
+
 **Configuration**
 
 - `tomcat.version` is pinned to `11.0.29`, since the `11.0.27` Spring Boot manages has a known vulnerability
