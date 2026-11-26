@@ -13,9 +13,9 @@ division and competitor category, and a shooter log's overall results only again
 category, so a junior and a senior in the same division never appeared in one ranking. Shooter results are now ranked
 within a firearm type and division, and overall results within a division, whatever the competitor category. The
 category is still stored on every row, a new migration marks every stored result as not yet calculated, and the
-application recalculates those results when it starts, so existing data is ranked again without a request. The release
-also pins `tomcat.version` above the version Spring Boot manages, after that version was found to have a known
-vulnerability. No endpoint, request field or response field changes, so it is a patch release.
+application recalculates those results in the background when it starts, so existing data is ranked again without a
+request. The release also pins `tomcat.version` above the version Spring Boot manages, after that version was found to
+have a known vulnerability. No endpoint, request field or response field changes, so it is a patch release.
 
 ---
 
@@ -41,6 +41,7 @@ vulnerability. No endpoint, request field or response field changes, so it is a 
 
 - `StartupRecalculationRunner` finds every match with a shooter result, and every shooter log with an overall result,
   whose `date_calculated` is `null`, and calculates the matches first and then the logs
+- It runs in a background thread, so startup is not delayed and the application serves requests while it works
 - A match or log that fails is logged and skipped, so one bad record neither stops the others nor prevents startup, and
   it is tried again on the next start
 
@@ -64,9 +65,9 @@ vulnerability. No endpoint, request field or response field changes, so it is a 
 - **`V11_15_0__mark_shooter_results_for_recalculation.sql`:** Clears `date_calculated` on `shooter_result` and
   `shooter_log_overall`, so each match and shooter log is ranked again, without competitor category, the next time it
   is calculated.
-- **`StartupRecalculationRunner`:** Calculates, when the application starts, the shooter results of every match, and
-  then the overall results of every shooter log, that has a row whose `date_calculated` is `null`, using
-  `ShooterResultRepository.findMatchIdsWithoutDateCalculated` and
+- **`StartupRecalculationRunner`:** Calculates, in a background thread when the application starts, the shooter results
+  of every match, and then the overall results of every shooter log, that has a row whose `date_calculated` is `null`,
+  using `ShooterResultRepository.findMatchIdsWithoutDateCalculated` and
   `ShooterLogOverallRepository.findShooterLogIdsWithoutDateCalculated`.
 
 ### Changed
@@ -101,9 +102,9 @@ release without changes:
 
 1. **Let Flyway apply `V11_15_0`, then let the service start.** The migration runs at startup and clears
    `date_calculated` on every `shooter_result` and `shooter_log_overall` row, and `StartupRecalculationRunner` then
-   calculates every match and shooter log with such a row, so the data is ranked without competitor category once
-   startup has finished. Startup takes longer in proportion to the number of matches and shooter logs, and the log
-   names any that could not be recalculated; they are tried again on the next start.
+   calculates every match and shooter log with such a row in a background thread. Startup is not delayed, but a match
+   or shooter log returns its old per-category ranks until it has been recalculated; the log reports how many are being
+   recalculated and names any that could not be, which are tried again on the next start.
 2. **Expect shared rankings.** A client that showed a separate league table per competitor category should group by
    `competitorCategory` itself, which each response still carries.
 
@@ -111,7 +112,7 @@ release without changes:
 
 ## 📊 Statistics
 
-- **Files Changed:** 23 against `main` before this release's history and release notes; 449 insertions and 45
+- **Files Changed:** 23 against `main` before this release's history and release notes; 498 insertions and 45
   deletions
 - **New Source Files:** 2 (`V11_15_0__mark_shooter_results_for_recalculation.sql` and `StartupRecalculationRunner`)
 - **New Test Files:** 2 (`StartupRecalculationRunnerTest` and `ShooterResultRepositoryIntegrationTest`)
@@ -127,8 +128,9 @@ release without changes:
   division, where a ranking per category could not.
 - **Keep the category stored.** `competitor_category` is NOT NULL on `shooter_result` and `shooter_log_overall` and is
   still returned, so a client can group by it without a schema change or migration.
-- **Refresh what the migration marks.** The migration only marks rows, and the runner finds them by that mark, so a
-  failed recalculation leaves its rows marked and is retried on the next start without any extra state.
+- **Refresh what the migration marks, off the startup path.** The migration only marks rows, and the runner finds them
+  by that mark, so a failed recalculation leaves its rows marked and is retried on the next start without any extra
+  state.
 - **Pin what is vulnerable, and say why.** `tomcat.version` is overridden because the managed version has a known
   vulnerability, and the pin stays until the Spring Boot parent manages a fixed release.
 - **A PATCH.** The release adds nothing and changes no contract, which `AGENTS.md`'s Semantic Versioning rules classify
@@ -138,12 +140,13 @@ release without changes:
 
 ## 🧪 Testing
 
-- `./mvnw test` passes: 1,544 tests with no failures or errors, 3 of them skipped because `FlywayMysqlMigrationTest`
+- `./mvnw test` passes: 1,546 tests with no failures or errors, 3 of them skipped because `FlywayMysqlMigrationTest`
   runs only where `FLYWAY_MYSQL_URL` is set; `./mvnw clean verify -Pcoverage` meets the 97% line and branch minimums, at
   98.7% line and 99.9% branch coverage.
 - The shooter result test for several categories now expects one ranking, and a new overall test covers competitors in
   different categories.
-- New tests cover the startup runner, including a match or log that fails, and the two queries it uses.
+- New tests cover the startup runner, including a match or log that fails, a failing query and the background thread,
+  and the two queries it uses.
 
 ---
 
@@ -153,8 +156,9 @@ release without changes:
   every row for a home club other than HPSC's is, creates them again.
 - A match or shooter log that cannot be recalculated at startup keeps its old per-category ranks, with a warning in the
   log, until it is recalculated by a later start or a calculation request.
-- Startup recalculates every uncalculated match and shooter log before the application is ready to serve requests, so
-  the first start after the upgrade is slower on a large database.
+- The recalculation runs in the background, so requests made while it works can still return old per-category ranks,
+  and on a large database it takes a while to finish; stopping the application during it leaves the rest marked, to be
+  recalculated on the next start.
 - `pom.xml` still overrides `tomcat.version`, `logback.version`, `h2.version`, the Jackson BOM properties and
   `mysql-connector-j`, set above Spring Boot's managed versions.
 
@@ -163,7 +167,8 @@ release without changes:
 ## 🔮 Future Enhancements
 
 - Drop the remaining dependency pins once Spring Boot manages versions at least as new.
-- Consider running the startup recalculation in the background, so a large database does not delay the first start.
+- Consider reporting the recalculation's progress, such as through a health indicator, so a deployment can tell when it
+  has finished.
 - Consider a safer key than the club number for matching non-HPSC competitor rows, if re-importing them proves a
   problem.
 

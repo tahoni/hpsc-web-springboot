@@ -196,7 +196,7 @@ Phases 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
   division, and `IpscShooterLogOverallServiceImpl` ranks a shooter log's overalls within their division, instead of
   also splitting each group by competitor category; the category is still stored on every `ShooterResult` and
   `ShooterLogOverall`
-- `StartupRecalculationRunner` calculates, when the application starts, every match's shooter results and then every
+- `StartupRecalculationRunner` calculates, in a background thread when the application starts, every match's shooter results and then every
   shooter log's overall results that have a row whose `date_calculated` is `null`, using two new repository queries; a
   match or log that fails is logged and skipped, so startup is not prevented
 
@@ -227,6 +227,6 @@ Phases 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
 
 **Test Coverage:**
 
-- The suite stands at 1,544 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with line coverage at 98.7% and
+- The suite stands at 1,546 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with line coverage at 98.7% and
   branch coverage at 99.9%; the category tests now expect one ranking, and a new overall test does the same, and the runner and
   its two queries have tests
