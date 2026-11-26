@@ -31,6 +31,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 #### 🔄 Changed
 
+##### Configuration
+
+- **`pom.xml`:** Sets `tomcat.version` to `11.0.29`, overriding the Tomcat version Spring Boot manages
+
 ##### Services
 
 - Shooter results are now ranked within their firearm type and division only, and shooter log overall results within
