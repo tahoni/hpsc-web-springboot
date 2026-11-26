@@ -174,9 +174,9 @@ release without changes, apart from retrying a refused calculation:
   every row for a home club other than HPSC's is, creates them again.
 - A match or shooter log that cannot be recalculated at startup keeps its old per-category ranks, with a warning in the
   log, until it is recalculated by a later start or a calculation request.
-- The recalculation runs in the background, so requests made while it works can still return old per-category ranks,
-  and on a large database it takes a while to finish; stopping the application during it leaves the rest marked, to be
-  recalculated on the next start.
+- The recalculation runs in the background, so reads made while it works can still return old per-category ranks, and
+  the two calculation `POST`s are refused with `409 Conflict` until it finishes, which on a large database takes a
+  while; stopping the application during it leaves the rest marked, to be recalculated on the next start.
 - `pom.xml` still overrides `tomcat.version`, `logback.version`, `h2.version`, the Jackson BOM properties and
   `mysql-connector-j`, set above Spring Boot's managed versions.
 
