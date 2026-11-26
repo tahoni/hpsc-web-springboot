@@ -44,6 +44,9 @@ have a known vulnerability. No endpoint, request field or response field changes
 - It runs in a background thread, so startup is not delayed and the application serves requests while it works
 - A match or log that fails is logged and skipped, so one bad record neither stops the others nor prevents startup, and
   it is tried again on the next start
+- While it works, `POST /ipsc/shooter-results/matches/{matchId}` and
+  `POST /ipsc/shooter-log-overall-results/logs/{shooterLogId}` answer `409 Conflict`, so a request never writes the same
+  results as the runner; the runner's own thread is exempt, and the request can be repeated once it has finished
 
 ### 🛡️ A Safer Tomcat
 
@@ -65,6 +68,10 @@ have a known vulnerability. No endpoint, request field or response field changes
 - **`V11_15_0__mark_shooter_results_for_recalculation.sql`:** Clears `date_calculated` on `shooter_result` and
   `shooter_log_overall`, so each match and shooter log is ranked again, without competitor category, the next time it
   is calculated.
+- **`StartupRecalculationStatus` and `RecalculationInProgressException`:** The status records whether the startup
+  recalculation is running, and the shooter result and shooter log overall calculations throw the exception, which
+  `ControllerAdvice` maps to `409 Conflict`, while it is. The `409` is in the OpenAPI description of both `POST`
+  endpoints.
 - **`StartupRecalculationRunner`:** Calculates, in a background thread when the application starts, the shooter results
   of every match, and then the overall results of every shooter log, that has a row whose `date_calculated` is `null`,
   using `ShooterResultRepository.findMatchIdsWithoutDateCalculated` and
@@ -97,14 +104,17 @@ Nothing is removed.
 
 ## 🚀 Migration Guide
 
-No endpoint, request or response contract changes, and nothing is removed. Deployments and clients can adopt the
-release without changes:
+No endpoint, request field or response field changes, and nothing is removed. Deployments and clients can adopt the
+release without changes, apart from retrying a refused calculation:
 
 1. **Let Flyway apply `V11_15_0`, then let the service start.** The migration runs at startup and clears
    `date_calculated` on every `shooter_result` and `shooter_log_overall` row, and `StartupRecalculationRunner` then
    calculates every match and shooter log with such a row in a background thread. Startup is not delayed, but a match
    or shooter log returns its old per-category ranks until it has been recalculated; the log reports how many are being
    recalculated and names any that could not be, which are tried again on the next start.
+   A calculation requested while it runs, with `POST /ipsc/shooter-results/matches/{matchId}` or
+   `POST /ipsc/shooter-log-overall-results/logs/{shooterLogId}`, is refused with `409 Conflict`, so a client should try
+   again shortly.
 2. **Expect shared rankings.** A client that showed a separate league table per competitor category should group by
    `competitorCategory` itself, which each response still carries.
 
@@ -112,10 +122,12 @@ release without changes:
 
 ## 📊 Statistics
 
-- **Files Changed:** 23 against `main` before this release's history and release notes; 498 insertions and 45
+- **Files Changed:** 28 against `main` before this release's history and release notes; 853 insertions and 49
   deletions
-- **New Source Files:** 2 (`V11_15_0__mark_shooter_results_for_recalculation.sql` and `StartupRecalculationRunner`)
-- **New Test Files:** 2 (`StartupRecalculationRunnerTest` and `ShooterResultRepositoryIntegrationTest`)
+- **New Source Files:** 4 (`V11_15_0__mark_shooter_results_for_recalculation.sql`, `StartupRecalculationRunner`,
+  `StartupRecalculationStatus` and `RecalculationInProgressException`)
+- **New Test Files:** 3 (`StartupRecalculationRunnerTest`, `StartupRecalculationStatusTest` and
+  `ShooterResultRepositoryIntegrationTest`)
 - **Deleted Test Files:** 0
 - **New Dependencies:** 0
 - **Improvement Plan:** Gap #57 added and closed, leaving all 57 closed
@@ -128,6 +140,9 @@ release without changes:
   division, where a ranking per category could not.
 - **Keep the category stored.** `competitor_category` is NOT NULL on `shooter_result` and `shooter_log_overall` and is
   still returned, so a client can group by it without a schema change or migration.
+- **Refuse, don't wait.** A calculation requested during the recalculation fails at once with a `409`, since waiting
+  could hold a request for as long as a large database takes, and the data it would write is about to be written anyway.
+  The runner's thread is the one exempt, so the same services do the work either way.
 - **Refresh what the migration marks, off the startup path.** The migration only marks rows, and the runner finds them
   by that mark, so a failed recalculation leaves its rows marked and is retried on the next start without any extra
   state.
@@ -140,13 +155,14 @@ release without changes:
 
 ## 🧪 Testing
 
-- `./mvnw test` passes: 1,546 tests with no failures or errors, 3 of them skipped because `FlywayMysqlMigrationTest`
+- `./mvnw test` passes: 1,558 tests with no failures or errors, 3 of them skipped because `FlywayMysqlMigrationTest`
   runs only where `FLYWAY_MYSQL_URL` is set; `./mvnw clean verify -Pcoverage` meets the 97% line and branch minimums, at
-  98.7% line and 99.9% branch coverage.
+  98.6% line and 99.9% branch coverage.
 - The shooter result test for several categories now expects one ranking, and a new overall test covers competitors in
   different categories.
 - New tests cover the startup runner, including a match or log that fails, a failing query and the background thread,
-  and the two queries it uses.
+  the status that refuses calculations while it runs, the `409` mapping and both services' refusal, and the two
+  queries it uses.
 
 ---
 

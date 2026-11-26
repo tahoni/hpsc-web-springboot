@@ -36,14 +36,15 @@ evolution of architecture, features and design philosophy across all versions.
   result as out of date and rank each match and shooter log again, without category, the next time it is calculated
 - `StartupRecalculationRunner` calculates every match, and then every shooter log, with a row whose `date_calculated`
   is `null` in a background thread when the application starts, logging and skipping one that fails, so existing data is
-  ranked without a request and startup is not delayed
+  ranked without a request and startup is not delayed;
+  until it finishes, a calculation request is refused with `409 Conflict` so it never writes the same results
 - `pom.xml` pins `tomcat.version` to `11.0.29`, after the `11.0.27` Spring Boot manages was found to have a known
   vulnerability
 - Scoped as `v18.1.1` **PATCH**: no endpoint, request field or response field is added, removed or changed, so
   `AGENTS.md`'s Semantic Versioning rules call for neither a MAJOR nor a MINOR, though the rank and percentage values
   clients see can differ for competitors in different categories
 - Improvement plan: Gap #57 is added and closed, leaving all 57 gaps closed and none open
-- The suite stands at 1,546 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
+- The suite stands at 1,558 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
 - Project version bumped to 18.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
 
 ### Version 18.1.0 (November 15, 2026)
@@ -838,7 +839,7 @@ The completed-work logs for versions 14.0.0 to 16.4.1 are archived, unchanged, i
 - `V11_15_0` marks every stored shooter result and shooter log overall result as not yet calculated, so each is ranked
   again, without category, the next time its match or log is calculated
 - `StartupRecalculationRunner` recalculates every match and shooter log with such a row in the background when the
-  application starts
+  application starts, refusing a calculation request with a `409` while it runs
 - The Javadoc and OpenAPI text of both services and controllers, `ARCHITECTURE.md` and `README.md` describe the new
   ranking
 - `tomcat.version` is pinned to `11.0.29`, for a known vulnerability in the `11.0.27` Spring Boot manages
