@@ -21,6 +21,26 @@ evolution of architecture, features and design philosophy across all versions.
 
 ## 📅 Historical Timeline
 
+### Version 18.1.1 (November 26, 2026)
+
+**Theme:** Ranking Competitors Within Their Division
+
+**Key Focus:**
+
+- `IpscShooterResultServiceImpl` ranks a match's verified competitors within their firearm type and division only, and
+  `IpscShooterLogOverallServiceImpl` ranks a shooter log's competitors within their division only; competitor category
+  no longer splits either ranking, though it is still stored on every row
+- The Javadoc and OpenAPI descriptions of both services and controllers describe the new ranking, and `ARCHITECTURE.md`
+  and `README.md` stop saying results are ranked per competitor category
+- `pom.xml` pins `tomcat.version` to `11.0.29`, after the `11.0.27` Spring Boot manages was found to have a known
+  vulnerability
+- Scoped as `v18.1.1` **PATCH**: no endpoint, request field or response field is added, removed or changed, so
+  `AGENTS.md`'s Semantic Versioning rules call for neither a MAJOR nor a MINOR, though the rank and percentage values
+  clients see can differ for competitors in different categories
+- Improvement plan: Gap #57 is added and closed, leaving all 57 gaps closed and none open
+- The suite stands at 1,538 tests, three of which are skipped unless `FLYWAY_MYSQL_URL` is set
+- Project version bumped to 18.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
 ### Version 18.1.0 (November 15, 2026)
 
 **Theme:** Ranking Competitors Across the Whole Match
@@ -179,6 +199,14 @@ Milestones 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
 - `logback.version` is raised and `h2.version` pinned above the versions Spring Boot manages, the latter for a known
   vulnerability
 - Improvement plan Gap #56 is added and closed, so every tracked gap stays closed
+
+### Milestone 64: Ranking Competitors Within Their Division (v18.1.1)
+
+- Shooter results are ranked within a firearm type and division, and shooter log overall results within a division,
+  whatever the competitor category
+- No contract changes, so the release is a PATCH
+- `tomcat.version` is pinned above the version Spring Boot manages, for a known vulnerability
+- Improvement plan Gap #57 is added and closed, so every tracked gap stays closed
 
 ---
 
@@ -474,13 +502,15 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
   Because that changes what the match import answers, what a bad row does to the request and the name of a response
   field, v17.0.0 is the project's ninth consecutive major version, with each breaking change flagged in `CHANGELOG.md`
   as it landed.
-- **Version 18.x (v18.0.0 – v18.1.0):** Make a shooter log overall say which matches it was calculated from — each competitor's
+- **Version 18.x (v18.0.0 – v18.1.1):** Make a shooter log overall say which matches it was calculated from — each competitor's
   best matches in the log — and keep that reliable once the persistence session has closed, while taking the OpenAPI
   document and Swagger UI off by default so a deployment serves them only on purpose. Because that changes what a
   running deployment serves, v18.0.0 is the project's tenth consecutive major version, with the breaking change flagged
   in `CHANGELOG.md` as it landed.
   v18.1.0 then ranks every verified competitor across the whole match, independent of firearm type, division and
   category, through new match result endpoints, and is a MINOR because it only adds to the API.
+  v18.1.1 then stops splitting shooter results and overall results by competitor category, ranking them within a
+  firearm type and division, and a division, and is a PATCH because no contract changes.
 
 ### Initial Phase (v1.0.0)
 
@@ -779,7 +809,7 @@ The entries for versions 10.0.0 to 13.3.0 are archived, unchanged, in
 
 ## 🛤️ Future Roadmap Implications
 
-Based on the evolution to v18.1.0, the following areas are identified for future enhancement:
+Based on the evolution to v18.1.1, the following areas are identified for future enhancement:
 
 The completed-work logs for versions 5.4.0 and earlier up to 7.2.0 are archived, unchanged, in
 [`documentation/archive/v5-v7/HISTORY_v5-v7.md`](/documentation/archive/v5-v7/HISTORY_v5-v7.md).
@@ -793,7 +823,18 @@ The completed-work logs for versions 10.0.0 to 13.3.0 are archived, unchanged, i
 The completed-work logs for versions 14.0.0 to 16.4.1 are archived, unchanged, in
 [`documentation/archive/v14-v16/HISTORY_v14-v16.md`](/documentation/archive/v14-v16/HISTORY_v14-v16.md).
 
-### Recently Completed (v18.1.0)
+### Recently Completed (v18.1.1)
+
+- `IpscShooterResultServiceImpl` ranks a match's verified competitors with points within their firearm type and
+  division, and `IpscShooterLogOverallServiceImpl` ranks a shooter log's overalls within their division, both whatever
+  the competitor category, which is still stored on each row
+- The Javadoc and OpenAPI text of both services and controllers, `ARCHITECTURE.md` and `README.md` describe the new
+  ranking
+- `tomcat.version` is pinned to `11.0.29`, for a known vulnerability in the `11.0.27` Spring Boot manages
+- Improvement plan: Gap #57 is added and closed, leaving all 57 gaps closed and none open
+- Project version bumped to 18.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation
+
+### Previously Completed (v18.1.0)
 
 - `MatchResult` and the `match_result` table (`V11_14_0`) hold each verified competitor's rank and percentage in a match
   overall, calculated and read through `IpscMatchResultController` at `/ipsc/match-results`

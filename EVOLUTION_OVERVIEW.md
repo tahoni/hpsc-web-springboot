@@ -185,3 +185,38 @@ Phases 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
 - The suite stands at 1,537 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with line coverage at 98.7% and
   branch coverage at 99.9%; new cases cover the calculation, ranking, the staleness rule, the controller endpoints
   and the response mapping
+
+---
+
+### Phase 64: Ranking Competitors Within Their Division (v18.1.1)
+
+**Services**
+
+- `IpscShooterResultServiceImpl` ranks a match's verified competitors with points within their firearm type and
+  division, and `IpscShooterLogOverallServiceImpl` ranks a shooter log's overalls within their division, instead of
+  also splitting each group by competitor category; the category is still stored on every `ShooterResult` and
+  `ShooterLogOverall`
+
+**Configuration**
+
+- `tomcat.version` is pinned to `11.0.29`, since the `11.0.27` Spring Boot manages has a known vulnerability
+
+**Documentation**
+
+- The Javadoc and OpenAPI text of both services and controllers, `ARCHITECTURE.md` and `README.md` describe the new
+  ranking, closing Gap #57
+
+**Build & Metadata**
+
+- Improvement plan: Gap #57 is added and closed, leaving all 57 gaps closed and none open
+- Project version bumped to 18.1.1 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Ranking competitors against the others in their division whatever their category, and scoping the release as a
+  PATCH because no endpoint or response field changes
+
+**Test Coverage:**
+
+- The suite stands at 1,538 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with line coverage at 98.7% and
+  branch coverage at 99.9%; the category tests now expect one ranking, and a new overall test does the same

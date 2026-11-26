@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 18.1.0](#-1810---2026-11-15) ← Current
+- [🧾 Version 18.1.1](#-1811---2026-11-26) ← Current
+- [🧾 Version 18.1.0](#-1810---2026-11-15)
 - [🧾 Version 18.0.0](#-1800---2026-11-14)
 - [🧾 Version 17.0.0](#-1700---2026-11-12)
 - [🗄️ Archived Versions 14.0.0 – 16.4.1](/documentation/archive/v14-v16/CHANGELOG_v14-v16.md)
@@ -29,6 +30,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
+---
+
+### 🧾 [18.1.1] - 2026-11-26
+
 #### 🔄 Changed
 
 ##### Configuration
@@ -40,12 +45,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - Shooter results are now ranked within their firearm type and division only, and shooter log overall results within
   their division only; competitor category no longer splits the ranking groups (it is still stored on each row)
+- The Javadoc and OpenAPI descriptions of `IpscShooterResultService`, `IpscShooterLogOverallService`, their
+  implementations and controllers say so, instead of describing a ranking per competitor category
+
+##### Tests
+
+- `IpscShooterResultServiceTest` expects competitors in different categories to be ranked together, and
+  `IpscShooterLogOverallServiceTest` has a new test that does the same for overall results
 
 ##### Documentation
 
 - **`ARCHITECTURE.md` and `README.md`:** The **IPSC Shooter Results** and **Shooter Logs** rows and the **IPSC Shooter
   Log Overall Results** bullet now say shooter results are ranked per firearm type and division, and overall results
   per division, whatever the competitor category, instead of per category. Closes improvement plan Gap #57.
+
+---
 
 ---
 
@@ -420,7 +434,8 @@ For issues, feature requests or questions:
 
 **Last Updated:** 2026-08-25
 
-[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v18.1.0...HEAD
+[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v18.1.1...HEAD
+[18.1.1]: https://github.com/tahoni/hpsc-web-springboot/compare/v18.1.0...v18.1.1
 [18.1.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v18.0.0...v18.1.0
 [18.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v17.0.0...v18.0.0
 [17.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.4.1...v17.0.0

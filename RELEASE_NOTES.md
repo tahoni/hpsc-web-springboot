@@ -1,53 +1,44 @@
-# Release Notes – Version 18.1.0
+# Release Notes – Version 18.1.1
 
-**Release Date:** November 15, 2026 **Status:** ✨ Stable
+**Release Date:** November 26, 2026 **Status:** ✨ Stable
 
 ---
 
 ## 🎯 Theme
 
-**Ranking Competitors Across the Whole Match**
+**Ranking Competitors Within Their Division**
 
-Version 18.1.0 is a minor release. Shooter results rank a competitor only against the others in their firearm type,
-division and competitor category, so there was no way to say who won a match overall. Match results rank every verified
-competitor with points together, whatever their firearm type, division or category, and are calculated and read through
-new `/ipsc/match-results` endpoints. The release also pins `h2.version` above the version Spring Boot manages, after
-that version was found to have a known vulnerability, and adds the link definitions the archived changelogs were
-missing. It only adds to the API, so it is a minor release.
+Version 18.1.1 is a patch release. Shooter results ranked a competitor only against the others in their firearm type,
+division and competitor category, and a shooter log's overall results only against those in their division and
+category, so a junior and a senior in the same division never appeared in one ranking. Shooter results are now ranked
+within a firearm type and division, and overall results within a division, whatever the competitor category. The
+category is still stored on every row. The release also pins `tomcat.version` above the version Spring Boot manages,
+after that version was found to have a known vulnerability. No endpoint, request field or response field changes, so it
+is a patch release.
 
 ---
 
 ## ⭐ Key Highlights
 
-### 🏆 A Match Ranked as a Whole
+### 🏁 One Ranking per Division
 
-- `MatchResult`, in the new `match_result` table, holds a verified competitor's rank and percentage in the match
-  overall, independent of competitor category and division
-- `POST /ipsc/match-results/matches/{matchId}` calculates a match's results, and
-  `GET /ipsc/match-results/matches/{matchId}` and `GET /ipsc/match-results` read them back
-- Competitors on equal points share a rank and the next rank is skipped; each percentage is the competitor's points as a
-  percentage of the match winner's
-- Only verified competitors with points above zero are included, as for shooter results
+- `IpscShooterResultServiceImpl` groups a match's verified competitors by firearm type and division, where it also
+  grouped them by competitor category
+- `IpscShooterLogOverallServiceImpl` groups a shooter log's overall results by division, where it also grouped them by
+  competitor category
+- Each competitor's `competitorCategory` is still saved and returned; it no longer affects `rankInLog` or
+  `percentageInLog`
 
-### ♻️ Recalculated Only When Out of Date
+### 🛡️ A Safer Tomcat
 
-- Calculating again updates the existing results instead of adding duplicates, and does nothing while they are current
-- Results are out of date once the match, or one of its competitors, was updated at least five minutes after they were
-  calculated, a competitor has no result yet, or a result belongs to a competitor who no longer qualifies
-- `TransactionService.replaceMatchResults` saves and deletes a match's results in one transaction, so a constraint
-  violation surfaces from the call
-
-### 🛡️ A Safer Test Database
-
-- `h2.version` is pinned to `2.5.252`, because the `2.4.240` that Spring Boot manages has a known vulnerability
-- `logback.version` is raised from `1.6.5` to `1.6.7`
+- `tomcat.version` is pinned to `11.0.29`, since the `11.0.27` Spring Boot manages has a known vulnerability, and the
+  pin stays until the parent manages a fixed release
 
 ### 📚 Documentation That Keeps Up
 
-- `ARCHITECTURE.md`, `README.md` and `flyway-migration-versioning.md` describe `MatchResult`, its endpoints and the
-  `V11_14_0` migration
-- The archived changelogs have link definitions for their version headings, and bracketed text that is not a link is
-  escaped, so no link label is left unresolved
+- The Javadoc and OpenAPI text of both services and controllers, `ARCHITECTURE.md` and `README.md` no longer say
+  results are ranked per competitor category
+- Improvement plan Gap #57 is added and closed, leaving all 57 gaps closed
 
 ---
 
@@ -55,30 +46,22 @@ missing. It only adds to the API, so it is a minor release.
 
 ### Added
 
-- **`V11_14_0__create_match_result.sql`:** Creates the `match_result` table, backing the new `MatchResult` entity, with
-  foreign keys to `ipsc_match`, `competitor` and `match_competitor`.
-- **`MatchResult`:** A competitor's rank and percentage in the match overall, with the same structure as
-  `ShooterResult`.
-- **`IpscMatchResultController`:** `POST /ipsc/match-results/matches/{matchId}` calculates `rankInLog` and
-  `percentageInLog` for every verified competitor with points in a match; `GET /ipsc/match-results/matches/{matchId}`
-  and `GET /ipsc/match-results` read them back.
-- **`IpscMatchResultService`, `MatchResultRepository` and `TransactionService.replaceMatchResults`:** The service,
-  repository and write that sit behind the controller.
-- **`MatchResultResponse`, `MatchResultMatchResponse` and `MatchResultResponseHolder`:** The response classes, linking a
-  match to its results.
-- **Tests:** `IpscMatchResultServiceTest`, `IpscMatchResultServiceIntegrationTest`, `IpscMatchResultControllerTest` and
-  `MatchResultResponseTest`.
+Nothing is added.
 
 ### Changed
 
-- **`pom.xml`:** `logback.version` is raised from `1.6.5` to `1.6.7`, and `h2.version` is pinned to `2.5.252`, since the
-  `2.4.240` Spring Boot manages has a known vulnerability.
-- **`ARCHITECTURE.md`, `README.md` and `flyway-migration-versioning.md`:** Describe `MatchResult`, the controller and
-  service, the match result response models and the `V11_14_0` migration, which they left out. Closes improvement plan
-  Gap #56.
-- **Archived changelogs and release notes:** Version headings in `CHANGELOG_v1-v4.md`, `CHANGELOG_v5-v7.md`,
-  `CHANGELOG_v8-v9.md` and `CHANGELOG_v10-v13.md` have link definitions, and bracketed text that is not a link is
-  escaped.
+- **Shooter results and shooter log overall results:** Shooter results are ranked within their firearm type and
+  division, and overall results within their division, instead of also within their competitor category. Competitors
+  who were ranked in separate category groups now share one ranking, so their ranks and percentages change when
+  their results are next recalculated.
+- **Javadoc and OpenAPI text:** `IpscShooterResultService`, `IpscShooterLogOverallService`, their implementations and
+  controllers describe the new ranking.
+- **`pom.xml`:** `tomcat.version` is pinned to `11.0.29`, overriding the `11.0.27` Spring Boot manages, which has a
+  known security vulnerability.
+- **`ARCHITECTURE.md` and `README.md`:** Say results are ranked per firearm type and division, and overall results per
+  division, whatever the competitor category. Closes improvement plan Gap #57.
+- **Tests:** `IpscShooterResultServiceTest` expects competitors in different categories to be ranked together, and
+  `IpscShooterLogOverallServiceTest` has a new test that does the same for overall results.
 
 ### Fixed
 
@@ -95,49 +78,47 @@ Nothing is removed.
 No endpoint, request or response contract changes, and nothing is removed. Deployments and clients can adopt the
 release without changes:
 
-1. **Let Flyway apply `V11_14_0`.** It runs at startup and creates the `match_result` table; nothing else in the schema
-   changes.
-2. **Calculate a match's results to see them.** `GET /ipsc/match-results` returns every match with no results until
-   `POST /ipsc/match-results/matches/{matchId}` has been called for it.
+1. **Know that existing results are not recalculated by the upgrade.** A calculation request returns results that are
+   up to date as they are, so a match's shooter results keep their old per-category ranks until the match or one of its
+   competitors is updated at least five minutes after they were calculated, and a shooter log's overall results are
+   refreshed only once its matches or their results change.
+2. **Expect shared rankings.** A client that showed a separate league table per competitor category should group by
+   `competitorCategory` itself, which each response still carries.
 
 ---
 
 ## 📊 Statistics
 
-- **Files Changed:** 41 against `main` before this release's history and release notes; 2,076 insertions and 40
+- **Files Changed:** 15 against `main` before this release's history and release notes; 141 insertions and 45
   deletions
-- **New Source Files:** 9 (`V11_14_0__create_match_result.sql`, `MatchResult`, `IpscMatchResultController`,
-  `IpscMatchResultService`, `IpscMatchResultServiceImpl`, `MatchResultRepository` and the three response classes)
-- **New Test Files:** 4 (`IpscMatchResultServiceTest`, `IpscMatchResultServiceIntegrationTest`,
-  `IpscMatchResultControllerTest` and `MatchResultResponseTest`)
+- **New Source Files:** 0
+- **New Test Files:** 0
 - **Deleted Test Files:** 0
 - **New Dependencies:** 0
-- **Improvement Plan:** Gap #56 added and closed, leaving all 56 closed
+- **Improvement Plan:** Gap #57 added and closed, leaving all 57 closed
 
 ---
 
 ## 🧭 Design Notes
 
-- **Rank the whole match once.** A match result ranks every verified competitor with points together, so a client gets
-  one league table without merging the per-category results of shooter results.
-- **Reuse the shooter result shape.** `MatchResult` has the same structure as `ShooterResult`, so the two are read and
-  mapped the same way and differ only in what they rank against.
-- **Recalculate only what is stale.** A result is rewritten only when the match or a competitor changed after it was
-  calculated, so a repeated request is cheap and the calculation date stays meaningful.
-- **Pin what is vulnerable, and say why.** `h2.version` is overridden because the managed version has a known
+- **Rank within the division.** One ranking per division, with the category kept as a label, answers who won the
+  division, where a ranking per category could not.
+- **Keep the category stored.** `competitor_category` is NOT NULL on `shooter_result` and `shooter_log_overall` and is
+  still returned, so a client can group by it without a schema change or migration.
+- **Pin what is vulnerable, and say why.** `tomcat.version` is overridden because the managed version has a known
   vulnerability, and the pin stays until the Spring Boot parent manages a fixed release.
-- **A MINOR.** The release adds an endpoint and a table and changes no existing contract, which `AGENTS.md`'s Semantic
-  Versioning rules classify as MINOR.
+- **A PATCH.** The release adds nothing and changes no contract, which `AGENTS.md`'s Semantic Versioning rules classify
+  as PATCH, though the rank values clients see can differ.
 
 ---
 
 ## 🧪 Testing
 
-- `./mvnw test` passes: 1,537 tests with no failures or errors, 3 of them skipped because `FlywayMysqlMigrationTest`
-  runs only where `FLYWAY_MYSQL_URL` is set; `./mvnw verify -Pcoverage` meets the 97% line and branch minimums, at 98.7%
-  line and 99.9% branch coverage.
-- New tests cover the calculation, ranking and percentages, the five-minute staleness rule, retrieval, the controller
-  endpoints and the response mapping.
+- `./mvnw test` passes: 1,538 tests with no failures or errors, 3 of them skipped because `FlywayMysqlMigrationTest`
+  runs only where `FLYWAY_MYSQL_URL` is set; `./mvnw clean verify -Pcoverage` meets the 97% line and branch minimums, at
+  98.7% line and 99.9% branch coverage.
+- The shooter result test for several categories now expects one ranking, and a new overall test covers competitors in
+  different categories.
 
 ---
 
@@ -145,14 +126,18 @@ release without changes:
 
 - A bulk competitor row without a club number always creates a competitor, so re-importing a file of such rows, as
   every row for a home club other than HPSC's is, creates them again.
-- `pom.xml` still overrides `logback.version`, `h2.version`, the Jackson BOM properties and `mysql-connector-j`, set
-  above Spring Boot's managed versions.
+- Results calculated before this release keep their per-category ranks until the match or a competitor is updated
+  after them, since a calculation request returns up-to-date results unchanged.
+- `pom.xml` still overrides `tomcat.version`, `logback.version`, `h2.version`, the Jackson BOM properties and
+  `mysql-connector-j`, set above Spring Boot's managed versions.
 
 ---
 
 ## 🔮 Future Enhancements
 
 - Drop the remaining dependency pins once Spring Boot manages versions at least as new.
+- Consider recalculating existing results when the service starts, or in a migration, so no result keeps an old
+  per-category rank.
 - Consider a safer key than the club number for matching non-HPSC competitor rows, if re-importing them proves a
   problem.
 
@@ -166,5 +151,6 @@ release without changes:
 
 ## 📝 Notes
 
-Version 18.1.0 ranks every verified competitor across the whole match through new match result endpoints, and pins
-`h2.version` above a vulnerable managed version. It leaves the improvement plan with all 56 gaps closed and none open.
+Version 18.1.1 ranks shooter results within a firearm type and division, and shooter log overall results within a
+division, whatever the competitor category, and pins `tomcat.version` above a vulnerable managed version. It leaves the
+improvement plan with all 57 gaps closed and none open.
