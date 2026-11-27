@@ -49,14 +49,15 @@ public class IpscShooterLogOverallController {
      * @param shooterLogId the identifier of the shooter log to calculate overall results for.
      * @return the {@link ShooterLogOverallResponseHolder} linking the shooter log to its freshly calculated overall
      * results.
-     * @throws NonFatalException if no shooter log with {@code shooterLogId} exists.
+     * @throws NonFatalException if no shooter log with {@code shooterLogId} exists, or the application is still
+     *                           recalculating results after it started.
      * @since 16.1.0
      */
     @PostMapping(value = "/logs/{shooterLogId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Calculate overall results for shooter log",
             description = "Calculate every verified competitor's "
             + "overall standing in a shooter log: the average of their best four percentages across the log's "
-            + "matches, ranked within their division and competitor category (no category is a group of its own). "
+            + "matches, ranked within their division, regardless of competitor category. "
             + "Competitors who are not verified are not included. Every match must be scheduled within the log's "
             + "dates, which is checked again as a match can be rescheduled after it was added. The matches' shooter "
             + "results are brought up to date first. Calculating again updates the existing overall results and "
@@ -70,6 +71,10 @@ public class IpscShooterLogOverallController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class))),
             @ApiResponse(responseCode = "404", description = "No shooter log with this ID could be found.",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ControllerResponse.class))),
+            @ApiResponse(responseCode = "409", description = "The application is still recalculating results after "
+                    + "it started; try again shortly.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ControllerResponse.class)))
     })

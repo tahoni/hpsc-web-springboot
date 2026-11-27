@@ -14,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
 import za.co.hpsc.web.exceptions.FatalException;
 import za.co.hpsc.web.exceptions.NonFatalException;
+import za.co.hpsc.web.exceptions.RecalculationInProgressException;
 import za.co.hpsc.web.exceptions.ValidationException;
 import za.co.hpsc.web.models.ControllerResponse;
 
@@ -112,6 +113,21 @@ public class ControllerAdviceTest {
         assertNotNull(response.getBody());
         assertNull(response.getBody().getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    // handleRecalculationInProgressException()
+    @Test
+    void testHandleRecalculationInProgressException_whenThrown_thenReturns409AndTheMessage() {
+        // Arrange
+        RecalculationInProgressException ex = new RecalculationInProgressException("try again shortly");
+
+        // Act
+        ResponseEntity<ControllerResponse> response = controllerAdvice.handleRecalculationInProgressException(ex,
+                webRequest);
+
+        // Assert
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertEquals("try again shortly", response.getBody().getMessage());
     }
 
     // handleNonFatalException()

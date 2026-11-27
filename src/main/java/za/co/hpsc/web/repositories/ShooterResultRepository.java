@@ -23,4 +23,8 @@ public interface ShooterResultRepository extends JpaRepository<ShooterResult, Lo
     @Query("select sr from ShooterResult sr join fetch sr.match join fetch sr.competitor "
             + "join fetch sr.matchCompetitor where sr.match.id in :matchIds order by sr.id")
     List<ShooterResult> findAllByMatchIdInWithDetails(@Param("matchIds") Collection<Long> matchIds);
+
+    // The matches that have a result which was never calculated, or was marked for recalculation.
+    @Query("select distinct sr.match.id from ShooterResult sr where sr.dateCalculated is null order by sr.match.id")
+    List<Long> findMatchIdsWithoutDateCalculated();
 }

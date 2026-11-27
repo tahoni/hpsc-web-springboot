@@ -14,6 +14,7 @@ import za.co.hpsc.web.domain.ShooterLogOverall;
 import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -160,6 +161,27 @@ class ShooterLogOverallRepositoryIntegrationTest {
         assertEquals(1, found.size());
         assertTrue(Hibernate.isInitialized(found.getFirst().getMatches()));
         assertTrue(found.getFirst().getMatches().isEmpty());
+    }
+
+    // findShooterLogIdsWithoutDateCalculated()
+    @Test
+    void testFindShooterLogIdsWithoutDateCalculated_whenOnlySomeLogsHaveAnUncalculatedOverall_thenReturnsThoseOnce() {
+        // Arrange
+        ShooterLog uncalculated = ScoringFixtures.shooterLog(entityManager);
+        ShooterLog calculated = ScoringFixtures.shooterLog(entityManager);
+        persistOverall(uncalculated, ScoringFixtures.competitor(entityManager, "Jane"));
+        persistOverall(uncalculated, ScoringFixtures.competitor(entityManager, "John"));
+        persistOverall(calculated, ScoringFixtures.competitor(entityManager, "Jill"))
+                .setDateCalculated(LocalDateTime.now());
+        flushAndClear();
+
+        // Act
+        List<Long> found = shooterLogOverallRepository.findShooterLogIdsWithoutDateCalculated();
+
+        // Assert
+        assertTrue(found.contains(uncalculated.getId()));
+        assertFalse(found.contains(calculated.getId()));
+        assertEquals(1, found.stream().filter(uncalculated.getId()::equals).count());
     }
 
     private void persistOverall(Competitor competitor) {

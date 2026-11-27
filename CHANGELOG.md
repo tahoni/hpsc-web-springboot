@@ -12,7 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ### Table of Contents
 
 - [🧪 Unreleased](#-unreleased)
-- [🧾 Version 18.1.0](#-1810---2026-11-15) ← Current
+- [🧾 Version 18.2.0](#-1820---2026-11-26) ← Current
+- [🧾 Version 18.1.0](#-1810---2026-11-15)
 - [🧾 Version 18.0.0](#-1800---2026-11-14)
 - [🧾 Version 17.0.0](#-1700---2026-11-12)
 - [🗄️ Archived Versions 14.0.0 – 16.4.1](/documentation/archive/v14-v16/CHANGELOG_v14-v16.md)
@@ -28,6 +29,68 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 ---
 
 ### 🧪 [Unreleased]
+
+---
+
+### 🧾 [18.2.0] - 2026-11-26
+
+#### ➕ Added
+
+##### Database
+
+- Migration `V11_15_0__mark_shooter_results_for_recalculation.sql` clears `date_calculated` on `shooter_result` and
+  `shooter_log_overall`, so each match and shooter log is ranked again, without competitor category, the next time it is
+  calculated, instead of its old results being returned as up to date
+
+##### Services
+
+- `StartupRecalculationRunner` recalculates, in a background thread started with the application, the shooter results of
+  every match, and then the overall results of every shooter log, that has a row whose `date_calculated` is `null`,
+  using `ShooterResultRepository.findMatchIdsWithoutDateCalculated` and
+  `ShooterLogOverallRepository.findShooterLogIdsWithoutDateCalculated`. It does not delay startup, a match or shooter
+  log that fails is logged and skipped, and is tried again on the next start
+- `StartupRecalculationStatus` records whether that recalculation is running, and
+  `IpscShooterResultServiceImpl.calculateMatchShooterResult` and
+  `IpscShooterLogOverallServiceImpl.calculateShooterLogOverall` refuse a calculation while it is, so
+  `POST /ipsc/shooter-results/matches/{matchId}` and `POST /ipsc/shooter-log-overall-results/logs/{shooterLogId}` answer
+  `409 Conflict` instead of writing the same results as the runner. The runner's own thread is exempt, and the runner
+  does not run under the `test` profile
+- `RecalculationInProgressException`, a `NonFatalException` that `ControllerAdvice` maps to `409 Conflict` instead of
+  `404 Not Found`, and the `409` response in the OpenAPI description of both `POST` endpoints
+
+##### Tests
+
+- `StartupRecalculationRunnerTest`, `StartupRecalculationStatusTest`, a `409` case in `ControllerAdviceTest`, a refusal
+  case in each calculation service's test, and repository integration tests for the two new queries
+
+#### 🔄 Changed
+
+##### Configuration
+
+- **`pom.xml`:** Sets `tomcat.version` to `11.0.29`, overriding the Tomcat version Spring Boot manages, which has a
+  known security vulnerability. Drop the override once the parent manages a fixed release
+- **`StartupRecalculationRunner.run`:** `ApplicationArguments` parameter is now annotated `@NonNull` (JSpecify) —
+  matches the `ApplicationRunner` contract and clears the nullness warning; no behaviour change
+
+##### Services
+
+- Shooter results are now ranked within their firearm type and division only, and shooter log overall results within
+  their division only; competitor category no longer splits the ranking groups (it is still stored on each row)
+- The Javadoc and OpenAPI descriptions of `IpscShooterResultService`, `IpscShooterLogOverallService`, their
+  implementations and controllers say so, instead of describing a ranking per competitor category
+
+##### Tests
+
+- `IpscShooterResultServiceTest` expects competitors in different categories to be ranked together, and
+  `IpscShooterLogOverallServiceTest` has a new test that does the same for overall results
+
+##### Documentation
+
+- **`ARCHITECTURE.md` and `README.md`:** The **IPSC Shooter Results** and **Shooter Logs** rows and the **IPSC Shooter
+  Log Overall Results** bullet now say shooter results are ranked per firearm type and division, and overall results
+  per division, whatever the competitor category, instead of per category. Closes improvement plan Gap #57.
+
+---
 
 ---
 
@@ -402,7 +465,8 @@ For issues, feature requests or questions:
 
 **Last Updated:** 2026-08-25
 
-[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v18.1.0...HEAD
+[Unreleased]: https://github.com/tahoni/hpsc-web-springboot/compare/v18.2.0...HEAD
+[18.2.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v18.1.0...v18.2.0
 [18.1.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v18.0.0...v18.1.0
 [18.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v17.0.0...v18.0.0
 [17.0.0]: https://github.com/tahoni/hpsc-web-springboot/compare/v16.4.1...v17.0.0

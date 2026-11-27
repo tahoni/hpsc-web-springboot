@@ -28,7 +28,7 @@ public interface IpscShooterLogOverallService {
      * average of their best {@code IpscConstants.SHOOTER_LOG_BEST_MATCHES} percentages across the matches they have
      * one in (all of them if they have fewer), to {@code IpscConstants.PERCENTAGE_SCALE} decimal places. Their
      * category and division are those of their most recent match in the log. Competitors are ranked by overall
-     * percentage, highest first, within their division and competitor category (none being a group of its own),
+     * percentage, highest first, within their division regardless of competitor category,
      * with competitors on an equal percentage sharing a rank and the next rank skipped. Every overall is stamped with
      * the date and time it was calculated.
      * </p>
@@ -56,6 +56,8 @@ public interface IpscShooterLogOverallService {
      *                           cannot be calculated.
      * @throws za.co.hpsc.web.exceptions.ValidationException if a match the log covers is scheduled before its start
      *                                                      date or after its end date.
+     * @throws za.co.hpsc.web.exceptions.RecalculationInProgressException if the application is still recalculating
+     *                                                                   results after it started.
      * @since 16.1.0
      */
     ShooterLogOverallResponseHolder calculateShooterLogOverall(Long shooterLogId) throws NonFatalException;
