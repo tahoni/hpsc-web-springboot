@@ -1,6 +1,7 @@
 package za.co.hpsc.web.configs;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
@@ -60,7 +61,7 @@ public class StartupRecalculationRunner implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) {
+    public void run(@NonNull ApplicationArguments args) {
         // Marked as running before the thread starts, so a calculation requested in between is refused too
         startupRecalculationStatus.begin();
         try {
