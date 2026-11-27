@@ -88,6 +88,8 @@ have a known vulnerability. No request field or response field changes, but the 
   controllers describe the new ranking.
 - **`pom.xml`:** `tomcat.version` is pinned to `11.0.29`, overriding the `11.0.27` Spring Boot manages, which has a
   known security vulnerability.
+- **`StartupRecalculationRunner.run`:** The `ApplicationArguments` parameter is annotated `@NonNull` (JSpecify), as the
+  `ApplicationRunner` contract requires; behaviour is unchanged.
 - **`ARCHITECTURE.md` and `README.md`:** Say results are ranked per firearm type and division, and overall results per
   division, whatever the competitor category. Closes improvement plan Gap #57.
 - **Tests:** `IpscShooterResultServiceTest` expects competitors in different categories to be ranked together, and

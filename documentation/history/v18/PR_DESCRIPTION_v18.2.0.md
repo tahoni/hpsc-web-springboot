@@ -16,7 +16,7 @@
   `POST`s answer `409 Conflict` while it runs
 - **Changed:** `IpscShooterResultServiceImpl` groups by firearm type and division and `IpscShooterLogOverallServiceImpl`
   by division, instead of also by competitor category; the Javadoc and OpenAPI text of both services and controllers
-  say so; `pom.xml` pins `tomcat.version` to `11.0.29`
+  say so; `pom.xml` pins `tomcat.version` to `11.0.29`; `StartupRecalculationRunner.run` marks its argument `@NonNull`
 - **Tests:** the shooter result category test expects one ranking, and a new overall test does the same
 - **Documentation:** `ARCHITECTURE.md` and `README.md` stop saying results are ranked per competitor category;
   `CHANGELOG.md`, `HISTORY.md`, `EVOLUTION_OVERVIEW.md` and `RELEASE_NOTES.md` cover 18.2.0; improvement plan Gap #57 is

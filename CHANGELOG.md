@@ -30,13 +30,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 ### 🧪 [Unreleased]
 
-#### 🔄 Changed
-
-##### Configuration
-
-- **`StartupRecalculationRunner.run`:** `ApplicationArguments` parameter is now annotated `@NonNull` (JSpecify) —
-  matches the `ApplicationRunner` contract and clears the nullness warning; no behaviour change
-
 ---
 
 ### 🧾 [18.2.0] - 2026-11-26
@@ -76,6 +69,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) as of version 5.0.
 
 - **`pom.xml`:** Sets `tomcat.version` to `11.0.29`, overriding the Tomcat version Spring Boot manages, which has a
   known security vulnerability. Drop the override once the parent manages a fixed release
+- **`StartupRecalculationRunner.run`:** `ApplicationArguments` parameter is now annotated `@NonNull` (JSpecify) —
+  matches the `ApplicationRunner` contract and clears the nullness warning; no behaviour change
 
 ##### Services
 
