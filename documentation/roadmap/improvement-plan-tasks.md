@@ -1,4 +1,4 @@
-# Roadmap Task List
+  # Roadmap Task List
 
 A concrete, checkbox-level breakdown of [`improvement-plan.md`](improvement-plan.md)'s gaps, grouped by that
 document's completion status — ✅ Completed, 🟡 Partially Completed, ⚪ Open — matching its own "🔍 Gaps &
@@ -629,6 +629,18 @@ Gap #41)* —
 - [x] Add a match result bullet to `README.md`'s feature list — done
 - [x] Add the `V11_14_0__create_match_result.sql` row to `flyway-migration-versioning.md`'s Current State table once
   its release version is known — done, as v18.1.0
+
+**Competitor category ranking docs** *(improvement-plan.md → Gap #57)* — ✅ Closed in v18.2.0
+
+- [x] Reword the **IPSC Shooter Results** row of `ARCHITECTURE.md`'s System Overview to say a match's results are ranked
+  per firearm type and division, not per competitor category — done
+- [x] Reword the **Shooter Logs** row to say overall rank and percentage are calculated per division, not per division
+  and competitor category — done
+- [x] Reword `README.md`'s **IPSC Shooter Log Overall Results** bullet to say competitors are ranked within their
+  division, and say once that competitor category is stored but does not split the rankings — done differently: the
+  bullet says "whatever their competitor category", and nothing says the category is still stored
+- [x] Leave `HISTORY.md` and the per-version release notes unchanged, as they record what each version did at the
+  time — done
 
 ---
 

@@ -20,8 +20,8 @@ public interface IpscShooterResultService {
      * <p>
      * Only competitors whose {@code isVerified} is {@code true} and whose points are above zero are included: any
      * other gets no result and does not count towards the group winner's points. Those competitors are ranked within
-     * their firearm type, division and competitor category by match points, highest first, with competitors without a
-     * category (NONE) a group of their own, and competitors on equal points sharing a rank and the next rank skipped.
+     * their firearm type and division by match points, highest first, regardless of competitor category, and
+     * competitors on equal points sharing a rank and the next rank skipped.
      * Each competitor's percentage is their points as a percentage of the group winner's points, to
      * {@code IpscConstants.PERCENTAGE_SCALE} decimal places. Every result is stamped with the date and time it was
      * calculated.
@@ -38,6 +38,8 @@ public interface IpscShooterResultService {
      * @return the match, linked to its shooter results, freshly calculated unless they were already up to date; the
      * results are empty if the match has no qualifying competitors.
      * @throws NonFatalException if no match with {@code matchId} exists.
+     * @throws za.co.hpsc.web.exceptions.RecalculationInProgressException if the application is still recalculating
+     *                                                                   results after it started.
      * @since 15.0.0
      */
     ShooterResponseHolder calculateMatchShooterResult(Long matchId) throws NonFatalException;

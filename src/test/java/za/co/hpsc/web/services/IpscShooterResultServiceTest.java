@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
+import za.co.hpsc.web.configs.StartupRecalculationStatus;
 import za.co.hpsc.web.domain.Competitor;
 import za.co.hpsc.web.domain.IpscMatch;
 import za.co.hpsc.web.domain.MatchCompetitor;
@@ -15,6 +16,7 @@ import za.co.hpsc.web.enums.CompetitorCategory;
 import za.co.hpsc.web.enums.Division;
 import za.co.hpsc.web.enums.FirearmType;
 import za.co.hpsc.web.exceptions.NonFatalException;
+import za.co.hpsc.web.exceptions.RecalculationInProgressException;
 import za.co.hpsc.web.models.ipsc.shooterresult.response.ShooterResponseHolder;
 import za.co.hpsc.web.models.ipsc.shooterresult.response.ShooterResultResponse;
 import za.co.hpsc.web.repositories.IpscMatchRepository;
@@ -48,8 +50,24 @@ class IpscShooterResultServiceTest {
     @Mock
     private TransactionService transactionService;
 
+    @Mock
+    private StartupRecalculationStatus startupRecalculationStatus;
+
     @InjectMocks
     private IpscShooterResultServiceImpl ipscShooterResultService;
+
+    // calculateMatchShooterResult() while the startup recalculation runs
+    @Test
+    void testCalculateMatchShooterResult_whenTheStartupRecalculationIsRunning_thenThrowsAndTouchesNothing() {
+        // Arrange
+        doThrow(new RecalculationInProgressException("busy")).when(startupRecalculationStatus).ensureNotRunning();
+
+        // Act & Assert
+        assertThrows(RecalculationInProgressException.class,
+                () -> ipscShooterResultService.calculateMatchShooterResult(2L));
+        verifyNoInteractions(ipscMatchRepository, matchCompetitorRepository, shooterResultRepository,
+                transactionService);
+    }
 
     // calculateMatchShooterResult()
     @Test
@@ -443,7 +461,7 @@ class IpscShooterResultServiceTest {
     }
 
     @Test
-    void testCalculateMatchShooterResult_whenSeveralCompetitorCategories_thenRanksEachCategorySeparately()
+    void testCalculateMatchShooterResult_whenSeveralCompetitorCategories_thenRanksThemTogetherByDivision()
             throws NonFatalException {
         // Arrange
         IpscMatch match = match(2L, "Club Championship");
@@ -465,10 +483,10 @@ class IpscShooterResultServiceTest {
         // Assert
         List<ShooterResult> saved = savedShooterResults();
         assertEquals(1, rankOf(saved, junior));
-        assertEquals(1, rankOf(saved, lady));
-        assertEquals(1, rankOf(saved, none));
-        assertEquals(2, rankOf(saved, otherNone));
-        assertEquals(new BigDecimal("50.00"), percentageOf(saved, otherNone));
+        assertEquals(2, rankOf(saved, lady));
+        assertEquals(3, rankOf(saved, none));
+        assertEquals(4, rankOf(saved, otherNone));
+        assertEquals(new BigDecimal("30.00"), percentageOf(saved, otherNone));
     }
 
     @Test

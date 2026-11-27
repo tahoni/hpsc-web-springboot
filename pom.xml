@@ -12,7 +12,7 @@
     <!-- Application definition -->
     <groupId>za.co.hpsc</groupId>
     <artifactId>hpsc-web</artifactId>
-    <version>18.1.0</version>
+    <version>18.2.0</version>
     <name>hpsc-web</name>
     <description>HPSC website backend</description>
 
@@ -44,6 +44,9 @@
         <jacoco.reportPath>${project.build.directory}/site/jacoco/jacoco.xml</jacoco.reportPath>
         <jacoco.version>0.8.16</jacoco.version>
         <logback.version>1.6.7</logback.version>
+        <!-- The Tomcat version Spring Boot manages has a known vulnerability, so override it until the parent
+             manages a fixed release. -->
+        <tomcat.version>11.0.29</tomcat.version>
         <!-- H2 is test-scoped and its version is managed by Spring Boot; the managed 2.4.240 has a known
              vulnerability, so override it until the parent manages a fixed release. -->
         <h2.version>2.5.252</h2.version>

@@ -185,3 +185,52 @@ Phases 51 to 60 (versions 14.0.0 to 16.4.1) are archived, unchanged, in
 - The suite stands at 1,537 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with line coverage at 98.7% and
   branch coverage at 99.9%; new cases cover the calculation, ranking, the staleness rule, the controller endpoints
   and the response mapping
+
+---
+
+### Phase 64: Ranking Competitors Within Their Division (v18.2.0)
+
+**Services**
+
+- `IpscShooterResultServiceImpl` ranks a match's verified competitors with points within their firearm type and
+  division, and `IpscShooterLogOverallServiceImpl` ranks a shooter log's overalls within their division, instead of
+  also splitting each group by competitor category; the category is still stored on every `ShooterResult` and
+  `ShooterLogOverall`
+- `StartupRecalculationRunner` calculates, in a background thread when the application starts, every match's shooter
+  results and then every shooter log's overall results that have a row whose `date_calculated` is `null`, using two new
+  repository queries; a match or log that fails is logged and skipped, so startup is not prevented
+- `StartupRecalculationStatus` records that it is running, and the shooter result and shooter log overall calculations
+  throw `RecalculationInProgressException`, which `ControllerAdvice` maps to `409 Conflict`, so a `POST` never writes
+  the same results as the runner
+
+**Database**
+
+- `V11_15_0__mark_shooter_results_for_recalculation.sql` clears `date_calculated` on `shooter_result` and
+  `shooter_log_overall`, which the services treat as out of date, so each match and shooter log is ranked again the next
+  time it is calculated
+
+**Configuration**
+
+- `tomcat.version` is pinned to `11.0.29`, since the `11.0.27` Spring Boot manages has a known vulnerability
+
+**Documentation**
+
+- The Javadoc and OpenAPI text of both services and controllers, `ARCHITECTURE.md` and `README.md` describe the new
+  ranking, closing Gap #57
+
+**Build & Metadata**
+
+- Improvement plan: Gap #57 is added and closed, leaving all 57 gaps closed and none open
+- Project version bumped to 18.2.0 in `pom.xml` and the `@OpenAPIDefinition` annotation in `HpscWebApplication.java`
+
+**Technical Focus:**
+
+- Ranking competitors against the others in their division whatever their category, and scoping the release as a
+  MINOR because the startup recalculation and its `409` are externally visible, though no request or response field
+  changes
+
+**Test Coverage:**
+
+- The suite stands at 1,558 tests, three skipped unless `FLYWAY_MYSQL_URL` is set, with line coverage at 98.6% and
+  branch coverage at 99.9%; the category tests now expect one ranking, a new overall test does the same, and the runner,
+  its status, its two queries and the `409` have tests
