@@ -65,6 +65,7 @@ public class StartupRecalculationRunner implements ApplicationRunner {
         // Marked as running before the thread starts, so a calculation requested in between is refused too
         startupRecalculationStatus.begin();
         try {
+
             // A daemon thread, so an unfinished recalculation never keeps the JVM alive after the application stops
             Thread.ofPlatform().name("startup-recalculation").daemon().start(() -> {
                 startupRecalculationStatus.attach();
